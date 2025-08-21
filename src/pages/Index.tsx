@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut } from "lucide-react";
+import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CameraCapture } from "@/components/CameraCapture";
 import { MedicationCard } from "@/components/MedicationCard";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { ScanHistory } from "./ScanHistory";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import heroImage from "@/assets/medical-hero.jpg";
 
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [language, setLanguage] = useState("AZ");
   const { user, signOut } = useAuth();
 
@@ -63,6 +65,10 @@ const Index = () => {
     );
   }
 
+  if (showHistory) {
+    return <ScanHistory />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/30 to-secondary-light/20">
       {/* Header */}
@@ -79,6 +85,10 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector value={language} onChange={setLanguage} />
+            <Button variant="ghost" onClick={() => setShowHistory(true)} className="gap-2">
+              <History className="h-4 w-4" />
+              History
+            </Button>
             <Button variant="ghost" onClick={handleSignOut} className="gap-2">
               <LogOut className="h-4 w-4" />
               Sign Out
@@ -129,10 +139,11 @@ const Index = () => {
             <Button 
               variant="outline" 
               size="lg"
+              onClick={() => setShowHistory(true)}
               className="border-2 border-primary text-primary hover:bg-primary-light text-lg px-8 py-6 h-auto"
             >
-              <Scan className="w-6 h-6 mr-3" />
-              Scan Barcode
+              <History className="w-6 h-6 mr-3" />
+              View History
             </Button>
           </div>
         </div>

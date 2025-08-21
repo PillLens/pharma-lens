@@ -1,16 +1,18 @@
 import { useState, useRef } from "react";
-import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2, Scan } from "lucide-react";
+import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2, Scan, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MedicationCard } from "./MedicationCard";
+import { FeedbackDialog } from "./FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
 import { Camera } from "@capacitor/camera";
 import { CameraResultType, CameraSource } from "@capacitor/camera";
 import { supabase } from "@/integrations/supabase/client";
 import { ocrService } from "@/services/ocrService";
 import { barcodeService } from "@/services/barcodeService";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CameraCaptureProps {
   onClose: () => void;
@@ -25,7 +27,115 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
   const [extractedData, setExtractedData] = useState<any>(null);
   const [barcodeData, setBarcodeData] = useState<any>(null);
   const [processingStep, setProcessingStep] = useState<string>("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [scanComplete, setScanComplete] = useState(false);
+  const [productFromDb, setProductFromDb] = useState<any>(null);
+  const [safetyWarnings, setSafetyWarnings] = useState<string[]>([]);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  const lookupProductByBarcode = async (barcode: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('barcode', barcode)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // Not found is OK
+        console.error('Barcode lookup error:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Failed to lookup product by barcode:', error);
+      return null;
+    }
+  };
+
+  const saveSession = async (barcodeValue?: string, extractionData?: any) => {
+    if (!user) return null;
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase
+        .from('sessions')
+        .insert({
+          user_id: user.id,
+          barcode_value: barcodeValue || null,
+          language,
+          region: 'AZ',
+          images: capturedImage ? [capturedImage] : [],
+        })
+        .select()
+        .single();
+
+      if (sessionError) throw sessionError;
+
+      const newSessionId = sessionData.id;
+      setSessionId(newSessionId);
+
+      // Save extraction data if available
+      if (extractionData) {
+        const { error: extractionError } = await supabase
+          .from('extractions')
+          .insert({
+            user_id: user.id,
+            extracted_json: extractionData,
+            quality_score: extractionData.confidence_score || 0,
+            risk_flags: calculateRiskFlags(extractionData),
+          });
+
+        if (extractionError) {
+          console.error('Error saving extraction:', extractionError);
+        }
+      }
+
+      return newSessionId;
+    } catch (error) {
+      console.error('Error saving session:', error);
+      return null;
+    }
+  };
+
+  const calculateRiskFlags = (medicationData: any): string[] => {
+    const flags: string[] = [];
+    
+    // Check confidence score
+    if ((medicationData.confidence_score || 0) < 0.7) {
+      flags.push("Low confidence extraction - verification recommended");
+    }
+
+    // Check for high-risk medication keywords
+    const highRiskKeywords = ['insulin', 'warfarin', 'digoxin', 'lithium', 'chemotherapy'];
+    const medicationText = `${medicationData.brand_name || ''} ${medicationData.generic_name || ''}`.toLowerCase();
+    
+    if (highRiskKeywords.some(keyword => medicationText.includes(keyword))) {
+      flags.push("High-risk medication - requires careful monitoring");
+    }
+
+    return flags;
+  };
+
+  const validateSafetyThresholds = (confidence: number, extractedData: any) => {
+    const warnings: string[] = [];
+
+    if (confidence < 0.7) {
+      warnings.push("Image quality too low for reliable extraction. Please retake with better lighting.");
+    }
+
+    if (confidence < 0.5) {
+      warnings.push("Critical: Cannot reliably extract medication information from this image.");
+    }
+
+    if (!extractedData?.brand_name) {
+      warnings.push("Unable to identify medication brand name. Manual verification required.");
+    }
+
+    setSafetyWarnings(warnings);
+    return warnings.length === 0;
+  };
 
   const extractMedicationInfo = async (text: string) => {
     try {
@@ -33,7 +143,7 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
         body: { 
           text, 
           language,
-          region: 'AZ' // You can make this dynamic based on user settings
+          region: 'AZ'
         }
       });
 
@@ -75,13 +185,24 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
 
   const processImage = async (imageData: string) => {
     setIsProcessing(true);
+    let barcodeValue: string | undefined;
+    let medicationData: any = null;
+
     try {
       // Step 1: Check for barcode
       setProcessingStep("Scanning for barcode...");
       const barcode = await barcodeService.scanBarcode(imageData);
       if (barcode) {
         setBarcodeData(barcode);
+        barcodeValue = barcode.code;
         console.log('Detected barcode:', barcode);
+
+        // Try to lookup product from database
+        const product = await lookupProductByBarcode(barcodeValue);
+        if (product) {
+          setProductFromDb(product);
+          setProcessingStep("Found medication in database...");
+        }
       }
 
       // Step 2: Perform OCR
@@ -95,16 +216,31 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
       // Step 3: Extract medication info if we have sufficient text
       if (ocrResult.text.trim().length > 10) {
         setProcessingStep("Analyzing medication information...");
-        const medicationData = await extractMedicationInfo(ocrResult.text);
+        medicationData = await extractMedicationInfo(ocrResult.text);
         setExtractedData(medicationData);
+
+        // Validate safety thresholds
+        const isSafe = validateSafetyThresholds(ocrResult.confidence, medicationData);
         
-        toast({
-          title: "Analysis Complete",
-          description: "Medication information extracted successfully.",
-        });
+        if (!isSafe) {
+          toast({
+            title: "Safety Warning",
+            description: "Please review the warnings before proceeding.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Analysis Complete",
+            description: "Medication information extracted successfully.",
+          });
+        }
       } else {
         throw new Error("Insufficient text detected in image. Please try a clearer photo.");
       }
+
+      // Save session to database
+      await saveSession(barcodeValue, medicationData);
+      setScanComplete(true);
 
     } catch (error) {
       console.error('Error processing image:', error);
@@ -127,6 +263,18 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
     setBarcodeData(null);
     setProcessingStep("");
     setIsProcessing(false);
+    setSessionId(null);
+    setScanComplete(false);
+    setProductFromDb(null);
+    setSafetyWarnings([]);
+  };
+
+  const handleContinue = () => {
+    setShowFeedback(true);
+  };
+
+  const handleFeedbackComplete = () => {
+    onClose();
   };
 
   const getConfidenceColor = (conf: number) => {
@@ -220,8 +368,9 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
                   Retake
                 </Button>
                 
-                {!isProcessing && ocrText && (
+                {!isProcessing && scanComplete && (
                   <Button 
+                    onClick={handleContinue}
                     className="flex-1 bg-gradient-to-r from-secondary to-secondary text-white"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -288,10 +437,51 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
               </Card>
             )}
 
-            {/* Medication Information */}
+            {/* Safety Warnings */}
+            {safetyWarnings.length > 0 && !isProcessing && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-1">
+                    {safetyWarnings.map((warning, index) => (
+                      <p key={index}>{warning}</p>
+                    ))}
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Database Product Match */}
+            {productFromDb && !isProcessing && (
+              <Card className="p-6 border-success">
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  <h3 className="font-semibold text-foreground">Product Found in Database</h3>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium text-foreground">{productFromDb.brand_name}</h4>
+                  {productFromDb.generic_name && (
+                    <p className="text-sm text-muted-foreground">Generic: {productFromDb.generic_name}</p>
+                  )}
+                  {productFromDb.strength && (
+                    <p className="text-sm text-muted-foreground">Strength: {productFromDb.strength}</p>
+                  )}
+                  {productFromDb.form && (
+                    <p className="text-sm text-muted-foreground">Form: {productFromDb.form}</p>
+                  )}
+                  {productFromDb.manufacturer && (
+                    <p className="text-sm text-muted-foreground">Manufacturer: {productFromDb.manufacturer}</p>
+                  )}
+                </div>
+              </Card>
+            )}
+
+            {/* Extracted Medication Information */}
             {extractedData && !isProcessing && (
               <Card className="p-6">
-                <h3 className="font-semibold text-foreground mb-4">Medication Information</h3>
+                <h3 className="font-semibold text-foreground mb-4">
+                  {productFromDb ? "OCR Verification" : "Extracted Medication Information"}
+                </h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium text-foreground">{extractedData.brand_name}</h4>
@@ -342,6 +532,11 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
                     <Badge variant={extractedData.confidence_score >= 0.8 ? "default" : "secondary"}>
                       Confidence: {Math.round((extractedData.confidence_score || 0) * 100)}%
                     </Badge>
+                    {calculateRiskFlags(extractedData).length > 0 && (
+                      <Badge variant="destructive">
+                        {calculateRiskFlags(extractedData).length} Risk Flag{calculateRiskFlags(extractedData).length > 1 ? 's' : ''}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </Card>
@@ -349,6 +544,14 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
           </div>
         )}
       </main>
+
+      {/* Feedback Dialog */}
+      <FeedbackDialog
+        open={showFeedback}
+        onOpenChange={setShowFeedback}
+        sessionId={sessionId || undefined}
+        onComplete={handleFeedbackComplete}
+      />
     </div>
   );
 };
