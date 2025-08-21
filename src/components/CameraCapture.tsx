@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2, Scan } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Camera } from "@capacitor/camera";
 import { CameraResultType, CameraSource } from "@capacitor/camera";
 import { supabase } from "@/integrations/supabase/client";
+import { ocrService } from "@/services/ocrService";
+import { barcodeService } from "@/services/barcodeService";
 
 interface CameraCaptureProps {
   onClose: () => void;
@@ -21,6 +23,8 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
   const [ocrText, setOcrText] = useState<string>("");
   const [confidence, setConfidence] = useState<number>(0);
   const [extractedData, setExtractedData] = useState<any>(null);
+  const [barcodeData, setBarcodeData] = useState<any>(null);
+  const [processingStep, setProcessingStep] = useState<string>("");
   const { toast } = useToast();
 
   const extractMedicationInfo = async (text: string) => {
@@ -72,47 +76,46 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
   const processImage = async (imageData: string) => {
     setIsProcessing(true);
     try {
-      // Simulate OCR processing for demo
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Step 1: Check for barcode
+      setProcessingStep("Scanning for barcode...");
+      const barcode = await barcodeService.scanBarcode(imageData);
+      if (barcode) {
+        setBarcodeData(barcode);
+        console.log('Detected barcode:', barcode);
+      }
+
+      // Step 2: Perform OCR
+      setProcessingStep("Extracting text from image...");
+      await ocrService.initialize();
+      const ocrResult = await ocrService.processImage(imageData);
       
-      // Mock extracted text for demonstration
-      const mockText = language === 'AZ' 
-        ? "Panadol Extra Ağrı Kesici - 500mg Paracetamol\nÜretici: GSK\nKullanım: Ağrı ve ateş için\nDoz: Günde 3 kez 1 tablet\nSon Kullanma Tarihi: 12/2025"
-        : language === 'RU'
-        ? "Парацетамол - болеутоляющее средство 500мг\nПроизводитель: GSK\nПрименение: От боли и жара\nДоза: 3 раза в день по 1 таблетке\nСрок годности: 12/2025"
-        : language === 'TR'
-        ? "Panadol Extra Ağrı Kesici - 500mg Parasetamol\nÜretici: GSK\nKullanım: Ağrı ve ateş için\nDoz: Günde 3 kez 1 tablet\nSon Kullanma Tarihi: 12/2025"
-        : "Panadol Extra Pain Relief - 500mg Paracetamol\nManufacturer: GSK\nIndication: For pain and fever relief\nDosage: Take 1 tablet 3 times daily\nExpiry Date: 12/2025";
-      
-      setOcrText(mockText);
-      setConfidence(0.92);
-      
-      // Extract medication information using LLM
-      try {
-        const medicationData = await extractMedicationInfo(mockText);
+      setOcrText(ocrResult.text);
+      setConfidence(ocrResult.confidence);
+
+      // Step 3: Extract medication info if we have sufficient text
+      if (ocrResult.text.trim().length > 10) {
+        setProcessingStep("Analyzing medication information...");
+        const medicationData = await extractMedicationInfo(ocrResult.text);
         setExtractedData(medicationData);
         
         toast({
           title: "Analysis Complete",
           description: "Medication information extracted successfully.",
         });
-      } catch (error) {
-        console.error('LLM extraction failed:', error);
-        toast({
-          title: "Extraction Failed", 
-          description: "Could not analyze medication data. Please try again.",
-          variant: "destructive",
-        });
+      } else {
+        throw new Error("Insufficient text detected in image. Please try a clearer photo.");
       }
-      
-      setIsProcessing(false);
+
     } catch (error) {
-      setIsProcessing(false);
+      console.error('Error processing image:', error);
       toast({
         title: "Processing Error",
-        description: "Could not process the image",
-        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to process the image. Please try again.",
+        variant: "destructive"
       });
+    } finally {
+      setIsProcessing(false);
+      setProcessingStep("");
     }
   };
 
@@ -121,6 +124,9 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
     setOcrText("");
     setConfidence(0);
     setExtractedData(null);
+    setBarcodeData(null);
+    setProcessingStep("");
+    setIsProcessing(false);
   };
 
   const getConfidenceColor = (conf: number) => {
@@ -225,36 +231,58 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
               </div>
             </Card>
 
-            {/* OCR Results */}
+            {/* Processing Status */}
             {isProcessing && (
               <Card className="p-6">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-2">
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                  <span className="text-muted-foreground">Analyzing medication information...</span>
+                  <span className="font-medium">Processing Image...</span>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {processingStep || "Analyzing your medication image..."}
+                </p>
               </Card>
             )}
 
-            {ocrText && !isProcessing && (
+            {(barcodeData || ocrText) && !isProcessing && (
               <Card className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="font-semibold text-foreground">Extracted Text</h3>
-                  <Badge 
-                    {...getConfidenceBadge(confidence)}
-                    className="text-xs"
-                  >
-                    {Math.round(confidence * 100)}% confidence
-                  </Badge>
-                </div>
-                
-                <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                  <p className="font-mono text-sm text-foreground whitespace-pre-line">{ocrText}</p>
-                </div>
+                <div className="space-y-4">
+                  {barcodeData && (
+                    <div>
+                      <h4 className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                        <Scan className="h-4 w-4" />
+                        Detected Barcode:
+                      </h4>
+                      <div className="bg-muted p-3 rounded-md text-sm">
+                        <p><strong>Code:</strong> {barcodeData.code}</p>
+                        <p><strong>Format:</strong> {barcodeData.format}</p>
+                        <p><strong>Confidence:</strong> {(barcodeData.confidence * 100).toFixed(1)}%</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {ocrText && (
+                    <div>
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-medium text-sm text-muted-foreground">Extracted Text:</h4>
+                        <Badge 
+                          {...getConfidenceBadge(confidence)}
+                          className="text-xs"
+                        >
+                          {Math.round(confidence * 100)}% confidence
+                        </Badge>
+                      </div>
+                      <div className="bg-muted p-3 rounded-md text-sm whitespace-pre-wrap max-h-32 overflow-y-auto">
+                        {ocrText}
+                      </div>
+                    </div>
+                  )}
 
-                <div className="text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span>Text extracted successfully</span>
+                  <div className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-success" />
+                      <span>Analysis completed successfully</span>
+                    </div>
                   </div>
                 </div>
               </Card>
