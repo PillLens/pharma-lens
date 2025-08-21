@@ -1,0 +1,194 @@
+import { supabase } from '@/integrations/supabase/client';
+
+export interface DrugInteraction {
+  id: string;
+  drugA: string;
+  drugB: string;
+  severity: 'major' | 'moderate' | 'minor';
+  description: string;
+  management: string;
+  evidenceLevel: string;
+  source: string;
+}
+
+export interface ExternalInteractionResponse {
+  interactions: DrugInteraction[];
+  source: string;
+  lastUpdated: string;
+}
+
+class DrugInteractionService {
+  // Check for interactions using external API (DrugBank, RxNorm, etc.)
+  async checkInteractionsExternal(medications: string[]): Promise<ExternalInteractionResponse | null> {
+    if (medications.length < 2) {
+      return { interactions: [], source: 'none', lastUpdated: new Date().toISOString() };
+    }
+
+    try {
+      // Call Supabase Edge Function for external API integration
+      const { data, error } = await supabase.functions.invoke('check-drug-interactions', {
+        body: { medications }
+      });
+
+      if (error) throw error;
+      
+      return data;
+    } catch (error) {
+      console.error('External interaction check failed:', error);
+      
+      // Fallback to local database
+      return this.checkInteractionsLocal(medications);
+    }
+  }
+
+  // Check for interactions in local Supabase database
+  async checkInteractionsLocal(medications: string[]): Promise<ExternalInteractionResponse | null> {
+    if (medications.length < 2) {
+      return { interactions: [], source: 'local', lastUpdated: new Date().toISOString() };
+    }
+
+    try {
+      const interactions: DrugInteraction[] = [];
+      
+      // Check each combination of medications
+      for (let i = 0; i < medications.length; i++) {
+        for (let j = i + 1; j < medications.length; j++) {
+          const medA = medications[i].toLowerCase();
+          const medB = medications[j].toLowerCase();
+          
+          const { data, error } = await supabase
+            .from('medication_interactions')
+            .select('*')
+            .or(`and(medication_a_id.ilike.%${medA}%,medication_b_id.ilike.%${medB}%),and(medication_a_id.ilike.%${medB}%,medication_b_id.ilike.%${medA}%)`);
+
+          if (error) {
+            console.error('Database interaction query failed:', error);
+            continue;
+          }
+
+          if (data && data.length > 0) {
+            interactions.push(...data.map(interaction => ({
+              id: interaction.id,
+              drugA: medA,
+              drugB: medB,
+              severity: this.mapSeverity(interaction.severity_score),
+              description: interaction.description,
+              management: interaction.management_advice || 'Consult healthcare provider',
+              evidenceLevel: interaction.evidence_level || 'Clinical',
+              source: 'local_database'
+            })));
+          }
+        }
+      }
+
+      return {
+        interactions,
+        source: 'local_database',
+        lastUpdated: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('Local interaction check failed:', error);
+      return null;
+    }
+  }
+
+  // Populate interaction database with known drug interactions
+  async populateInteractionDatabase(): Promise<void> {
+    const commonInteractions = [
+      {
+        medication_a_id: 'warfarin',
+        medication_b_id: 'aspirin',
+        interaction_type: 'pharmacodynamic',
+        severity_score: 8,
+        description: 'Increased risk of bleeding when warfarin is combined with aspirin',
+        management_advice: 'Monitor INR closely and watch for signs of bleeding',
+        evidence_level: 'High'
+      },
+      {
+        medication_a_id: 'metformin',
+        medication_b_id: 'contrast_dye',
+        interaction_type: 'pharmacokinetic',
+        severity_score: 7,
+        description: 'Risk of lactic acidosis with metformin and iodinated contrast',
+        management_advice: 'Discontinue metformin 48 hours before contrast procedure',
+        evidence_level: 'High'
+      },
+      {
+        medication_a_id: 'digoxin',
+        medication_b_id: 'amiodarone',
+        interaction_type: 'pharmacokinetic',
+        severity_score: 8,
+        description: 'Amiodarone increases digoxin levels significantly',
+        management_advice: 'Reduce digoxin dose by 50% and monitor levels',
+        evidence_level: 'High'
+      },
+      {
+        medication_a_id: 'lisinopril',
+        medication_b_id: 'spironolactone',
+        interaction_type: 'pharmacodynamic',
+        severity_score: 6,
+        description: 'Risk of hyperkalemia when combining ACE inhibitors with potassium-sparing diuretics',
+        management_advice: 'Monitor serum potassium regularly',
+        evidence_level: 'Moderate'
+      },
+      {
+        medication_a_id: 'simvastatin',
+        medication_b_id: 'clarithromycin',
+        interaction_type: 'pharmacokinetic',
+        severity_score: 7,
+        description: 'Clarithromycin increases simvastatin levels, increasing risk of rhabdomyolysis',
+        management_advice: 'Avoid combination or use alternative statin',
+        evidence_level: 'High'
+      }
+    ];
+
+    try {
+      const { error } = await supabase
+        .from('medication_interactions')
+        .upsert(commonInteractions, { onConflict: 'medication_a_id,medication_b_id' });
+
+      if (error) throw error;
+      
+      console.log('Successfully populated drug interactions database');
+    } catch (error) {
+      console.error('Failed to populate interactions:', error);
+      throw error;
+    }
+  }
+
+  // Get interaction details by ID
+  async getInteractionDetails(interactionId: string): Promise<DrugInteraction | null> {
+    try {
+      const { data, error } = await supabase
+        .from('medication_interactions')
+        .select('*')
+        .eq('id', interactionId)
+        .single();
+
+      if (error) throw error;
+
+      return {
+        id: data.id,
+        drugA: data.medication_a_id,
+        drugB: data.medication_b_id,
+        severity: this.mapSeverity(data.severity_score),
+        description: data.description,
+        management: data.management_advice || 'Consult healthcare provider',
+        evidenceLevel: data.evidence_level || 'Clinical',
+        source: 'database'
+      };
+    } catch (error) {
+      console.error('Failed to get interaction details:', error);
+      return null;
+    }
+  }
+
+  private mapSeverity(score: number | null): 'major' | 'moderate' | 'minor' {
+    if (!score) return 'minor';
+    if (score >= 7) return 'major';
+    if (score >= 4) return 'moderate';
+    return 'minor';
+  }
+}
+
+export const drugInteractionService = new DrugInteractionService();

@@ -1,5 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { comprehensiveMedications } from '@/data/comprehensiveMedications';
+import { realBarcodeMappings, findProductByBarcode } from '@/data/realBarcodeMappings';
+import { drugInteractionService } from './drugInteractionService';
+import { storageService } from './storageService';
 
 export interface ProductRecord {
   brand_name: string;
@@ -32,15 +35,17 @@ export interface BarcodeProductMapping {
 class DatabaseService {
   async populateProductDatabase(): Promise<void> {
     try {
-      // Convert comprehensive medications to product records
-      const products: ProductRecord[] = Object.entries(comprehensiveMedications).map(([key, med]) => ({
+      console.log('Starting database population...');
+      
+      // Step 1: Populate comprehensive medications
+      const comprehensiveProducts: ProductRecord[] = Object.entries(comprehensiveMedications).map(([key, med]) => ({
         brand_name: med.brandName,
         generic_name: med.genericName,
         strength: med.strength,
-        form: 'tablet', // Default form
-        manufacturer: 'Unknown', // Would need to be populated from real data
+        form: 'tablet',
+        manufacturer: 'Generic',
         country_code: 'AZ',
-        barcode: this.generateBarcode(key), // Generate dummy barcodes for testing
+        barcode: this.generateBarcode(key),
         atc_code: this.extractATCCode(med.genericName || med.brandName),
         active_ingredients: [med.genericName || med.brandName],
         dosage_forms: ['tablet', 'capsule'],
@@ -58,17 +63,51 @@ class DatabaseService {
         data_source: 'comprehensive_database'
       }));
 
-      // Batch insert products
-      const { error } = await supabase
-        .from('products')
-        .upsert(products, { onConflict: 'brand_name,generic_name' });
+      // Step 2: Add real barcode mappings
+      const realProducts: ProductRecord[] = realBarcodeMappings.map(mapping => ({
+        brand_name: mapping.productName,
+        generic_name: mapping.genericName,
+        strength: mapping.strength,
+        form: mapping.form,
+        manufacturer: mapping.manufacturer,
+        country_code: mapping.country,
+        barcode: mapping.barcode,
+        atc_code: this.extractATCCode(mapping.genericName),
+        active_ingredients: [mapping.genericName],
+        dosage_forms: [mapping.form],
+        therapeutic_class: this.getTherapeuticClass(mapping.genericName),
+        prescription_required: this.requiresPrescription(mapping.genericName),
+        safety_warnings: this.getSafetyWarnings(mapping.genericName),
+        storage_conditions: 'Store as directed on package',
+        expiry_monitoring: true,
+        search_keywords: [
+          mapping.productName.toLowerCase(),
+          mapping.genericName.toLowerCase(),
+          mapping.manufacturer.toLowerCase()
+        ],
+        verification_status: 'verified',
+        data_source: 'real_barcode_database'
+      }));
 
-      if (error) {
-        console.error('Error populating products:', error);
-        throw error;
+      // Combine both datasets
+      const allProducts = [...comprehensiveProducts, ...realProducts];
+
+      // Batch insert products
+      const { error: productError } = await supabase
+        .from('products')
+        .upsert(allProducts, { onConflict: 'barcode' });
+
+      if (productError) {
+        console.error('Error populating products:', productError);
+        throw productError;
       }
 
-      console.log(`Successfully populated ${products.length} medications`);
+      console.log(`Successfully populated ${allProducts.length} medications`);
+
+      // Step 3: Populate drug interactions
+      await drugInteractionService.populateInteractionDatabase();
+      console.log('Successfully populated drug interactions');
+
     } catch (error) {
       console.error('Database population failed:', error);
       throw error;
@@ -94,14 +133,44 @@ class DatabaseService {
 
   async findProductByBarcode(barcode: string): Promise<any | null> {
     try {
+      // First try real barcode mappings for immediate response
+      const realMapping = findProductByBarcode(barcode);
+      if (realMapping) {
+        // Check if this product exists in database
+        const { data: existingProduct } = await supabase
+          .from('products')
+          .select('*')
+          .eq('barcode', barcode)
+          .eq('verification_status', 'verified')
+          .maybeSingle();
+
+        if (existingProduct) {
+          return existingProduct;
+        }
+
+        // If not in database, return mapped data
+        return {
+          brand_name: realMapping.productName,
+          generic_name: realMapping.genericName,
+          strength: realMapping.strength,
+          form: realMapping.form,
+          manufacturer: realMapping.manufacturer,
+          barcode: realMapping.barcode,
+          country_code: realMapping.country,
+          verification_status: 'verified',
+          data_source: 'real_barcode_mapping'
+        };
+      }
+
+      // Fallback to database search
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('barcode', barcode)
         .eq('verification_status', 'verified')
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       return data;
     } catch (error) {
       console.error('Barcode lookup failed:', error);
@@ -157,6 +226,58 @@ class DatabaseService {
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash) % 1000000000; // Keep within 10 digits
+  }
+
+  private getTherapeuticClass(genericName: string): string {
+    const therapeuticMap: Record<string, string> = {
+      'acetylsalicylic acid': 'Analgesic/Antiplatelet',
+      'lisinopril': 'ACE Inhibitor',
+      'atorvastatin': 'Statin',
+      'metoprolol': 'Beta Blocker',
+      'metformin': 'Antidiabetic',
+      'salbutamol': 'Bronchodilator',
+      'omeprazole': 'Proton Pump Inhibitor',
+      'amoxicillin': 'Antibiotic',
+      'paracetamol': 'Analgesic/Antipyretic',
+      'ibuprofen': 'NSAID',
+      'cholecalciferol': 'Vitamin D'
+    };
+
+    const lowercaseName = genericName.toLowerCase();
+    for (const [med, theClass] of Object.entries(therapeuticMap)) {
+      if (lowercaseName.includes(med)) {
+        return theClass;
+      }
+    }
+    return 'General';
+  }
+
+  private requiresPrescription(genericName: string): boolean {
+    const prescriptionRequired = [
+      'lisinopril', 'atorvastatin', 'metoprolol', 'metformin', 
+      'salbutamol', 'omeprazole', 'amoxicillin', 'azithromycin'
+    ];
+    
+    const lowercaseName = genericName.toLowerCase();
+    return prescriptionRequired.some(med => lowercaseName.includes(med));
+  }
+
+  private getSafetyWarnings(genericName: string): string[] {
+    const warningsMap: Record<string, string[]> = {
+      'acetylsalicylic acid': ['May cause stomach bleeding', 'Do not use in children under 16'],
+      'metformin': ['Monitor kidney function', 'Risk of lactic acidosis'],
+      'lisinopril': ['Monitor kidney function and potassium', 'May cause dry cough'],
+      'omeprazole': ['Long-term use may affect bone health', 'May interact with clopidogrel'],
+      'amoxicillin': ['Check for penicillin allergy', 'Complete full course']
+    };
+
+    const lowercaseName = genericName.toLowerCase();
+    for (const [med, warnings] of Object.entries(warningsMap)) {
+      if (lowercaseName.includes(med)) {
+        return warnings;
+      }
+    }
+    return [];
   }
 }
 
