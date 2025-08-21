@@ -1,16 +1,35 @@
 import { useState } from "react";
-import { Camera, Scan, Shield, Globe2, Clock, BookOpen } from "lucide-react";
+import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CameraCapture } from "@/components/CameraCapture";
 import { MedicationCard } from "@/components/MedicationCard";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 import heroImage from "@/assets/medical-hero.jpg";
 
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [language, setLanguage] = useState("AZ");
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
   
   const features = [
     {
@@ -58,7 +77,13 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">Medication Guide</p>
             </div>
           </div>
-          <LanguageSelector value={language} onChange={setLanguage} />
+          <div className="flex items-center gap-4">
+            <LanguageSelector value={language} onChange={setLanguage} />
+            <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 

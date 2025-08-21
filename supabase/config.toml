@@ -1,1 +1,7 @@
 project_id = "bquxkkaipevuakmqqilk"
+
+[functions.extract-medication]
+verify_jwt = true
+
+[functions.submit-feedback]
+verify_jwt = true

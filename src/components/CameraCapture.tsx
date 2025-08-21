@@ -1,11 +1,14 @@
 import { useState, useRef } from "react";
-import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle } from "lucide-react";
+import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { MedicationCard } from "./MedicationCard";
 import { useToast } from "@/hooks/use-toast";
 import { Camera } from "@capacitor/camera";
 import { CameraResultType, CameraSource } from "@capacitor/camera";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CameraCaptureProps {
   onClose: () => void;
@@ -17,7 +20,30 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [ocrText, setOcrText] = useState<string>("");
   const [confidence, setConfidence] = useState<number>(0);
+  const [extractedData, setExtractedData] = useState<any>(null);
   const { toast } = useToast();
+
+  const extractMedicationInfo = async (text: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('extract-medication', {
+        body: { 
+          text, 
+          language,
+          region: 'AZ' // You can make this dynamic based on user settings
+        }
+      });
+
+      if (error) {
+        console.error('Extraction error:', error);
+        throw error;
+      }
+
+      return data?.data;
+    } catch (error) {
+      console.error('Failed to extract medication info:', error);
+      throw error;
+    }
+  };
 
   const captureImage = async () => {
     try {
@@ -47,25 +73,39 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
     setIsProcessing(true);
     try {
       // Simulate OCR processing for demo
-      setTimeout(() => {
-        // Mock extracted text for demonstration
-        const mockText = language === 'AZ' 
-          ? "Panadol Extra Ağrı Kesici - 500mg Paracetamol"
-          : language === 'RU'
-          ? "Парацетамол - болеутоляющее средство 500мг"
-          : language === 'TR'
-          ? "Panadol Extra Ağrı Kesici - 500mg Parasetamol"
-          : "Panadol Extra Pain Relief - 500mg Paracetamol";
-        
-        setOcrText(mockText);
-        setConfidence(0.92);
-        setIsProcessing(false);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock extracted text for demonstration
+      const mockText = language === 'AZ' 
+        ? "Panadol Extra Ağrı Kesici - 500mg Paracetamol\nÜretici: GSK\nKullanım: Ağrı ve ateş için\nDoz: Günde 3 kez 1 tablet\nSon Kullanma Tarihi: 12/2025"
+        : language === 'RU'
+        ? "Парацетамол - болеутоляющее средство 500мг\nПроизводитель: GSK\nПрименение: От боли и жара\nДоза: 3 раза в день по 1 таблетке\nСрок годности: 12/2025"
+        : language === 'TR'
+        ? "Panadol Extra Ağrı Kesici - 500mg Parasetamol\nÜretici: GSK\nKullanım: Ağrı ve ateş için\nDoz: Günde 3 kez 1 tablet\nSon Kullanma Tarihi: 12/2025"
+        : "Panadol Extra Pain Relief - 500mg Paracetamol\nManufacturer: GSK\nIndication: For pain and fever relief\nDosage: Take 1 tablet 3 times daily\nExpiry Date: 12/2025";
+      
+      setOcrText(mockText);
+      setConfidence(0.92);
+      
+      // Extract medication information using LLM
+      try {
+        const medicationData = await extractMedicationInfo(mockText);
+        setExtractedData(medicationData);
         
         toast({
-          title: "Text Extracted",
-          description: "Medication information detected successfully",
+          title: "Analysis Complete",
+          description: "Medication information extracted successfully.",
         });
-      }, 2000);
+      } catch (error) {
+        console.error('LLM extraction failed:', error);
+        toast({
+          title: "Extraction Failed", 
+          description: "Could not analyze medication data. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
+      setIsProcessing(false);
     } catch (error) {
       setIsProcessing(false);
       toast({
@@ -80,6 +120,7 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
     setCapturedImage(null);
     setOcrText("");
     setConfidence(0);
+    setExtractedData(null);
   };
 
   const getConfidenceColor = (conf: number) => {
@@ -188,8 +229,8 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
             {isProcessing && (
               <Card className="p-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-muted-foreground">Processing image...</span>
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-muted-foreground">Analyzing medication information...</span>
                 </div>
               </Card>
             )}
@@ -207,13 +248,72 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
                 </div>
                 
                 <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                  <p className="font-mono text-sm text-foreground">{ocrText}</p>
+                  <p className="font-mono text-sm text-foreground whitespace-pre-line">{ocrText}</p>
                 </div>
 
                 <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-success" />
                     <span>Text extracted successfully</span>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Medication Information */}
+            {extractedData && !isProcessing && (
+              <Card className="p-6">
+                <h3 className="font-semibold text-foreground mb-4">Medication Information</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-foreground">{extractedData.brand_name}</h4>
+                    {extractedData.generic_name && (
+                      <p className="text-sm text-muted-foreground">Generic: {extractedData.generic_name}</p>
+                    )}
+                    {extractedData.strength && (
+                      <p className="text-sm text-muted-foreground">Strength: {extractedData.strength}</p>
+                    )}
+                    {extractedData.form && (
+                      <p className="text-sm text-muted-foreground">Form: {extractedData.form}</p>
+                    )}
+                    {extractedData.manufacturer && (
+                      <p className="text-sm text-muted-foreground">Manufacturer: {extractedData.manufacturer}</p>
+                    )}
+                  </div>
+
+                  {extractedData.indications && extractedData.indications.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-foreground mb-2">Indications:</h5>
+                      <ul className="list-disc list-inside space-y-1">
+                        {extractedData.indications.map((indication: string, index: number) => (
+                          <li key={index} className="text-sm text-muted-foreground">{indication}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {extractedData.warnings && extractedData.warnings.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-foreground mb-2">Warnings:</h5>
+                      <ul className="list-disc list-inside space-y-1">
+                        {extractedData.warnings.map((warning: string, index: number) => (
+                          <li key={index} className="text-sm text-muted-foreground">{warning}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {extractedData.dosage && (
+                    <div>
+                      <h5 className="font-medium text-foreground">Dosage:</h5>
+                      <p className="text-sm text-muted-foreground">{extractedData.dosage}</p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 pt-2 border-t">
+                    <Badge variant={extractedData.confidence_score >= 0.8 ? "default" : "secondary"}>
+                      Confidence: {Math.round((extractedData.confidence_score || 0) * 100)}%
+                    </Badge>
                   </div>
                 </div>
               </Card>
