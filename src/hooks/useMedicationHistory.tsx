@@ -29,8 +29,9 @@ export const useMedicationHistory = () => {
     }
 
     try {
+      // Direct table access with type assertion
       const { data, error } = await supabase
-        .from('user_medications')
+        .from('user_medications' as any)
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -41,7 +42,19 @@ export const useMedicationHistory = () => {
         return;
       }
 
-      setMedications(data || []);
+      setMedications((data as any[])?.map(item => ({
+        id: item.id,
+        medication_name: item.medication_name,
+        generic_name: item.generic_name || '',
+        dosage: item.dosage,
+        frequency: item.frequency,
+        start_date: item.start_date,
+        end_date: item.end_date,
+        prescriber: item.prescriber,
+        notes: item.notes,
+        is_active: item.is_active,
+        created_at: item.created_at
+      })) || []);
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to load medication history');
@@ -55,7 +68,7 @@ export const useMedicationHistory = () => {
 
     try {
       const { data, error } = await supabase
-        .from('user_medications')
+        .from('user_medications' as any)
         .insert([{
           ...medication,
           user_id: user.id
@@ -69,9 +82,23 @@ export const useMedicationHistory = () => {
         return null;
       }
 
-      setMedications(prev => [data, ...prev]);
+      const newMedication: UserMedication = {
+        id: (data as any).id,
+        medication_name: (data as any).medication_name,
+        generic_name: (data as any).generic_name || '',
+        dosage: (data as any).dosage,
+        frequency: (data as any).frequency,
+        start_date: (data as any).start_date,
+        end_date: (data as any).end_date,
+        prescriber: (data as any).prescriber,
+        notes: (data as any).notes,
+        is_active: (data as any).is_active,
+        created_at: (data as any).created_at
+      };
+
+      setMedications(prev => [newMedication, ...prev]);
       toast.success('Medication added successfully');
-      return data;
+      return newMedication;
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to add medication');
@@ -84,7 +111,7 @@ export const useMedicationHistory = () => {
 
     try {
       const { data, error } = await supabase
-        .from('user_medications')
+        .from('user_medications' as any)
         .update(updates)
         .eq('id', id)
         .eq('user_id', user.id)
@@ -97,11 +124,25 @@ export const useMedicationHistory = () => {
         return null;
       }
 
+      const updatedMedication: UserMedication = {
+        id: (data as any).id,
+        medication_name: (data as any).medication_name,
+        generic_name: (data as any).generic_name || '',
+        dosage: (data as any).dosage,
+        frequency: (data as any).frequency,
+        start_date: (data as any).start_date,
+        end_date: (data as any).end_date,
+        prescriber: (data as any).prescriber,
+        notes: (data as any).notes,
+        is_active: (data as any).is_active,
+        created_at: (data as any).created_at
+      };
+
       setMedications(prev => 
-        prev.map(med => med.id === id ? { ...med, ...data } : med)
+        prev.map(med => med.id === id ? updatedMedication : med)
       );
       toast.success('Medication updated successfully');
-      return data;
+      return updatedMedication;
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to update medication');
@@ -114,7 +155,7 @@ export const useMedicationHistory = () => {
 
     try {
       const { error } = await supabase
-        .from('user_medications')
+        .from('user_medications' as any)
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);

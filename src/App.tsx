@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import { ScanHistory } from "./pages/ScanHistory";
+import MedicationManager from "./pages/MedicationManager";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,11 @@ const App = () => (
             <Route path="/history" element={
               <ProtectedRoute>
                 <ScanHistory />
+              </ProtectedRoute>
+            } />
+            <Route path="/medications" element={
+              <ProtectedRoute>
+                <MedicationManager />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

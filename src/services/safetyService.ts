@@ -42,7 +42,7 @@ class SafetyService {
           (interaction.drug2.toLowerCase() === currentGeneric.toLowerCase() && 
            interaction.drug1.toLowerCase() === userGeneric.toLowerCase())
         ) {
-          interactions.push(interaction);
+          interactions.push(interaction as DrugInteraction);
         }
       });
     });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search } from "lucide-react";
+import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search, Pill } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { ScanHistory } from "./ScanHistory";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/medical-hero.jpg";
 
 const Index = () => {
@@ -16,6 +17,7 @@ const Index = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [language, setLanguage] = useState("AZ");
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -85,9 +87,13 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector value={language} onChange={setLanguage} />
-            <Button variant="ghost" onClick={() => setShowHistory(true)} className="gap-2">
+            <Button variant="ghost" onClick={() => navigate("/history")} className="gap-2">
               <History className="h-4 w-4" />
               History
+            </Button>
+            <Button variant="ghost" onClick={() => navigate("/medications")} className="gap-2">
+              <Pill className="h-4 w-4" />
+              Medications
             </Button>
             <Button variant="ghost" onClick={handleSignOut} className="gap-2">
               <LogOut className="h-4 w-4" />

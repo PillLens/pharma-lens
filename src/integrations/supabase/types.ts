@@ -311,6 +311,54 @@ export type Database = {
           },
         ]
       }
+      user_medications: {
+        Row: {
+          created_at: string
+          dosage: string
+          end_date: string | null
+          frequency: string
+          generic_name: string | null
+          id: string
+          is_active: boolean
+          medication_name: string
+          notes: string | null
+          prescriber: string | null
+          start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dosage: string
+          end_date?: string | null
+          frequency: string
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          medication_name: string
+          notes?: string | null
+          prescriber?: string | null
+          start_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dosage?: string
+          end_date?: string | null
+          frequency?: string
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          medication_name?: string
+          notes?: string | null
+          prescriber?: string | null
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
