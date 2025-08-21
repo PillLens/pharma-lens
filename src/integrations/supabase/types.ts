@@ -146,6 +146,60 @@ export type Database = {
           },
         ]
       }
+      medication_interactions: {
+        Row: {
+          created_at: string
+          description: string
+          evidence_level: string | null
+          id: string
+          interaction_type: string
+          management_advice: string | null
+          medication_a_id: string | null
+          medication_b_id: string | null
+          severity_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          evidence_level?: string | null
+          id?: string
+          interaction_type: string
+          management_advice?: string | null
+          medication_a_id?: string | null
+          medication_b_id?: string | null
+          severity_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          evidence_level?: string | null
+          id?: string
+          interaction_type?: string
+          management_advice?: string | null
+          medication_a_id?: string | null
+          medication_b_id?: string | null
+          severity_score?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_interactions_medication_a_id_fkey"
+            columns: ["medication_a_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medication_interactions_medication_b_id_fkey"
+            columns: ["medication_b_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_labels: {
         Row: {
           created_at: string
@@ -217,43 +271,79 @@ export type Database = {
       }
       products: {
         Row: {
+          active_ingredients: string[] | null
           atc_code: string | null
           barcode: string | null
           brand_name: string
           country_code: string
           created_at: string
+          data_source: string | null
+          dosage_forms: string[] | null
+          expiry_monitoring: boolean | null
           form: string | null
           generic_name: string | null
           id: string
+          image_url: string | null
+          leaflet_url: string | null
           manufacturer: string | null
+          prescription_required: boolean | null
+          safety_warnings: string[] | null
+          search_keywords: string[] | null
+          storage_conditions: string | null
           strength: string | null
+          therapeutic_class: string | null
           updated_at: string
+          verification_status: string | null
         }
         Insert: {
+          active_ingredients?: string[] | null
           atc_code?: string | null
           barcode?: string | null
           brand_name: string
           country_code?: string
           created_at?: string
+          data_source?: string | null
+          dosage_forms?: string[] | null
+          expiry_monitoring?: boolean | null
           form?: string | null
           generic_name?: string | null
           id?: string
+          image_url?: string | null
+          leaflet_url?: string | null
           manufacturer?: string | null
+          prescription_required?: boolean | null
+          safety_warnings?: string[] | null
+          search_keywords?: string[] | null
+          storage_conditions?: string | null
           strength?: string | null
+          therapeutic_class?: string | null
           updated_at?: string
+          verification_status?: string | null
         }
         Update: {
+          active_ingredients?: string[] | null
           atc_code?: string | null
           barcode?: string | null
           brand_name?: string
           country_code?: string
           created_at?: string
+          data_source?: string | null
+          dosage_forms?: string[] | null
+          expiry_monitoring?: boolean | null
           form?: string | null
           generic_name?: string | null
           id?: string
+          image_url?: string | null
+          leaflet_url?: string | null
           manufacturer?: string | null
+          prescription_required?: boolean | null
+          safety_warnings?: string[] | null
+          search_keywords?: string[] | null
+          storage_conditions?: string | null
           strength?: string | null
+          therapeutic_class?: string | null
           updated_at?: string
+          verification_status?: string | null
         }
         Relationships: []
       }
@@ -310,6 +400,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      usage_analytics: {
+        Row: {
+          event_data: Json | null
+          event_type: string
+          id: string
+          platform: string | null
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+          version: string | null
+        }
+        Insert: {
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          platform?: string | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+          version?: string | null
+        }
+        Update: {
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          platform?: string | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+          version?: string | null
+        }
+        Relationships: []
       }
       user_medications: {
         Row: {
