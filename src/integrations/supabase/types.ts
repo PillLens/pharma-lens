@@ -14,7 +14,303 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      extractions: {
+        Row: {
+          created_at: string
+          extracted_json: Json
+          id: string
+          label_id: string | null
+          model_version: string
+          quality_score: number | null
+          risk_flags: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          extracted_json: Json
+          id?: string
+          label_id?: string | null
+          model_version?: string
+          quality_score?: number | null
+          risk_flags?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          extracted_json?: Json
+          id?: string
+          label_id?: string | null
+          model_version?: string
+          quality_score?: number | null
+          risk_flags?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extractions_label_id_fkey"
+            columns: ["label_id"]
+            isOneToOne: false
+            referencedRelation: "labels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          issue_type: string | null
+          rating: number | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          issue_type?: string | null
+          rating?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          issue_type?: string | null
+          rating?: number | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      labels: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          id: string
+          language: string
+          product_id: string | null
+          raw_text: string | null
+          region: string
+          source_name: string | null
+          source_url: string | null
+          updated_at: string
+          version_date: string | null
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          language?: string
+          product_id?: string | null
+          raw_text?: string | null
+          region?: string
+          source_name?: string | null
+          source_url?: string | null
+          updated_at?: string
+          version_date?: string | null
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          language?: string
+          product_id?: string | null
+          raw_text?: string | null
+          region?: string
+          source_name?: string | null
+          source_url?: string | null
+          updated_at?: string
+          version_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "labels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_labels: {
+        Row: {
+          created_at: string
+          id: string
+          label_file_url: string | null
+          partner_id: string | null
+          product_id: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label_file_url?: string | null
+          partner_id?: string | null
+          product_id?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label_file_url?: string | null
+          partner_id?: string | null
+          product_id?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_labels_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacy_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_labels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pharmacy_partners: {
+        Row: {
+          contact: string | null
+          created_at: string
+          id: string
+          name: string
+          verified: boolean | null
+        }
+        Insert: {
+          contact?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          verified?: boolean | null
+        }
+        Update: {
+          contact?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          atc_code: string | null
+          barcode: string | null
+          brand_name: string
+          country_code: string
+          created_at: string
+          form: string | null
+          generic_name: string | null
+          id: string
+          manufacturer: string | null
+          strength: string | null
+          updated_at: string
+        }
+        Insert: {
+          atc_code?: string | null
+          barcode?: string | null
+          brand_name: string
+          country_code?: string
+          created_at?: string
+          form?: string | null
+          generic_name?: string | null
+          id?: string
+          manufacturer?: string | null
+          strength?: string | null
+          updated_at?: string
+        }
+        Update: {
+          atc_code?: string | null
+          barcode?: string | null
+          brand_name?: string
+          country_code?: string
+          created_at?: string
+          form?: string | null
+          generic_name?: string | null
+          id?: string
+          manufacturer?: string | null
+          strength?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          barcode_value: string | null
+          created_at: string
+          extraction_id: string | null
+          id: string
+          images: string[] | null
+          language: string
+          region: string
+          selected_product_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          barcode_value?: string | null
+          created_at?: string
+          extraction_id?: string | null
+          id?: string
+          images?: string[] | null
+          language?: string
+          region?: string
+          selected_product_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          barcode_value?: string | null
+          created_at?: string
+          extraction_id?: string | null
+          id?: string
+          images?: string[] | null
+          language?: string
+          region?: string
+          selected_product_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_extraction_id_fkey"
+            columns: ["extraction_id"]
+            isOneToOne: false
+            referencedRelation: "extractions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_selected_product_id_fkey"
+            columns: ["selected_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
