@@ -21,12 +21,8 @@ import {
 
 export const FamilyManagement: React.FC = () => {
   const isMobile = useIsMobile();
-
-  // Use mobile version on mobile devices
-  if (isMobile) {
-    return <MobileFamilyManagement />;
-  }
-
+  
+  // All hooks must be called before any conditional logic
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
   const [pendingInvitations, setPendingInvitations] = useState<FamilyInvitation[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
@@ -111,6 +107,11 @@ export const FamilyManagement: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
+
+  // Use mobile version on mobile devices - AFTER all hooks are defined
+  if (isMobile) {
+    return <MobileFamilyManagement />;
+  }
 
   if (loading) {
     return (
