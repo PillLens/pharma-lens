@@ -9,7 +9,7 @@ import QuickStatsCards from './QuickStatsCards';
 import RecentScansCarousel from './RecentScansCarousel';
 import QuickActionCards from './QuickActionCards';
 import TodaysOverview from './TodaysOverview';
-import EnhancedFAB from './EnhancedFAB';
+import EnhancedFAB from './DraggableEnhancedFAB';
 
 interface MobileDashboardProps {
   onScanPress: () => void;
@@ -95,6 +95,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language
         onEmergencyPress={handleEmergencyAccess}
         isMenuOpen={showFABMenu}
         onMenuToggle={() => setShowFABMenu(!showFABMenu)}
+        routeKey="dashboard"
       />
     </>
   );
