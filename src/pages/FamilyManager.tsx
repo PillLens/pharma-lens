@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { FamilyManagement } from '@/components/FamilyManagement';
 import MobileLayout from '@/components/MobileLayout';
+import EnhancedMobileLayout from '@/components/EnhancedMobileLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const FamilyManager: React.FC = () => {
@@ -36,9 +37,9 @@ const FamilyManager: React.FC = () => {
 
   if (isMobile) {
     return (
-      <MobileLayout title="Family & Caregivers">
+      <EnhancedMobileLayout title="Family & Caregivers">
         {content}
-      </MobileLayout>
+      </EnhancedMobileLayout>
     );
   }
 

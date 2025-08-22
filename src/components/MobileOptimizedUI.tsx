@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { EnhancedButton } from "@/components/ui/enhanced/EnhancedButton";
+import { EnhancedCard } from "@/components/ui/enhanced/EnhancedCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ResponsiveDialogProps {
@@ -27,11 +29,13 @@ export const ResponsiveDialog = ({
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
         {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent className="max-h-[90vh] overflow-y-auto">
-          <DrawerHeader className="text-left">
-            <DrawerTitle>{title}</DrawerTitle>
+        <DrawerContent className="max-h-[90vh] overflow-y-auto glass-card border-t border-border/30">
+          <DrawerHeader className="text-left border-b border-border/20">
+            <DrawerTitle className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {title}
+            </DrawerTitle>
           </DrawerHeader>
-          <div className="p-4">
+          <div className="p-6 smooth-scroll">
             {children}
           </div>
         </DrawerContent>
@@ -61,9 +65,12 @@ export const MobileOptimizedCard = ({ children, className = "" }: MobileOptimize
   const isMobile = useIsMobile();
   
   return (
-    <Card className={`${isMobile ? 'rounded-lg border-0 shadow-sm' : ''} ${className}`}>
+    <EnhancedCard 
+      variant={isMobile ? "glass" : "default"}
+      className={`${isMobile ? 'animate-fade-in-up' : ''} ${className}`}
+    >
       {children}
-    </Card>
+    </EnhancedCard>
   );
 };
 
@@ -88,19 +95,17 @@ export const MobileOptimizedButton = ({
 }: MobileOptimizedButtonProps) => {
   const isMobile = useIsMobile();
   
-  const mobileClass = isMobile ? 'min-h-[48px] text-base px-6' : '';
-  
   return (
-    <Button
-      variant={variant}
-      size={size}
+    <EnhancedButton
+      variant={variant as any}
+      size={isMobile ? "mobile" : size}
       onClick={onClick}
       disabled={disabled}
       type={type}
-      className={`${mobileClass} ${className}`}
+      className={className}
     >
       {children}
-    </Button>
+    </EnhancedButton>
   );
 };
 
@@ -137,11 +142,11 @@ export const MobileSpacing = ({ children, size = "md" }: MobileSpacingProps) => 
   const isMobile = useIsMobile();
   
   const spacingClass = isMobile 
-    ? size === "sm" ? "space-y-3" : size === "lg" ? "space-y-8" : "space-y-6"
-    : size === "sm" ? "space-y-4" : size === "lg" ? "space-y-12" : "space-y-8";
+    ? size === "sm" ? "space-y-4" : size === "lg" ? "space-y-8" : "space-y-6"
+    : size === "sm" ? "space-y-6" : size === "lg" ? "space-y-12" : "space-y-8";
   
   return (
-    <div className={spacingClass}>
+    <div className={`${spacingClass} animate-fade-in-up`}>
       {children}
     </div>
   );
