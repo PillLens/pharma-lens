@@ -31,31 +31,43 @@ serve(async (req) => {
       );
     }
 
-    // Create comprehensive extraction prompt
-    const extractionPrompt = `Extract comprehensive medication information from this text. Return ONLY a valid JSON object with the following structure:
+    // Create language-aware extraction prompt
+    const getLanguageSpecificPrompt = (language: string, region: string) => {
+      const languageInstructions = {
+        'AZ': 'Məlumatları Azərbaycan dilində qaytarın. Tibbi terminologiya və təlimatlar Azərbaycan dilində olmalıdır.',
+        'RU': 'Верните информацию на русском языке. Медицинская терминология и инструкции должны быть на русском языке.',
+        'TR': 'Bilgileri Türkçe olarak döndürün. Tıbbi terminoloji ve talimatlar Türkçe olmalıdır.',
+        'EN': 'Return information in English. Medical terminology and instructions should be in English.'
+      };
+
+      const languageInstruction = languageInstructions[language] || languageInstructions['EN'];
+      
+      return `Extract comprehensive medication information from this text and return it in the specified language. ${languageInstruction}
+
+Return ONLY a valid JSON object with the following structure:
 {
-  "brand_name": "string (required)",
-  "generic_name": "string or null",
+  "brand_name": "string (required) - in ${language}",
+  "generic_name": "string or null - in ${language}",
   "strength": "string or null", 
-  "form": "string or null (tablet, capsule, syrup, etc)",
-  "manufacturer": "string or null",
-  "indications": ["string array of uses/conditions"],
-  "contraindications": ["string array of who should not use"],
-  "warnings": ["string array of warnings"],
-  "side_effects": ["string array of side effects"],
-  "active_ingredients": ["string array"],
+  "form": "string or null (tablet, capsule, syrup, etc) - in ${language}",
+  "manufacturer": "string or null - in ${language}",
+  "indications": ["string array of uses/conditions - in ${language}"],
+  "contraindications": ["string array of who should not use - in ${language}"],
+  "warnings": ["string array of warnings - in ${language}"],
+  "side_effects": ["string array of side effects - in ${language}"],
+  "active_ingredients": ["string array - in ${language}"],
   "usage_instructions": {
-    "dosage": "string - how much to take",
-    "frequency": "string - how often (daily, twice daily, etc)",
-    "duration": "string - how long to take (days, weeks, or ongoing)",
-    "timing": "string - when to take (morning, evening, with meals, etc)",
-    "route": "string - how to take (oral, topical, etc)",
-    "special_instructions": "string - any special instructions"
+    "dosage": "string - how much to take - in ${language}",
+    "frequency": "string - how often (daily, twice daily, etc) - in ${language}",
+    "duration": "string - how long to take (days, weeks, or ongoing) - in ${language}",
+    "timing": "string - when to take (morning, evening, with meals, etc) - in ${language}",
+    "route": "string - how to take (oral, topical, etc) - in ${language}",
+    "special_instructions": "string - any special instructions - in ${language}"
   },
-  "storage_instructions": "string - how to store the medication",
-  "drug_interactions": ["string array of known interactions"],
-  "pregnancy_safety": "string or null - safety during pregnancy",
-  "age_restrictions": "string or null - age limitations",
+  "storage_instructions": "string - how to store the medication - in ${language}",
+  "drug_interactions": ["string array of known interactions - in ${language}"],
+  "pregnancy_safety": "string or null - safety during pregnancy - in ${language}",
+  "age_restrictions": "string or null - age limitations - in ${language}",
   "expiry_date": "YYYY-MM-DD or null",
   "barcode": "string or null",
   "confidence_score": number between 0.0 and 1.0
@@ -64,7 +76,10 @@ serve(async (req) => {
 Text to analyze (Language: ${language}, Region: ${region}):
 ${text}
 
-Respond with ONLY the JSON object, no additional text.`;
+Important: All text fields (except dates, barcodes, and confidence_score) must be in ${language} language. Respond with ONLY the JSON object, no additional text.`;
+    };
+
+    const extractionPrompt = getLanguageSpecificPrompt(language, region);
 
     console.log('Sending extraction request to OpenAI...');
 
@@ -79,7 +94,7 @@ Respond with ONLY the JSON object, no additional text.`;
         messages: [
           {
             role: 'system',
-            content: 'You are a medical information extraction specialist. Extract medication data accurately and return only valid JSON.'
+            content: `You are a medical information extraction specialist. Extract medication data accurately and return only valid JSON. Adapt your response to the user's language and region. For ${language} language, ensure all text fields are in ${language} language where appropriate.`
           },
           {
             role: 'user',

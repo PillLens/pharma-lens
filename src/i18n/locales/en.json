@@ -4,6 +4,8 @@
   },
   "common": {
     "loading": "Loading...",
+    "processing": "Processing...",
+    "analyzing": "Analyzing...",
     "error": "Error",
     "success": "Success",
     "cancel": "Cancel",
@@ -14,7 +16,14 @@
     "close": "Close",
     "confidence": "Confidence",
     "optional": "Optional",
-    "tryAgain": "Please try again"
+    "tryAgain": "Please try again",
+    "enterText": "Enter text",
+    "selectOption": "Select option",
+    "noData": "No data available",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done"
   },
   "navigation": {
     "home": "Home",
@@ -54,9 +63,26 @@
   "scanner": {
     "scanMedication": "Scan Medication",
     "medicationFound": "Medication Found",
-    "continue": "Continue"
+    "scanning": "Scanning...",
+    "takingPhoto": "Taking photo...",
+    "processingImage": "Processing image...",
+    "extractingInfo": "Extracting information...",
+    "medicationNotFound": "Medication not found",
+    "scanAgain": "Scan again",
+    "continue": "Continue",
+    "cameraAccess": "Camera access required",
+    "cameraPermission": "Please allow camera access to scan medications",
+    "holdSteady": "Hold device steady",
+    "alignMedication": "Align medication within the frame",
+    "goodLighting": "Ensure good lighting",
+    "scanInstructions": "Place medication label clearly in the frame"
   },
   "medications": {
+    "brandName": "Brand Name",
+    "genericName": "Generic Name",
+    "strength": "Strength",
+    "form": "Form",
+    "manufacturer": "Manufacturer",
     "dosage": "Dosage",
     "frequency": "Frequency",
     "timing": "Timing",
@@ -78,16 +104,58 @@
     "twiceDaily": "Twice daily",
     "threeTimes": "Three times daily",
     "fourTimes": "Four times daily",
-    "asNeeded": "As needed"
+    "asNeeded": "As needed",
+    "withFood": "With food",
+    "beforeFood": "Before food",
+    "afterFood": "After food",
+    "indications": "Indications",
+    "contraindications": "Contraindications",
+    "sideEffects": "Side Effects",
+    "activeIngredients": "Active Ingredients",
+    "drugInteractions": "Drug Interactions",
+    "pregnancySafety": "Pregnancy Safety",
+    "ageRestrictions": "Age Restrictions",
+    "expiryDate": "Expiry Date",
+    "barcode": "Barcode",
+    "tablet": "Tablet",
+    "capsule": "Capsule",
+    "syrup": "Syrup",
+    "injection": "Injection",
+    "cream": "Cream",
+    "ointment": "Ointment",
+    "drops": "Drops",
+    "spray": "Spray",
+    "patch": "Patch",
+    "gel": "Gel"
   },
   "safety": {
     "warnings": "Warnings",
     "importantInfo": "Important Safety Information",
-    "disclaimer": "PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice."
+    "disclaimer": "PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice.",
+    "consultDoctor": "Consult your doctor",
+    "readLabel": "Read the medication label carefully",
+    "followInstructions": "Follow the prescribed instructions",
+    "reportSideEffects": "Report any side effects to your healthcare provider"
   },
   "reminders": {
     "createReminder": "Create Reminder",
     "reminderTimes": "Reminder Times",
-    "addTime": "Add Time"
+    "addTime": "Add Time",
+    "setReminder": "Set Reminder",
+    "reminderSet": "Reminder set successfully",
+    "morningDose": "Morning dose",
+    "afternoonDose": "Afternoon dose",
+    "eveningDose": "Evening dose",
+    "nightDose": "Night dose"
+  },
+  "errors": {
+    "networkError": "Network error occurred",
+    "serverError": "Server error occurred",
+    "scanFailed": "Scan failed",
+    "cameraError": "Camera error",
+    "permissionDenied": "Permission denied",
+    "unsupportedFormat": "Unsupported format",
+    "processingFailed": "Processing failed",
+    "extractionFailed": "Information extraction failed"
   }
 }

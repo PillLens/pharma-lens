@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ocrService } from "@/services/ocrService";
 import { barcodeService } from "@/services/barcodeService";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CameraCaptureProps {
   onClose: () => void;
@@ -35,6 +36,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
   const [safetyWarnings, setSafetyWarnings] = useState<string[]>([]);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const lookupProductByBarcode = async (barcode: string) => {
     try {
@@ -176,11 +178,11 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       }
     } catch (error) {
       console.error('Camera error:', error);
-      toast({
-        title: "Camera Error",
-        description: "Could not access camera. Please check permissions.",
-        variant: "destructive",
-      });
+        toast({
+          title: t('errors.cameraError'),
+          description: t('errors.permissionDenied'),
+          variant: "destructive",
+        });
     }
   };
 
@@ -225,18 +227,18 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         
         if (!isSafe) {
           toast({
-            title: "Safety Warning",
-            description: "Please review the warnings before proceeding.",
+            title: t('safety.warnings'),
+            description: t('common.tryAgain'),
             variant: "destructive",
           });
         } else {
           toast({
-            title: "Analysis Complete",
-            description: "Medication information extracted successfully.",
+            title: t('common.success'),
+            description: t('scanner.medicationFound'),
           });
         }
       } else {
-        throw new Error("Insufficient text detected in image. Please try a clearer photo.");
+        throw new Error(t('errors.extractionFailed'));
       }
 
       // Save session to database
@@ -245,11 +247,11 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
     } catch (error) {
       console.error('Error processing image:', error);
-      toast({
-        title: "Processing Error",
-        description: error instanceof Error ? error.message : "Failed to process the image. Please try again.",
-        variant: "destructive"
-      });
+        toast({
+          title: t('errors.processingFailed'),
+          description: error instanceof Error ? error.message : t('errors.scanFailed'),
+          variant: "destructive"
+        });
     } finally {
       setIsProcessing(false);
       setProcessingStep("");
@@ -303,7 +305,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="w-5 h-5" />
             </Button>
-            <h1 className="text-xl font-semibold text-foreground">Capture Medication</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t('scanner.scanMedication')}</h1>
           </div>
           <Badge variant="outline" className="text-xs">
             {language}
@@ -320,10 +322,9 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-primary-light flex items-center justify-center">
                 <CameraIcon className="w-12 h-12 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-4">Position Your Medication</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-4">{t('scanner.alignMedication')}</h2>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Point your camera at the medication box, blister pack, or leaflet. 
-                Make sure the text is clearly visible and well-lit.
+                {t('scanner.scanInstructions')}
               </p>
             </div>
 
@@ -333,17 +334,17 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical text-lg px-8 py-6 h-auto"
             >
               <CameraIcon className="w-6 h-6 mr-3" />
-              Take Photo
+              {t('scanner.takePhoto')}
             </Button>
 
             <div className="mt-8 grid gap-4 text-sm text-muted-foreground max-w-md mx-auto">
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                <span>Ensure good lighting and focus</span>
+                <span>{t('scanner.goodLighting')}</span>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                <span>Include brand name and strength</span>
+                <span>{t('medications.brandName')} and {t('medications.strength')}</span>
               </div>
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
@@ -370,7 +371,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                   className="flex-1"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Retake
+                  {t('scanner.scanAgain')}
                 </Button>
                 
                 {!isProcessing && scanComplete && (
@@ -379,7 +380,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                     className="flex-1 bg-gradient-to-r from-secondary to-secondary text-white"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Continue
+                    {t('scanner.continue')}
                   </Button>
                 )}
               </div>
@@ -390,10 +391,10 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               <Card className="p-6">
                 <div className="flex items-center gap-3 mb-2">
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                  <span className="font-medium">Processing Image...</span>
+                  <span className="font-medium">{t('scanner.processingImage')}</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {processingStep || "Analyzing your medication image..."}
+                  {processingStep || t('scanner.extractingInfo')}
                 </p>
               </Card>
             )}
@@ -423,7 +424,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                           {...getConfidenceBadge(confidence)}
                           className="text-xs"
                         >
-                          {Math.round(confidence * 100)}% confidence
+                          {Math.round(confidence * 100)}% {t('common.confidence')}
                         </Badge>
                       </div>
                       <div className="bg-muted p-3 rounded-md text-sm whitespace-pre-wrap max-h-32 overflow-y-auto">
@@ -435,7 +436,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                   <div className="text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-success" />
-                      <span>Analysis completed successfully</span>
+                      <span>{t('common.success')}</span>
                     </div>
                   </div>
                 </div>

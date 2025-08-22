@@ -138,14 +138,16 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
                 <h2 className="text-2xl font-bold text-foreground">
                   {medicationData.brand_name}
                 </h2>
-                {medicationData.generic_name && (
+                 {medicationData.generic_name && (
                   <p className="text-muted-foreground">
                     {t('medications.genericName')}: {medicationData.generic_name}
                   </p>
                 )}
-                <p className="text-sm text-muted-foreground mt-1">
-                  {medicationData.strength} • {medicationData.form} • {medicationData.manufacturer}
-                </p>
+                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mt-1">
+                  {medicationData.strength && <span>{medicationData.strength}</span>}
+                  {medicationData.form && <span>• {medicationData.form}</span>}
+                  {medicationData.manufacturer && <span>• {medicationData.manufacturer}</span>}
+                </div>
               </div>
             </div>
 
@@ -217,7 +219,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
                       id="dosage"
                       value={formData.dosage}
                       onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
-                      placeholder={t('medications.dosagePlaceholder')}
+                      placeholder={`${t('common.enterText')}...`}
                     />
                   </div>
                   <div>
@@ -264,7 +266,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
                     id="prescriber"
                     value={formData.prescriber}
                     onChange={(e) => setFormData(prev => ({ ...prev, prescriber: e.target.value }))}
-                    placeholder={t('medications.prescriberPlaceholder')}
+                    placeholder={`${t('common.enterText')}...`}
                   />
                 </div>
 
@@ -274,7 +276,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
                     id="notes"
                     value={formData.notes}
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder={t('medications.notesPlaceholder')}
+                    placeholder={`${t('common.enterText')}...`}
                     rows={3}
                   />
                 </div>
@@ -343,7 +345,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
           <div className="grid gap-4">
             {medicationData.indications && medicationData.indications.length > 0 && (
               <Card className="p-4">
-                <h4 className="font-semibold mb-2">{t('medications.whatItsFor')}</h4>
+                <h4 className="font-semibold mb-2">{t('medications.indications')}</h4>
                 <ul className="space-y-1">
                   {medicationData.indications.map((indication, index) => (
                     <li key={index} className="text-sm text-muted-foreground">• {indication}</li>
