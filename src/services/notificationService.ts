@@ -1,4 +1,3 @@
-
 import { CapacitorConfig } from '@capacitor/cli';
 import { 
   PushNotifications, 
@@ -9,11 +8,18 @@ import {
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { toast } from 'sonner';
 import { capacitorService } from './capacitorService';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface NotificationPermissions {
   alert: boolean;
   badge: boolean;
   sound: boolean;
+}
+
+export interface NotificationSettings {
+  sound: boolean;
+  vibration: boolean;
+  led: boolean;
 }
 
 export interface MedicationReminder {
@@ -22,8 +28,13 @@ export interface MedicationReminder {
   dosage: string;
   time: string;
   frequency: 'daily' | 'weekly' | 'monthly';
-  daysOfWeek?: number[]; // 0 = Sunday, 1 = Monday, etc.
+  daysOfWeek: number[]; // 0 = Sunday, 1 = Monday, etc.
   isActive: boolean;
+  notificationSettings: NotificationSettings;
+  medicationId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SafetyAlert {
@@ -147,6 +158,193 @@ export class NotificationService {
   private handleLocalNotificationAction(notification: any): void {
     // Handle local notification actions
     console.log('Local notification action:', notification);
+  }
+
+  // User Reminder Management Methods
+  async loadUserReminders(): Promise<MedicationReminder[]> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('medication_reminders')
+        .select(`
+          *,
+          medications (
+            medication_name,
+            dosage,
+            form
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map(reminder => ({
+        id: reminder.id,
+        medicationId: reminder.medication_id,
+        medicationName: reminder.medications?.medication_name || 'Unknown',
+        dosage: reminder.medications?.dosage || '',
+        time: reminder.reminder_time,
+        frequency: reminder.frequency as 'daily' | 'weekly' | 'monthly',
+        daysOfWeek: reminder.days_of_week || [],
+        isActive: reminder.is_active,
+        notificationSettings: reminder.notification_settings as NotificationSettings || {
+          sound: true,
+          vibration: true,
+          led: true
+        },
+        userId: reminder.user_id,
+        createdAt: reminder.created_at,
+        updatedAt: reminder.updated_at
+      }));
+
+    } catch (error) {
+      console.error('Failed to load user reminders:', error);
+      toast.error('Failed to load reminders');
+      return [];
+    }
+  }
+
+  async createReminder(
+    medicationId: string, 
+    reminderData: {
+      time: string;
+      daysOfWeek: number[];
+      notificationSettings: NotificationSettings;
+    }
+  ): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('User not authenticated');
+        return false;
+      }
+
+      const { data, error } = await supabase
+        .from('medication_reminders')
+        .insert({
+          user_id: user.id,
+          medication_id: medicationId,
+          reminder_time: reminderData.time,
+          days_of_week: reminderData.daysOfWeek,
+          frequency: 'daily',
+          is_active: true,
+          notification_settings: reminderData.notificationSettings
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Schedule the notification
+      const reminder: MedicationReminder = {
+        id: data.id,
+        medicationId: data.medication_id,
+        medicationName: 'Loading...', // Will be populated when reminders are reloaded
+        dosage: '',
+        time: data.reminder_time,
+        frequency: data.frequency as 'daily',
+        daysOfWeek: data.days_of_week,
+        isActive: data.is_active,
+        notificationSettings: data.notification_settings as NotificationSettings,
+        userId: data.user_id,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+      };
+
+      await this.scheduleMedicationReminder(reminder);
+      toast.success('Reminder created successfully');
+      return true;
+
+    } catch (error) {
+      console.error('Failed to create reminder:', error);
+      toast.error('Failed to create reminder');
+      return false;
+    }
+  }
+
+  async updateReminder(
+    reminderId: string, 
+    updates: Partial<{
+      time: string;
+      daysOfWeek: number[];
+      notificationSettings: NotificationSettings;
+      isActive: boolean;
+    }>
+  ): Promise<boolean> {
+    try {
+      const updateData: any = {};
+      if (updates.time) updateData.reminder_time = updates.time;
+      if (updates.daysOfWeek) updateData.days_of_week = updates.daysOfWeek;
+      if (updates.notificationSettings) updateData.notification_settings = updates.notificationSettings;
+      if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+
+      const { error } = await supabase
+        .from('medication_reminders')
+        .update(updateData)
+        .eq('id', reminderId);
+
+      if (error) throw error;
+
+      // Cancel old notifications and reschedule if active
+      await this.cancelMedicationReminder(reminderId);
+      
+      if (updates.isActive !== false) {
+        // Reload and reschedule this specific reminder
+        const reminders = await this.loadUserReminders();
+        const updatedReminder = reminders.find(r => r.id === reminderId);
+        if (updatedReminder && updatedReminder.isActive) {
+          await this.scheduleMedicationReminder(updatedReminder);
+        }
+      }
+
+      toast.success('Reminder updated successfully');
+      return true;
+
+    } catch (error) {
+      console.error('Failed to update reminder:', error);
+      toast.error('Failed to update reminder');
+      return false;
+    }
+  }
+
+  async deleteReminder(reminderId: string): Promise<boolean> {
+    try {
+      // Cancel notifications first
+      await this.cancelMedicationReminder(reminderId);
+
+      const { error } = await supabase
+        .from('medication_reminders')
+        .delete()
+        .eq('id', reminderId);
+
+      if (error) throw error;
+
+      toast.success('Reminder deleted successfully');
+      return true;
+
+    } catch (error) {
+      console.error('Failed to delete reminder:', error);
+      toast.error('Failed to delete reminder');
+      return false;
+    }
+  }
+
+  async scheduleMedicationReminders(reminders: MedicationReminder[]): Promise<boolean> {
+    try {
+      const results = await Promise.all(
+        reminders
+          .filter(reminder => reminder.isActive)
+          .map(reminder => this.scheduleMedicationReminder(reminder))
+      );
+      
+      return results.every(result => result);
+    } catch (error) {
+      console.error('Failed to schedule multiple reminders:', error);
+      return false;
+    }
   }
 
   // Medication Reminder Methods

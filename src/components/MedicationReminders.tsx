@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { notificationService, MedicationReminder } from '@/services/notificationService';
+import { notificationService, MedicationReminder, NotificationSettings } from '@/services/notificationService';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 
 export const MedicationReminders: React.FC = () => {
@@ -26,7 +26,7 @@ export const MedicationReminders: React.FC = () => {
   const [selectedMedicationId, setSelectedMedicationId] = useState('');
   const [reminderTime, setReminderTime] = useState('08:00');
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 2, 3, 4, 5, 6, 7]); // All days by default
-  const [notificationSettings, setNotificationSettings] = useState({
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     sound: true,
     vibration: true,
     led: true
@@ -246,7 +246,16 @@ export const MedicationReminders: React.FC = () => {
 
       {/* Reminders List */}
       <div className="grid gap-4">
-        {reminders.length === 0 ? (
+        {loading ? (
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded w-48 mb-4"></div>
+            <div className="grid gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-muted rounded"></div>
+              ))}
+            </div>
+          </div>
+        ) : reminders.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -328,8 +337,8 @@ interface ReminderFormProps {
   setReminderTime: (time: string) => void;
   selectedDays: number[];
   toggleDay: (day: number) => void;
-  notificationSettings: any;
-  setNotificationSettings: (settings: any) => void;
+  notificationSettings: NotificationSettings;
+  setNotificationSettings: (settings: NotificationSettings) => void;
   onSubmit: () => void;
   onCancel: () => void;
   daysOfWeek: any[];
