@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MobileSecurityMetricCard } from './MobileSecurityMetricCard';
-import EmptyStateIllustration from './EmptyStateIllustration';
+import ProfessionalMobileLayout from './ProfessionalMobileLayout';
 import { securityAuditService, SecurityMetrics, AuditLogEntry } from '@/services/securityAuditService';
 import { hipaaComplianceService, HIPAAComplianceData } from '@/services/hipaaComplianceService';
 import { rateLimitingService, RateLimitResult } from '@/services/rateLimitingService';
@@ -117,7 +117,8 @@ export const MobileSecurityDashboard: React.FC = () => {
   const securityStatus = getSecurityStatus(complianceScore);
 
   return (
-    <div className="p-4 space-y-4">
+    <ProfessionalMobileLayout title="Security" showHeader={true}>
+      <div className="p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -283,6 +284,7 @@ export const MobileSecurityDashboard: React.FC = () => {
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+    </ProfessionalMobileLayout>
   );
 };
