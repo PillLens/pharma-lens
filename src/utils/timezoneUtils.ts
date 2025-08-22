@@ -70,16 +70,26 @@ export const getNextDoseTime = (
 ): { isDue: boolean; nextTime: string; isOverdue: boolean } => {
   const now = getCurrentTimeInTimezone(timezone);
   const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const currentTimeInMinutes = currentHour * 60 + currentMinute;
   
   const checkTime = (timeStr: string, label: string) => {
-    const { isDue, isPast, isCurrent } = isDoseTime(timeStr, timezone, 30);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const doseTimeInMinutes = hours * 60 + minutes;
+    const windowStart = doseTimeInMinutes - 30; // 30 minutes before
+    const windowEnd = doseTimeInMinutes + 30;   // 30 minutes after
+    
+    const isDue = currentTimeInMinutes >= windowStart && currentTimeInMinutes <= windowEnd && !recentlyTaken;
+    const isPast = currentTimeInMinutes > windowEnd;
+    const isOverdue = isPast && !recentlyTaken;
+    
     return {
       time: timeStr,
       label,
-      isDue: isDue && !recentlyTaken,
+      isDue,
       isPast,
-      isCurrent: isCurrent && !recentlyTaken,
-      isOverdue: isPast && !recentlyTaken
+      isOverdue,
+      doseTimeInMinutes
     };
   };
   
@@ -88,9 +98,9 @@ export const getNextDoseTime = (
       const morning = checkTime('08:00', '8:00 AM');
       
       if (morning.isOverdue) {
-        return { isDue: false, nextTime: 'Overdue: 8:00 AM', isOverdue: true };
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: true };
       }
-      if (morning.isDue || morning.isCurrent) {
+      if (morning.isDue) {
         return { isDue: true, nextTime: 'Due at 8:00 AM', isOverdue: false };
       }
       return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: false };
@@ -100,22 +110,37 @@ export const getNextDoseTime = (
       const morning = checkTime('08:00', '8:00 AM');
       const evening = checkTime('20:00', '8:00 PM');
       
-      if (evening.isOverdue) {
-        return { isDue: false, nextTime: 'Overdue: 8:00 PM', isOverdue: true };
+      // If both doses have passed for today
+      if (morning.isPast && evening.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Tomorrow 8:00 AM', 
+          isOverdue: evening.isOverdue || morning.isOverdue 
+        };
       }
-      if (evening.isDue || evening.isCurrent) {
+      
+      // If evening dose is due or overdue
+      if (evening.isDue) {
         return { isDue: true, nextTime: 'Due at 8:00 PM', isOverdue: false };
       }
-      if (morning.isOverdue && currentHour < 20) {
-        return { isDue: false, nextTime: 'Next: Today 8:00 PM (Morning dose overdue)', isOverdue: true };
+      if (evening.isOverdue) {
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: true };
       }
-      if (morning.isDue || morning.isCurrent) {
+      
+      // If morning dose is due or overdue, but evening is still upcoming
+      if (morning.isDue) {
         return { isDue: true, nextTime: 'Due at 8:00 AM', isOverdue: false };
       }
-      if (currentHour >= 8 && currentHour < 20) {
-        return { isDue: false, nextTime: 'Next: Today 8:00 PM', isOverdue: false };
+      if (morning.isPast && !evening.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Today 8:00 PM', 
+          isOverdue: morning.isOverdue 
+        };
       }
-      return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: false };
+      
+      // Before first dose of the day
+      return { isDue: false, nextTime: 'Next: Today 8:00 AM', isOverdue: false };
     }
     
     case 'three_times_daily': {
@@ -123,31 +148,56 @@ export const getNextDoseTime = (
       const afternoon = checkTime('14:00', '2:00 PM');
       const evening = checkTime('20:00', '8:00 PM');
       
-      if (evening.isOverdue) {
-        return { isDue: false, nextTime: 'Overdue: 8:00 PM', isOverdue: true };
+      // If all doses have passed for today
+      if (morning.isPast && afternoon.isPast && evening.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Tomorrow 8:00 AM', 
+          isOverdue: evening.isOverdue || afternoon.isOverdue || morning.isOverdue 
+        };
       }
-      if (evening.isDue || evening.isCurrent) {
+      
+      // Check evening dose
+      if (evening.isDue) {
         return { isDue: true, nextTime: 'Due at 8:00 PM', isOverdue: false };
       }
-      if (afternoon.isOverdue && currentHour < 20) {
-        return { isDue: false, nextTime: 'Next: Today 8:00 PM (2:00 PM dose overdue)', isOverdue: true };
+      if (evening.isOverdue) {
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: true };
       }
-      if (afternoon.isDue || afternoon.isCurrent) {
+      if (!evening.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Today 8:00 PM', 
+          isOverdue: afternoon.isOverdue || morning.isOverdue 
+        };
+      }
+      
+      // Check afternoon dose
+      if (afternoon.isDue) {
         return { isDue: true, nextTime: 'Due at 2:00 PM', isOverdue: false };
       }
-      if (morning.isOverdue && currentHour < 14) {
-        return { isDue: false, nextTime: 'Next: Today 2:00 PM (Morning dose overdue)', isOverdue: true };
+      if (afternoon.isPast && !evening.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Today 8:00 PM', 
+          isOverdue: afternoon.isOverdue || morning.isOverdue 
+        };
       }
-      if (morning.isDue || morning.isCurrent) {
+      
+      // Check morning dose
+      if (morning.isDue) {
         return { isDue: true, nextTime: 'Due at 8:00 AM', isOverdue: false };
       }
-      if (currentHour >= 8 && currentHour < 14) {
-        return { isDue: false, nextTime: 'Next: Today 2:00 PM', isOverdue: false };
+      if (morning.isPast && !afternoon.isPast) {
+        return { 
+          isDue: false, 
+          nextTime: 'Next: Today 2:00 PM', 
+          isOverdue: morning.isOverdue 
+        };
       }
-      if (currentHour >= 14 && currentHour < 20) {
-        return { isDue: false, nextTime: 'Next: Today 8:00 PM', isOverdue: false };
-      }
-      return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM', isOverdue: false };
+      
+      // Before first dose of the day
+      return { isDue: false, nextTime: 'Next: Today 8:00 AM', isOverdue: false };
     }
     
     default:
