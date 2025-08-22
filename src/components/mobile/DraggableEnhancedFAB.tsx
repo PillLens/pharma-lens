@@ -38,12 +38,14 @@ const DraggableEnhancedFAB: React.FC<DraggableEnhancedFABProps> = ({
   const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
   const [initialPosition, setInitialPosition] = useState<Position>({ x: 0, y: 0 });
   const [isPressed, setIsPressed] = useState(false);
+  const currentTouchRef = useRef<Position>({ x: 0, y: 0 });
   const pressTimerRef = useRef<NodeJS.Timeout>();
 
-  const PRESS_DURATION = 500; // 500ms press to start dragging
+  const PRESS_DURATION = 800; // 800ms press to start dragging (longer for better UX)
   const FAB_SIZE = 64; // 16 * 4 = 64px for xl size
   const SNAP_THRESHOLD = 40;
   const SAFE_MARGIN = 20;
+  const MOVEMENT_THRESHOLD = 10; // pixels of movement before considering it a drag
 
   const fabActions = [
     {
@@ -170,14 +172,23 @@ const DraggableEnhancedFAB: React.FC<DraggableEnhancedFABProps> = ({
   const handlePressStart = useCallback((clientX: number, clientY: number) => {
     setIsPressed(true);
     setDragStart({ x: clientX, y: clientY });
+    currentTouchRef.current = { x: clientX, y: clientY };
     setInitialPosition(position);
 
     // Start press timer
     pressTimerRef.current = setTimeout(() => {
-      setIsDragging(true);
-      // Add haptic feedback if available
-      if ('vibrate' in navigator) {
-        navigator.vibrate(50);
+      // Check if there was significant movement during the press duration
+      const deltaX = Math.abs(currentTouchRef.current.x - clientX);
+      const deltaY = Math.abs(currentTouchRef.current.y - clientY);
+      const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      // Only start dragging if user held still during press duration
+      if (totalMovement < MOVEMENT_THRESHOLD) {
+        setIsDragging(true);
+        // Add haptic feedback if available
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
       }
     }, PRESS_DURATION);
   }, [position]);
@@ -188,8 +199,13 @@ const DraggableEnhancedFAB: React.FC<DraggableEnhancedFABProps> = ({
       clearTimeout(pressTimerRef.current);
     }
 
-    if (!isDragging && isPressed) {
-      // It was a regular click, not a drag - toggle menu
+    // Calculate total movement to determine if this was a click or drag attempt
+    const deltaX = Math.abs(currentTouchRef.current.x - dragStart.x);
+    const deltaY = Math.abs(currentTouchRef.current.y - dragStart.y);
+    const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (!isDragging && isPressed && totalMovement < MOVEMENT_THRESHOLD) {
+      // It was a regular click with minimal movement - toggle menu
       onMenuToggle();
     }
 
@@ -203,10 +219,13 @@ const DraggableEnhancedFAB: React.FC<DraggableEnhancedFABProps> = ({
 
     setIsDragging(false);
     setIsPressed(false);
-  }, [isDragging, isPressed, onMenuToggle, position, findNearestSnapZone, constrainPosition, savePosition]);
+  }, [isDragging, isPressed, onMenuToggle, position, findNearestSnapZone, constrainPosition, savePosition, dragStart]);
 
   // Handle drag move
   const handleDragMove = useCallback((clientX: number, clientY: number) => {
+    // Always update current touch position for movement calculation
+    currentTouchRef.current = { x: clientX, y: clientY };
+    
     if (!isDragging) return;
 
     const deltaX = clientX - dragStart.x;
