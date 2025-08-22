@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -145,7 +146,22 @@ export class FamilySharingService {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match our interface
+      const familyGroup: FamilyGroup = {
+        ...data,
+        members: data.members?.map((member: any) => ({
+          ...member,
+          family_group_id: groupId,
+          permissions: member.permissions as {
+            view_medications: boolean;
+            edit_medications: boolean;
+            receive_alerts: boolean;
+          }
+        }))
+      };
+      
+      return familyGroup;
     } catch (error) {
       console.error('Error fetching family group details:', error);
       return null;
@@ -362,7 +378,16 @@ export class FamilySharingService {
         .eq('family_group_id', groupId);
 
       if (error) throw error;
-      return data || [];
+      
+      // Transform the data to match our interface
+      return data?.map((item: any) => ({
+        ...item,
+        sharing_permissions: item.sharing_permissions as {
+          view: boolean;
+          edit: boolean;
+          delete: boolean;
+        }
+      })) || [];
     } catch (error) {
       console.error('Error fetching shared medications:', error);
       return [];
@@ -465,7 +490,7 @@ export class FamilySharingService {
       if (ownedMedication) return true;
 
       // Check if user has access through family sharing
-      const { data: sharedMedication } = await supabase
+      const { data: sharedMedication, error } = await supabase
         .from('shared_medications')
         .select(`
           sharing_permissions,
@@ -477,17 +502,24 @@ export class FamilySharingService {
         `)
         .eq('medication_id', medicationId);
 
-      if (!sharedMedication) return false;
+      if (error || !sharedMedication) return false;
 
       // Check if user is a member of the family group with the required permission
       for (const shared of sharedMedication) {
-        const isMember = shared.family_members.some(
+        const familyMembers = Array.isArray(shared.family_members) ? shared.family_members : [];
+        const isMember = familyMembers.some(
           (member: any) => 
             member.user_id === user.id && 
             member.invitation_status === 'accepted'
         );
 
-        if (isMember && shared.sharing_permissions[requiredPermission]) {
+        const permissions = shared.sharing_permissions as {
+          view: boolean;
+          edit: boolean;
+          delete: boolean;
+        };
+
+        if (isMember && permissions[requiredPermission]) {
           return true;
         }
       }

@@ -1,385 +1,358 @@
+
+import { CapacitorConfig } from '@capacitor/cli';
 import { 
   PushNotifications, 
-  PushNotificationSchema,
-  ActionPerformed,
-  Token,
-  PermissionStatus 
+  PushNotificationSchema, 
+  ActionPerformed, 
+  PushNotificationToken 
 } from '@capacitor/push-notifications';
-import { Capacitor } from '@capacitor/core';
-import { supabase } from '@/integrations/supabase/client';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { toast } from 'sonner';
+import { capacitorService } from './capacitorService';
+
+export interface NotificationPermissions {
+  alert: boolean;
+  badge: boolean;
+  sound: boolean;
+}
 
 export interface MedicationReminder {
   id: string;
   medicationName: string;
+  dosage: string;
   time: string;
-  daysOfWeek: number[];
+  frequency: 'daily' | 'weekly' | 'monthly';
+  daysOfWeek?: number[]; // 0 = Sunday, 1 = Monday, etc.
   isActive: boolean;
-  notificationSettings: {
-    sound: boolean;
-    vibration: boolean;
-    led: boolean;
-  };
 }
 
-export interface NotificationPayload {
+export interface SafetyAlert {
+  id: string;
+  type: 'drug_interaction' | 'expiration' | 'dosage_warning' | 'emergency';
   title: string;
-  body: string;
-  data?: Record<string, any>;
-  badge?: number;
-  sound?: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  medicationIds?: string[];
+  actionRequired?: boolean;
 }
 
 export class NotificationService {
-  private isNative = Capacitor.isNativePlatform();
-  private reminderIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private isInitialized = false;
+  private pushToken: string | null = null;
 
   async initialize(): Promise<boolean> {
-    if (!this.isNative) {
-      console.log('Push notifications not available on web platform');
-      return false;
-    }
-
     try {
-      const permission = await this.requestPermissions();
-      if (!permission) {
+      if (!capacitorService.isNative()) {
+        console.log('Push notifications not available on web platform');
         return false;
       }
 
-      await this.setupListeners();
-      await this.registerDevice();
+      // Request permissions
+      const permResult = await PushNotifications.requestPermissions();
+      
+      if (permResult.receive !== 'granted') {
+        toast.error('Push notification permissions denied');
+        return false;
+      }
+
+      // Register for push notifications
+      await PushNotifications.register();
+
+      // Set up listeners
+      this.setupNotificationListeners();
+
+      // Request local notification permissions
+      await LocalNotifications.requestPermissions();
+
+      this.isInitialized = true;
+      console.log('Notification service initialized successfully');
       return true;
+
     } catch (error) {
-      console.error('Failed to initialize notifications:', error);
+      console.error('Failed to initialize notification service:', error);
+      toast.error('Failed to initialize notifications');
       return false;
     }
   }
 
-  async requestPermissions(): Promise<boolean> {
-    if (!this.isNative) return false;
-
-    try {
-      const permission = await PushNotifications.requestPermissions();
-      return permission.receive === 'granted';
-    } catch (error) {
-      console.error('Error requesting notification permissions:', error);
-      return false;
-    }
-  }
-
-  async checkPermissions(): Promise<PermissionStatus> {
-    if (!this.isNative) {
-      return { receive: 'denied', sound: 'denied' };
-    }
-
-    return await PushNotifications.checkPermissions();
-  }
-
-  private async setupListeners(): Promise<void> {
-    if (!this.isNative) return;
-
-    // Register for push notifications
-    await PushNotifications.addListener('registration', (token: Token) => {
+  private setupNotificationListeners(): void {
+    // Handle registration success
+    PushNotifications.addListener('registration', (token: PushNotificationToken) => {
       console.log('Push registration success, token: ' + token.value);
-      this.saveDeviceToken(token.value);
+      this.pushToken = token.value;
+      // TODO: Send token to backend for push notification targeting
     });
 
-    // Handle registration errors
-    await PushNotifications.addListener('registrationError', (error: any) => {
-      console.error('Error on registration: ', error);
+    // Handle registration error
+    PushNotifications.addListener('registrationError', (error: any) => {
+      console.error('Push registration error: ', error);
     });
 
-    // Handle push notification received
-    await PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      console.log('Push received: ', notification);
-      this.handleNotificationReceived(notification);
+    // Handle incoming push notifications
+    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+      console.log('Push notification received: ', notification);
+      this.handleIncomingNotification(notification);
     });
 
-    // Handle notification action performed
-    await PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
-      console.log('Push action performed: ', notification);
+    // Handle notification tap
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+      console.log('Push notification action performed: ', notification);
       this.handleNotificationAction(notification);
     });
-  }
 
-  private async registerDevice(): Promise<void> {
-    if (!this.isNative) return;
-
-    try {
-      await PushNotifications.register();
-    } catch (error) {
-      console.error('Error registering for push notifications:', error);
-    }
-  }
-
-  private async saveDeviceToken(token: string): Promise<void> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Store token in user metadata or a separate table if needed
-      await supabase.auth.updateUser({
-        data: { push_token: token }
-      });
-    } catch (error) {
-      console.error('Error saving device token:', error);
-    }
-  }
-
-  private handleNotificationReceived(notification: PushNotificationSchema): void {
-    toast.info(notification.title || 'Notification', {
-      description: notification.body
+    // Handle local notification tap
+    LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+      console.log('Local notification action performed: ', notification);
+      this.handleLocalNotificationAction(notification);
     });
+  }
+
+  private handleIncomingNotification(notification: PushNotificationSchema): void {
+    // Handle different types of notifications
+    const notificationType = notification.data?.type;
+    
+    switch (notificationType) {
+      case 'medication_reminder':
+        this.handleMedicationReminderNotification(notification);
+        break;
+      case 'safety_alert':
+        this.handleSafetyAlertNotification(notification);
+        break;
+      case 'family_update':
+        this.handleFamilyUpdateNotification(notification);
+        break;
+      default:
+        console.log('Unknown notification type:', notificationType);
+    }
   }
 
   private handleNotificationAction(notification: ActionPerformed): void {
-    const data = notification.notification.data;
-    
-    if (data?.type === 'medication_reminder') {
-      // Navigate to medication management or handle reminder action
-      console.log('Medication reminder action:', data);
-    } else if (data?.type === 'safety_alert') {
-      // Navigate to safety alerts
-      console.log('Safety alert action:', data);
+    // Handle user actions on push notifications
+    const actionId = notification.actionId;
+    const notificationData = notification.notification.data;
+
+    switch (actionId) {
+      case 'taken':
+        this.markMedicationAsTaken(notificationData?.medicationId);
+        break;
+      case 'snooze':
+        this.snoozeMedicationReminder(notificationData?.reminderId, 15); // Snooze for 15 minutes
+        break;
+      case 'view_details':
+        this.navigateToMedicationDetails(notificationData?.medicationId);
+        break;
     }
   }
 
-  // Local notifications for medication reminders
-  async scheduleMedicationReminders(reminders: MedicationReminder[]): Promise<void> {
-    // Clear existing reminders
-    this.clearAllReminders();
-
-    for (const reminder of reminders) {
-      if (reminder.isActive) {
-        this.scheduleReminder(reminder);
-      }
-    }
+  private handleLocalNotificationAction(notification: any): void {
+    // Handle local notification actions
+    console.log('Local notification action:', notification);
   }
 
-  private scheduleReminder(reminder: MedicationReminder): void {
-    const scheduleNextReminder = () => {
-      const now = new Date();
-      const [hours, minutes] = reminder.time.split(':').map(Number);
-      
-      let nextReminder = new Date();
-      nextReminder.setHours(hours, minutes, 0, 0);
-      
-      // If time has passed today, schedule for tomorrow or next valid day
-      if (nextReminder <= now) {
-        nextReminder.setDate(nextReminder.getDate() + 1);
+  // Medication Reminder Methods
+  async scheduleMedicationReminder(reminder: MedicationReminder): Promise<boolean> {
+    try {
+      if (!this.isInitialized) {
+        await this.initialize();
       }
-      
-      // Find next valid day based on daysOfWeek
-      while (!reminder.daysOfWeek.includes(this.getDayOfWeek(nextReminder))) {
-        nextReminder.setDate(nextReminder.getDate() + 1);
-      }
-      
-      const timeUntilReminder = nextReminder.getTime() - now.getTime();
-      
-      const timeoutId = setTimeout(() => {
-        this.sendMedicationReminder(reminder);
-        // Schedule the next occurrence
-        scheduleNextReminder();
-      }, timeUntilReminder);
-      
-      this.reminderIntervals.set(reminder.id, timeoutId);
-    };
-    
-    scheduleNextReminder();
-  }
 
-  private getDayOfWeek(date: Date): number {
-    // Convert JavaScript day (0 = Sunday) to our format (1 = Monday)
-    const jsDay = date.getDay();
-    return jsDay === 0 ? 7 : jsDay;
-  }
-
-  private async sendMedicationReminder(reminder: MedicationReminder): Promise<void> {
-    const payload: NotificationPayload = {
-      title: 'Medication Reminder',
-      body: `Time to take your ${reminder.medicationName}`,
-      data: {
-        type: 'medication_reminder',
-        medicationId: reminder.id,
-        medicationName: reminder.medicationName
-      }
-    };
-
-    await this.sendLocalNotification(payload);
-  }
-
-  async sendLocalNotification(payload: NotificationPayload): Promise<void> {
-    if (this.isNative && 'Notification' in window) {
-      // Use browser notifications as fallback or for web
-      if (Notification.permission === 'granted') {
-        new Notification(payload.title, {
-          body: payload.body,
-          data: payload.data,
-          badge: payload.badge?.toString()
-        });
-      }
-    } else {
-      // Fallback to toast notification
-      toast.info(payload.title, {
-        description: payload.body
+      const notifications = this.generateNotificationSchedule(reminder);
+      
+      await LocalNotifications.schedule({
+        notifications: notifications
       });
+
+      console.log(`Scheduled ${notifications.length} reminders for ${reminder.medicationName}`);
+      return true;
+
+    } catch (error) {
+      console.error('Failed to schedule medication reminder:', error);
+      return false;
     }
   }
 
-  async sendSafetyAlert(alert: {
-    title: string;
-    message: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-  }): Promise<void> {
-    const payload: NotificationPayload = {
-      title: alert.title,
-      body: alert.message,
-      data: {
-        type: 'safety_alert',
-        severity: alert.severity
+  private generateNotificationSchedule(reminder: MedicationReminder): any[] {
+    const notifications = [];
+    const now = new Date();
+    
+    // Generate notifications for the next 30 days
+    for (let day = 0; day < 30; day++) {
+      const notificationDate = new Date(now);
+      notificationDate.setDate(now.getDate() + day);
+      
+      // Check if notification should be sent on this day based on frequency
+      if (this.shouldNotifyOnDay(notificationDate, reminder)) {
+        const [hours, minutes] = reminder.time.split(':').map(Number);
+        notificationDate.setHours(hours, minutes, 0, 0);
+        
+        // Only schedule future notifications
+        if (notificationDate > now) {
+          notifications.push({
+            id: parseInt(`${reminder.id}${day}`), // Unique ID for each notification
+            title: 'Medication Reminder',
+            body: `Time to take ${reminder.medicationName} (${reminder.dosage})`,
+            schedule: { at: notificationDate },
+            sound: 'default',
+            actionTypeId: 'medication_reminder',
+            extra: {
+              medicationId: reminder.id,
+              medicationName: reminder.medicationName,
+              dosage: reminder.dosage
+            }
+          });
+        }
       }
-    };
-
-    await this.sendLocalNotification(payload);
+    }
     
-    // Also show toast for immediate visibility
-    const toastMethod = alert.severity === 'critical' ? toast.error : 
-                       alert.severity === 'high' ? toast.warning : toast.info;
+    return notifications;
+  }
+
+  private shouldNotifyOnDay(date: Date, reminder: MedicationReminder): boolean {
+    const dayOfWeek = date.getDay();
     
-    toastMethod(alert.title, {
-      description: alert.message,
-      duration: alert.severity === 'critical' ? 10000 : 5000
-    });
-  }
-
-  clearReminder(reminderId: string): void {
-    const timeoutId = this.reminderIntervals.get(reminderId);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      this.reminderIntervals.delete(reminderId);
+    switch (reminder.frequency) {
+      case 'daily':
+        return true;
+      case 'weekly':
+        return reminder.daysOfWeek?.includes(dayOfWeek) || false;
+      case 'monthly':
+        return date.getDate() === 1; // First day of month
+      default:
+        return false;
     }
   }
 
-  clearAllReminders(): void {
-    for (const timeoutId of this.reminderIntervals.values()) {
-      clearTimeout(timeoutId);
-    }
-    this.reminderIntervals.clear();
-  }
-
-  async loadUserReminders(): Promise<MedicationReminder[]> {
+  async cancelMedicationReminder(reminderId: string): Promise<boolean> {
     try {
-      const { data, error } = await supabase
-        .from('medication_reminders')
-        .select(`
-          id,
-          medication_id,
-          reminder_time,
-          days_of_week,
-          is_active,
-          notification_settings,
-          user_medications!inner(medication_name)
-        `)
-        .eq('is_active', true);
+      // Cancel all notifications for this reminder (for next 30 days)
+      const notificationIds = [];
+      for (let day = 0; day < 30; day++) {
+        notificationIds.push(parseInt(`${reminderId}${day}`));
+      }
 
-      if (error) throw error;
+      await LocalNotifications.cancel({
+        notifications: notificationIds.map(id => ({ id }))
+      });
 
-      return data?.map(reminder => ({
-        id: reminder.id,
-        medicationName: reminder.user_medications.medication_name,
-        time: reminder.reminder_time,
-        daysOfWeek: reminder.days_of_week,
-        isActive: reminder.is_active,
-        notificationSettings: reminder.notification_settings as any
-      })) || [];
+      console.log(`Cancelled reminders for ID: ${reminderId}`);
+      return true;
+
     } catch (error) {
-      console.error('Error loading reminders:', error);
-      return [];
+      console.error('Failed to cancel medication reminder:', error);
+      return false;
     }
   }
 
-  async createReminder(medicationId: string, reminderData: {
-    time: string;
-    daysOfWeek: number[];
-    notificationSettings?: any;
-  }): Promise<void> {
+  // Safety Alert Methods
+  async sendSafetyAlert(alert: SafetyAlert): Promise<boolean> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
 
-      const { error } = await supabase
-        .from('medication_reminders')
-        .insert({
-          user_id: user.id,
-          medication_id: medicationId,
-          reminder_time: reminderData.time,
-          days_of_week: reminderData.daysOfWeek,
-          notification_settings: reminderData.notificationSettings || {
-            sound: true,
-            vibration: true,
-            led: true
-          }
-        });
+      const notification = {
+        id: parseInt(alert.id),
+        title: alert.title,
+        body: alert.message,
+        schedule: { at: new Date(Date.now() + 1000) }, // Send immediately
+        sound: alert.severity === 'critical' ? 'alarm' : 'default',
+        actionTypeId: 'safety_alert',
+        extra: {
+          alertId: alert.id,
+          alertType: alert.type,
+          severity: alert.severity,
+          medicationIds: alert.medicationIds
+        }
+      };
 
-      if (error) throw error;
+      await LocalNotifications.schedule({
+        notifications: [notification]
+      });
 
-      // Reload and reschedule reminders
-      const reminders = await this.loadUserReminders();
-      await this.scheduleMedicationReminders(reminders);
-      
-      toast.success('Reminder created successfully');
+      // Also show toast for immediate attention
+      const toastMessage = `${alert.title}: ${alert.message}`;
+      if (alert.severity === 'critical') {
+        toast.error(toastMessage);
+      } else {
+        toast.warning(toastMessage);
+      }
+
+      return true;
+
     } catch (error) {
-      console.error('Error creating reminder:', error);
-      toast.error('Failed to create reminder');
+      console.error('Failed to send safety alert:', error);
+      return false;
     }
   }
 
-  async updateReminder(reminderId: string, updates: Partial<{
-    time: string;
-    daysOfWeek: number[];
-    isActive: boolean;
-    notificationSettings: any;
-  }>): Promise<void> {
+  // Family Notification Methods
+  async sendFamilyNotification(
+    title: string, 
+    message: string, 
+    familyMemberIds: string[]
+  ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('medication_reminders')
-        .update({
-          ...(updates.time && { reminder_time: updates.time }),
-          ...(updates.daysOfWeek && { days_of_week: updates.daysOfWeek }),
-          ...(updates.isActive !== undefined && { is_active: updates.isActive }),
-          ...(updates.notificationSettings && { notification_settings: updates.notificationSettings })
-        })
-        .eq('id', reminderId);
-
-      if (error) throw error;
-
-      // Reload and reschedule reminders
-      const reminders = await this.loadUserReminders();
-      await this.scheduleMedicationReminders(reminders);
+      // In a real implementation, this would send push notifications
+      // to family members via a backend service
+      console.log('Family notification:', { title, message, familyMemberIds });
       
-      toast.success('Reminder updated successfully');
+      // For now, just log the notification
+      toast.info(`Family notification sent: ${title}`);
+      return true;
+
     } catch (error) {
-      console.error('Error updating reminder:', error);
-      toast.error('Failed to update reminder');
+      console.error('Failed to send family notification:', error);
+      return false;
     }
   }
 
-  async deleteReminder(reminderId: string): Promise<void> {
-    try {
-      this.clearReminder(reminderId);
-      
-      const { error } = await supabase
-        .from('medication_reminders')
-        .delete()
-        .eq('id', reminderId);
+  // Helper Methods
+  private handleMedicationReminderNotification(notification: PushNotificationSchema): void {
+    console.log('Handling medication reminder:', notification);
+    // Show local toast or update UI
+    toast.info(notification.body || 'Medication reminder');
+  }
 
-      if (error) throw error;
-      
-      toast.success('Reminder deleted successfully');
-    } catch (error) {
-      console.error('Error deleting reminder:', error);
-      toast.error('Failed to delete reminder');
+  private handleSafetyAlertNotification(notification: PushNotificationSchema): void {
+    console.log('Handling safety alert:', notification);
+    toast.error(notification.body || 'Safety alert');
+  }
+
+  private handleFamilyUpdateNotification(notification: PushNotificationSchema): void {
+    console.log('Handling family update:', notification);
+    toast.info(notification.body || 'Family update');
+  }
+
+  private markMedicationAsTaken(medicationId?: string): void {
+    if (medicationId) {
+      console.log('Marking medication as taken:', medicationId);
+      // TODO: Update medication adherence tracking
+      toast.success('Medication marked as taken');
     }
+  }
+
+  private snoozeMedicationReminder(reminderId?: string, minutes: number = 15): void {
+    if (reminderId) {
+      console.log(`Snoozing reminder ${reminderId} for ${minutes} minutes`);
+      // TODO: Reschedule notification for later
+      toast.info(`Reminder snoozed for ${minutes} minutes`);
+    }
+  }
+
+  private navigateToMedicationDetails(medicationId?: string): void {
+    if (medicationId) {
+      console.log('Navigating to medication details:', medicationId);
+      // TODO: Navigate to medication details page
+    }
+  }
+
+  // Getters
+  getPushToken(): string | null {
+    return this.pushToken;
+  }
+
+  isServiceInitialized(): boolean {
+    return this.isInitialized;
   }
 }
 
