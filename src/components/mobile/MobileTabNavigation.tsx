@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, History, Pill, Bell, Users, Shield, User, MoreHorizontal } from 'lucide-react';
+import { Home, History, Pill, Bell, Users, Shield, User, MoreHorizontal, Globe2 } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
 import { 
@@ -11,6 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 // Main navigation items (4 most important)
 const mainNavigationItems = [
@@ -59,6 +60,13 @@ const moreNavigationItems = [
     label: 'Auth',
     href: '/auth',
     category: 'system'
+  },
+  {
+    icon: Globe2,
+    label: 'Language',
+    href: '#language',
+    category: 'system',
+    isLanguageSelector: true
   },
 ];
 
@@ -109,16 +117,16 @@ const MobileTabNavigation: React.FC = () => {
           <div 
             className="absolute top-0 h-0.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50 rounded-full transition-all duration-500 ease-out shadow-glow"
             style={{
-              left: `${(activeIndex / 5) * 100}%`,
-              width: `${100 / 5}%`,
+              left: `${(activeIndex / 4) * 100}%`,
+              width: `${100 / 4}%`,
               margin: '0 1%'
             }}
           />
         )}
         
         {/* Navigation content */}
-        <div className="relative px-2 py-3">
-          <div className="flex items-stretch justify-center gap-1">
+        <div className="relative px-1 py-3">
+          <div className="flex items-stretch justify-center max-w-80 mx-auto">
             {/* Main navigation tabs */}
             {mainNavigationItems.map((item, index) => {
               const isActive = location.pathname === item.href;
@@ -130,7 +138,7 @@ const MobileTabNavigation: React.FC = () => {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center px-4 py-2 rounded-2xl transition-all duration-300 touch-target flex-1 relative group",
+                    "flex flex-col items-center justify-center px-3 py-2 rounded-2xl transition-all duration-300 touch-target flex-1 relative group min-h-[56px]",
                     "active:scale-95 transform-gpu",
                     isCurrentPressed && "scale-95",
                     isActive 
@@ -142,7 +150,7 @@ const MobileTabNavigation: React.FC = () => {
                 >
                   {/* Icon container with enhanced styling */}
                   <div className={cn(
-                    "relative p-2.5 rounded-xl transition-all duration-300 transform-gpu mb-1",
+                    "relative p-2.5 rounded-xl transition-all duration-300 transform-gpu",
                     isActive 
                       ? "bg-primary/15 shadow-md" 
                       : "group-hover:bg-muted/60 group-active:bg-muted/80"
@@ -157,16 +165,6 @@ const MobileTabNavigation: React.FC = () => {
                       <div className="absolute inset-0 rounded-xl bg-primary/30 animate-pulse" />
                     )}
                   </div>
-                  
-                  {/* Text label */}
-                  <span className={cn(
-                    "text-xs font-medium transition-all duration-300 text-center leading-tight",
-                    isActive 
-                      ? "text-primary font-semibold" 
-                      : "text-muted-foreground group-hover:text-foreground"
-                  )}>
-                    {item.label}
-                  </span>
                   
                   {/* Active tab background glow */}
                   {isActive && (
@@ -188,7 +186,7 @@ const MobileTabNavigation: React.FC = () => {
               <DrawerTrigger asChild>
                 <button
                   className={cn(
-                    "flex flex-col items-center justify-center px-4 py-2 rounded-2xl transition-all duration-300 touch-target flex-1 relative group",
+                    "flex flex-col items-center justify-center px-3 py-2 rounded-2xl transition-all duration-300 touch-target flex-1 relative group min-h-[56px]",
                     "active:scale-95 transform-gpu",
                     isMoreNavActive 
                       ? "text-primary" 
@@ -199,7 +197,7 @@ const MobileTabNavigation: React.FC = () => {
                 >
                   {/* Icon container */}
                   <div className={cn(
-                    "relative p-2.5 rounded-xl transition-all duration-300 transform-gpu mb-1",
+                    "relative p-2.5 rounded-xl transition-all duration-300 transform-gpu",
                     isMoreNavActive 
                       ? "bg-primary/15 shadow-md" 
                       : "group-hover:bg-muted/60 group-active:bg-muted/80"
@@ -209,16 +207,6 @@ const MobileTabNavigation: React.FC = () => {
                       isMoreNavActive && "drop-shadow-sm"
                     )} />
                   </div>
-                  
-                  {/* Text label */}
-                  <span className={cn(
-                    "text-xs font-medium transition-all duration-300 text-center leading-tight",
-                    isMoreNavActive 
-                      ? "text-primary font-semibold" 
-                      : "text-muted-foreground group-hover:text-foreground"
-                  )}>
-                    More
-                  </span>
                   
                   {/* Active background glow for more items */}
                   {isMoreNavActive && (
@@ -238,10 +226,33 @@ const MobileTabNavigation: React.FC = () => {
                 </DrawerHeader>
                 
                 <div className="px-4 pb-8">
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 gap-6">
                     {moreNavigationItems.map((item) => {
                       const isActive = location.pathname === item.href;
                       const Icon = item.icon;
+                      
+                      // Special handling for language selector
+                      if (item.isLanguageSelector) {
+                        return (
+                          <div
+                            key={item.href}
+                            className="flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-300 touch-target relative group"
+                          >
+                            {/* Icon container */}
+                            <div className="relative p-3 rounded-xl transition-all duration-300 transform-gpu mb-2 group-hover:bg-muted/60">
+                              <Icon className="w-6 h-6 flex-shrink-0 transition-all duration-300" />
+                            </div>
+                            
+                            {/* Language selector */}
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-sm font-medium text-muted-foreground">
+                                {item.label}
+                              </span>
+                              <LanguageSelector />
+                            </div>
+                          </div>
+                        );
+                      }
                       
                       return (
                         <NavLink
