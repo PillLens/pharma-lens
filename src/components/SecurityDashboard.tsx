@@ -23,14 +23,12 @@ export function SecurityDashboard() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Use mobile version on mobile devices - AFTER all hooks are declared
-  if (isMobile) {
-    return <MobileSecurityDashboard />;
-  }
-
+  // ALL hooks including useEffect must be declared before any conditional returns
   useEffect(() => {
-    loadSecurityData();
-  }, []);
+    if (!isMobile) {
+      loadSecurityData();
+    }
+  }, [isMobile]);
 
   const loadSecurityData = async () => {
     try {
@@ -131,6 +129,11 @@ export function SecurityDashboard() {
       });
     }
   };
+
+  // Use mobile version on mobile devices - AFTER all hooks are declared
+  if (isMobile) {
+    return <MobileSecurityDashboard />;
+  }
 
   if (loading) {
     return (
