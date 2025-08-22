@@ -10,6 +10,7 @@ import { UserMedication } from '@/hooks/useMedicationHistory';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface EnhancedMedicationCardProps {
   medication: UserMedication;
@@ -31,6 +32,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   onClick
 }) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -203,7 +205,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const isDueNow = doseStatus.isDue;
   const nextDoseStatus = doseStatus.nextTime;
   
-  console.log('Medication:', medication.medication_name, 'isDueNow:', isDueNow, 'recentlyTaken:', recentlyTaken, 'loading:', loading);
+  console.log('Medication:', medication.medication_name, 'isDueNow:', isDueNow, 'recentlyTaken:', recentlyTaken, 'loading:', loading, 'hour:', new Date().getHours());
 
   const getFrequencyLabel = (frequency: string) => {
     const frequencyMap: Record<string, string> = {
@@ -335,8 +337,15 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                         notes: 'Marked via Take Now button'
                       });
                     
-                    // Update local state immediately to stop pulsing
+                     // Update local state immediately to stop pulsing
                     setRecentlyTaken(true);
+                    console.log('Take Now clicked - setting recentlyTaken to true');
+                    
+                    // Show success toast
+                    toast({
+                      title: "Dose recorded",
+                      description: `${medication.medication_name} marked as taken`,
+                    });
                     
                     // Call parent callback if provided
                     if (onMarkTaken) {
@@ -344,7 +353,18 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                     }
                   } catch (error) {
                     console.error('Error recording dose:', error);
+                    toast({
+                      title: "Error",
+                      description: "Failed to record dose. Please try again.",
+                      variant: "destructive",
+                    });
                   }
+                } else {
+                  toast({
+                    title: "Error", 
+                    description: "Please log in to record doses",
+                    variant: "destructive",
+                  });
                 }
               }}
               className="h-12 px-6 rounded-2xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80 text-success-foreground shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
