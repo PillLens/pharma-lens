@@ -233,7 +233,7 @@ const FamilyManager: React.FC = () => {
 
   return (
     <ProfessionalMobileLayout 
-      title="Family Care Timeline"
+      title={t('family.title')}
       showHeader={true}
       className="bg-background"
     >
@@ -251,7 +251,7 @@ const FamilyManager: React.FC = () => {
           onWatchDemo={handleWatchDemo}
         />
       ) : (
-        <div className="p-6">
+        <div className="p-4 max-w-full overflow-x-hidden">
           {/* Pending Invitations */}
           {pendingInvitations.length > 0 && (
             <div className="mb-6">
@@ -299,22 +299,22 @@ const FamilyManager: React.FC = () => {
 
           {/* Enhanced Family Management with Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4 mb-6">
-              <TabsTrigger value="overview" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-4 mb-6 h-auto">
+              <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <BarChart3 className="w-4 h-4" />
-                <span className="hidden sm:inline">Overview</span>
+                <span>Overview</span>
               </TabsTrigger>
-              <TabsTrigger value="groups" className="flex items-center gap-2">
+              <TabsTrigger value="groups" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Users className="w-4 h-4" />
-                <span className="hidden sm:inline">Groups</span>
+                <span>Groups</span>
               </TabsTrigger>
-              <TabsTrigger value="timeline" className="flex items-center gap-2">
+              <TabsTrigger value="timeline" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Calendar className="w-4 h-4" />
-                <span className="hidden sm:inline">Timeline</span>
+                <span>Timeline</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Activity className="w-4 h-4" />
-                <span className="hidden sm:inline">Analytics</span>
+                <span>Analytics</span>
               </TabsTrigger>
             </TabsList>
 
