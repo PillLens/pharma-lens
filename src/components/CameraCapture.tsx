@@ -140,11 +140,12 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     return warnings.length === 0;
   };
 
-  const extractMedicationInfo = async (text: string) => {
+  const extractMedicationInfo = async (text: string, barcode?: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('extract-medication', {
         body: { 
           text, 
+          barcode,
           language,
           region: 'AZ'
         }
@@ -219,7 +220,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       // Step 3: Extract medication info if we have sufficient text
       if (ocrResult.text.trim().length > 10) {
         setProcessingStep("Analyzing medication information...");
-        medicationData = await extractMedicationInfo(ocrResult.text);
+        medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue);
         setExtractedData(medicationData);
 
         // Validate safety thresholds
