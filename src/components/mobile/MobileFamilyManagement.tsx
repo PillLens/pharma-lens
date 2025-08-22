@@ -1,21 +1,79 @@
+
 import React, { useState, useEffect } from 'react';
-import { Plus, Users, UserPlus, Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Users, UserPlus, Settings, Heart } from 'lucide-react';
+import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from '@/components/ui/mobile/MobileCard';
+import { MobileButton } from '@/components/ui/mobile/MobileButton';
+import { EnhancedMobileButton } from '@/components/mobile/EnhancedMobileButton';
 import { Badge } from '@/components/ui/badge';
-import EmptyStateIllustration from './EmptyStateIllustration';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PullToRefreshWrapper } from '@/components/mobile/PullToRefreshWrapper';
+import { GestureNavigationWrapper } from '@/components/mobile/GestureNavigationWrapper';
 import { MobileFamilyMemberCard } from './MobileFamilyMemberCard';
 import { MobileFamilyInvitationWizard } from './MobileFamilyInvitationWizard';
 import BottomSheet from '@/components/ui/mobile/BottomSheet';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { hapticService } from '@/services/hapticService';
 import { 
   familySharingService, 
   FamilyGroup, 
   FamilyMember, 
   FamilyInvitation 
 } from '@/services/familySharingService';
+
+const LoadingSkeleton = () => (
+  <div className="p-4 space-y-4">
+    <Skeleton className="h-6 w-48" />
+    <div className="space-y-4">
+      {[1, 2].map((i) => (
+        <MobileCard key={i} className="animate-pulse">
+          <MobileCardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-20" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-9 w-16" />
+                  <Skeleton className="h-9 w-16" />
+                </div>
+              </div>
+            </div>
+          </MobileCardContent>
+        </MobileCard>
+      ))}
+    </div>
+  </div>
+);
+
+const SimpleMobileEmptyState = ({ onCreateGroup }: { onCreateGroup: () => void }) => (
+  <MobileCard variant="medical" className="mx-4">
+    <MobileCardContent className="p-8 text-center">
+      <div className="w-20 h-20 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+        <Users className="w-10 h-10 text-primary animate-pulse" />
+      </div>
+      <h3 className="text-lg font-semibold mb-3 text-foreground">Start Your Care Network</h3>
+      <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+        Connect with family members and caregivers to share medication information safely.
+      </p>
+      <EnhancedMobileButton
+        onClick={() => {
+          hapticService.buttonPress();
+          onCreateGroup();
+        }}
+        variant="default"
+        size="lg"
+        className="w-full h-12 shadow-medical"
+        hapticPattern="medium"
+        rippleEffect={true}
+      >
+        <Plus className="h-5 w-5 mr-2" />
+        Create Family Group
+      </EnhancedMobileButton>
+    </MobileCardContent>
+  </MobileCard>
+);
 
 export const MobileFamilyManagement: React.FC = () => {
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
@@ -45,8 +103,13 @@ export const MobileFamilyManagement: React.FC = () => {
       
       setFamilyGroups(groups);
       setPendingInvitations(invitations);
+      
+      if (groups.length > 0 || invitations.length > 0) {
+        hapticService.feedback('success');
+      }
     } catch (error) {
       console.error('Error loading family data:', error);
+      hapticService.errorOccurred();
       toast.error('Failed to load family data. Please try again.');
     } finally {
       setLoading(false);
@@ -56,40 +119,47 @@ export const MobileFamilyManagement: React.FC = () => {
   const handleCreateGroup = async () => {
     if (!newGroupName.trim()) return;
 
+    hapticService.feedback('medium');
     const group = await familySharingService.createFamilyGroup(newGroupName);
     if (group) {
       await loadFamilyData();
       setCreateGroupDialog(false);
       setNewGroupName('');
+      hapticService.actionCompleted();
       toast.success('Family group created successfully!');
+    } else {
+      hapticService.errorOccurred();
     }
   };
 
   const handleInvitationResponse = async (groupId: string, response: 'accepted' | 'declined') => {
+    hapticService.feedback('medium');
     const success = await familySharingService.respondToInvitation(groupId, response);
     if (success) {
       await loadFamilyData();
+      hapticService.actionCompleted();
       toast.success(`Invitation ${response === 'accepted' ? 'accepted' : 'declined'}`);
+    } else {
+      hapticService.errorOccurred();
     }
   };
 
   const handleInviteMember = (group: FamilyGroup) => {
+    hapticService.buttonPress();
     setSelectedGroupForInvite(group);
     setInviteWizardOpen(true);
   };
 
   const handleMemberAction = (action: string, member: FamilyMember) => {
+    hapticService.feedback('light');
     switch (action) {
       case 'call':
-        // Integrate with phone calling (phone property not available in FamilyMember type)
         toast.info('Phone integration coming soon!');
         break;
       case 'message':
-        // Integrate with SMS or messaging (phone property not available in FamilyMember type)
         toast.info('Messaging integration coming soon!');
         break;
       case 'share':
-        // Share member contact
         if (navigator.share) {
           navigator.share({
             title: `${member.display_name}'s Contact`,
@@ -99,7 +169,6 @@ export const MobileFamilyManagement: React.FC = () => {
         }
         break;
       case 'settings':
-        // Open member settings
         toast.info('Member settings coming soon!');
         break;
     }
@@ -115,159 +184,158 @@ export const MobileFamilyManagement: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="p-4 space-y-4">
-        <div className="animate-pulse">
-          <div className="h-6 bg-muted rounded w-48 mb-4"></div>
-          <div className="space-y-4">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-32 bg-muted rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Pending Invitations */}
-      {pendingInvitations.length > 0 && (
-        <Card className="medical-surface border-amber-200 bg-amber-50/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2 text-amber-800">
-              <UserPlus className="h-4 w-4" />
-              Pending Invitations ({pendingInvitations.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {pendingInvitations.map((invitation) => (
-              <div key={invitation.familyGroupId} className="p-3 bg-white rounded-lg border border-amber-200">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h4 className="font-medium text-sm">{invitation.familyGroupName}</h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">Invited as:</span>
-                      <Badge className={`text-xs ${getRoleBadgeColor(invitation.role)}`}>
-                        {invitation.role.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
-                    className="flex-1 h-9"
+    <GestureNavigationWrapper className="min-h-screen bg-background">
+      <PullToRefreshWrapper onRefresh={loadFamilyData}>
+        <div className="pb-24 space-y-6">
+          {/* Pending Invitations */}
+          {pendingInvitations.length > 0 && (
+            <div className="px-4 pt-4">
+              <MobileCard variant="warning" className="animate-fade-in">
+                <MobileCardHeader className="pb-3">
+                  <MobileCardTitle className="text-sm flex items-center gap-2 text-warning-foreground">
+                    <UserPlus className="h-4 w-4" />
+                    Pending Invitations ({pendingInvitations.length})
+                  </MobileCardTitle>
+                </MobileCardHeader>
+                <MobileCardContent className="space-y-3">
+                  {pendingInvitations.map((invitation) => (
+                    <MobileCard key={invitation.familyGroupId} variant="glass" className="p-3">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-medium text-sm">{invitation.familyGroupName}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-muted-foreground">Invited as:</span>
+                            <Badge className={`text-xs ${getRoleBadgeColor(invitation.role)}`}>
+                              {invitation.role.replace('_', ' ')}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <EnhancedMobileButton 
+                          size="sm" 
+                          onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
+                          className="flex-1 h-10"
+                          variant="success"
+                          hapticPattern="success"
+                          rippleEffect={true}
+                        >
+                          Accept
+                        </EnhancedMobileButton>
+                        <EnhancedMobileButton 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
+                          className="flex-1 h-10"
+                          hapticPattern="light"
+                          rippleEffect={true}
+                        >
+                          Decline
+                        </EnhancedMobileButton>
+                      </div>
+                    </MobileCard>
+                  ))}
+                </MobileCardContent>
+              </MobileCard>
+            </div>
+          )}
+
+          {/* Family Groups */}
+          <div className="px-4">
+            {familyGroups.length === 0 ? (
+              <SimpleMobileEmptyState onCreateGroup={() => setCreateGroupDialog(true)} />
+            ) : (
+              <div className="space-y-4">
+                {familyGroups.map((group, index) => (
+                  <MobileCard 
+                    key={group.id} 
+                    variant="elevated" 
+                    interactive={true}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    Accept
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
-                    className="flex-1 h-9"
-                  >
-                    Decline
-                  </Button>
-                </div>
+                    <MobileCardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <MobileCardTitle className="text-base">{group.name}</MobileCardTitle>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">
+                              {group.member_count} members
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              Created {new Date(group.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        <EnhancedMobileButton
+                          size="sm"
+                          variant="ghost"
+                          className="h-10 w-10 p-0"
+                          hapticPattern="light"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </EnhancedMobileButton>
+                      </div>
+                    </MobileCardHeader>
+                    
+                    <MobileCardContent className="space-y-3">
+                      {/* Members List */}
+                      {group.members && group.members.length > 0 && (
+                        <div className="space-y-3">
+                          {group.members.map((member) => (
+                            <MobileFamilyMemberCard
+                              key={member.id}
+                              member={member}
+                              isOwner={group.creator_id === member.user_id}
+                              onCall={(member) => handleMemberAction('call', member)}
+                              onMessage={(member) => handleMemberAction('message', member)}
+                              onShare={(member) => handleMemberAction('share', member)}
+                              onSettings={(member) => handleMemberAction('settings', member)}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Invite Button */}
+                      <EnhancedMobileButton
+                        onClick={() => handleInviteMember(group)}
+                        variant="outline"
+                        className="w-full h-12 border-dashed hover:bg-primary/5"
+                        hapticPattern="medium"
+                        rippleEffect={true}
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Invite Family Member
+                      </EnhancedMobileButton>
+                    </MobileCardContent>
+                  </MobileCard>
+                ))}
               </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+            )}
+          </div>
 
-      {/* Family Groups */}
-      {familyGroups.length === 0 ? (
-        <Card className="medical-surface">
-          <CardContent className="p-8 text-center">
-            <EmptyStateIllustration 
-              type="family"
-              className="w-24 h-24 mx-auto mb-4"
-            />
-            <h3 className="text-lg font-semibold mb-2">No Family Groups</h3>
-            <p className="text-muted-foreground text-sm mb-6">
-              Create a family group to share medications and coordinate care with caregivers.
-            </p>
-            <Button 
-              onClick={() => setCreateGroupDialog(true)} 
-              className="w-full h-12"
+          {/* Floating Action Button */}
+          <div className="fixed bottom-20 right-4 z-10">
+            <EnhancedMobileButton
+              onClick={() => {
+                hapticService.buttonPress();
+                setCreateGroupDialog(true);
+              }}
+              size="xl"
+              className="h-16 w-16 rounded-full shadow-floating hover:shadow-glow hover:scale-110 transition-all duration-300"
+              variant="medical"
+              hapticPattern="medium"
+              rippleEffect={true}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Your First Group
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {familyGroups.map((group) => (
-            <Card key={group.id} className="medical-surface">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base">{group.name}</CardTitle>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">
-                        {group.member_count} members
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        Created {new Date(group.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 px-3"
-                  >
-                    <Settings className="h-3 w-3" />
-                  </Button>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-3">
-                {/* Members List */}
-                {group.members && group.members.length > 0 && (
-                  <div className="space-y-3">
-                    {group.members.map((member) => (
-                      <MobileFamilyMemberCard
-                        key={member.id}
-                        member={member}
-                        isOwner={group.creator_id === member.user_id}
-                        onCall={(member) => handleMemberAction('call', member)}
-                        onMessage={(member) => handleMemberAction('message', member)}
-                        onShare={(member) => handleMemberAction('share', member)}
-                        onSettings={(member) => handleMemberAction('settings', member)}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Invite Button */}
-                <Button
-                  onClick={() => handleInviteMember(group)}
-                  variant="outline"
-                  className="w-full h-12 border-dashed"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Invite Family Member
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+              <Plus className="h-6 w-6" />
+            </EnhancedMobileButton>
+          </div>
         </div>
-      )}
-
-      {/* Floating Action Button */}
-      <div className="fixed bottom-20 right-4 z-10">
-        <Button
-          onClick={() => setCreateGroupDialog(true)}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg"
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
-      </div>
+      </PullToRefreshWrapper>
 
       {/* Create Group Bottom Sheet */}
       <BottomSheet isOpen={createGroupDialog} onClose={() => setCreateGroupDialog(false)}>
@@ -285,20 +353,27 @@ export const MobileFamilyManagement: React.FC = () => {
               />
             </div>
             <div className="flex gap-3 pt-4">
-              <Button 
+              <EnhancedMobileButton 
                 variant="outline" 
-                onClick={() => setCreateGroupDialog(false)}
+                onClick={() => {
+                  hapticService.navigationBack();
+                  setCreateGroupDialog(false);
+                }}
                 className="flex-1 h-12"
+                hapticPattern="light"
               >
                 Cancel
-              </Button>
-              <Button 
+              </EnhancedMobileButton>
+              <EnhancedMobileButton 
                 onClick={handleCreateGroup} 
                 disabled={!newGroupName.trim()}
                 className="flex-1 h-12"
+                variant="default"
+                hapticPattern="success"
+                rippleEffect={true}
               >
                 Create Group
-              </Button>
+              </EnhancedMobileButton>
             </div>
           </div>
         </div>
@@ -309,17 +384,19 @@ export const MobileFamilyManagement: React.FC = () => {
         <MobileFamilyInvitationWizard
           isOpen={inviteWizardOpen}
           onClose={() => {
+            hapticService.navigationBack();
             setInviteWizardOpen(false);
             setSelectedGroupForInvite(null);
           }}
           familyGroup={selectedGroupForInvite}
           onInviteSent={() => {
+            hapticService.actionCompleted();
             loadFamilyData();
             setInviteWizardOpen(false);
             setSelectedGroupForInvite(null);
           }}
         />
       )}
-    </div>
+    </GestureNavigationWrapper>
   );
 };
