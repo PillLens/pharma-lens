@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, History, Pill, Users, Bell, Shield, LogOut } from 'lucide-react';
+import { Menu, X, Home, History, Pill, Users, Bell, Shield, LogOut, Crown, Scan, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -14,6 +14,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useSubscription } from '@/contexts/SubscriptionContext';
+import { Badge } from '@/components/ui/badge';
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +23,7 @@ const MobileNavigation = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { t } = useTranslation();
+  const { subscription, isInTrial, trialDaysRemaining } = useSubscription();
 
   const handleSignOut = async () => {
     try {
@@ -34,12 +37,14 @@ const MobileNavigation = () => {
   };
 
   const navigationItems = [
-    { icon: Home, labelKey: 'navigation.scanner', href: '/' },
+    { icon: Home, labelKey: 'navigation.dashboard', href: '/' },
+    { icon: Scan, labelKey: 'navigation.scanner', href: '/scanner' },
     { icon: History, labelKey: 'navigation.history', href: '/history' },
     { icon: Pill, labelKey: 'navigation.medications', href: '/medications' },
     { icon: Users, labelKey: 'navigation.family', href: '/family' },
     { icon: Bell, labelKey: 'navigation.reminders', href: '/reminders' },
     { icon: Shield, labelKey: 'navigation.security', href: '/security' },
+    { icon: Settings, labelKey: 'navigation.settings', href: '/settings' },
   ];
 
   return (
@@ -57,9 +62,26 @@ const MobileNavigation = () => {
       <DrawerContent className="h-[85vh]">
         <DrawerHeader className="text-left">
           <div className="flex items-center justify-between">
-            <DrawerTitle className="text-xl font-bold text-primary">
-              <TranslatedText translationKey="app.title" />
-            </DrawerTitle>
+            <div>
+              <DrawerTitle className="text-xl font-bold text-primary">
+                <TranslatedText translationKey="app.title" />
+              </DrawerTitle>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge 
+                  variant={subscription.plan === 'free' ? 'outline' : 'default'} 
+                  className={subscription.plan !== 'free' ? 'bg-gradient-to-r from-primary to-primary-glow text-white' : ''}
+                >
+                  {isInTrial && <Crown className="w-3 h-3 mr-1" />}
+                  {subscription.plan === 'free' ? 'Free' : 
+                   subscription.plan === 'pro_individual' ? 'Pro Individual' : 'Pro Family'}
+                </Badge>
+                {isInTrial && (
+                  <Badge variant="secondary" className="text-xs">
+                    {trialDaysRemaining} days left
+                  </Badge>
+                )}
+              </div>
+            </div>
             <DrawerClose asChild>
               <Button variant="ghost" size="sm" className="p-2">
                 <X className="h-5 w-5" />

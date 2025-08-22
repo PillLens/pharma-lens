@@ -19,10 +19,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 const FamilyManager: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { checkFeatureAccess } = useSubscription();
 
   // State management
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
@@ -333,10 +336,20 @@ const FamilyManager: React.FC = () => {
                     <Users className="w-5 h-5" />
                     Your Family Groups ({familyGroups.length})
                   </h2>
-                  <Button onClick={() => setShowCreateGroup(true)}>
-                    <Users className="w-4 h-4 mr-2" />
-                    Add Group
-                  </Button>
+                  <FeatureGate 
+                    feature="can_create_family_group"
+                    fallback={
+                      <Button variant="outline" disabled>
+                        <Users className="w-4 h-4 mr-2" />
+                        Add Group (Pro)
+                      </Button>
+                    }
+                  >
+                    <Button onClick={() => setShowCreateGroup(true)}>
+                      <Users className="w-4 h-4 mr-2" />
+                      Add Group
+                    </Button>
+                  </FeatureGate>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {familyGroups.map((group) => (

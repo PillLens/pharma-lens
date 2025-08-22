@@ -15,10 +15,13 @@ import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSh
 import EnhancedMedicationCard from '@/components/medications/enhanced/EnhancedMedicationCard';
 import MedicationFloatingActionButton from '@/components/medications/MedicationFloatingActionButton';
 import { UserMedication } from '@/hooks/useMedicationHistory';
+import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const { checkFeatureAccess } = useSubscription();
   const { 
     medications, 
     loading, 

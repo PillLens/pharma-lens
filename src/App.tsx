@@ -5,8 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
 import { ScanHistory } from "./pages/ScanHistory";
 import MedicationManager from "./pages/MedicationManager";
 import Auth from "./pages/Auth";
@@ -14,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Reminders from "./pages/Reminders";
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
+import Settings from "./pages/Settings";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import { useEffect } from "react";
 
@@ -29,13 +32,19 @@ const App = () => {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
+          <SubscriptionProvider>
+            <TooltipProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/scanner" element={
                   <ProtectedRoute>
                     <Index />
                   </ProtectedRoute>
@@ -65,11 +74,17 @@ const App = () => {
                     <Reminders />
                   </ProtectedRoute>
                 } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </TooltipProvider>
+            </TooltipProvider>
+          </SubscriptionProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
