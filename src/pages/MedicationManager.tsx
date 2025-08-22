@@ -201,8 +201,37 @@ const MedicationManager: React.FC = () => {
   };
 
   const handleQuickActions = {
-    markAllTaken: () => {
-      toast.success(`${dueMedications.length} medications marked as taken`);
+    markAllTaken: async () => {
+      if (!user || dueMedications.length === 0) return;
+      
+      try {
+        // Mark all due medications as taken
+        const adherenceLogs = dueMedications.map(medication => ({
+          user_id: user.id,
+          medication_id: medication.id,
+          scheduled_time: new Date().toISOString(),
+          taken_time: new Date().toISOString(),
+          status: 'taken',
+          reported_by: user.id
+        }));
+
+        const { error } = await supabase
+          .from('medication_adherence_log')
+          .insert(adherenceLogs);
+
+        if (error) throw error;
+
+        toast.success(`${dueMedications.length} medications marked as taken! 🎉`, {
+          description: 'All doses logged successfully in your health record',
+          duration: 3000,
+        });
+
+        // Refresh medications to update stats
+        refetch();
+      } catch (error) {
+        console.error('Error marking all medications as taken:', error);
+        toast.error('Failed to log all medication doses');
+      }
     },
     snoozeReminders: (minutes: number) => {
       toast.info(`Reminders snoozed for ${minutes} minutes`);
@@ -250,18 +279,18 @@ const MedicationManager: React.FC = () => {
                   <MobileButton
                     size="sm"
                     onClick={handleQuickActions.markAllTaken}
-                    className="rounded-xl whitespace-nowrap bg-success/10 text-success border-success/20 hover:bg-success/20"
+                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-success to-success/80 text-success-foreground border-0 hover:from-success/90 hover:to-success/70 shadow-md hover:shadow-lg transition-all duration-200"
                     haptic
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Mark All Taken ({dueMedications.length})
+                    Mark All Taken
                   </MobileButton>
                 )}
                 
                 <MobileButton
                   size="sm"
                   onClick={handleQuickActions.viewInteractions}
-                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
+                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/20 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
                   haptic
                 >
                   <AlertTriangle className="w-4 h-4 mr-2" />
@@ -271,7 +300,7 @@ const MedicationManager: React.FC = () => {
                 <MobileButton
                   size="sm"
                   onClick={() => handleQuickActions.snoozeReminders(30)}
-                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
+                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-blue-500/20 to-blue-400/10 text-blue-600 border border-blue-400/20 hover:from-blue-500/30 hover:to-blue-400/20 shadow-sm hover:shadow-md transition-all duration-200"
                   haptic
                 >
                   <Bell className="w-4 h-4 mr-2" />

@@ -176,7 +176,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                   onMarkTaken();
                 }
               }}
-              className="h-9 px-4 rounded-xl bg-primary hover:bg-primary/90"
+              className="h-9 px-4 rounded-xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80 text-success-foreground shadow-sm transition-all duration-200 hover:shadow-md"
               haptic
             >
               <CheckCircle className="w-4 h-4 mr-1" />
