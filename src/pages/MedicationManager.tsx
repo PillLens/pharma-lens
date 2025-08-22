@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Clock, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
@@ -14,6 +14,7 @@ import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
 import MedicationFloatingActionButton from '@/components/medications/MedicationFloatingActionButton';
+import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 
 const MedicationManager: React.FC = () => {
@@ -136,16 +137,16 @@ const MedicationManager: React.FC = () => {
 
   // Mobile-first layout
   return (
-    <div className="min-h-screen bg-background">
-      {/* Mobile Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="px-4 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      {/* Mobile Header */}      
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-sm">
+        <div className="px-4 py-4 safe-area-top">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h1 className="text-xl font-semibold text-foreground">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {t('medications.title')}
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                 {t('medications.subtitle')}
               </p>
             </div>
@@ -154,79 +155,114 @@ const MedicationManager: React.FC = () => {
             <Button
               onClick={() => setIsAddSheetOpen(true)}
               size="sm"
-              className="rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] min-w-[44px] h-[44px]"
+              className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 min-w-[44px] h-[44px] border-0"
             >
               <Plus className="w-5 h-5" />
             </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div className="px-4 pb-safe-area-bottom">
-          {/* Stats Bar */}
-          {!loading && medications.length > 0 && (
-            <div className="py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="px-3 py-2 rounded-xl bg-card shadow-sm border">
-                    <span className="text-sm font-medium text-foreground">
-                      {medications.length} {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
-                    </span>
+      <main className="flex-1 overflow-y-auto pb-safe-area-bottom">
+        <PullToRefresh onRefresh={handleRefresh}>
+          <div className="px-4">
+            {/* Stats Bar - Enhanced Cards */}
+            {!loading && medications.length > 0 && (
+              <div className="py-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                        <Pill className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                          {medications.length}
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+                          {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-3 py-2 rounded-xl bg-green-500/10 border border-green-500/20">
-                    <span className="text-sm font-medium text-green-600">
-                      {medications.filter(m => m.is_active).length} {t('medications.active')}
-                    </span>
+                  
+                  <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                          {medications.filter(m => m.is_active).length}
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+                          {t('medications.active')}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Main Content */}
-          {loading ? (
-            <div className="space-y-3 pt-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
-          ) : medications.length === 0 ? (
-            <div className="pt-8">
-              <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
-            </div>
-          ) : (
-            <div className="space-y-3 pt-2 pb-6">
-              {medications.map((medication) => (
-                  <SwipeableCard
-                  key={medication.id}
-                  onDelete={() => handleDelete(medication)}
-                  className="rounded-2xl shadow-md hover:shadow-lg border border-border/50 transition-all duration-200"
-                >
-                  <div 
-                    onClick={() => handleCardTap(medication)}
-                    className="min-h-[44px] active:scale-[0.98] transition-transform duration-200 cursor-pointer"
-                  >
-                    <MobileMedicationCard
-                      medication={medication}
-                      onEdit={() => handleEdit(medication)}
-                      onDelete={() => handleDelete(medication)}
-                      onToggleActive={() => handleToggleActive(medication)}
-                    />
+            {/* Main Content */}
+            {loading ? (
+              <div className="space-y-4 py-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg animate-pulse">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="space-y-2">
+                        <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded-lg w-32"></div>
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24"></div>
+                      </div>
+                      <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
+                    </div>
                   </div>
-                </SwipeableCard>
-              ))}
-            </div>
-          )}
-        </div>
-      </PullToRefresh>
+                ))}
+              </div>
+            ) : medications.length === 0 ? (
+              <div className="py-8">
+                <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+              </div>
+            ) : (
+              <div className="space-y-4 py-4 pb-24">
+                {medications.map((medication) => (
+                  <div
+                    key={medication.id}
+                    className="transition-all duration-200 active:scale-[0.98] cursor-pointer"
+                    onClick={() => handleCardTap(medication)}
+                  >
+                    <SwipeableCard onDelete={() => handleDelete(medication)}>
+                      <EnhancedMedicationCard
+                        medication={medication}
+                        onEdit={() => handleEdit(medication)}
+                        onDelete={() => handleDelete(medication)}
+                        onToggleActive={() => handleToggleActive(medication)}
+                      />
+                    </SwipeableCard>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </PullToRefresh>
+      </main>
 
       {/* Floating Action Button */}
       {!loading && (
-        <MedicationFloatingActionButton
+        <Button
           onClick={() => setIsAddSheetOpen(true)}
-        />
+          className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-200 active:scale-95 border-0"
+        >
+          <Plus className="w-6 h-6" />
+        </Button>
       )}
 
       {/* Bottom Sheets */}
@@ -253,25 +289,32 @@ const MedicationManager: React.FC = () => {
       />
 
       {/* Delete Confirmation */}
-      <AlertDialog open={!!medicationToDelete} onOpenChange={() => setMedicationToDelete(null)}>
-        <AlertDialogContent className="mx-4 rounded-2xl max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('medications.confirmDelete')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('medications.confirmDeleteText')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2 sm:gap-2">
-            <AlertDialogCancel className="rounded-xl flex-1">{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteMedication} 
-              className="bg-destructive text-destructive-foreground rounded-xl flex-1"
+      <div className={`fixed inset-0 z-50 ${medicationToDelete ? 'block' : 'hidden'}`}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMedicationToDelete(null)}></div>
+        <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+            {t('medications.confirmDelete')}
+          </h3>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
+            {t('medications.confirmDeleteText')}
+          </p>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setMedicationToDelete(null)}
+              className="flex-1 rounded-xl border-slate-300 dark:border-slate-600"
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={handleDeleteMedication}
+              className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white border-0"
             >
               {t('common.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
