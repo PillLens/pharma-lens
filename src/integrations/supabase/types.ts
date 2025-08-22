@@ -58,6 +58,80 @@ export type Database = {
           },
         ]
       }
+      family_groups: {
+        Row: {
+          created_at: string
+          creator_id: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      family_members: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          family_group_id: string
+          id: string
+          invitation_status: string
+          invited_at: string
+          invited_by: string | null
+          permissions: Json
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          family_group_id: string
+          id?: string
+          invitation_status?: string
+          invited_at?: string
+          invited_by?: string | null
+          permissions?: Json
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          family_group_id?: string
+          id?: string
+          invitation_status?: string
+          invited_at?: string
+          invited_by?: string | null
+          permissions?: Json
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           comment: string | null
@@ -196,6 +270,50 @@ export type Database = {
             columns: ["medication_b_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medication_reminders: {
+        Row: {
+          created_at: string
+          days_of_week: number[]
+          id: string
+          is_active: boolean
+          medication_id: string
+          notification_settings: Json
+          reminder_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          medication_id: string
+          notification_settings?: Json
+          reminder_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_of_week?: number[]
+          id?: string
+          is_active?: boolean
+          medication_id?: string
+          notification_settings?: Json
+          reminder_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_reminders_medication_id_fkey"
+            columns: ["medication_id"]
+            isOneToOne: false
+            referencedRelation: "user_medications"
             referencedColumns: ["id"]
           },
         ]
@@ -397,6 +515,51 @@ export type Database = {
             columns: ["selected_product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shared_medications: {
+        Row: {
+          created_at: string
+          family_group_id: string
+          id: string
+          medication_id: string
+          shared_by: string
+          sharing_permissions: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          family_group_id: string
+          id?: string
+          medication_id: string
+          shared_by: string
+          sharing_permissions?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          family_group_id?: string
+          id?: string
+          medication_id?: string
+          shared_by?: string
+          sharing_permissions?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_medications_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shared_medications_medication_id_fkey"
+            columns: ["medication_id"]
+            isOneToOne: false
+            referencedRelation: "user_medications"
             referencedColumns: ["id"]
           },
         ]
