@@ -94,17 +94,17 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   return (
     <MobileCard 
       variant={isDueNow ? 'warning' : 'default'} 
-      className={`group transition-all duration-300 hover:shadow-lg ${className}`}
+      className={`group transition-all duration-300 hover:shadow-lg ${className} ${isDueNow ? 'animate-pulse' : ''}`}
       onClick={onClick}
     >
-      <MobileCardHeader className="pb-4">
+      <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md">
-              <Pill className="w-7 h-7 text-primary-foreground" />
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm">
+              <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <MobileCardTitle className="text-lg font-bold truncate mb-1">
+              <MobileCardTitle className="text-base font-bold truncate mb-1">
                 {medication.medication_name}
               </MobileCardTitle>
               <MobileCardDescription className="text-sm text-muted-foreground">
@@ -113,12 +113,12 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               <div className="flex items-center gap-2 mt-2">
                 <Badge 
                   variant={medication.is_active ? 'default' : 'secondary'} 
-                  className="text-xs"
+                  className="text-xs px-2 py-1"
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
                 {isDueNow && (
-                  <Badge variant="destructive" className="text-xs animate-pulse">
+                  <Badge variant="destructive" className="text-xs animate-pulse px-2 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
                   </Badge>
@@ -153,104 +153,62 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         </div>
       </MobileCardHeader>
 
-      <MobileCardContent className="space-y-6">
-        {/* Next Dose Section */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/10 border border-border/50">
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-              isDueNow ? 'bg-warning/10' : 'bg-primary/10'
-            }`}>
-              <Clock className={`w-4 h-4 ${isDueNow ? 'text-warning' : 'text-primary'}`} />
-            </div>
-            <div>
-              <div className="text-sm font-medium">Next Dose</div>
-              <div className={`text-xs ${isDueNow ? 'text-warning' : 'text-muted-foreground'}`}>
-                {nextDoseStatus}
+      <MobileCardContent className="space-y-4">
+        {/* Due Now Action - Always show if active and due */}
+        {isDueNow && medication.is_active && (
+          <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+                <Clock className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm font-medium">Time to take your dose!</div>
+                <div className="text-xs text-muted-foreground">
+                  {nextDoseStatus}
+                </div>
               </div>
             </div>
-          </div>
-          {isDueNow && onMarkTaken && (
             <MobileButton
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                onMarkTaken();
+                if (onMarkTaken) {
+                  onMarkTaken();
+                }
               }}
-              className="h-9 px-4 rounded-xl"
+              className="h-9 px-4 rounded-xl bg-primary hover:bg-primary/90"
               haptic
             >
               <CheckCircle className="w-4 h-4 mr-1" />
-              Take
+              Mark Taken
             </MobileButton>
-          )}
+          </div>
+        )}
+
+        {/* Compact Stats */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="text-center p-2 rounded-lg bg-muted/30">
+            <div className="text-sm font-bold text-primary">{adherenceRate}%</div>
+            <div className="text-xs text-muted-foreground">Adherence</div>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/30">
+            <div className="text-sm font-bold text-success">{streak}</div>
+            <div className="text-xs text-muted-foreground">Day Streak</div>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/30">
+            <div className="text-sm font-bold ${inventoryDays <= 7 ? 'text-destructive' : inventoryDays <= 14 ? 'text-warning' : 'text-success'}">{inventoryDays}</div>
+            <div className="text-xs text-muted-foreground">Days Left</div>
+          </div>
         </div>
 
-        {/* Adherence Progress */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+        {/* Next Dose Info - Only show if not due now */}
+        {!isDueNow && (
+          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Adherence Rate</span>
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm">Next Dose</span>
             </div>
-            <span className="text-sm font-bold text-primary">{adherenceRate}%</span>
-          </div>
-          <Progress value={adherenceRate} className="h-2" />
-        </div>
-
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 border border-purple-200 dark:border-purple-800">
-            <Zap className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-            <div className="text-sm font-bold text-purple-700 dark:text-purple-300">{streak}</div>
-            <div className="text-xs text-purple-600 dark:text-purple-400">Day Streak</div>
-          </div>
-
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800">
-            <Heart className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-            <div className="text-sm font-bold text-blue-700 dark:text-blue-300">{effectiveness}%</div>
-            <div className="text-xs text-blue-600 dark:text-blue-400">Effective</div>
-          </div>
-
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 border border-green-200 dark:border-green-800">
-            <Calendar className="w-5 h-5 text-green-600 mx-auto mb-1" />
-            <div className="text-sm font-bold text-green-700 dark:text-green-300">{inventoryDays}</div>
-            <div className="text-xs text-green-600 dark:text-green-400">Days Left</div>
-          </div>
-        </div>
-
-        {/* Supply Status */}
-        <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Supply Status</span>
-          </div>
-          <Badge 
-            variant="outline" 
-            className={`text-xs ${
-              inventoryDays <= 7 ? 'border-destructive text-destructive' :
-              inventoryDays <= 14 ? 'border-warning text-warning' :
-              'border-success text-success'
-            }`}
-          >
-            {inventoryDays} days left
-          </Badge>
-        </div>
-
-        {/* Additional Information */}
-        {(medication.start_date || medication.prescriber) && (
-          <div className="pt-2 space-y-2 text-sm border-t border-border">
-            {medication.start_date && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Started:</span>
-                <span className="font-medium">{format(new Date(medication.start_date), 'MMM dd, yyyy')}</span>
-              </div>
-            )}
-            {medication.prescriber && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Prescriber:</span>
-                <span className="font-medium truncate ml-2">{medication.prescriber}</span>
-              </div>
-            )}
+            <span className="text-sm font-medium">{nextDoseStatus}</span>
           </div>
         )}
 
@@ -264,13 +222,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
             
             if (diffDays <= 7 && diffDays > 0) {
               return (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-warning/10 border border-warning/20">
-                  <AlertTriangle className="w-5 h-5 text-warning" />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-warning">Medication Expiring Soon</div>
-                    <div className="text-xs text-warning/80">
-                      Expires in {diffDays} day{diffDays !== 1 ? 's' : ''}
-                    </div>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-warning/10 border border-warning/20">
+                  <AlertTriangle className="w-4 h-4 text-warning" />
+                  <div className="text-sm text-warning">
+                    Expires in {diffDays} day{diffDays !== 1 ? 's' : ''}
                   </div>
                 </div>
               );
@@ -278,13 +233,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
             
             if (diffDays <= 0) {
               return (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
-                  <XCircle className="w-5 h-5 text-destructive" />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-destructive">Medication Expired</div>
-                    <div className="text-xs text-destructive/80">
-                      {diffDays === 0 ? 'Expires today' : 'Expired'}
-                    </div>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <XCircle className="w-4 h-4 text-destructive" />
+                  <div className="text-sm text-destructive">
+                    {diffDays === 0 ? 'Expires today' : 'Expired'}
                   </div>
                 </div>
               );

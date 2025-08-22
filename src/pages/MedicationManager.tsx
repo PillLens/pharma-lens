@@ -4,6 +4,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from '@/components/ui/mobile/MobileCard';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
@@ -14,6 +17,7 @@ import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import EnhancedMedicationCard from '@/components/medications/enhanced/EnhancedMedicationCard';
 import MedicationFloatingActionButton from '@/components/medications/MedicationFloatingActionButton';
+import MedicationExplanationCard from '@/components/medications/MedicationExplanationCard';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -21,6 +25,8 @@ import { useSubscription } from '@/contexts/SubscriptionContext';
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { checkFeatureAccess } = useSubscription();
   const { 
     medications, 
@@ -163,11 +169,35 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  const handleMarkTaken = (medicationId: string) => {
-    toast.success('Medication marked as taken', {
-      description: 'Dose logged successfully',
-      duration: 3000,
-    });
+  const handleMarkTaken = async (medicationId: string) => {
+    if (!user) return;
+
+    try {
+      // Log the adherence in the database
+      const { error } = await supabase
+        .from('medication_adherence_log')
+        .insert([{
+          user_id: user.id,
+          medication_id: medicationId,
+          scheduled_time: new Date().toISOString(),
+          taken_time: new Date().toISOString(),
+          status: 'taken',
+          reported_by: user.id
+        }]);
+
+      if (error) throw error;
+
+      toast.success('Medication marked as taken! 🎉', {
+        description: 'Dose logged successfully in your health record',
+        duration: 3000,
+      });
+
+      // Refresh medications to update stats
+      refetch();
+    } catch (error) {
+      console.error('Error marking medication as taken:', error);
+      toast.error('Failed to log medication dose');
+    }
   };
 
   const handleQuickActions = {
@@ -246,7 +276,13 @@ const MedicationManager: React.FC = () => {
       {/* Main Content with Tabs */}
       <div className="max-w-6xl mx-auto px-6 py-6">
         {!loading && medications.length > 0 ? (
-          <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
+          <div className="space-y-4">
+            {/* Show explanation card for first-time users or when no reminders exist */}
+            {medications.length > 0 && medications.length <= 2 && (
+              <MedicationExplanationCard onNavigateToReminders={() => navigate('/reminders')} />
+            )}
+            
+            <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="today" className="gap-2">
                 <Clock className="w-4 h-4" />
@@ -545,6 +581,7 @@ const MedicationManager: React.FC = () => {
               )}
             </TabsContent>
           </Tabs>
+          </div>
         ) : null}
 
         {/* Loading State */}
@@ -611,44 +648,32 @@ const MedicationManager: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
-  );
 
-  return (
-    <ProfessionalMobileLayout>
-      {mainContent}
+      {/* Floating Action Button */}
+      <MedicationFloatingActionButton onClick={() => setIsAddSheetOpen(true)} />
 
-      {/* Simple Floating Action Button */}
-      <MedicationFloatingActionButton 
-        onClick={() => setIsAddSheetOpen(true)}
-      />
-
-      {/* Sheets */}
+      {/* Bottom Sheets */}
       <MedicationFormSheet
-        isOpen={isAddSheetOpen}
-        onClose={() => setIsAddSheetOpen(false)}
-        onSave={handleAddMedication}
+        medication={selectedMedication}
+        isOpen={isAddSheetOpen || isEditSheetOpen}
+        onClose={() => {
+          setIsAddSheetOpen(false);
+          setIsEditSheetOpen(false);
+          setSelectedMedication(null);
+        }}
+        onSave={handleSave}
         isLoading={isSubmitting}
       />
 
-      {selectedMedication && (
-        <MedicationFormSheet
-          isOpen={isEditSheetOpen}
-          onClose={() => setIsEditSheetOpen(false)}
-          onSave={handleUpdateMedication}
-          isLoading={isSubmitting}
-          medication={selectedMedication}
-        />
-      )}
-
-      {selectedMedication && (
-        <MedicationDetailsSheet
-          medication={selectedMedication}
-          isOpen={isDetailsSheetOpen}
-          onClose={() => setIsDetailsSheetOpen(false)}
-          onEdit={() => handleEdit(selectedMedication)}
-        />
-      )}
+      <MedicationDetailsSheet
+        medication={selectedMedication}
+        isOpen={isDetailsSheetOpen}
+        onClose={() => setIsDetailsSheetOpen(false)}
+        onEdit={() => {
+          setIsDetailsSheetOpen(false);
+          setIsEditSheetOpen(true);
+        }}
+      />
     </ProfessionalMobileLayout>
   );
 };
