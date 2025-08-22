@@ -119,20 +119,21 @@ export const FamilyManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Users className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold">Family & Caregivers</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">Family & Caregivers</h2>
         </div>
         
         <Dialog open={createGroupDialog} onOpenChange={setCreateGroupDialog}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 w-full sm:w-auto min-h-[44px]">
               <Plus className="w-4 h-4" />
-              Create Group
+              <span className="hidden sm:inline">Create Group</span>
+              <span className="sm:hidden">Create</span>
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="w-[95vw] max-w-md mx-auto">
             <DialogHeader>
               <DialogTitle>Create Family Group</DialogTitle>
             </DialogHeader>
@@ -144,13 +145,22 @@ export const FamilyManagement: React.FC = () => {
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
                   placeholder="e.g., Smith Family, Mom's Care Team"
+                  className="min-h-[44px]"
                 />
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setCreateGroupDialog(false)}>
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setCreateGroupDialog(false)}
+                  className="min-h-[44px]"
+                >
                   Cancel
                 </Button>
-                <Button onClick={handleCreateGroup} disabled={!newGroupName.trim()}>
+                <Button 
+                  onClick={handleCreateGroup} 
+                  disabled={!newGroupName.trim()}
+                  className="min-h-[44px]"
+                >
                   Create Group
                 </Button>
               </div>
@@ -170,17 +180,18 @@ export const FamilyManagement: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {pendingInvitations.map((invitation) => (
-              <div key={invitation.familyGroupId} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={invitation.familyGroupId} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
                 <div className="flex-1">
                   <h4 className="font-medium">{invitation.familyGroupName}</h4>
                   <p className="text-sm text-muted-foreground">
                     Invited as: <Badge className={getRoleBadgeColor(invitation.role)}>{invitation.role.replace('_', ' ')}</Badge>
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   <Button 
                     size="sm" 
                     onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
+                    className="min-h-[44px] w-full sm:w-auto"
                   >
                     Accept
                   </Button>
@@ -188,6 +199,7 @@ export const FamilyManagement: React.FC = () => {
                     size="sm" 
                     variant="outline" 
                     onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
+                    className="min-h-[44px] w-full sm:w-auto"
                   >
                     Decline
                   </Button>
@@ -199,7 +211,7 @@ export const FamilyManagement: React.FC = () => {
       )}
 
       {/* Family Groups */}
-      <div className="grid gap-4">
+      <div className="space-y-4">
         {familyGroups.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
@@ -208,7 +220,7 @@ export const FamilyManagement: React.FC = () => {
               <p className="text-muted-foreground mb-4">
                 Create a family group to share medications and coordinate care with caregivers.
               </p>
-              <Button onClick={() => setCreateGroupDialog(true)} className="gap-2">
+              <Button onClick={() => setCreateGroupDialog(true)} className="gap-2 min-h-[44px]">
                 <Plus className="w-4 h-4" />
                 Create Your First Group
               </Button>
@@ -218,22 +230,23 @@ export const FamilyManagement: React.FC = () => {
           familyGroups.map((group) => (
             <Card key={group.id}>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <CardTitle className="text-lg">{group.name}</CardTitle>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                     <Badge variant="outline">{group.member_count} members</Badge>
                     
-                    <Dialog open={inviteMemberDialog && selectedGroup?.id === group.id} onOpenChange={(open) => {
-                      setInviteMemberDialog(open);
-                      if (open) setSelectedGroup(group);
-                    }}>
-                      <DialogTrigger asChild>
-                        <Button size="sm" variant="outline" className="gap-2">
-                          <UserPlus className="w-4 h-4" />
-                          Invite
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Dialog open={inviteMemberDialog && selectedGroup?.id === group.id} onOpenChange={(open) => {
+                        setInviteMemberDialog(open);
+                        if (open) setSelectedGroup(group);
+                      }}>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline" className="gap-2 min-h-[44px] flex-1 sm:flex-none">
+                            <UserPlus className="w-4 h-4" />
+                            Invite
+                          </Button>
+                        </DialogTrigger>
+                      <DialogContent className="w-[95vw] max-w-md mx-auto max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>Invite Family Member</DialogTitle>
                         </DialogHeader>
@@ -246,13 +259,14 @@ export const FamilyManagement: React.FC = () => {
                               value={inviteEmail}
                               onChange={(e) => setInviteEmail(e.target.value)}
                               placeholder="Enter email address"
+                              className="min-h-[44px]"
                             />
                           </div>
                           
                           <div>
                             <Label htmlFor="invite-role">Role</Label>
                             <Select value={inviteRole} onValueChange={(value: any) => setInviteRole(value)}>
-                              <SelectTrigger>
+                              <SelectTrigger className="min-h-[44px]">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -265,9 +279,9 @@ export const FamilyManagement: React.FC = () => {
                           
                           <div className="space-y-3">
                             <Label>Permissions</Label>
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                               <div className="flex items-center justify-between">
-                                <Label htmlFor="view-meds">View Medications</Label>
+                                <Label htmlFor="view-meds" className="text-sm">View Medications</Label>
                                 <Switch
                                   id="view-meds"
                                   checked={invitePermissions.view_medications}
@@ -277,7 +291,7 @@ export const FamilyManagement: React.FC = () => {
                                 />
                               </div>
                               <div className="flex items-center justify-between">
-                                <Label htmlFor="edit-meds">Edit Medications</Label>
+                                <Label htmlFor="edit-meds" className="text-sm">Edit Medications</Label>
                                 <Switch
                                   id="edit-meds"
                                   checked={invitePermissions.edit_medications}
@@ -287,7 +301,7 @@ export const FamilyManagement: React.FC = () => {
                                 />
                               </div>
                               <div className="flex items-center justify-between">
-                                <Label htmlFor="receive-alerts">Receive Safety Alerts</Label>
+                                <Label htmlFor="receive-alerts" className="text-sm">Receive Safety Alerts</Label>
                                 <Switch
                                   id="receive-alerts"
                                   checked={invitePermissions.receive_alerts}
@@ -299,21 +313,31 @@ export const FamilyManagement: React.FC = () => {
                             </div>
                           </div>
                           
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setInviteMemberDialog(false)}>
+                          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4">
+                            <Button 
+                              variant="outline" 
+                              onClick={() => setInviteMemberDialog(false)}
+                              className="min-h-[44px]"
+                            >
                               Cancel
                             </Button>
-                            <Button onClick={handleInviteMember} disabled={!inviteEmail.trim()}>
+                            <Button 
+                              onClick={handleInviteMember} 
+                              disabled={!inviteEmail.trim()}
+                              className="min-h-[44px]"
+                            >
                               Send Invitation
                             </Button>
                           </div>
                         </div>
                       </DialogContent>
                     </Dialog>
-                    
-                    <Button size="sm" variant="outline">
-                      <Settings className="w-4 h-4" />
-                    </Button>
+                      
+                      <Button size="sm" variant="outline" className="min-h-[44px] flex-1 sm:flex-none">
+                        <Settings className="w-4 h-4" />
+                        <span className="ml-2 sm:hidden">Settings</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardHeader>

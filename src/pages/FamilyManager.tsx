@@ -2,11 +2,11 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import MedicationManagement from '@/components/MedicationManagement';
+import { FamilyManagement } from '@/components/FamilyManagement';
 import MobileLayout from '@/components/MobileLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const MedicationManager: React.FC = () => {
+const FamilyManager: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -29,14 +29,14 @@ const MedicationManager: React.FC = () => {
         )}
 
         {/* Main Content */}
-        <MedicationManagement />
+        <FamilyManagement />
       </div>
     </div>
   );
 
   if (isMobile) {
     return (
-      <MobileLayout title="Medications">
+      <MobileLayout title="Family & Caregivers">
         {content}
       </MobileLayout>
     );
@@ -45,4 +45,4 @@ const MedicationManager: React.FC = () => {
   return content;
 };
 
-export default MedicationManager;
+export default FamilyManager;

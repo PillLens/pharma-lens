@@ -13,7 +13,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Reminders from "./pages/Reminders";
 import { SecurityDashboard } from "@/components/SecurityDashboard";
-import { FamilyManagement } from "@/components/FamilyManagement";
+import FamilyManager from "./pages/FamilyManager";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import { useEffect } from "react";
 
@@ -57,7 +57,7 @@ const App = () => {
                 } />
                 <Route path="/family" element={
                   <ProtectedRoute>
-                    <FamilyManagement />
+                    <FamilyManager />
                   </ProtectedRoute>
                 } />
                 <Route path="/reminders" element={

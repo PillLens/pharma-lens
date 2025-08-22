@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/medical-hero.jpg";
+import MobileLayout from "@/components/MobileLayout";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
@@ -18,6 +20,7 @@ const Index = () => {
   const [language, setLanguage] = useState("AZ");
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     try {
@@ -71,70 +74,76 @@ const Index = () => {
     return <ScanHistory />;
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/30 to-secondary-light/20">
-      {/* Header */}
-      <header className="px-4 py-6 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
-              <Shield className="w-6 h-6 text-white" />
+  const content = (
+    <div className={`min-h-screen ${!isMobile ? 'bg-gradient-to-br from-background via-primary-light/30 to-secondary-light/20' : ''}`}>
+      {/* Desktop Header */}
+      {!isMobile && (
+        <header className="px-4 py-6 bg-background/80 backdrop-blur-sm border-b border-border">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">PharmaLens</h1>
+                <p className="text-sm text-muted-foreground">Medication Guide</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">PharmaLens</h1>
-              <p className="text-sm text-muted-foreground">Medication Guide</p>
+            <div className="flex items-center gap-4">
+              <LanguageSelector value={language} onChange={setLanguage} />
+              <Button variant="ghost" onClick={() => navigate("/history")} className="gap-2">
+                <History className="h-4 w-4" />
+                History
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/medications")} className="gap-2">
+                <Pill className="h-4 w-4" />
+                Medications
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/family")} className="gap-2">
+                <Users className="h-4 w-4" />
+                Family
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/reminders")} className="gap-2">
+                <Bell className="h-4 w-4" />
+                Reminders
+              </Button>
+              <Button variant="ghost" onClick={() => navigate("/security")} className="gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Security
+              </Button>
+              <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <LanguageSelector value={language} onChange={setLanguage} />
-            <Button variant="ghost" onClick={() => navigate("/history")} className="gap-2">
-              <History className="h-4 w-4" />
-              History
-            </Button>
-            <Button variant="ghost" onClick={() => navigate("/medications")} className="gap-2">
-              <Pill className="h-4 w-4" />
-              Medications
-            </Button>
-            <Button variant="ghost" onClick={() => navigate("/family")} className="gap-2">
-              <Users className="h-4 w-4" />
-              Family
-            </Button>
-            <Button variant="ghost" onClick={() => navigate("/reminders")} className="gap-2">
-              <Bell className="h-4 w-4" />
-              Reminders
-            </Button>
-            <Button variant="ghost" onClick={() => navigate("/security")} className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Security
-            </Button>
-            <Button variant="ghost" onClick={handleSignOut} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className={`${!isMobile ? 'max-w-4xl mx-auto px-4 py-8' : ''}`}>
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-primary-light text-primary font-medium">
+        <div className={`text-center ${!isMobile ? 'mb-12' : 'mb-8'}`}>
+          <Badge className={`mb-4 bg-primary-light text-primary font-medium ${isMobile ? 'text-xs' : ''}`}>
             Privacy-First • Safety-Focused
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+          <h2 className={`font-bold text-foreground mb-6 leading-tight ${
+            isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'
+          }`}>
             Snap. Scan. Understand.
             <br />
             <span className="text-primary">Your Medication</span>
           </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className={`text-muted-foreground mb-8 max-w-2xl mx-auto ${
+            isMobile ? 'text-base px-2' : 'text-xl'
+          }`}>
             Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets. 
             Safe, accurate, and sourced from official labels only.
           </p>
 
-          {/* Hero Image */}
-          <div className="relative mb-8 mx-auto max-w-2xl">
-            <div className="aspect-video rounded-2xl overflow-hidden shadow-elevated">
+          {/* Hero Image - Show smaller on mobile */}
+          <div className={`relative mb-8 mx-auto ${isMobile ? 'max-w-sm' : 'max-w-2xl'}`}>
+            <div className={`rounded-2xl overflow-hidden shadow-elevated ${isMobile ? 'aspect-square' : 'aspect-video'}`}>
               <img 
                 src={heroImage} 
                 alt="Medical OCR scanning interface"
@@ -144,11 +153,13 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className={`flex gap-4 justify-center items-center ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
             <Button 
               size="lg"
               onClick={() => setShowCamera(true)}
-              className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical text-lg px-8 py-6 h-auto"
+              className={`bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical ${
+                isMobile ? 'w-full min-h-[56px] text-base' : 'text-lg px-8 py-6 h-auto'
+              }`}
             >
               <Camera className="w-6 h-6 mr-3" />
               Scan Medication
@@ -158,7 +169,9 @@ const Index = () => {
               variant="outline" 
               size="lg"
               onClick={() => setShowHistory(true)}
-              className="border-2 border-primary text-primary hover:bg-primary-light text-lg px-8 py-6 h-auto"
+              className={`border-2 border-primary text-primary hover:bg-primary-light ${
+                isMobile ? 'w-full min-h-[56px] text-base' : 'text-lg px-8 py-6 h-auto'
+              }`}
             >
               <History className="w-6 h-6 mr-3" />
               View History
@@ -167,27 +180,33 @@ const Index = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className={`grid gap-6 mb-12 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
           {features.map((feature, index) => (
-            <Card key={index} className="p-6 text-center hover:shadow-card transition-all duration-300 border-2 border-transparent hover:border-primary-light">
-              <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-6 h-6 text-primary" />
+            <Card key={index} className={`text-center hover:shadow-card transition-all duration-300 border-2 border-transparent hover:border-primary-light ${
+              isMobile ? 'p-4' : 'p-6'
+            }`}>
+              <div className={`rounded-full bg-primary-light flex items-center justify-center mx-auto mb-4 ${
+                isMobile ? 'w-10 h-10' : 'w-12 h-12'
+              }`}>
+                <feature.icon className={`text-primary ${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
+              <h3 className={`font-semibold text-foreground mb-2 ${isMobile ? 'text-base' : ''}`}>{feature.title}</h3>
+              <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{feature.description}</p>
             </Card>
           ))}
         </div>
 
         {/* Safety Notice */}
-        <Card className="bg-warning/10 border-warning/30 p-6">
+        <Card className={`bg-warning/10 border-warning/30 ${isMobile ? 'p-4' : 'p-6'}`}>
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
-              <Shield className="w-5 h-5 text-warning" />
+            <div className={`rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0 ${
+              isMobile ? 'w-8 h-8' : 'w-10 h-10'
+            }`}>
+              <Shield className={`text-warning ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Important Safety Information</h3>
-              <p className="text-sm text-muted-foreground">
+              <h3 className={`font-semibold text-foreground mb-2 ${isMobile ? 'text-sm' : ''}`}>Important Safety Information</h3>
+              <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 PharmaLens provides information extracted from official medication labels and leaflets. 
                 This is not medical advice. Always consult your healthcare provider or pharmacist for 
                 personalized medical guidance, especially for high-risk medications.
@@ -198,6 +217,16 @@ const Index = () => {
       </main>
     </div>
   );
+
+  if (isMobile) {
+    return (
+      <MobileLayout title="PharmaLens">
+        {content}
+      </MobileLayout>
+    );
+  }
+
+  return content;
 };
 
 export default Index;
