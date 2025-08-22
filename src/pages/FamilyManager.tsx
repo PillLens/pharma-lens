@@ -233,7 +233,7 @@ const FamilyManager: React.FC = () => {
 
   return (
     <ProfessionalMobileLayout 
-      title={t('family.title')}
+      title="Family Care Timeline"
       showHeader={true}
       className="bg-background"
     >
