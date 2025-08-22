@@ -369,39 +369,6 @@ const DraggableEnhancedFAB: React.FC<DraggableEnhancedFABProps> = ({
         </div>
       )}
 
-      {/* Main FAB Toggle - Draggable */}
-      <MobileButton
-        ref={fabRef}
-        size="xl"
-        className={cn(
-          'fixed w-16 h-16 rounded-full shadow-floating transition-all duration-300 select-none z-50',
-          isDragging && 'scale-110 shadow-2xl cursor-grabbing',
-          isPressed && !isDragging && 'scale-95',
-          !isDragging && 'hover:scale-110 cursor-grab',
-          isMenuOpen 
-            ? 'bg-destructive hover:bg-destructive/90 text-white rotate-45' 
-            : 'bg-primary hover:bg-primary-glow text-white rotate-0'
-        )}
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          touchAction: 'none',
-          userSelect: 'none',
-        }}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        haptic={false} // Disable default haptic since we handle it manually
-      >
-        {isMenuOpen ? (
-          <X className="w-7 h-7" />
-        ) : (
-          <div className="relative">
-            <Plus className="w-7 h-7" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full animate-ping" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full" />
-          </div>
-        )}
-      </MobileButton>
       
       {/* Visual feedback during drag */}
       {isDragging && (
