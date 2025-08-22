@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, History, Pill, Users, Bell } from 'lucide-react';
+import { Home, History, Pill, Users, Bell, User, Settings, Shield } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +31,16 @@ const navigationItems = [
     label: 'Family',
     href: '/family',
   },
+  {
+    icon: User,
+    label: 'Auth',
+    href: '/auth',
+  },
+  {
+    icon: Shield,
+    label: 'Security',
+    href: '/security',
+  },
 ];
 
 const MobileTabNavigation: React.FC = () => {
@@ -50,7 +60,6 @@ const MobileTabNavigation: React.FC = () => {
     await hapticService.feedback('light');
     setActiveIndex(index);
     
-    // Reset press state after animation
     setTimeout(() => setIsPressed(null), 150);
   };
 
@@ -59,7 +68,7 @@ const MobileTabNavigation: React.FC = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom md:hidden">
       {/* Enhanced backdrop with blur */}
       <div className="absolute inset-0 bg-background/95 backdrop-blur-xl border-t border-border/30" />
       
@@ -69,13 +78,13 @@ const MobileTabNavigation: React.FC = () => {
         style={{
           left: `${(activeIndex / navigationItems.length) * 100}%`,
           width: `${100 / navigationItems.length}%`,
-          margin: '0 4px'
+          margin: '0 2px'
         }}
       />
       
       {/* Navigation content */}
-      <div className="relative px-2 py-3">
-        <div className="flex items-center justify-around">
+      <div className="relative px-1 py-2">
+        <div className="flex items-center justify-around overflow-x-auto scrollbar-hide">
           {navigationItems.map((item, index) => {
             const isActive = location.pathname === item.href;
             const isCurrentPressed = isPressed === index;
@@ -86,7 +95,7 @@ const MobileTabNavigation: React.FC = () => {
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 touch-target min-w-0 flex-1 relative group",
+                  "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 touch-target min-w-0 flex-shrink-0 relative group",
                   "active:scale-95 transform-gpu",
                   isCurrentPressed && "scale-95",
                   isActive 
@@ -99,31 +108,32 @@ const MobileTabNavigation: React.FC = () => {
                   handleLongPress(index);
                 }}
                 aria-label={item.label}
+                style={{ minWidth: '48px' }}
               >
                 {/* Icon container */}
                 <div className={cn(
-                  "relative p-3 rounded-xl transition-all duration-300 transform-gpu",
+                  "relative p-2 rounded-lg transition-all duration-300 transform-gpu",
                   isActive 
-                    ? "bg-primary/15 scale-110" 
+                    ? "bg-primary/15" 
                     : "group-hover:bg-muted/60 group-active:bg-muted/80"
                 )}>
-                  <Icon className="w-6 h-6 flex-shrink-0 transition-all duration-300" />
+                  <Icon className="w-5 h-5 flex-shrink-0 transition-all duration-300" />
                   
                   {/* Press feedback */}
                   {isCurrentPressed && (
-                    <div className="absolute inset-0 rounded-xl bg-primary/30" />
+                    <div className="absolute inset-0 rounded-lg bg-primary/30" />
                   )}
                 </div>
                 
                 {/* Active tab background glow */}
                 {isActive && (
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary/5 via-primary/3 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-primary/5 via-primary/3 to-transparent pointer-events-none" />
                 )}
                 
                 {/* Ripple effect container */}
-                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
                   {isCurrentPressed && (
-                    <div className="absolute inset-0 bg-primary/20 rounded-2xl opacity-60" />
+                    <div className="absolute inset-0 bg-primary/20 rounded-xl opacity-60" />
                   )}
                 </div>
               </NavLink>
