@@ -14,15 +14,15 @@ interface LanguageSelectorProps {
 }
 
 const languages = [
-  { code: "AZ", name: "Azərbaycan", flag: "🇦🇿" },
-  { code: "EN", name: "English", flag: "🇬🇧" },
-  { code: "RU", name: "Русский", flag: "🇷🇺" },
-  { code: "TR", name: "Türkçe", flag: "🇹🇷" },
+  { code: "az", name: "Azərbaycan", flag: "🇦🇿" },
+  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "ru", name: "Русский", flag: "🇷🇺" },
+  { code: "tr", name: "Türkçe", flag: "🇹🇷" },
 ];
 
 export const LanguageSelector = ({ value, onChange }: LanguageSelectorProps) => {
   const { language, changeLanguage } = useTranslation();
-  const currentLanguageCode = value || language || 'AZ';
+  const currentLanguageCode = value || language || 'az';
   const currentLanguage = languages.find(lang => lang.code === currentLanguageCode) || languages[0];
 
   const handleLanguageChange = (newLanguage: string) => {
