@@ -155,9 +155,6 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
     }
   ];
 
-  console.log('MedicationFormSheet - Form sections:', formSections.map(s => s.title));
-  console.log('MedicationFormSheet - Testing basics:', t('medications.form.basics'));
-  console.log('MedicationFormSheet - Testing dosageFrequency:', t('medications.form.dosageFrequency'));
 
   const currentSection = formSections[currentStep];
   const isLastStep = currentStep === formSections.length - 1;

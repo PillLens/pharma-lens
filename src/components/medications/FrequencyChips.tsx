@@ -16,9 +16,6 @@ const FrequencyChips: React.FC<FrequencyChipsProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  console.log('FrequencyChips - Current language:', t('medications.onceDaily'));
-  console.log('FrequencyChips - Testing translation:', t('medications.frequency.onceDaily'));
-
   const frequencies = [
     { key: 'once_daily', label: t('medications.frequency.onceDaily') },
     { key: 'twice_daily', label: t('medications.frequency.twiceDaily') },

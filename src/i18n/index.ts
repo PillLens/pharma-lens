@@ -9,10 +9,10 @@ import ruTranslation from './locales/ru.json';
 import trTranslation from './locales/tr.json';
 
 const resources = {
-  AZ: { translation: azTranslation },
-  EN: { translation: enTranslation },
-  RU: { translation: ruTranslation },
-  TR: { translation: trTranslation },
+  az: { translation: azTranslation },
+  en: { translation: enTranslation },
+  ru: { translation: ruTranslation },
+  tr: { translation: trTranslation },
 };
 
 i18n
@@ -20,8 +20,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'EN',
-    lng: 'AZ', // Default to Azerbaijani
+    fallbackLng: 'en',
+    lng: 'az', // Default to Azerbaijani
     debug: process.env.NODE_ENV === 'development',
     
     interpolation: {
