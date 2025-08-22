@@ -238,20 +238,25 @@ const MedicationManager: React.FC = () => {
   const mobileContent = (
     <>
       <PullToRefresh onRefresh={handleRefresh}>
-        {/* Mobile Header */}
-        <div className="px-4 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-1">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">My Medications</h1>
-              <p className="text-base text-muted-foreground">Track and manage your daily medications</p>
+        {/* Redesigned Mobile Header */}
+        <div className="px-6 pt-4 pb-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <Pill className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Medications</h1>
+                <p className="text-sm text-muted-foreground">Manage your daily meds</p>
+              </div>
             </div>
             <MobileButton
               size="sm"
               onClick={() => setIsAddSheetOpen(true)}
-              className="w-12 h-12 rounded-full"
+              className="w-10 h-10 rounded-xl bg-primary hover:bg-primary/90 shadow-lg"
               haptic
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-5 h-5 text-white" />
             </MobileButton>
           </div>
         </div>
