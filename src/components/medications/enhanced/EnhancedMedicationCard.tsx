@@ -152,47 +152,56 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const streak = generateStableValue(medication.id + 'streak', 1, 15);
   const effectiveness = generateStableValue(medication.id + 'effectiveness', 80, 95);
   
-  // Calculate next dose time based on frequency (stable)
-  const getNextDoseStatus = () => {
+  // Calculate if medication is currently due
+  const getCurrentDoseStatus = () => {
     const now = new Date();
     const hour = now.getHours();
     
-    // If recently taken, show next dose time
-    if (recentlyTaken) {
-      switch (medication.frequency) {
-        case 'once_daily':
-          return 'Next: Tomorrow 8:00 AM';
-        case 'twice_daily':
-          if (hour >= 6 && hour < 14) return 'Next: Today 8:00 PM';
-          return 'Next: Tomorrow 8:00 AM';
-        case 'three_times_daily':
-          if (hour >= 6 && hour < 12) return 'Next: Today 2:00 PM';
-          if (hour >= 12 && hour < 18) return 'Next: Today 8:00 PM';
-          return 'Next: Tomorrow 8:00 AM';
-        default:
-          return 'As needed';
-      }
-    }
-    
     switch (medication.frequency) {
       case 'once_daily':
-        return hour >= 6 && hour < 12 ? 'Due at 8:00 AM' : 'Next: Tomorrow 8:00 AM';
+        if (hour >= 6 && hour < 12 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 8:00 AM' };
+        }
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM' };
+      
       case 'twice_daily':
-        if (hour >= 6 && hour < 14) return 'Due at 8:00 AM';
-        if (hour >= 18 && hour <= 23) return 'Due at 8:00 PM';
-        return 'Next: Tomorrow 8:00 AM';
+        if (hour >= 6 && hour < 14 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 8:00 AM' };
+        }
+        if (hour >= 18 && hour <= 23 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 8:00 PM' };
+        }
+        if (hour >= 6 && hour < 14) {
+          return { isDue: false, nextTime: 'Next: Today 8:00 PM' };
+        }
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM' };
+      
       case 'three_times_daily':
-        if (hour >= 6 && hour < 12) return 'Due at 8:00 AM';
-        if (hour >= 12 && hour < 18) return 'Due at 2:00 PM';
-        if (hour >= 18 && hour <= 23) return 'Due at 8:00 PM';
-        return 'Next: Tomorrow 8:00 AM';
+        if (hour >= 6 && hour < 12 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 8:00 AM' };
+        }
+        if (hour >= 12 && hour < 18 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 2:00 PM' };
+        }
+        if (hour >= 18 && hour <= 23 && !recentlyTaken) {
+          return { isDue: true, nextTime: 'Due at 8:00 PM' };
+        }
+        if (hour >= 6 && hour < 12) {
+          return { isDue: false, nextTime: 'Next: Today 2:00 PM' };
+        }
+        if (hour >= 12 && hour < 18) {
+          return { isDue: false, nextTime: 'Next: Today 8:00 PM' };
+        }
+        return { isDue: false, nextTime: 'Next: Tomorrow 8:00 AM' };
+      
       default:
-        return 'As needed';
+        return { isDue: false, nextTime: 'As needed' };
     }
   };
 
-  const nextDoseStatus = getNextDoseStatus();
-  const isDueNow = nextDoseStatus.includes('Due at') && !recentlyTaken;
+  const doseStatus = getCurrentDoseStatus();
+  const isDueNow = doseStatus.isDue;
+  const nextDoseStatus = doseStatus.nextTime;
   
   console.log('Medication:', medication.medication_name, 'isDueNow:', isDueNow, 'recentlyTaken:', recentlyTaken, 'loading:', loading);
 
