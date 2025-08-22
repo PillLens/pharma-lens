@@ -299,15 +299,17 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
       </MobileCardHeader>
 
       <MobileCardContent className="space-y-4">
-        {/* Due Now Action - Always show if active and due */}
-        {isDueNow && medication.is_active && (
+        {/* Take Now Button - Show when medication is due and active */}
+        {medication.is_active && (
           <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-                <Clock className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <Pill className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-primary">Time to take your dose!</div>
+                <div className="text-sm font-semibold text-primary">
+                  {isDueNow ? "Time to take your dose!" : "Mark as taken"}
+                </div>
                 <div className="text-xs text-muted-foreground">
                   {nextDoseStatus}
                 </div>
@@ -315,12 +317,34 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
             </div>
             <MobileButton
               size="lg"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                if (onMarkTaken) {
-                  onMarkTaken();
-                  // Update local state immediately for better UX
-                  setRecentlyTaken(true);
+                
+                // Record dose as taken in database
+                if (user) {
+                  try {
+                    const now = new Date();
+                    await supabase
+                      .from('medication_adherence_log')
+                      .insert({
+                        user_id: user.id,
+                        medication_id: medication.id,
+                        scheduled_time: now.toISOString(),
+                        taken_time: now.toISOString(),
+                        status: 'taken',
+                        notes: 'Marked via Take Now button'
+                      });
+                    
+                    // Update local state immediately to stop pulsing
+                    setRecentlyTaken(true);
+                    
+                    // Call parent callback if provided
+                    if (onMarkTaken) {
+                      onMarkTaken();
+                    }
+                  } catch (error) {
+                    console.error('Error recording dose:', error);
+                  }
                 }
               }}
               className="h-12 px-6 rounded-2xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80 text-success-foreground shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
