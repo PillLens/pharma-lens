@@ -251,16 +251,20 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
       key={componentKey}
       variant={isDueNow ? 'warning' : 'default'} 
       className={`group transition-all duration-300 hover:shadow-lg ${className} ${shouldPulse ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
+      style={animationDisabled ? { animation: 'none !important' } : {}}
       onClick={onClick}
     >
       <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-              shouldPulse
-                ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
-                : 'bg-gradient-to-br from-primary/70 to-primary/50'
-            }`}>
+            <div 
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
+                shouldPulse
+                  ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
+                  : 'bg-gradient-to-br from-primary/70 to-primary/50'
+              }`}
+              style={animationDisabled ? { animation: 'none !important' } : {}}
+            >
               <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
@@ -278,7 +282,11 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
                 {shouldPulse && (
-                  <Badge variant="destructive" className="text-xs animate-pulse px-2 py-1">
+                  <Badge 
+                    variant="destructive" 
+                    className="text-xs animate-pulse px-2 py-1"
+                    style={animationDisabled ? { animation: 'none !important' } : {}}
+                  >
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
                   </Badge>
