@@ -6,10 +6,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface LanguageSelectorProps {
-  value: string;
-  onChange: (language: string) => void;
+  value?: string;
+  onChange?: (language: string) => void;
 }
 
 const languages = [
@@ -20,7 +21,14 @@ const languages = [
 ];
 
 export const LanguageSelector = ({ value, onChange }: LanguageSelectorProps) => {
-  const currentLanguage = languages.find(lang => lang.code === value) || languages[0];
+  const { language, changeLanguage } = useTranslation();
+  const currentLanguageCode = value || language || 'AZ';
+  const currentLanguage = languages.find(lang => lang.code === currentLanguageCode) || languages[0];
+
+  const handleLanguageChange = (newLanguage: string) => {
+    changeLanguage(newLanguage);
+    onChange?.(newLanguage);
+  };
 
   return (
     <DropdownMenu>
@@ -32,17 +40,17 @@ export const LanguageSelector = ({ value, onChange }: LanguageSelectorProps) => 
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {languages.map((language) => (
+        {languages.map((lang) => (
           <DropdownMenuItem
-            key={language.code}
-            onClick={() => onChange(language.code)}
+            key={lang.code}
+            onClick={() => handleLanguageChange(lang.code)}
             className={`gap-3 ${
-              value === language.code ? "bg-primary-light text-primary" : ""
+              currentLanguageCode === lang.code ? "bg-primary-light text-primary" : ""
             }`}
           >
-            <span className="text-lg">{language.flag}</span>
-            <span>{language.name}</span>
-            {value === language.code && (
+            <span className="text-lg">{lang.flag}</span>
+            <span>{lang.name}</span>
+            {currentLanguageCode === lang.code && (
               <div className="w-2 h-2 bg-primary rounded-full ml-auto"></div>
             )}
           </DropdownMenuItem>
