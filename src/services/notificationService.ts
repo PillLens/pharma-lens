@@ -1,4 +1,3 @@
-import { CapacitorConfig } from '@capacitor/cli';
 import { 
   PushNotifications, 
   PushNotificationSchema, 
@@ -13,7 +12,6 @@ import { supabase } from '@/integrations/supabase/client';
 export interface NotificationPermissions {
   alert: boolean;
   badge: boolean;
-  sound: boolean;
 }
 
 export interface NotificationSettings {
@@ -170,10 +168,9 @@ export class NotificationService {
         .from('medication_reminders')
         .select(`
           *,
-          medications (
+          user_medications!inner (
             medication_name,
-            dosage,
-            form
+            dosage
           )
         `)
         .eq('user_id', user.id)
@@ -184,13 +181,13 @@ export class NotificationService {
       return (data || []).map(reminder => ({
         id: reminder.id,
         medicationId: reminder.medication_id,
-        medicationName: reminder.medications?.medication_name || 'Unknown',
-        dosage: reminder.medications?.dosage || '',
+        medicationName: reminder.user_medications?.medication_name || 'Unknown',
+        dosage: reminder.user_medications?.dosage || '',
         time: reminder.reminder_time,
-        frequency: reminder.frequency as 'daily' | 'weekly' | 'monthly',
+        frequency: 'daily' as const,
         daysOfWeek: reminder.days_of_week || [],
         isActive: reminder.is_active,
-        notificationSettings: reminder.notification_settings as NotificationSettings || {
+        notificationSettings: (reminder.notification_settings as unknown as NotificationSettings) || {
           sound: true,
           vibration: true,
           led: true
@@ -229,9 +226,8 @@ export class NotificationService {
           medication_id: medicationId,
           reminder_time: reminderData.time,
           days_of_week: reminderData.daysOfWeek,
-          frequency: 'daily',
           is_active: true,
-          notification_settings: reminderData.notificationSettings
+          notification_settings: reminderData.notificationSettings as any
         })
         .select()
         .single();
@@ -245,10 +241,10 @@ export class NotificationService {
         medicationName: 'Loading...', // Will be populated when reminders are reloaded
         dosage: '',
         time: data.reminder_time,
-        frequency: data.frequency as 'daily',
+        frequency: 'daily' as const,
         daysOfWeek: data.days_of_week,
         isActive: data.is_active,
-        notificationSettings: data.notification_settings as NotificationSettings,
+        notificationSettings: (data.notification_settings as unknown as NotificationSettings),
         userId: data.user_id,
         createdAt: data.created_at,
         updatedAt: data.updated_at
@@ -278,7 +274,7 @@ export class NotificationService {
       const updateData: any = {};
       if (updates.time) updateData.reminder_time = updates.time;
       if (updates.daysOfWeek) updateData.days_of_week = updates.daysOfWeek;
-      if (updates.notificationSettings) updateData.notification_settings = updates.notificationSettings;
+      if (updates.notificationSettings) updateData.notification_settings = updates.notificationSettings as any;
       if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
 
       const { error } = await supabase
@@ -552,6 +548,17 @@ export class NotificationService {
   isServiceInitialized(): boolean {
     return this.isInitialized;
   }
+}
+
+// Safety Alert interface and methods
+export interface SafetyAlert {
+  id: string;
+  type: 'drug_interaction' | 'expiration' | 'dosage_warning' | 'emergency';
+  title: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  medicationIds?: string[];
+  actionRequired?: boolean;
 }
 
 // Singleton instance

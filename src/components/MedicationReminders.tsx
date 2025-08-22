@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Clock, Plus, Bell, BellOff, Edit, Trash2, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -416,7 +417,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
             id="sound"
             checked={notificationSettings.sound}
             onCheckedChange={(checked) => 
-              setNotificationSettings(prev => ({ ...prev, sound: checked }))
+              setNotificationSettings({ ...notificationSettings, sound: checked })
             }
           />
         </div>
@@ -426,7 +427,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
             id="vibration"
             checked={notificationSettings.vibration}
             onCheckedChange={(checked) => 
-              setNotificationSettings(prev => ({ ...prev, vibration: checked }))
+              setNotificationSettings({ ...notificationSettings, vibration: checked })
             }
           />
         </div>
@@ -436,7 +437,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
             id="led"
             checked={notificationSettings.led}
             onCheckedChange={(checked) => 
-              setNotificationSettings(prev => ({ ...prev, led: checked }))
+              setNotificationSettings({ ...notificationSettings, led: checked })
             }
           />
         </div>
