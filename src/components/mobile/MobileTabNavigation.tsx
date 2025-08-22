@@ -107,9 +107,9 @@ const MobileTabNavigation: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border">
-        {/* Navigation content */}
-        <div className="px-2 py-1">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+        {/* Modern Navigation with Labels */}
+        <div className="px-2 py-2">
           <div className="flex items-center justify-around max-w-md mx-auto">
             {/* Main navigation tabs */}
             {mainNavigationItems.map((item, index) => {
@@ -121,15 +121,21 @@ const MobileTabNavigation: React.FC = () => {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center p-2 transition-colors duration-200 min-w-[60px] min-h-[49px]",
+                    "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px] relative",
                     isActive 
-                      ? "text-primary" 
-                      : "text-muted-foreground"
+                      ? "text-white bg-primary shadow-lg" 
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                   onTouchStart={() => handleTabPress(index)}
                   aria-label={item.label}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className={cn("w-5 h-5 mb-1", isActive && "text-white")} />
+                  <span className={cn("text-xs font-medium", isActive && "text-white")}>
+                    {item.label}
+                  </span>
+                  {isActive && (
+                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
+                  )}
                 </NavLink>
               );
             })}
@@ -139,24 +145,25 @@ const MobileTabNavigation: React.FC = () => {
               <DrawerTrigger asChild>
                 <button
                   className={cn(
-                    "flex flex-col items-center justify-center p-2 transition-colors duration-200 min-w-[60px] min-h-[49px]",
+                    "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px]",
                     isMoreNavActive 
-                      ? "text-primary" 
-                      : "text-muted-foreground"
+                      ? "text-white bg-primary shadow-lg" 
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                   onTouchStart={handleMorePress}
                   aria-label="More options"
                 >
-                  <MoreHorizontal className="w-6 h-6" />
+                  <MoreHorizontal className="w-5 h-5 mb-1" />
+                  <span className="text-xs font-medium">More</span>
                 </button>
               </DrawerTrigger>
 
-              <DrawerContent>
-                <DrawerHeader>
-                  <DrawerTitle>More Options</DrawerTitle>
+              <DrawerContent className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/50 dark:border-slate-700/50">
+                <DrawerHeader className="text-center border-b border-slate-200/50 dark:border-slate-700/50">
+                  <DrawerTitle className="text-lg font-semibold">More Options</DrawerTitle>
                 </DrawerHeader>
                 
-                <div className="px-6 pb-6">
+                <div className="px-6 py-6">
                   <div className="grid grid-cols-2 gap-4">
                     {moreNavigationItems.map((item) => {
                       const isActive = location.pathname === item.href;
@@ -167,10 +174,10 @@ const MobileTabNavigation: React.FC = () => {
                         return (
                           <div
                             key={item.href}
-                            className="flex flex-col items-center justify-center p-4 rounded-lg"
+                            className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50"
                           >
-                            <Icon className="w-6 h-6 mb-2 text-muted-foreground" />
-                            <span className="text-sm font-medium text-muted-foreground mb-2">
+                            <Icon className="w-6 h-6 mb-2 text-slate-600 dark:text-slate-400" />
+                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200 mb-3">
                               {item.label}
                             </span>
                             <LanguageSelector />
@@ -183,10 +190,10 @@ const MobileTabNavigation: React.FC = () => {
                           key={item.href}
                           to={item.href}
                           className={cn(
-                            "flex flex-col items-center justify-center p-4 rounded-lg transition-colors duration-200",
+                            "flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-200 border",
                             isActive 
-                              ? "text-primary bg-primary/5" 
-                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                              ? "text-white bg-primary border-primary shadow-lg" 
+                              : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                           )}
                           onTouchStart={handleMoreItemPress}
                           aria-label={item.label}
@@ -206,7 +213,7 @@ const MobileTabNavigation: React.FC = () => {
         </div>
         
         {/* Safe area padding */}
-        <div className="h-safe-area-inset-bottom bg-background" />
+        <div className="h-safe-area-inset-bottom bg-white/95 dark:bg-slate-900/95" />
       </nav>
     </>
   );

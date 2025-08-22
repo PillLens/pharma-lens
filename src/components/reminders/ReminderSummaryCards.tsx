@@ -49,33 +49,29 @@ const ReminderSummaryCards: React.FC<ReminderSummaryCardsProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-3 px-4 mb-6">
-      {summaryCards.map((card) => {
-        const IconComponent = card.icon;
-        return (
-          <Card
-            key={card.id}
-            className="rounded-2xl shadow-sm border-0 bg-card cursor-pointer transition-all duration-200 active:scale-[0.98] hover:shadow-md"
-            onClick={() => onCardTap?.(card.type)}
-          >
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div className={`w-10 h-10 rounded-xl ${card.color} flex items-center justify-center`}>
-                  <IconComponent className={`w-5 h-5 ${card.iconColor}`} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-foreground">
-                    {card.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground leading-tight">
-                    {card.title}
-                  </p>
-                </div>
+    <div className="px-6 mb-6">
+      <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+        {summaryCards.map((card) => {
+          const IconComponent = card.icon;
+          return (
+            <div
+              key={card.id}
+              className="bg-white dark:bg-slate-900 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 active:scale-[0.98] hover:shadow-md shadow-sm border-0"
+              onClick={() => onCardTap?.(card.type)}
+            >
+              <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                <IconComponent className="w-4 h-4 text-white" />
               </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+              <p className="text-lg font-bold text-foreground mb-0.5">
+                {card.value}
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight font-medium">
+                {card.title}
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
