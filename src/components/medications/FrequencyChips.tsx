@@ -17,14 +17,14 @@ const FrequencyChips: React.FC<FrequencyChipsProps> = ({
   const { t } = useTranslation();
 
   const frequencies = [
-    { key: 'once_daily', label: t('medications.onceDaily') },
-    { key: 'twice_daily', label: t('medications.twiceDaily') },
-    { key: 'three_times_daily', label: t('medications.threeTimes') },
-    { key: 'four_times_daily', label: t('medications.fourTimes') },
-    { key: 'every_8h', label: t('medications.every8h') },
-    { key: 'every_12h', label: t('medications.every12h') },
-    { key: 'as_needed', label: t('medications.asNeeded') },
-    { key: 'custom', label: t('medications.custom') }
+    { key: 'once_daily', label: t('medications.frequency.onceDaily') },
+    { key: 'twice_daily', label: t('medications.frequency.twiceDaily') },
+    { key: 'three_times_daily', label: t('medications.frequency.threeTimes') },
+    { key: 'four_times_daily', label: t('medications.frequency.fourTimes') },
+    { key: 'every_8h', label: t('medications.frequency.every8h') },
+    { key: 'every_12h', label: t('medications.frequency.every12h') },
+    { key: 'as_needed', label: t('medications.frequency.asNeeded') },
+    { key: 'custom', label: t('medications.frequency.custom') }
   ];
 
   return (
