@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { format } from 'date-fns';
+import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
 
 interface AdvancedMedicationCardProps {
   medication: UserMedication;
@@ -39,30 +40,12 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
   const adherenceRate = generateStableValue(medication.id, 85, 98);
   const inventoryDays = generateStableValue(medication.id + 'inventory', 5, 30);
   
-  // Calculate next dose time based on frequency (stable)
-  const getNextDoseStatus = () => {
-    const now = new Date();
-    const hour = now.getHours();
-    
-    switch (medication.frequency) {
-      case 'once_daily':
-        return hour < 8 ? 'Due at 8:00 AM' : 'Next: Tomorrow 8:00 AM';
-      case 'twice_daily':
-        if (hour < 8) return 'Due at 8:00 AM';
-        if (hour < 20) return 'Due at 8:00 PM';
-        return 'Next: Tomorrow 8:00 AM';
-      case 'three_times_daily':
-        if (hour < 8) return 'Due at 8:00 AM';
-        if (hour < 14) return 'Due at 2:00 PM';
-        if (hour < 20) return 'Due at 8:00 PM';
-        return 'Next: Tomorrow 8:00 AM';
-      default:
-        return 'As needed';
-    }
-  };
-
-  const nextDoseStatus = getNextDoseStatus();
-  const isDueNow = nextDoseStatus.includes('Due at') && new Date().getHours() >= 8;
+  // Use timezone-aware dose status calculation
+  const timezone = getUserTimezone(); // Could be enhanced to get from user profile
+  const doseStatus = getNextDoseTime(medication.frequency, timezone);
+  const nextDoseStatus = doseStatus.nextTime;
+  const isDueNow = doseStatus.isDue;
+  const isOverdue = doseStatus.isOverdue;
 
   const getFrequencyLabel = (frequency: string) => {
     const frequencyMap: Record<string, string> = {
@@ -137,7 +120,7 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
             <Clock className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">Next Dose</span>
           </div>
-          <span className={`text-sm font-semibold ${isDueNow ? 'text-warning' : 'text-foreground'}`}>
+          <span className={`text-sm font-semibold ${isDueNow ? 'text-warning' : isOverdue ? 'text-red-600' : 'text-foreground'}`}>
             {nextDoseStatus}
           </span>
         </div>
@@ -184,18 +167,22 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
           </div>
         )}
 
-        {/* Quick Action */}
-        {medication.is_active && isDueNow && onMarkTaken && (
+        {/* Quick Action - Show for due or overdue medications */}
+        {medication.is_active && (isDueNow || isOverdue) && onMarkTaken && (
           <Button
             size="sm"
-            className="w-full"
+            className={`w-full ${
+              isOverdue 
+                ? 'bg-red-500 hover:bg-red-600 text-white' 
+                : 'bg-primary hover:bg-primary/90'
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               onMarkTaken();
             }}
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            Mark as Taken
+            {isOverdue ? 'Take Now (Overdue)' : 'Mark as Taken'}
           </Button>
         )}
 
