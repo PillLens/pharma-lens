@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, language = 'EN', region = 'AZ', barcode = null } = await req.json();
+    const { text, language = 'EN', region = 'AZ', barcode = null, sessionId = null } = await req.json();
     
     if (!text && !barcode) {
       return new Response(
@@ -34,7 +34,7 @@ serve(async (req) => {
         // Store in database if user is authenticated
         const authHeader = req.headers.get('Authorization');
         if (authHeader) {
-          await storeExtraction(authHeader, knownMedications);
+          await storeExtraction(authHeader, knownMedications, sessionId);
         }
         
         return new Response(
@@ -59,7 +59,7 @@ serve(async (req) => {
         // Store in database if user is authenticated
         const authHeader = req.headers.get('Authorization');
         if (authHeader) {
-          await storeExtraction(authHeader, textBasedMedication);
+          await storeExtraction(authHeader, textBasedMedication, sessionId);
         }
         
         return new Response(
@@ -267,7 +267,7 @@ IMPORTANT: You must respond with ONLY valid JSON, no markdown formatting, no add
     // Store in database if user is authenticated
     const authHeader = req.headers.get('Authorization');
     if (authHeader) {
-      await storeExtraction(authHeader, extractedData);
+      await storeExtraction(authHeader, extractedData, sessionId);
     }
 
     return new Response(
@@ -582,7 +582,7 @@ function getSpecialInstructions(genericName: string): string {
 }
 
 // Helper function to store extraction in database
-async function storeExtraction(authHeader: string, extractedData: any) {
+async function storeExtraction(authHeader: string, extractedData: any, sessionId?: string) {
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -600,22 +600,44 @@ async function storeExtraction(authHeader: string, extractedData: any) {
     const { data: user } = await supabase.auth.getUser();
     
     if (user.user) {
-      const { error: dbError } = await supabase
+      // Insert extraction
+      const { data: extraction, error: dbError } = await supabase
         .from('extractions')
         .insert({
           user_id: user.user.id,
           extracted_json: extractedData,
           quality_score: extractedData.confidence_score,
           model_version: extractedData.confidence_score > 0.9 ? 'barcode_db' : 'gpt-4.1-2025-04-14'
-        });
+        })
+        .select()
+        .single();
 
       if (dbError) {
         console.error('Database insert error:', dbError);
+        return null;
       } else {
         console.log('Extraction saved to database');
+        
+        // Link extraction to session if sessionId provided
+        if (sessionId && extraction) {
+          const { error: sessionError } = await supabase
+            .from('sessions')
+            .update({ extraction_id: extraction.id })
+            .eq('id', sessionId)
+            .eq('user_id', user.user.id);
+            
+          if (sessionError) {
+            console.error('Failed to link extraction to session:', sessionError);
+          } else {
+            console.log('Extraction linked to session');
+          }
+        }
+        
+        return extraction.id;
       }
     }
   } catch (dbError) {
     console.error('Database operation failed:', dbError);
   }
+  return null;
 }

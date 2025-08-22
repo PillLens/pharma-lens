@@ -140,14 +140,15 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     return warnings.length === 0;
   };
 
-  const extractMedicationInfo = async (text: string, barcode?: string) => {
+  const extractMedicationInfo = async (text: string, barcode?: string, sessionId?: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('extract-medication', {
         body: { 
           text, 
           barcode,
           language,
-          region: 'AZ'
+          region: 'AZ',
+          sessionId
         }
       });
 
@@ -217,10 +218,15 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       setOcrText(ocrResult.text);
       setConfidence(ocrResult.confidence);
 
-      // Step 3: Extract medication info if we have sufficient text
+      // Step 3: Create session first to get session ID
+      setProcessingStep("Creating scan session...");
+      const sessionId = await saveSession(barcodeValue);
+      const currentSessionId = sessionId;
+
+      // Step 4: Extract medication info if we have sufficient text
       if (ocrResult.text.trim().length > 10) {
         setProcessingStep("Analyzing medication information...");
-        medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue);
+        medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue, currentSessionId);
         setExtractedData(medicationData);
 
         // Validate safety thresholds
@@ -242,8 +248,6 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         throw new Error(t('errors.extractionFailed'));
       }
 
-      // Save session to database
-      await saveSession(barcodeValue, medicationData);
       setScanComplete(true);
 
     } catch (error) {

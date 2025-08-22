@@ -72,7 +72,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         let takenInCurrentWindow = false;
 
         if (data && data.length > 0) {
-          data.forEach(dose => {
+          for (const dose of data) {
             const takenTime = new Date(dose.taken_time);
             const takenHour = takenTime.getHours();
             
@@ -85,27 +85,42 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 // Morning window (6-14) or Evening window (18-23)
                 if (hour >= 6 && hour < 14) {
                   // Current time is morning - check if morning dose was taken
-                  takenInCurrentWindow = (takenHour >= 6 && takenHour < 14);
+                  if (takenHour >= 6 && takenHour < 14) {
+                    takenInCurrentWindow = true;
+                    break;
+                  }
                 } else if (hour >= 18 && hour <= 23) {
                   // Current time is evening - check if evening dose was taken
-                  takenInCurrentWindow = (takenHour >= 18 && takenHour <= 23);
+                  if (takenHour >= 18 && takenHour <= 23) {
+                    takenInCurrentWindow = true;
+                    break;
+                  }
                 }
                 break;
               case 'three_times_daily':
                 // Morning (6-12), Afternoon (12-18), Evening (18-23)
                 if (hour >= 6 && hour < 12) {
                   // Morning window
-                  takenInCurrentWindow = (takenHour >= 6 && takenHour < 12);
+                  if (takenHour >= 6 && takenHour < 12) {
+                    takenInCurrentWindow = true;
+                    break;
+                  }
                 } else if (hour >= 12 && hour < 18) {
                   // Afternoon window  
-                  takenInCurrentWindow = (takenHour >= 12 && takenHour < 18);
+                  if (takenHour >= 12 && takenHour < 18) {
+                    takenInCurrentWindow = true;
+                    break;
+                  }
                 } else if (hour >= 18 && hour <= 23) {
                   // Evening window
-                  takenInCurrentWindow = (takenHour >= 18 && takenHour <= 23);
+                  if (takenHour >= 18 && takenHour <= 23) {
+                    takenInCurrentWindow = true;
+                    break;
+                  }
                 }
                 break;
             }
-          });
+          }
         }
 
         console.log('Taken in current window:', takenInCurrentWindow);
