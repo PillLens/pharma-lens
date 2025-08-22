@@ -14,17 +14,19 @@ import { useToast } from '@/hooks/use-toast';
 
 export function SecurityDashboard() {
   const isMobile = useIsMobile();
-
-  // Use mobile version on mobile devices
-  if (isMobile) {
-    return <MobileSecurityDashboard />;
-  }
+  
+  // All hooks must be called at the top level - BEFORE any conditional returns
   const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics | null>(null);
   const [complianceData, setComplianceData] = useState<HIPAAComplianceData | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
   const [rateLimitStatus, setRateLimitStatus] = useState<Record<string, RateLimitResult>>({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  // Use mobile version on mobile devices - AFTER all hooks are declared
+  if (isMobile) {
+    return <MobileSecurityDashboard />;
+  }
 
   useEffect(() => {
     loadSecurityData();
