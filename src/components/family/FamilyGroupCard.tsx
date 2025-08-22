@@ -55,8 +55,8 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
   };
 
   return (
-    <Card className="rounded-2xl shadow-md border-0 bg-card hover:shadow-lg transition-all duration-200 active:scale-[0.98] cursor-pointer">
-      <CardContent className="p-5">
+    <Card className="border border-border/50 hover:border-border hover:shadow-sm transition-all duration-200 cursor-pointer">
+      <CardContent className="p-4">
         <div className="space-y-4">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -83,7 +83,7 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="rounded-full w-8 h-8 hover:bg-muted"
+                  className="rounded-md w-8 h-8 hover:bg-muted"
                 >
                   <MoreVertical className="w-4 h-4" />
                 </Button>
@@ -135,12 +135,12 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
             {/* Status Badges */}
             <div className="flex gap-2">
               {group.members && group.members.some(m => m.invitation_status === 'pending') && (
-                <Badge className="text-xs px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 border-amber-500/20">
+                <Badge className="text-xs px-2 py-1 bg-amber-500/10 text-amber-600 border-amber-500/20">
                   {t('family.status.pending')}
                 </Badge>
               )}
               {group.members && group.members.some(m => m.invitation_status === 'accepted') && (
-                <Badge className="text-xs px-3 py-1 rounded-full bg-green-500/10 text-green-600 border-green-500/20">
+                <Badge className="text-xs px-2 py-1 bg-green-500/10 text-green-600 border-green-500/20">
                   {t('family.status.active')}
                 </Badge>
               )}

@@ -10,6 +10,7 @@ import GroupDetailsSheet from '@/components/family/GroupDetailsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
 import FamilyFloatingActionButton from '@/components/family/FamilyFloatingActionButton';
+import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -179,37 +180,33 @@ const FamilyManager: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-surface">
-      {/* Mobile-First Header */}
-      <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
-        <div className="px-4 py-4">
-          <div className="text-center">
-            <h1 className="text-lg font-semibold text-foreground tracking-tight">
-              {t('family.title')}
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t('family.subtitle')}
-            </p>
-          </div>
+    <ProfessionalMobileLayout 
+      title={t('family.title')}
+      showHeader={true}
+      className="bg-background"
+    >
+      <div className="space-y-6 p-6">
+        {/* Subtitle */}
+        <div className="text-center">
+          <p className="text-muted-foreground">
+            {t('family.subtitle')}
+          </p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-24">
         {loading ? (
           <LoadingSkeleton />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6 max-w-4xl mx-auto">
             {/* Pending Invitations */}
             {pendingInvitations.length > 0 && (
-              <div className="px-4 pt-4">
-                <h2 className="font-medium text-foreground mb-3 flex items-center gap-2">
-                  <Bell className="w-4 h-4" />
+              <div>
+                <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Bell className="w-5 h-5" />
                   {t('family.invitations.pending')} ({pendingInvitations.length})
                 </h2>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {pendingInvitations.map((invitation) => (
-                    <Card key={invitation.familyGroupId} className="rounded-2xl shadow-md border-0">
+                    <Card key={invitation.familyGroupId} className="border border-border/50 hover:border-border transition-colors">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
@@ -225,14 +222,14 @@ const FamilyManager: React.FC = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
-                              className="rounded-lg"
+                              className="h-8"
                             >
                               {t('family.invitations.decline')}
                             </Button>
                             <Button
                               size="sm"
                               onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
-                              className="rounded-lg"
+                              className="h-8"
                             >
                               {t('family.invitations.accept')}
                             </Button>
@@ -246,31 +243,33 @@ const FamilyManager: React.FC = () => {
             )}
 
             {/* Family Groups */}
-            <div className="px-4">
+            <div>
               {familyGroups.length === 0 ? (
                 <FamilyEmptyState onCreateGroup={() => setShowCreateGroup(true)} />
               ) : (
-                <div className="space-y-3">
-                  <h2 className="font-medium text-foreground flex items-center gap-2">
-                    <Users className="w-4 h-4" />
+                <div className="space-y-4">
+                  <h2 className="font-semibold text-foreground flex items-center gap-2">
+                    <Users className="w-5 h-5" />
                     Your Groups ({familyGroups.length})
                   </h2>
-                  {familyGroups.map((group) => (
-                    <FamilyGroupCard
-                      key={group.id}
-                      group={group}
-                      onTap={() => handleGroupCardTap(group)}
-                      onInviteMember={() => handleInviteFromGroup(group)}
-                      onEditGroup={() => handleEditGroup(group)}
-                      onDeleteGroup={() => handleDeleteGroup(group)}
-                    />
-                  ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {familyGroups.map((group) => (
+                      <FamilyGroupCard
+                        key={group.id}
+                        group={group}
+                        onTap={() => handleGroupCardTap(group)}
+                        onInviteMember={() => handleInviteFromGroup(group)}
+                        onEditGroup={() => handleEditGroup(group)}
+                        onDeleteGroup={() => handleDeleteGroup(group)}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Floating Action Button */}
       <FamilyFloatingActionButton
@@ -302,19 +301,19 @@ const FamilyManager: React.FC = () => {
         onInvite={handleInviteMember}
         isLoading={isInvitingMember}
       />
-    </div>
+    </ProfessionalMobileLayout>
   );
 };
 
 // Loading Skeleton Component
 const LoadingSkeleton: React.FC = () => (
-  <div className="p-4 space-y-4">
-    <div className="space-y-3">
+  <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-4">
       <Skeleton className="h-6 w-32" />
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="rounded-2xl">
-            <CardContent className="p-5">
+          <Card key={i} className="border border-border/50">
+            <CardContent className="p-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
