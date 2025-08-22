@@ -37,12 +37,17 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   // Check if medication was taken recently
   useEffect(() => {
     const checkRecentDose = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
       try {
         const now = new Date();
         const startOfDay = new Date(now);
         startOfDay.setHours(0, 0, 0, 0);
+        
+        console.log('Checking recent dose for medication:', medication.medication_name);
         
         // Check for doses taken today for this medication
         const { data, error } = await supabase
@@ -60,6 +65,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
           return;
         }
 
+        console.log('Recent doses found:', data?.length || 0);
+
         // Check if a dose was taken in the current time window
         const hour = now.getHours();
         let takenInCurrentWindow = false;
@@ -75,24 +82,33 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 takenInCurrentWindow = true;
                 break;
               case 'twice_daily':
-                // Morning (6-14) or Evening (18-24)
-                if ((hour >= 6 && hour < 18 && takenHour >= 6 && takenHour < 18) ||
-                    (hour >= 18 && takenHour >= 18)) {
-                  takenInCurrentWindow = true;
+                // Morning window (6-14) or Evening window (18-23)
+                if (hour >= 6 && hour < 14) {
+                  // Current time is morning - check if morning dose was taken
+                  takenInCurrentWindow = (takenHour >= 6 && takenHour < 14);
+                } else if (hour >= 18 && hour <= 23) {
+                  // Current time is evening - check if evening dose was taken
+                  takenInCurrentWindow = (takenHour >= 18 && takenHour <= 23);
                 }
                 break;
               case 'three_times_daily':
-                // Morning (6-12), Afternoon (12-18), Evening (18-24)
-                if ((hour >= 6 && hour < 12 && takenHour >= 6 && takenHour < 12) ||
-                    (hour >= 12 && hour < 18 && takenHour >= 12 && takenHour < 18) ||
-                    (hour >= 18 && takenHour >= 18)) {
-                  takenInCurrentWindow = true;
+                // Morning (6-12), Afternoon (12-18), Evening (18-23)
+                if (hour >= 6 && hour < 12) {
+                  // Morning window
+                  takenInCurrentWindow = (takenHour >= 6 && takenHour < 12);
+                } else if (hour >= 12 && hour < 18) {
+                  // Afternoon window  
+                  takenInCurrentWindow = (takenHour >= 12 && takenHour < 18);
+                } else if (hour >= 18 && hour <= 23) {
+                  // Evening window
+                  takenInCurrentWindow = (takenHour >= 18 && takenHour <= 23);
                 }
                 break;
             }
           });
         }
 
+        console.log('Taken in current window:', takenInCurrentWindow);
         setRecentlyTaken(takenInCurrentWindow);
         setLoading(false);
       } catch (error) {
@@ -132,11 +148,11 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         case 'once_daily':
           return 'Next: Tomorrow 8:00 AM';
         case 'twice_daily':
-          if (hour < 18) return 'Next: Today 8:00 PM';
+          if (hour >= 6 && hour < 14) return 'Next: Today 8:00 PM';
           return 'Next: Tomorrow 8:00 AM';
         case 'three_times_daily':
-          if (hour < 12) return 'Next: Today 2:00 PM';
-          if (hour < 18) return 'Next: Today 8:00 PM';
+          if (hour >= 6 && hour < 12) return 'Next: Today 2:00 PM';
+          if (hour >= 12 && hour < 18) return 'Next: Today 8:00 PM';
           return 'Next: Tomorrow 8:00 AM';
         default:
           return 'As needed';
@@ -145,15 +161,15 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
     
     switch (medication.frequency) {
       case 'once_daily':
-        return hour < 8 ? 'Due at 8:00 AM' : 'Next: Tomorrow 8:00 AM';
+        return hour >= 6 && hour < 12 ? 'Due at 8:00 AM' : 'Next: Tomorrow 8:00 AM';
       case 'twice_daily':
-        if (hour < 8) return 'Due at 8:00 AM';
-        if (hour < 20) return 'Due at 8:00 PM';
+        if (hour >= 6 && hour < 14) return 'Due at 8:00 AM';
+        if (hour >= 18 && hour <= 23) return 'Due at 8:00 PM';
         return 'Next: Tomorrow 8:00 AM';
       case 'three_times_daily':
-        if (hour < 8) return 'Due at 8:00 AM';
-        if (hour < 14) return 'Due at 2:00 PM';
-        if (hour < 20) return 'Due at 8:00 PM';
+        if (hour >= 6 && hour < 12) return 'Due at 8:00 AM';
+        if (hour >= 12 && hour < 18) return 'Due at 2:00 PM';
+        if (hour >= 18 && hour <= 23) return 'Due at 8:00 PM';
         return 'Next: Tomorrow 8:00 AM';
       default:
         return 'As needed';
@@ -162,6 +178,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
   const nextDoseStatus = getNextDoseStatus();
   const isDueNow = nextDoseStatus.includes('Due at') && !recentlyTaken;
+  
+  console.log('Medication:', medication.medication_name, 'isDueNow:', isDueNow, 'recentlyTaken:', recentlyTaken, 'loading:', loading);
 
   const getFrequencyLabel = (frequency: string) => {
     const frequencyMap: Record<string, string> = {
