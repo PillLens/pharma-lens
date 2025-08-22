@@ -41,12 +41,12 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <Index />
                   </ProtectedRoute>
                 } />
-                <Route path="/scanner" element={
+                <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <Index />
+                    <Dashboard />
                   </ProtectedRoute>
                 } />
                 <Route path="/history" element={

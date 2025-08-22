@@ -156,19 +156,26 @@ class EntitlementsService {
   }
 
   private getDefaultEntitlements(): UserEntitlements {
+    // All users get full trial access for 14 days
     return {
-      can_create_family_group: false,
-      can_export_reports: false,
-      reminders_limit: 1,
-      hipaa_report_access: false,
-      max_devices: 1
+      can_create_family_group: true,
+      can_export_reports: true,
+      reminders_limit: -1, // Unlimited during trial
+      hipaa_report_access: true,
+      max_devices: 3,
+      max_family_members: 5
     };
   }
 
   private getDefaultSubscription(): UserSubscription {
+    // All new users get 14-day trial starting immediately
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 14);
+    
     return {
       plan: 'free',
-      status: 'active',
+      status: 'trialing',
+      trial_expires_at: trialEnd.toISOString(),
       is_trial_eligible: true
     };
   }
