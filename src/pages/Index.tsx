@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search, Pill, Users, BarChart3 } from "lucide-react";
+import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search, Pill, Users, BarChart3, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -98,6 +98,10 @@ const Index = () => {
             <Button variant="ghost" onClick={() => navigate("/family")} className="gap-2">
               <Users className="h-4 w-4" />
               Family
+            </Button>
+            <Button variant="ghost" onClick={() => navigate("/reminders")} className="gap-2">
+              <Bell className="h-4 w-4" />
+              Reminders
             </Button>
             <Button variant="ghost" onClick={() => navigate("/security")} className="gap-2">
               <BarChart3 className="h-4 w-4" />

@@ -857,27 +857,7 @@ export type Database = {
       }
     }
     Views: {
-      error_summary: {
-        Row: {
-          count: number | null
-          date: string | null
-          error_type: string | null
-          severity: string | null
-          unique_sessions: number | null
-        }
-        Relationships: []
-      }
-      performance_summary: {
-        Row: {
-          avg_value: number | null
-          hour: string | null
-          max_value: number | null
-          metric_name: string | null
-          min_value: number | null
-          sample_count: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       check_rate_limit: {

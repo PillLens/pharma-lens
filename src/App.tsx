@@ -11,6 +11,7 @@ import { ScanHistory } from "./pages/ScanHistory";
 import MedicationManager from "./pages/MedicationManager";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Reminders from "./pages/Reminders";
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import { FamilyManagement } from "@/components/FamilyManagement";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
@@ -57,6 +58,11 @@ const App = () => {
                 <Route path="/family" element={
                   <ProtectedRoute>
                     <FamilyManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/reminders" element={
+                  <ProtectedRoute>
+                    <Reminders />
                   </ProtectedRoute>
                 } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
