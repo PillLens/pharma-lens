@@ -46,16 +46,16 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'patient':
-        return 'bg-medical-info/20 text-medical-info';
+        return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
       case 'caregiver':
-        return 'bg-medical-success/20 text-medical-success';
+        return 'bg-green-500/10 text-green-600 border-green-500/20';
       default:
-        return 'bg-muted text-muted-foreground';
+        return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
     }
   };
 
   return (
-    <Card className="rounded-2xl shadow-md border-0 bg-card hover:shadow-lg transition-all duration-200 active:scale-[0.98]">
+    <Card className="rounded-2xl shadow-md border-0 bg-card hover:shadow-lg transition-all duration-200 active:scale-[0.98] cursor-pointer">
       <CardContent className="p-5">
         <div className="space-y-4">
           {/* Header */}
@@ -88,7 +88,7 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
                   <MoreVertical className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-48 bg-background border shadow-lg z-50">
                 <DropdownMenuItem onClick={onInviteMember}>
                   <UserPlus className="w-4 h-4 mr-2" />
                   {t('family.member.invite')}
@@ -110,14 +110,14 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
               {group.members && group.members.length > 0 ? (
                 <>
                   {group.members.slice(0, 4).map((member, index) => (
-                    <Avatar key={member.id} className="w-8 h-8 border-2 border-background">
-                      <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                    <Avatar key={member.id} className="w-8 h-8 border-2 border-background shadow-sm">
+                      <AvatarFallback className="text-xs bg-primary/10 text-primary font-medium">
                         {getInitials(member.display_name || member.user_email || 'U')}
                       </AvatarFallback>
                     </Avatar>
                   ))}
                   {group.members.length > 4 && (
-                    <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center shadow-sm">
                       <span className="text-xs text-muted-foreground font-medium">
                         +{group.members.length - 4}
                       </span>
@@ -135,12 +135,12 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
             {/* Status Badges */}
             <div className="flex gap-2">
               {group.members && group.members.some(m => m.invitation_status === 'pending') && (
-                <Badge variant="secondary" className="text-xs bg-medical-warning/20 text-medical-warning">
+                <Badge className="text-xs px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 border-amber-500/20">
                   {t('family.status.pending')}
                 </Badge>
               )}
               {group.members && group.members.some(m => m.invitation_status === 'accepted') && (
-                <Badge variant="secondary" className="text-xs bg-medical-success/20 text-medical-success">
+                <Badge className="text-xs px-3 py-1 rounded-full bg-green-500/10 text-green-600 border-green-500/20">
                   {t('family.status.active')}
                 </Badge>
               )}
