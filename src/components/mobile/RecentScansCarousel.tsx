@@ -5,45 +5,29 @@ import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, Mobil
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { formatDistanceToNow } from 'date-fns';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 const RecentScansCarousel: React.FC = () => {
   const navigate = useNavigate();
+  const { dashboardStats, loading } = useDashboardData();
 
-  // Mock recent scans data
-  const recentScans = [
-    {
-      id: '1',
-      medicationName: 'Paracetamol 500mg',
-      status: 'identified',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      type: 'OTC',
-      confidence: 95
-    },
-    {
-      id: '2',
-      medicationName: 'Unknown Medication',
-      status: 'unknown',
-      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-      type: 'Unknown',
-      confidence: 0
-    },
-    {
-      id: '3',
-      medicationName: 'Aspirin 100mg',
-      status: 'identified',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-      type: 'Rx',
-      confidence: 89
-    },
-    {
-      id: '4',
-      medicationName: 'Ibuprofen 200mg',
-      status: 'identified',
-      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      type: 'OTC',
-      confidence: 92
-    }
-  ];
+  const recentScans = dashboardStats.scans.recent.map(scan => {
+    const medicationName = scan.products?.brand_name || 
+                          scan.extractions?.extracted_json?.brand_name || 
+                          'Unknown Medication';
+    
+    const status = medicationName === 'Unknown Medication' ? 'unknown' : 'identified';
+    const confidence = scan.extractions?.quality_score ? Math.round(scan.extractions.quality_score * 100) : 0;
+
+    return {
+      id: scan.id,
+      medicationName,
+      status,
+      timestamp: new Date(scan.created_at),
+      type: scan.products?.brand_name ? 'Identified' : 'Unknown',
+      confidence
+    };
+  });
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -90,7 +74,13 @@ const RecentScansCarousel: React.FC = () => {
         </button>
       </div>
 
-      {recentScans.length > 0 ? (
+      {loading ? (
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="min-w-[280px] h-32 bg-muted/50 rounded-2xl animate-pulse flex-shrink-0" />
+          ))}
+        </div>
+      ) : recentScans.length > 0 ? (
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {recentScans.map((scan) => (
             <MobileCard

@@ -3,15 +3,34 @@ import { Pill, Bell, Users, Activity, TrendingUp, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from '@/components/ui/mobile/MobileCard';
 import { TranslatedText } from '@/components/TranslatedText';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 const QuickStatsCards: React.FC = () => {
   const navigate = useNavigate();
+  const { dashboardStats, loading } = useDashboardData();
 
-  // Mock data - in real app, fetch from API/context
+  if (loading) {
+    return (
+      <div className="px-4 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            <TranslatedText translationKey="dashboard.quickStats" fallback="Quick Stats" />
+          </h2>
+          <TrendingUp className="w-5 h-5 text-success" />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 bg-muted/50 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const stats = [
     {
       icon: Pill,
-      count: 8,
+      count: dashboardStats.medications.active,
       label: 'medications',
       color: 'text-success',
       bgColor: 'bg-success/10',
@@ -20,7 +39,7 @@ const QuickStatsCards: React.FC = () => {
     },
     {
       icon: Bell,
-      count: 3,
+      count: dashboardStats.reminders.active,
       label: 'reminders',
       color: 'text-warning',
       bgColor: 'bg-warning/10',
@@ -29,7 +48,7 @@ const QuickStatsCards: React.FC = () => {
     },
     {
       icon: Users,
-      count: 4,
+      count: dashboardStats.family.groups,
       label: 'family',
       color: 'text-info',
       bgColor: 'bg-info/10',
@@ -38,7 +57,7 @@ const QuickStatsCards: React.FC = () => {
     },
     {
       icon: Activity,
-      count: 12,
+      count: dashboardStats.scans.recentCount,
       label: 'scans',
       color: 'text-primary',
       bgColor: 'bg-primary/10',

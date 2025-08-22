@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 interface DashboardCardsProps {
   onNavigate: (path: string) => void;
@@ -14,6 +15,7 @@ interface DashboardCardsProps {
 
 export function DashboardCards({ onNavigate }: DashboardCardsProps) {
   const { subscription, isInTrial, trialDaysRemaining, checkFeatureAccess } = useSubscription();
+  const { dashboardStats, loading } = useDashboardData();
 
   return (
     <div className="space-y-4 px-4">
@@ -32,9 +34,9 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative w-12 h-12">
-                <Progress value={85} className="h-2 rounded-full" />
+                <Progress value={dashboardStats.adherence.rate} className="h-2 rounded-full" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-primary">85%</span>
+                  <span className="text-sm font-semibold text-primary">{dashboardStats.adherence.rate}%</span>
                 </div>
               </div>
               <div>
@@ -55,14 +57,16 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
             </p>
             <div className="flex gap-2 flex-wrap">
               <Badge variant="secondary" className="text-xs">
-                <TranslatedText translationKey="dashboard.morning" fallback="Morning" /> • 2
+                <TranslatedText translationKey="dashboard.completed" fallback="Completed" /> • {dashboardStats.adherence.completedToday}
               </Badge>
               <Badge variant="secondary" className="text-xs">
-                <TranslatedText translationKey="dashboard.afternoon" fallback="Afternoon" /> • 1
+                <TranslatedText translationKey="dashboard.pending" fallback="Pending" /> • {dashboardStats.adherence.totalToday - dashboardStats.adherence.completedToday}
               </Badge>
-              <Badge variant="secondary" className="text-xs">
-                <TranslatedText translationKey="dashboard.evening" fallback="Evening" /> • 3
-              </Badge>
+              {dashboardStats.adherence.missedToday > 0 && (
+                <Badge variant="destructive" className="text-xs">
+                  <TranslatedText translationKey="dashboard.missed" fallback="Missed" /> • {dashboardStats.adherence.missedToday}
+                </Badge>
+              )}
             </div>
           </div>
         </CardContent>
@@ -86,21 +90,21 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
         <CardContent className="space-y-3">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-primary">4</p>
+              <p className="text-2xl font-bold text-primary">{dashboardStats.medications.active}</p>
               <p className="text-xs text-muted-foreground">
                 <TranslatedText translationKey="dashboard.active" fallback="Active" />
               </p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-amber-500">1</p>
+              <p className="text-2xl font-bold text-amber-500">{dashboardStats.medications.lowStock}</p>
               <p className="text-xs text-muted-foreground">
                 <TranslatedText translationKey="dashboard.lowStock" fallback="Low Stock" />
               </p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-500">0</p>
+              <p className="text-2xl font-bold text-green-500">{dashboardStats.medications.total}</p>
               <p className="text-xs text-muted-foreground">
-                <TranslatedText translationKey="dashboard.refillsNext7Days" fallback="Refills (7d)" />
+                <TranslatedText translationKey="dashboard.total" fallback="Total" />
               </p>
             </div>
           </div>
@@ -124,13 +128,18 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-              <span className="text-sm">Aspirin 81mg</span>
-              <Badge variant="outline" className="text-xs">8:00 AM</Badge>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-              <span className="text-sm">Vitamin D</span>
-              <Badge variant="outline" className="text-xs">6:00 PM</Badge>
+            {dashboardStats.reminders.nextReminder ? (
+              <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                <span className="text-sm">{dashboardStats.reminders.nextReminder.medication}</span>
+                <Badge variant="outline" className="text-xs">{dashboardStats.reminders.nextReminder.time}</Badge>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">No upcoming reminders</p>
+              </div>
+            )}
+            <div className="text-xs text-muted-foreground text-center">
+              {dashboardStats.reminders.active} active reminders • {dashboardStats.reminders.todaysDoses} doses today
             </div>
           </div>
         </CardContent>
@@ -154,12 +163,23 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">
-                <TranslatedText translationKey="dashboard.noFamilyGroups" fallback="No family groups yet" />
-              </p>
-              <Button variant="outline" size="sm" className="mt-2" onClick={() => onNavigate('/family')}>
-                <TranslatedText translationKey="dashboard.createGroup" fallback="Create Group" />
-              </Button>
+              {dashboardStats.family.groups > 0 ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">{dashboardStats.family.groups} groups • {dashboardStats.family.members} members</p>
+                  <Button variant="outline" size="sm" onClick={() => onNavigate('/family')}>
+                    <TranslatedText translationKey="dashboard.manageFamily" fallback="Manage Family" />
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <TranslatedText translationKey="dashboard.noFamilyGroups" fallback="No family groups yet" />
+                  </p>
+                  <Button variant="outline" size="sm" className="mt-2" onClick={() => onNavigate('/family')}>
+                    <TranslatedText translationKey="dashboard.createGroup" fallback="Create Group" />
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

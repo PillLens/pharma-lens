@@ -3,19 +3,25 @@ import { Clock, Bell, CheckCircle, AlertCircle, Calendar, TrendingUp } from 'luc
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 const TodaysOverview: React.FC = () => {
-  // Mock data - in real app, fetch from API
+  const { dashboardStats, loading } = useDashboardData();
+
+  if (loading) {
+    return (
+      <div className="px-4 mb-6">
+        <div className="h-48 bg-muted/50 rounded-2xl animate-pulse" />
+      </div>
+    );
+  }
+
   const todayData = {
-    nextReminder: {
-      medication: 'Aspirin 100mg',
-      time: '2:30 PM',
-      status: 'upcoming'
-    },
-    completedToday: 2,
-    missedToday: 0,
-    totalToday: 3,
-    streakDays: 7
+    nextReminder: dashboardStats.reminders.nextReminder,
+    completedToday: dashboardStats.adherence.completedToday,
+    missedToday: dashboardStats.adherence.missedToday,
+    totalToday: dashboardStats.adherence.totalToday,
+    streakDays: dashboardStats.adherence.streak
   };
 
   const completionRate = Math.round((todayData.completedToday / todayData.totalToday) * 100);
@@ -90,7 +96,7 @@ const TodaysOverview: React.FC = () => {
             </div>
 
             {/* Next Reminder */}
-            {hasUpcomingReminders && (
+            {hasUpcomingReminders && todayData.nextReminder && (
               <div className="flex items-center gap-3 p-3 bg-warning/5 border border-warning/20 rounded-lg">
                 <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
                   <Bell className="w-5 h-5 text-warning animate-pulse" />
@@ -99,9 +105,9 @@ const TodaysOverview: React.FC = () => {
                   <div className="text-sm font-medium text-foreground">
                     <TranslatedText translationKey="dashboard.nextReminder" fallback="Next reminder" />
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {todayData.nextReminder.medication} at {todayData.nextReminder.time}
-                  </div>
+              <div className="text-xs text-muted-foreground">
+                {todayData.nextReminder?.medication} at {todayData.nextReminder?.time}
+              </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-warning">
                   <Clock className="w-3 h-3" />
