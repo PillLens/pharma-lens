@@ -122,10 +122,22 @@ class ErrorMonitoringService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
+      // Use usage_analytics table for now until types are updated
       const { error: dbError } = await supabase
-        .from('error_reports')
+        .from('usage_analytics')
         .insert({
-          ...error,
+          event_type: 'error_report',
+          event_data: {
+            error_type: error.error_type,
+            error_message: error.error_message,
+            stack_trace: error.stack_trace,
+            url: error.url,
+            severity: error.severity,
+            context: error.context
+          },
+          session_id: error.session_id,
+          user_agent: error.user_agent,
+          timestamp: error.timestamp,
           user_id: user?.id
         });
 
@@ -184,9 +196,26 @@ class ErrorMonitoringService {
     };
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Use usage_analytics table for now until types are updated
       const { error } = await supabase
-        .from('crash_reports')
-        .insert(crash);
+        .from('usage_analytics')
+        .insert({
+          event_type: 'crash_report',
+          event_data: {
+            crash_id: crash.crash_id,
+            app_version: crash.app_version,
+            platform: crash.platform,
+            device_info: crash.device_info,
+            stack_trace: crash.stack_trace,
+            user_actions: crash.user_actions
+          } as any,
+          session_id: crash.crash_id,
+          timestamp: crash.timestamp,
+          user_id: user?.id,
+          platform: crash.platform
+        });
 
       if (error) {
         console.error('Failed to save crash report:', error);

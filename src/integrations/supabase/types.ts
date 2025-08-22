@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      crash_reports: {
+        Row: {
+          app_version: string
+          crash_id: string
+          created_at: string
+          device_info: Json
+          id: string
+          platform: string
+          stack_trace: string
+          timestamp: string
+          user_actions: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          app_version: string
+          crash_id: string
+          created_at?: string
+          device_info: Json
+          id?: string
+          platform: string
+          stack_trace: string
+          timestamp?: string
+          user_actions?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          app_version?: string
+          crash_id?: string
+          created_at?: string
+          device_info?: Json
+          id?: string
+          platform?: string
+          stack_trace?: string
+          timestamp?: string
+          user_actions?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      error_reports: {
+        Row: {
+          context: Json | null
+          created_at: string
+          error_message: string
+          error_type: string
+          id: string
+          resolved: boolean
+          session_id: string
+          severity: string
+          stack_trace: string | null
+          timestamp: string
+          updated_at: string
+          url: string
+          user_agent: string
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          error_message: string
+          error_type: string
+          id?: string
+          resolved?: boolean
+          session_id: string
+          severity: string
+          stack_trace?: string | null
+          timestamp?: string
+          updated_at?: string
+          url: string
+          user_agent: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          error_message?: string
+          error_type?: string
+          id?: string
+          resolved?: boolean
+          session_id?: string
+          severity?: string
+          stack_trace?: string | null
+          timestamp?: string
+          updated_at?: string
+          url?: string
+          user_agent?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       extractions: {
         Row: {
           created_at: string
@@ -363,6 +453,39 @@ export type Database = {
           },
         ]
       }
+      performance_metrics: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          metric_name: string
+          metric_value: number
+          session_id: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          metric_name: string
+          metric_value: number
+          session_id: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          metric_name?: string
+          metric_value?: number
+          session_id?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       pharmacy_partners: {
         Row: {
           contact: string | null
@@ -650,7 +773,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      error_summary: {
+        Row: {
+          count: number | null
+          date: string | null
+          error_type: string | null
+          severity: string | null
+          unique_sessions: number | null
+        }
+        Relationships: []
+      }
+      performance_summary: {
+        Row: {
+          avg_value: number | null
+          hour: string | null
+          max_value: number | null
+          metric_name: string | null
+          min_value: number | null
+          sample_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

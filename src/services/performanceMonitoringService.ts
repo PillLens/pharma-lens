@@ -187,14 +187,22 @@ class PerformanceMonitoringService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      const metricsWithUser = metrics.map(metric => ({
-        ...metric,
+      // Convert to usage_analytics format for now
+      const analyticsEvents = metrics.map(metric => ({
+        event_type: 'performance_metric',
+        event_data: {
+          metric_name: metric.metric_name,
+          metric_value: metric.metric_value,
+          context: metric.context
+        },
+        session_id: metric.session_id,
+        timestamp: metric.timestamp,
         user_id: user?.id
       }));
 
       const { error } = await supabase
-        .from('performance_metrics')
-        .insert(metricsWithUser);
+        .from('usage_analytics')
+        .insert(analyticsEvents);
 
       if (error) {
         errorMonitoringService.logError('Failed to save performance metrics', error);
@@ -211,19 +219,28 @@ class PerformanceMonitoringService {
   async getPerformanceReport(): Promise<any> {
     try {
       const { data, error } = await supabase
-        .from('performance_metrics')
+        .from('usage_analytics')
         .select('*')
-        .eq('session_id', this.sessionId)
+        .eq('event_type', 'performance_metric')
         .order('timestamp', { ascending: false })
         .limit(100);
 
       if (error) throw error;
 
+      // Convert back to performance metric format
+      const metrics = (data || []).map(item => ({
+        metric_name: (item.event_data as any)?.metric_name || 'unknown',
+        metric_value: (item.event_data as any)?.metric_value || 0,
+        timestamp: item.timestamp,
+        session_id: item.session_id,
+        context: (item.event_data as any)?.context
+      }));
+
       return {
-        sessionMetrics: data,
+        sessionMetrics: metrics,
         scanAccuracy: this.calculateScanAccuracy(),
-        averageResponseTimes: this.calculateAverageResponseTimes(data || []),
-        performanceScore: this.calculatePerformanceScore(data || [])
+        averageResponseTimes: this.calculateAverageResponseTimes(metrics),
+        performanceScore: this.calculatePerformanceScore(metrics)
       };
     } catch (error) {
       errorMonitoringService.logError('Failed to generate performance report', error);
@@ -245,22 +262,24 @@ class PerformanceMonitoringService {
     };
   }
 
-  private calculateAverageResponseTimes(metrics: PerformanceMetric[]): any {
-    const responseTimeMetrics = metrics.filter(m => m.metric_name.includes('response_time') || m.metric_name.includes('processing_time'));
+  private calculateAverageResponseTimes(metrics: any[]): any {
+    const responseTimeMetrics = metrics.filter(m => 
+      m.metric_name?.includes('response_time') || m.metric_name?.includes('processing_time')
+    );
     
     return responseTimeMetrics.reduce((acc, metric) => {
-      const category = metric.metric_name.replace('_ms', '').replace('_time', '');
+      const category = metric.metric_name?.replace('_ms', '').replace('_time', '') || 'unknown';
       if (!acc[category]) {
         acc[category] = { total: 0, count: 0 };
       }
-      acc[category].total += metric.metric_value;
+      acc[category].total += metric.metric_value || 0;
       acc[category].count += 1;
       acc[category].average = acc[category].total / acc[category].count;
       return acc;
     }, {} as Record<string, any>);
   }
 
-  private calculatePerformanceScore(metrics: PerformanceMetric[]): number {
+  private calculatePerformanceScore(metrics: any[]): number {
     // Simple performance scoring based on key metrics
     const scanAccuracy = this.calculateScanAccuracy();
     const avgLoadTime = metrics.find(m => m.metric_name === 'app_load_time_ms')?.metric_value || 3000;
