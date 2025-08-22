@@ -81,7 +81,7 @@ export class RealTimeCommunicationService {
         .limit(limit);
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as CommunicationMessage[];
     } catch (error) {
       console.error('Error fetching messages:', error);
       return [];
@@ -144,7 +144,7 @@ export class RealTimeCommunicationService {
         .limit(limit);
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as FamilyActivityEvent[];
     } catch (error) {
       console.error('Error fetching family activity:', error);
       return [];

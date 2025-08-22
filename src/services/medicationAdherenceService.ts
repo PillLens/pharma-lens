@@ -244,7 +244,7 @@ export class MedicationAdherenceService {
         .order('reminder_time');
 
       if (error) throw error;
-      return (data || []) as MedicationReminder[];
+      return (data || []) as unknown as MedicationReminder[];
     } catch (error) {
       console.error('Error fetching medication reminders:', error);
       return [];
@@ -337,7 +337,7 @@ export class MedicationAdherenceService {
             const stats = await this.getAdherenceStats(medication.id);
             adherenceData.push({
               userId: member.user_id,
-              userName: member.user_profile?.display_name || member.user_profile?.email,
+              userName: (member as any).user_profile?.display_name || (member as any).user_profile?.email || 'Unknown User',
               medicationId: medication.id,
               medicationName: medication.medication_name,
               ...stats

@@ -125,7 +125,7 @@ export class AppointmentService {
       const { data, error } = await query.order('appointment_date', { ascending: true });
 
       if (error) throw error;
-      return (data || []) as FamilyAppointment[];
+      return (data || []) as unknown as FamilyAppointment[];
     } catch (error) {
       console.error('Error fetching family appointments:', error);
       return [];
@@ -153,7 +153,7 @@ export class AppointmentService {
       const { data, error } = await query.order('appointment_date', { ascending: true });
 
       if (error) throw error;
-      return (data || []) as FamilyAppointment[];
+      return (data || []) as unknown as FamilyAppointment[];
     } catch (error) {
       console.error('Error fetching my appointments:', error);
       return [];
@@ -266,7 +266,7 @@ export class AppointmentService {
         .order('appointment_date', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as FamilyAppointment[];
     } catch (error) {
       console.error('Error fetching upcoming appointments:', error);
       return [];
@@ -290,7 +290,7 @@ export class AppointmentService {
         .order('appointment_date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as FamilyAppointment[];
     } catch (error) {
       console.error('Error searching appointments:', error);
       return [];
@@ -314,7 +314,7 @@ export class AppointmentService {
         .order('appointment_date', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as FamilyAppointment[];
     } catch (error) {
       console.error('Error fetching appointments by type:', error);
       return [];

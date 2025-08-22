@@ -128,7 +128,7 @@ export class CareTaskService {
       const { data, error } = await query;
 
       if (error) throw error;
-      return (data || []) as CareTask[];
+      return (data || []) as unknown as CareTask[];
     } catch (error) {
       console.error('Error fetching my tasks:', error);
       return [];
@@ -194,7 +194,7 @@ export class CareTaskService {
         .single();
 
       if (task) {
-        await this.notifyTaskReassignment(task);
+        await this.notifyTaskReassignment(task as unknown as CareTask);
       }
 
       toast.success('Task reassigned successfully');
@@ -257,7 +257,7 @@ export class CareTaskService {
         .order('due_date', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as CareTask[];
     } catch (error) {
       console.error('Error fetching overdue tasks:', error);
       return [];
