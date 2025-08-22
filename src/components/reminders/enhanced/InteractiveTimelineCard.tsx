@@ -1,0 +1,166 @@
+import React, { useState, useEffect } from 'react';
+import { Clock, CheckCircle2, Circle, AlertCircle, Bell, ChevronRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+
+interface TimelineEntry {
+  id: string;
+  time: string;
+  medication: string;
+  dosage: string;
+  status: 'upcoming' | 'current' | 'taken' | 'missed';
+  color: string;
+}
+
+interface InteractiveTimelineCardProps {
+  entries: TimelineEntry[];
+  onMarkTaken?: (entryId: string) => void;
+  onSnooze?: (entryId: string) => void;
+}
+
+const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
+  entries,
+  onMarkTaken,
+  onSnooze
+}) => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'taken':
+        return <CheckCircle2 className="w-5 h-5 text-success" />;
+      case 'missed':
+        return <AlertCircle className="w-5 h-5 text-destructive" />;
+      case 'current':
+        return <Bell className="w-5 h-5 text-primary animate-pulse" />;
+      default:
+        return <Circle className="w-5 h-5 text-muted-foreground" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'taken':
+        return 'bg-success/10 border-success/20';
+      case 'missed':
+        return 'bg-destructive/10 border-destructive/20';
+      case 'current':
+        return 'bg-primary/10 border-primary/20 ring-2 ring-primary/30';
+      default:
+        return 'bg-muted/30 border-border';
+    }
+  };
+
+  const completedCount = entries.filter(e => e.status === 'taken').length;
+  const completionRate = (completedCount / entries.length) * 100;
+
+  return (
+    <Card className="rounded-3xl border-0 bg-gradient-to-br from-card to-primary/5 shadow-sm">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-bold text-foreground mb-1">Today's Timeline</h3>
+            <p className="text-sm text-muted-foreground">
+              {completedCount} of {entries.length} doses completed
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-primary">{Math.round(completionRate)}%</div>
+            <div className="text-xs text-muted-foreground">Progress</div>
+          </div>
+        </div>
+
+        <Progress value={completionRate} className="mb-6 h-2" />
+
+        <div className="space-y-4">
+          {entries.map((entry, index) => (
+            <div
+              key={entry.id}
+              className={`relative flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${getStatusColor(entry.status)}`}
+            >
+              {/* Timeline line */}
+              {index < entries.length - 1 && (
+                <div className="absolute left-6 top-12 w-0.5 h-8 bg-border" />
+              )}
+              
+              {/* Status icon */}
+              <div className="flex-shrink-0">
+                {getStatusIcon(entry.status)}
+              </div>
+              
+              {/* Content */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="font-semibold text-foreground">{entry.time}</div>
+                  <Badge 
+                    variant={entry.status === 'taken' ? "default" : entry.status === 'missed' ? "destructive" : "outline"}
+                    className="text-xs capitalize"
+                  >
+                    {entry.status}
+                  </Badge>
+                </div>
+                <div className="text-sm text-foreground mb-1">{entry.medication}</div>
+                <div className="text-xs text-muted-foreground">{entry.dosage}</div>
+              </div>
+              
+              {/* Actions for current/upcoming */}
+              {(entry.status === 'current' || entry.status === 'upcoming') && (
+                <div className="flex gap-2">
+                  {entry.status === 'current' && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs px-3 h-8"
+                        onClick={() => onSnooze?.(entry.id)}
+                      >
+                        Snooze
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="text-xs px-3 h-8"
+                        onClick={() => onMarkTaken?.(entry.id)}
+                      >
+                        Mark Taken
+                      </Button>
+                    </>
+                  )}
+                  {entry.status === 'upcoming' && (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Quick stats at bottom */}
+        <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-border/20">
+          <div className="text-center">
+            <div className="text-lg font-bold text-success">{entries.filter(e => e.status === 'taken').length}</div>
+            <div className="text-xs text-muted-foreground">Taken</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-primary">{entries.filter(e => e.status === 'upcoming').length}</div>
+            <div className="text-xs text-muted-foreground">Upcoming</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-destructive">{entries.filter(e => e.status === 'missed').length}</div>
+            <div className="text-xs text-muted-foreground">Missed</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default InteractiveTimelineCard;

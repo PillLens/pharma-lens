@@ -5,8 +5,9 @@ import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import RemindersEmptyState from '@/components/reminders/RemindersEmptyState';
-import ReminderSummaryCards from '@/components/reminders/ReminderSummaryCards';
-import ReminderCard from '@/components/reminders/ReminderCard';
+import EnhancedSummaryDashboard from '@/components/reminders/enhanced/EnhancedSummaryDashboard';
+import EnhancedReminderCard from '@/components/reminders/enhanced/EnhancedReminderCard';
+import InteractiveTimelineCard from '@/components/reminders/enhanced/InteractiveTimelineCard';
 import ReminderDetailsSheet from '@/components/reminders/ReminderDetailsSheet';
 import AddReminderSheet from '@/components/reminders/AddReminderSheet';
 import RemindersFloatingActionButton from '@/components/reminders/RemindersFloatingActionButton';
@@ -22,6 +23,10 @@ type Reminder = {
   status: 'active' | 'paused';
   nextDose?: string;
   notes?: string;
+  adherenceRate?: number;
+  streak?: number;
+  lastTaken?: string;
+  dosesToday?: { time: string; taken: boolean }[];
 };
 
 // Mock data - replace with actual data fetching
@@ -34,7 +39,14 @@ const mockReminders: Reminder[] = [
     times: ['08:00', '20:00'],
     status: 'active',
     nextDose: 'Today at 8:00 PM',
-    notes: 'Take with food'
+    notes: 'Take with food',
+    adherenceRate: 92,
+    streak: 7,
+    lastTaken: '2024-01-20T08:00:00Z',
+    dosesToday: [
+      { time: '08:00', taken: true },
+      { time: '20:00', taken: false }
+    ]
   },
   {
     id: '2',
@@ -42,7 +54,27 @@ const mockReminders: Reminder[] = [
     dosage: '2 tablets',
     frequency: 'Every 8 hours',
     times: ['08:00', '16:00', '00:00'],
-    status: 'paused'
+    status: 'active',
+    adherenceRate: 78,
+    streak: 3,
+    dosesToday: [
+      { time: '08:00', taken: true },
+      { time: '16:00', taken: false },
+      { time: '00:00', taken: false }
+    ]
+  },
+  {
+    id: '3',
+    medicationName: 'Metformin',
+    dosage: '1 tablet',
+    frequency: 'Once daily',
+    times: ['09:00'],
+    status: 'active',
+    adherenceRate: 96,
+    streak: 14,
+    dosesToday: [
+      { time: '09:00', taken: true }
+    ]
   }
 ];
 
@@ -182,6 +214,50 @@ const Reminders: React.FC = () => {
   const todaysDoses = reminders
     .filter(r => r.status === 'active')
     .reduce((total, r) => total + r.times.length, 0);
+  
+  // Calculate adherence and streak data
+  const overallAdherenceRate = Math.round(
+    reminders.reduce((sum, r) => sum + (r.adherenceRate || 0), 0) / reminders.length
+  );
+  const longestStreak = Math.max(...reminders.map(r => r.streak || 0));
+  const missedDoses = reminders.reduce((total, r) => {
+    const todayDoses = r.dosesToday || [];
+    return total + todayDoses.filter(d => !d.taken).length;
+  }, 0);
+  
+  const weeklyAdherence = [
+    { day: 'Mon', rate: 95 },
+    { day: 'Tue', rate: 88 },
+    { day: 'Wed', rate: 92 },
+    { day: 'Thu', rate: 85 },
+    { day: 'Fri', rate: 96 },
+    { day: 'Sat', rate: 89 },
+    { day: 'Sun', rate: 93 }
+  ];
+
+  // Timeline data for today
+  const timelineEntries = reminders
+    .filter(r => r.status === 'active')
+    .flatMap(r => 
+      r.times.map(time => ({
+        id: `${r.id}-${time}`,
+        time,
+        medication: r.medicationName,
+        dosage: r.dosage,
+        status: getCurrentTimeStatus(time),
+        color: 'primary'
+      }))
+    )
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  function getCurrentTimeStatus(time: string): 'upcoming' | 'current' | 'taken' | 'missed' {
+    const currentTime = new Date().toTimeString().slice(0, 5);
+    const timeDiff = new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTime}:00`).getTime();
+    
+    if (Math.abs(timeDiff) < 30 * 60 * 1000) return 'current'; // Within 30 minutes
+    if (timeDiff < 0) return Math.random() > 0.3 ? 'taken' : 'missed'; // Past time
+    return 'upcoming'; // Future time
+  }
 
   return (
     <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
@@ -201,15 +277,40 @@ const Reminders: React.FC = () => {
         <LoadingSkeleton />
       ) : (
         <div className="space-y-6">
-          {/* Summary Cards */}
+          {/* Enhanced Summary Dashboard */}
           <div className="pt-4">
-            <ReminderSummaryCards
+            <EnhancedSummaryDashboard
               activeReminders={activeReminders}
               medicationsCovered={medicationsCovered}
               todaysDoses={todaysDoses}
+              adherenceRate={overallAdherenceRate}
+              streak={longestStreak}
+              missedDoses={missedDoses}
+              weeklyAdherence={weeklyAdherence}
               onCardTap={handleSummaryCardTap}
             />
           </div>
+
+          {/* Interactive Timeline */}
+          {timelineEntries.length > 0 && (
+            <div className="px-4">
+              <InteractiveTimelineCard
+                entries={timelineEntries}
+                onMarkTaken={(entryId) => {
+                  toast({
+                    title: 'Dose Marked as Taken',
+                    description: 'Great job staying on track!',
+                  });
+                }}
+                onSnooze={(entryId) => {
+                  toast({
+                    title: 'Reminder Snoozed',
+                    description: 'We\'ll remind you again in 15 minutes',
+                  });
+                }}
+              />
+            </div>
+          )}
 
           {/* Reminders List */}
           <div className="px-4">
@@ -222,7 +323,7 @@ const Reminders: React.FC = () => {
                   Your Reminders ({reminders.length})
                 </h2>
                 {reminders.map((reminder) => (
-                  <ReminderCard
+                  <EnhancedReminderCard
                     key={reminder.id}
                     reminder={reminder}
                     onTap={() => handleReminderTap(reminder)}
@@ -232,6 +333,12 @@ const Reminders: React.FC = () => {
                     }}
                     onDelete={() => handleDeleteReminder(reminder.id)}
                     onToggleStatus={() => handleToggleReminderStatus(reminder.id)}
+                    onMarkTaken={(time) => {
+                      toast({
+                        title: 'Dose Marked as Taken',
+                        description: `${reminder.medicationName} at ${time} marked as taken`,
+                      });
+                    }}
                   />
                 ))}
               </div>

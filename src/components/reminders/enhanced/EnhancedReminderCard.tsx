@@ -1,0 +1,269 @@
+import React, { useState, useEffect } from 'react';
+import { Clock, Edit, Trash2, MoreVertical, CheckCircle2, Circle, Bell, Pill, Calendar, Timer, Target, TrendingUp } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useTranslation } from '@/hooks/useTranslation';
+
+interface EnhancedReminderCardProps {
+  reminder: {
+    id: string;
+    medicationName: string;
+    dosage: string;
+    frequency: string;
+    times: string[];
+    status: 'active' | 'paused';
+    nextDose?: string;
+    notes?: string;
+    adherenceRate?: number;
+    streak?: number;
+    lastTaken?: string;
+    dosesToday?: { time: string; taken: boolean }[];
+  };
+  onTap: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleStatus: () => void;
+  onMarkTaken?: (time: string) => void;
+}
+
+const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
+  reminder,
+  onTap,
+  onEdit,
+  onDelete,
+  onToggleStatus,
+  onMarkTaken
+}) => {
+  const { t } = useTranslation();
+  const [timeUntilNext, setTimeUntilNext] = useState<string>('');
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update current time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Calculate time until next dose
+  useEffect(() => {
+    if (reminder.status === 'active' && reminder.times.length > 0) {
+      const now = new Date();
+      const currentTimeStr = now.toTimeString().slice(0, 5);
+      
+      // Find next upcoming time
+      let nextTime = null;
+      for (const time of reminder.times) {
+        if (time > currentTimeStr) {
+          nextTime = time;
+          break;
+        }
+      }
+      
+      // If no time today, use first time tomorrow
+      if (!nextTime) {
+        nextTime = reminder.times[0];
+      }
+      
+      const [hours, minutes] = nextTime.split(':').map(Number);
+      const nextDose = new Date();
+      nextDose.setHours(hours, minutes, 0, 0);
+      
+      // If the time has passed today, set for tomorrow
+      if (nextDose <= now) {
+        nextDose.setDate(nextDose.getDate() + 1);
+      }
+      
+      const diffMs = nextDose.getTime() - now.getTime();
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      
+      if (diffHours > 0) {
+        setTimeUntilNext(`${diffHours}h ${diffMinutes}m`);
+      } else {
+        setTimeUntilNext(`${diffMinutes}m`);
+      }
+    }
+  }, [reminder.times, reminder.status, currentTime]);
+
+  const getStatusVariant = (status: 'active' | 'paused') => {
+    return status === 'active' 
+      ? { variant: 'default' as const, label: t('reminders.status.active') }
+      : { variant: 'secondary' as const, label: t('reminders.status.paused') };
+  };
+
+  const getCardVariant = () => {
+    if (reminder.status === 'paused') return 'opacity-60';
+    
+    const now = new Date().toTimeString().slice(0, 5);
+    const hasOverdue = reminder.times.some(time => time < now);
+    
+    if (hasOverdue) return 'ring-2 ring-warning/50 bg-warning/5';
+    return 'bg-gradient-to-br from-card to-primary/5';
+  };
+
+  const statusInfo = getStatusVariant(reminder.status);
+  const adherenceRate = reminder.adherenceRate || 85;
+  const streak = reminder.streak || 0;
+
+  return (
+    <Card 
+      className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer ${getCardVariant()}`}
+      onClick={onTap}
+    >
+      <CardContent className="p-6">
+        {/* Header with medication info */}
+        <div className="flex items-start justify-between mb-5">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-lg">
+                <Pill className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
+                  {reminder.medicationName}
+                </h3>
+                <div className="flex items-center gap-2">
+                  <Badge variant={statusInfo.variant} className="text-xs px-3 py-1 rounded-full font-medium">
+                    {statusInfo.label}
+                  </Badge>
+                  {streak > 0 && (
+                    <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-success/10 text-success border-success/20">
+                      🔥 {streak} days
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 w-10 p-0 rounded-full opacity-60 hover:opacity-100 hover:bg-primary/10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 rounded-2xl">
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+                <Edit className="w-4 h-4 mr-3" />
+                {t('reminders.actions.edit')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onToggleStatus(); }}>
+                <Clock className="w-4 h-4 mr-3" />
+                {reminder.status === 'active' ? t('reminders.actions.pause') : t('reminders.actions.activate')}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-3" />
+                {t('reminders.actions.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Medication details */}
+        <div className="space-y-4 mb-5">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Dosage & Frequency</span>
+            <div className="text-right">
+              <div className="font-semibold text-foreground">{reminder.dosage}</div>
+              <div className="text-muted-foreground text-xs">{reminder.frequency}</div>
+            </div>
+          </div>
+
+          {/* Adherence Progress */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Adherence Rate
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-foreground">{adherenceRate}%</span>
+                <TrendingUp className="w-3 h-3 text-success" />
+              </div>
+            </div>
+            <Progress value={adherenceRate} className="h-2 bg-muted/50" />
+          </div>
+        </div>
+
+        {/* Today's Schedule */}
+        <div className="space-y-3 mb-5">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>Today's Schedule</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {reminder.times.map((time, index) => {
+              const currentTimeStr = new Date().toTimeString().slice(0, 5);
+              const isPast = time < currentTimeStr;
+              const isCurrent = Math.abs(new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTimeStr}:00`).getTime()) < 30 * 60 * 1000;
+              
+              return (
+                <div
+                  key={index}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all ${
+                    isCurrent 
+                      ? 'bg-primary text-primary-foreground shadow-md animate-pulse' 
+                      : isPast 
+                        ? 'bg-success/10 text-success border border-success/20' 
+                        : 'bg-muted/50 text-foreground border border-border/50'
+                  }`}
+                >
+                  {isPast ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <Circle className="w-4 h-4" />
+                  )}
+                  <span className="font-medium">{time}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Next dose countdown */}
+        {reminder.status === 'active' && timeUntilNext && (
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-primary/10 to-primary-light/10 border border-primary/20">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <Timer className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-foreground">Next dose in</div>
+                <div className="text-xs text-muted-foreground">Stay on track!</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-lg font-bold text-primary">{timeUntilNext}</div>
+              <div className="text-xs text-muted-foreground">remaining</div>
+            </div>
+          </div>
+        )}
+
+        {/* Paused state message */}
+        {reminder.status === 'paused' && (
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 text-muted-foreground">
+            <Bell className="w-5 h-5" />
+            <div className="text-sm">
+              Reminder paused - tap to reactivate
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default EnhancedReminderCard;
