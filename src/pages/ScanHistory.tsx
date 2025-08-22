@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Clock, Search, Filter, Download, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { MobileCard } from "@/components/ui/mobile/MobileCard";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
+import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
 
 interface ScanSession {
   id: string;
@@ -43,6 +45,7 @@ export const ScanHistory = () => {
   const [filterBy, setFilterBy] = useState("all");
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const fetchScanHistory = async () => {
     if (!user) return;
@@ -138,65 +141,111 @@ export const ScanHistory = () => {
   };
 
   if (loading) {
-    return (
+    const loadingContent = (
       <div className="min-h-screen bg-background">
-        <header className="px-4 py-6 bg-background border-b border-border">
-          <div className="max-w-4xl mx-auto">
+        <header className={`px-4 py-6 bg-background border-b border-border ${isMobile ? '' : ''}`}>
+          <div className={!isMobile ? 'max-w-4xl mx-auto' : ''}>
             <div className="animate-pulse space-y-4">
               <div className="h-8 bg-muted rounded w-48"></div>
               <div className="h-4 bg-muted rounded w-32"></div>
             </div>
           </div>
         </header>
-        <main className="max-w-4xl mx-auto px-4 py-8">
+        <main className={`px-4 py-8 ${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-6">
+              <MobileCard key={i} className="p-6">
                 <div className="animate-pulse space-y-3">
                   <div className="h-4 bg-muted rounded w-3/4"></div>
                   <div className="h-3 bg-muted rounded w-1/2"></div>
                 </div>
-              </Card>
+              </MobileCard>
             ))}
           </div>
         </main>
       </div>
     );
+
+    if (isMobile) {
+      return (
+        <ProfessionalMobileLayout title="Scan History">
+          {loadingContent}
+        </ProfessionalMobileLayout>
+      );
+    }
+    
+    return loadingContent;
   }
 
-  return (
+  const content = (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="px-4 py-6 bg-background border-b border-border">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Scan History</h1>
-                <p className="text-muted-foreground">Your recent medication scans</p>
+      {/* Header - Only show on desktop */}
+      {!isMobile && (
+        <header className="px-4 py-6 bg-background border-b border-border">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Scan History</h1>
+                  <p className="text-muted-foreground">Your recent medication scans</p>
+                </div>
               </div>
+              <Badge variant="secondary" className="text-xs">
+                {filteredSessions.length} scans
+              </Badge>
             </div>
+
+            {/* Search and Filter */}
+            <div className="flex gap-3">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by medication name or barcode..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={filterBy} onValueChange={setFilterBy}>
+                <SelectTrigger className="w-48">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="Filter by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Scans</SelectItem>
+                  <SelectItem value="recent">Last 7 Days</SelectItem>
+                  <SelectItem value="with_barcode">With Barcode</SelectItem>
+                  <SelectItem value="high_risk">High Risk</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </header>
+      )}
+
+      {/* Mobile Search and Filter */}
+      {isMobile && (
+        <div className="px-4 py-4 bg-background border-b border-border">
+          <div className="flex items-center justify-between mb-4">
             <Badge variant="secondary" className="text-xs">
               {filteredSessions.length} scans
             </Badge>
           </div>
-
-          {/* Search and Filter */}
-          <div className="flex gap-3">
-            <div className="flex-1 relative">
+          <div className="space-y-3">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search by medication name or barcode..."
+                placeholder="Search medications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
             <Select value={filterBy} onValueChange={setFilterBy}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger>
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Filter by" />
               </SelectTrigger>
@@ -209,12 +258,12 @@ export const ScanHistory = () => {
             </Select>
           </div>
         </div>
-      </header>
+      )}
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className={`px-4 py-8 ${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
         {filteredSessions.length === 0 ? (
-          <Card className="p-12 text-center">
+          <MobileCard className="p-12 text-center">
             <Clock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold text-foreground mb-2">No Scans Found</h3>
             <p className="text-muted-foreground">
@@ -223,7 +272,7 @@ export const ScanHistory = () => {
                 : "Start scanning medications to see your history here."
               }
             </p>
-          </Card>
+          </MobileCard>
         ) : (
           <div className="space-y-4">
             {filteredSessions.map((session) => {
@@ -232,23 +281,23 @@ export const ScanHistory = () => {
               const riskFlags = session.extractions?.risk_flags || [];
 
               return (
-                <Card key={session.id} className="p-6 hover:shadow-card transition-shadow">
+                <MobileCard key={session.id} variant="elevated" className="p-4 hover:shadow-card transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-foreground text-lg">
+                      <h3 className="font-semibold text-foreground text-base">
                         {medication?.brand_name || "Unknown Medication"}
                       </h3>
                       {medication?.generic_name && (
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {medication.generic_name}
                           {medication.strength && ` • ${medication.strength}`}
                           {medication.form && ` • ${medication.form}`}
                         </p>
                       )}
-                      <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>{format(new Date(session.created_at), 'PPp')}</span>
-                        {session.barcode_value && (
+                      <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                        <Clock className="w-3 h-3" />
+                        <span>{format(new Date(session.created_at), 'MMM d, yyyy h:mm a')}</span>
+                        {session.barcode_value && !isMobile && (
                           <>
                             <span>•</span>
                             <span>Barcode: {session.barcode_value}</span>
@@ -257,14 +306,14 @@ export const ScanHistory = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-1">
                       {qualityScore > 0 && (
-                        <Badge {...getQualityBadge(qualityScore)}>
+                        <Badge {...getQualityBadge(qualityScore)} className="text-xs">
                           {Math.round(qualityScore * 100)}%
                         </Badge>
                       )}
                       {riskFlags.length > 0 && (
-                        <Badge variant="destructive">
+                        <Badge variant="destructive" className="text-xs">
                           {riskFlags.length} Risk{riskFlags.length > 1 ? 's' : ''}
                         </Badge>
                       )}
@@ -283,21 +332,21 @@ export const ScanHistory = () => {
                   )}
 
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" className="text-xs">
+                    <Button variant="ghost" size="sm" className="text-xs h-8">
                       <Eye className="w-3 h-3 mr-1" />
-                      View Details
+                      View
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={() => exportSession(session)}
-                      className="text-xs"
+                      className="text-xs h-8"
                     >
                       <Download className="w-3 h-3 mr-1" />
                       Export
                     </Button>
                   </div>
-                </Card>
+                </MobileCard>
               );
             })}
           </div>
@@ -305,4 +354,14 @@ export const ScanHistory = () => {
       </main>
     </div>
   );
+
+  if (isMobile) {
+    return (
+      <ProfessionalMobileLayout title="Scan History" showHeader={false}>
+        {content}
+      </ProfessionalMobileLayout>
+    );
+  }
+
+  return content;
 };

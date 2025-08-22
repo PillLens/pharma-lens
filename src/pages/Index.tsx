@@ -14,10 +14,10 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/medical-hero.jpg";
-import MobileLayout from "@/components/MobileLayout";
-import EnhancedMobileLayout from "@/components/EnhancedMobileLayout";
-import { EnhancedCard } from "@/components/ui/enhanced/EnhancedCard";
-import { EnhancedButton } from "@/components/ui/enhanced/EnhancedButton";
+import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
+import FloatingActionButton from "@/components/mobile/FloatingActionButton";
+import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from "@/components/ui/mobile/MobileCard";
+import { MobileButton } from "@/components/ui/mobile/MobileButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
@@ -92,43 +92,43 @@ const Index = () => {
   }
 
   const content = (
-    <div className={`min-h-screen ${!isMobile ? 'bg-gradient-to-br from-background via-primary-light/30 to-secondary-light/20' : ''}`}>
+    <div className={`${!isMobile ? 'min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-secondary-light/10' : ''}`}>
       {/* Desktop Header */}
       {!isMobile && (
-        <header className="px-4 py-6 bg-background/80 backdrop-blur-sm border-b border-border">
+        <header className="px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">PharmaLens</h1>
                 <p className="text-sm text-muted-foreground">Medication Guide</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <LanguageSelector value={language} onChange={setLanguage} />
-              <Button variant="ghost" onClick={() => navigate("/history")} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className="gap-2">
                 <History className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.history" />
               </Button>
-              <Button variant="ghost" onClick={() => navigate("/medications")} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/medications")} className="gap-2">
                 <Pill className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.medications" />
               </Button>
-              <Button variant="ghost" onClick={() => navigate("/family")} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/family")} className="gap-2">
                 <Users className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.family" />
               </Button>
-              <Button variant="ghost" onClick={() => navigate("/reminders")} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/reminders")} className="gap-2">
                 <Bell className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.reminders" />
               </Button>
-              <Button variant="ghost" onClick={() => navigate("/security")} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/security")} className="gap-2">
                 <BarChart3 className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.security" />
               </Button>
-              <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
                 <LogOut className="h-4 w-4" />
                 <TranslatedText translationKey="auth.signOut" />
               </Button>
@@ -138,13 +138,13 @@ const Index = () => {
       )}
 
       {/* Main Content */}
-      <main className={`${!isMobile ? 'max-w-4xl mx-auto px-4 py-8' : ''}`}>
+      <main className={`${!isMobile ? 'max-w-4xl mx-auto px-4 py-8' : 'px-4 py-6'}`}>
         {/* Hero Section */}
-        <div className={`text-center ${!isMobile ? 'mb-12' : 'mb-8'}`}>
-          <Badge className={`mb-4 bg-primary-light text-primary font-medium ${isMobile ? 'text-xs' : ''}`}>
+        <div className="text-center mb-8">
+          <Badge className="mb-4 bg-primary-light text-primary border-primary/20">
             <TranslatedText translationKey="hero.badge" fallback="Privacy-First • Safety-Focused" />
           </Badge>
-          <h2 className={`font-bold text-foreground mb-6 leading-tight ${
+          <h2 className={`font-bold text-foreground mb-4 leading-tight ${
             isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'
           }`}>
             <TranslatedText translationKey="hero.title1" fallback="Snap. Scan. Understand." />
@@ -153,97 +153,91 @@ const Index = () => {
               <TranslatedText translationKey="hero.title2" fallback="Your Medication" />
             </span>
           </h2>
-          <p className={`text-muted-foreground mb-8 max-w-2xl mx-auto ${
-            isMobile ? 'text-base px-2' : 'text-xl'
+          <p className={`text-muted-foreground mb-8 ${
+            isMobile ? 'text-base' : 'text-xl max-w-2xl mx-auto'
           }`}>
-            <TranslatedText translationKey="hero.description" fallback="Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets. Safe, accurate, and sourced from official labels only." />
+            <TranslatedText translationKey="hero.description" fallback="Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets." />
           </p>
 
-          {/* Hero Image - Show smaller on mobile */}
-          <div className={`relative mb-8 mx-auto ${isMobile ? 'max-w-sm' : 'max-w-2xl'}`}>
-            <div className={`rounded-2xl overflow-hidden shadow-elevated ${isMobile ? 'aspect-square' : 'aspect-video'}`}>
-              <img 
-                src={heroImage} 
-                alt="Medical OCR scanning interface"
-                className="w-full h-full object-cover"
-              />
+          {/* Hero Image */}
+          {!isMobile && (
+            <div className="relative mb-8 mx-auto max-w-2xl">
+              <div className="rounded-lg overflow-hidden shadow-card aspect-video">
+                <img 
+                  src={heroImage} 
+                  alt="Medical OCR scanning interface"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
-          </div>
+          )}
           
-          <div className={`flex gap-4 justify-center items-center ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
-            <EnhancedButton 
-              size="lg"
-              onClick={() => setShowCamera(true)}
-              className={`animate-scale-in ${
-                isMobile ? 'w-full' : ''
-              }`}
-              style={{ animationDelay: '0.2s' }}
-            >
-              <Camera className="w-6 h-6" />
-              <TranslatedText translationKey="scanner.scanMedication" fallback="Scan Medication" />
-            </EnhancedButton>
-            
-            <EnhancedButton 
-              variant="outline"
-              size="lg"
-              onClick={() => setShowHistory(true)}
-              className={`animate-scale-in ${
-                isMobile ? 'w-full' : ''
-              }`}
-              style={{ animationDelay: '0.4s' }}
-            >
-              <History className="w-6 h-6" />
-              <TranslatedText translationKey="navigation.history" fallback="View History" />
-            </EnhancedButton>
-          </div>
+          {/* Action Buttons - Only show scan button on mobile, FAB handles it */}
+          {!isMobile && (
+            <div className="flex gap-4 justify-center items-center flex-col sm:flex-row">
+              <MobileButton 
+                size="lg"
+                onClick={() => setShowCamera(true)}
+                className="w-full sm:w-auto"
+              >
+                <Camera className="w-5 h-5" />
+                <TranslatedText translationKey="scanner.scanMedication" fallback="Scan Medication" />
+              </MobileButton>
+              
+              <MobileButton 
+                variant="outline"
+                size="lg"
+                onClick={() => setShowHistory(true)}
+                className="w-full sm:w-auto"
+              >
+                <History className="w-5 h-5" />
+                <TranslatedText translationKey="navigation.history" fallback="View History" />
+              </MobileButton>
+            </div>
+          )}
         </div>
 
         {/* Features Grid */}
-        <div className={`grid gap-6 mb-12 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
+        <div className={`grid gap-4 mb-8 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
           {features.map((feature, index) => (
-            <EnhancedCard 
-              key={index} 
-              variant="glass"
-              className={`text-center animate-fade-in-up ${
-                isMobile ? 'p-5' : 'p-6'
-              }`}
-              style={{ animationDelay: `${0.6 + index * 0.1}s` }}
-            >
-              <div className={`rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4 shadow-glow ${
-                isMobile ? 'w-12 h-12' : 'w-14 h-14'
-              }`}>
-                <feature.icon className={`text-primary ${isMobile ? 'w-6 h-6' : 'w-7 h-7'}`} />
-              </div>
-              <h3 className={`font-bold text-foreground mb-3 ${isMobile ? 'text-base' : 'text-lg'}`}>{feature.title}</h3>
-              <p className={`text-muted-foreground leading-relaxed ${isMobile ? 'text-sm' : 'text-sm'}`}>{feature.description}</p>
-            </EnhancedCard>
+            <MobileCard key={index} variant="elevated" className="text-center">
+              <MobileCardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <MobileCardTitle className="text-base">{feature.title}</MobileCardTitle>
+              </MobileCardHeader>
+              <MobileCardContent>
+                <MobileCardDescription>{feature.description}</MobileCardDescription>
+              </MobileCardContent>
+            </MobileCard>
           ))}
         </div>
 
         {/* Safety Notice */}
-        <EnhancedCard 
-          variant="gradient" 
-          className={`bg-gradient-to-r from-warning/10 to-destructive/5 border-warning/30 animate-fade-in-up ${isMobile ? 'p-5' : 'p-6'}`}
-          style={{ animationDelay: '1.2s' }}
-        >
-          <div className="flex items-start gap-4">
-            <div className={`rounded-2xl bg-warning/20 flex items-center justify-center flex-shrink-0 shadow-glow ${
-              isMobile ? 'w-10 h-10' : 'w-12 h-12'
-            }`}>
-              <Shield className={`text-warning ${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+        <MobileCard variant="outline" className="border-warning/30 bg-warning/5">
+          <MobileCardHeader>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-warning" />
+              </div>
+              <div>
+                <MobileCardTitle className="text-base mb-2">
+                  <TranslatedText translationKey="safety.importantInfo" fallback="Important Safety Information" />
+                </MobileCardTitle>
+                <MobileCardDescription>
+                  <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance." />
+                </MobileCardDescription>
+              </div>
             </div>
-            <div>
-              <h3 className={`font-bold text-foreground mb-3 ${isMobile ? 'text-base' : 'text-lg'}`}>
-                <TranslatedText translationKey="safety.importantInfo" fallback="Important Safety Information" />
-              </h3>
-              <p className={`text-muted-foreground leading-relaxed ${isMobile ? 'text-sm' : 'text-sm'}`}>
-                <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance, especially for high-risk medications." />
-              </p>
-            </div>
-          </div>
-        </EnhancedCard>
+          </MobileCardHeader>
+        </MobileCard>
       </main>
+
+      {/* Floating Action Button for Mobile */}
+      {isMobile && (
+        <FloatingActionButton onClick={() => setShowCamera(true)} />
+      )}
 
       {/* Scan Result Dialog */}
       {scanResultData && (
@@ -261,9 +255,9 @@ const Index = () => {
 
   if (isMobile) {
     return (
-      <EnhancedMobileLayout title={t('app.title', 'PharmaLens')}>
+      <ProfessionalMobileLayout title={t('app.title', 'PharmaLens')}>
         {content}
-      </EnhancedMobileLayout>
+      </ProfessionalMobileLayout>
     );
   }
 

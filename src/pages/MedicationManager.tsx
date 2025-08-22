@@ -3,8 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import MedicationManagement from '@/components/MedicationManagement';
-import MobileLayout from '@/components/MobileLayout';
-import EnhancedMobileLayout from '@/components/EnhancedMobileLayout';
+import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MedicationManager: React.FC = () => {
@@ -37,9 +36,9 @@ const MedicationManager: React.FC = () => {
 
   if (isMobile) {
     return (
-      <EnhancedMobileLayout title="Medications">
+      <ProfessionalMobileLayout title="Medications">
         {content}
-      </EnhancedMobileLayout>
+      </ProfessionalMobileLayout>
     );
   }
 

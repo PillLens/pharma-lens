@@ -3,8 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { FamilyManagement } from '@/components/FamilyManagement';
-import MobileLayout from '@/components/MobileLayout';
-import EnhancedMobileLayout from '@/components/EnhancedMobileLayout';
+import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const FamilyManager: React.FC = () => {
@@ -37,9 +36,9 @@ const FamilyManager: React.FC = () => {
 
   if (isMobile) {
     return (
-      <EnhancedMobileLayout title="Family & Caregivers">
+      <ProfessionalMobileLayout title="Family & Caregivers">
         {content}
-      </EnhancedMobileLayout>
+      </ProfessionalMobileLayout>
     );
   }
 
