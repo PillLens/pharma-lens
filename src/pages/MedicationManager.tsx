@@ -21,6 +21,7 @@ import MedicationExplanationCard from '@/components/medications/MedicationExplan
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -45,35 +46,63 @@ const MedicationManager: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all' | 'insights'>('today');
   const [filter, setFilter] = useState<'all' | 'active' | 'due' | 'expired'>('all');
+  const [userProfile, setUserProfile] = useState<{ timezone?: string | null }>({});
+
+  // Get user profile for timezone
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('timezone')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) throw error;
+        setUserProfile(data || {});
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
 
   // Enhanced medication management logic
   const activeMedications = medications.filter(m => m.is_active);
   const inactiveMedications = medications.filter(m => !m.is_active);
   
-  // Get medications due today
+  // Get medications that are actually due right now (not overdue or upcoming)
   const getDueMedications = () => {
-    const now = new Date();
-    const hour = now.getHours();
+    const timezone = getUserTimezone(userProfile.timezone);
     
     return activeMedications.filter(med => {
-      switch (med.frequency) {
-        case 'once_daily':
-          return hour >= 8 && hour < 12; // Due morning
-        case 'twice_daily':
-          return (hour >= 8 && hour < 12) || (hour >= 20 && hour < 24);
-        case 'three_times_daily':
-          return (hour >= 8 && hour < 12) || (hour >= 14 && hour < 18) || (hour >= 20 && hour < 24);
-        default:
-          return false;
-      }
+      const doseStatus = getNextDoseTime(med.frequency, timezone);
+      return doseStatus.isDue; // Only medications that are actually due now
+    });
+  };
+
+  // Get overdue medications  
+  const getOverdueMedications = () => {
+    const timezone = getUserTimezone(userProfile.timezone);
+    
+    return activeMedications.filter(med => {
+      const doseStatus = getNextDoseTime(med.frequency, timezone);
+      return doseStatus.isOverdue; // Only medications that are overdue
     });
   };
 
   const dueMedications = getDueMedications();
+  const overdueMedications = getOverdueMedications();
   const expiredMedications = medications.filter(m => {
     if (!m.end_date) return false;
     return new Date(m.end_date) < new Date();
   });
+
+  // All medications that need attention (due + overdue)
+  const medicationsNeedingAttention = [...dueMedications, ...overdueMedications];
 
   // Generate stable stats
   const generateStableStats = () => {
@@ -102,7 +131,7 @@ const MedicationManager: React.FC = () => {
       case 'active':
         return activeMedications;
       case 'due':
-        return dueMedications;
+        return medicationsNeedingAttention; // Include both due and overdue
       case 'expired':
         return expiredMedications;
       default:
@@ -267,7 +296,7 @@ const MedicationManager: React.FC = () => {
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">Medication Hub</h1>
                   <p className="text-sm text-muted-foreground">
-                    {medications.length === 0 ? 'Start your therapy journey' : `${activeMedications.length} active • ${dueMedications.length} due today`}
+                    {medications.length === 0 ? 'Start your therapy journey' : `${activeMedications.length} active • ${medicationsNeedingAttention.length} need attention`}
                   </p>
                 </div>
               </div>
@@ -275,7 +304,7 @@ const MedicationManager: React.FC = () => {
             {/* Quick Action Bar */}
             {!loading && medications.length > 0 && (
               <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
-                {dueMedications.length > 0 && (
+                {medicationsNeedingAttention.length > 0 && (
                   <MobileButton
                     size="sm"
                     onClick={handleQuickActions.markAllTaken}
@@ -347,8 +376,8 @@ const MedicationManager: React.FC = () => {
                           <Target className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-foreground">{dueMedications.length}</div>
-                          <div className="text-xs text-muted-foreground">Due Now</div>
+                          <div className="text-2xl font-bold text-foreground">{medicationsNeedingAttention.length}</div>
+                          <div className="text-xs text-muted-foreground">Need Attention</div>
                         </div>
                       </div>
                     </MobileCardContent>
@@ -397,8 +426,8 @@ const MedicationManager: React.FC = () => {
                   </MobileCard>
                 </div>
 
-                {/* Today's Schedule */}
-                {dueMedications.length > 0 ? (
+                {/* Today's Schedule - Split into Due and Overdue */}
+                {dueMedications.length > 0 && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-semibold text-foreground">Due Right Now</h3>
@@ -420,7 +449,35 @@ const MedicationManager: React.FC = () => {
                       />
                     ))}
                   </div>
-                ) : (
+                )}
+
+                {/* Overdue Medications */}
+                {overdueMedications.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-red-600">Overdue</h3>
+                      <Badge variant="destructive" className="text-xs">
+                        <AlertTriangle className="w-3 h-3 mr-1" />
+                        {overdueMedications.length} medications
+                      </Badge>
+                    </div>
+                    
+                    {overdueMedications.map((medication) => (
+                      <EnhancedMedicationCard
+                        key={medication.id}
+                        medication={medication}
+                        onEdit={() => handleEdit(medication)}
+                        onDelete={() => handleDelete(medication)}
+                        onToggleActive={() => handleToggleActive(medication)}
+                        onMarkTaken={() => handleMarkTaken(medication.id)}
+                        className="shadow-lg border-l-4 border-l-red-500"
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* All caught up message */}
+                {dueMedications.length === 0 && overdueMedications.length === 0 && (
                   <MobileCard className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
                     <MobileCardContent className="p-8 text-center">
                       <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
@@ -431,11 +488,15 @@ const MedicationManager: React.FC = () => {
                 )}
 
                 {/* Upcoming Doses */}
-                {activeMedications.filter(m => !dueMedications.includes(m)).length > 0 && (
+                {activeMedications.filter(m => !medicationsNeedingAttention.includes(m)).length > 0 && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">Upcoming Today</h3>
                     <div className="space-y-3">
-                      {activeMedications.filter(m => !dueMedications.includes(m)).slice(0, 3).map((medication) => (
+                      {activeMedications.filter(m => !medicationsNeedingAttention.includes(m)).slice(0, 3).map((medication) => {
+                        const timezone = getUserTimezone(userProfile.timezone);
+                        const doseStatus = getNextDoseTime(medication.frequency, timezone);
+                        
+                        return (
                         <MobileCard key={medication.id} className="bg-muted/30">
                           <MobileCardContent className="p-4">
                             <div className="flex items-center justify-between">
@@ -449,13 +510,16 @@ const MedicationManager: React.FC = () => {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-sm font-medium text-muted-foreground">Next: 8:00 PM</div>
-                                <Badge variant="outline" className="text-xs">Scheduled</Badge>
+                                <div className="text-sm font-medium">{doseStatus.nextTime.replace('Next: ', '')}</div>
+                                <Badge variant="secondary" className="text-xs">
+                                  Scheduled
+                                </Badge>
                               </div>
                             </div>
                           </MobileCardContent>
                         </MobileCard>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -487,7 +551,7 @@ const MedicationManager: React.FC = () => {
                     onClick={() => setFilter('due')}
                     className="rounded-xl whitespace-nowrap"
                   >
-                    Due ({dueMedications.length})
+                    Due ({medicationsNeedingAttention.length})
                   </MobileButton>
                   {expiredMedications.length > 0 && (
                     <MobileButton
