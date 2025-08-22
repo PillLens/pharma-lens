@@ -188,8 +188,7 @@ const MedicationManager: React.FC = () => {
       {/* Enhanced Header with Quick Stats */}
       <div className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
                 <Pill className="w-7 h-7 text-primary-foreground" />
               </div>
@@ -200,14 +199,6 @@ const MedicationManager: React.FC = () => {
                 </p>
               </div>
             </div>
-            <MobileButton
-              onClick={() => setIsAddSheetOpen(true)}
-              className="rounded-2xl w-12 h-12 p-0 shadow-lg"
-              haptic
-            >
-              <Plus className="w-5 h-5" />
-            </MobileButton>
-          </div>
 
           {/* Quick Action Bar */}
           {!loading && medications.length > 0 && (
@@ -622,6 +613,15 @@ const MedicationManager: React.FC = () => {
   return (
     <ProfessionalMobileLayout>
       {mainContent}
+
+      {/* Floating Action Button */}
+      <MobileButton
+        onClick={() => setIsAddSheetOpen(true)}
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-primary/80 border-0 z-50 hover:scale-110 transition-all duration-300"
+        haptic
+      >
+        <Plus className="w-6 h-6 text-primary-foreground" />
+      </MobileButton>
 
       {/* Sheets */}
       <MedicationFormSheet
