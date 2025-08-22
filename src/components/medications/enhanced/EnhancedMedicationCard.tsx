@@ -36,6 +36,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
   const [manuallyMarkedTaken, setManuallyMarkedTaken] = useState(false);
+  const [animationDisabled, setAnimationDisabled] = useState(false);
+  const [componentKey, setComponentKey] = useState(0);
 
   // Check if medication was taken recently
   useEffect(() => {
@@ -232,17 +234,20 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
   const inventoryStatus = getInventoryStatus(inventoryDays);
 
+  const shouldPulse = isDueNow && !recentlyTaken && !animationDisabled;
+
   return (
     <MobileCard 
+      key={componentKey}
       variant={isDueNow ? 'warning' : 'default'} 
-      className={`group transition-all duration-300 hover:shadow-lg ${className} ${(isDueNow && !recentlyTaken) ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
+      className={`group transition-all duration-300 hover:shadow-lg ${className} ${shouldPulse ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
       onClick={onClick}
     >
       <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-              (isDueNow && !recentlyTaken)
+              shouldPulse
                 ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
                 : 'bg-gradient-to-br from-primary/70 to-primary/50'
             }`}>
@@ -262,7 +267,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
-                {isDueNow && !recentlyTaken && (
+                {shouldPulse && (
                   <Badge variant="destructive" className="text-xs animate-pulse px-2 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
@@ -341,10 +346,12 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                         notes: 'Marked via Take Now button'
                       });
                     
-                     // Update local state immediately to stop pulsing
+                     // Immediately disable animations and update state
+                    setAnimationDisabled(true);
                     setRecentlyTaken(true);
                     setManuallyMarkedTaken(true);
-                    console.log('Take Now clicked - setting recentlyTaken to true');
+                    setComponentKey(prev => prev + 1); // Force re-render to reset CSS animations
+                    console.log('Take Now clicked - disabling animations and updating state');
                     
                     // Show success toast
                     toast({
