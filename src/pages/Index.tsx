@@ -6,8 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { CameraCapture } from "@/components/CameraCapture";
 import { MedicationCard } from "@/components/MedicationCard";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { TranslatedText, useCommonTranslations } from "@/components/TranslatedText";
+import { ScanResultDialog } from "@/components/ScanResultDialog";
 import { ScanHistory } from "./ScanHistory";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/medical-hero.jpg";
@@ -17,8 +20,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showScanResult, setShowScanResult] = useState(false);
+  const [scanResultData, setScanResultData] = useState(null);
   const [language, setLanguage] = useState("AZ");
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
+  const commonT = useCommonTranslations();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -26,38 +33,44 @@ const Index = () => {
     try {
       await signOut();
       toast({
-        title: "Signed out",
-        description: "You have been signed out successfully.",
+        title: t('common.success'),
+        description: t('auth.signOutSuccess'),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
+        title: t('common.error'),
+        description: t('common.tryAgain'),
         variant: "destructive",
       });
     }
+  };
+
+  const handleScanResult = (medicationData: any) => {
+    setScanResultData(medicationData);
+    setShowCamera(false);
+    setShowScanResult(true);
   };
   
   const features = [
     {
       icon: Shield,
-      title: "Safety First",
-      description: "Medical-grade accuracy with official source verification"
+      title: t('features.safetyFirst'),
+      description: t('features.safetyDescription')
     },
     {
       icon: Globe2,
-      title: "Multi-Language",
-      description: "Support for AZ, EN, RU, TR languages"
+      title: t('features.multiLanguage'),
+      description: t('features.languageDescription')
     },
     {
       icon: Clock,
-      title: "Instant Results",
-      description: "On-device OCR for immediate medication information"
+      title: t('features.instantResults'),
+      description: t('features.resultsDescription')
     },
     {
       icon: BookOpen,
-      title: "Evidence-Based",
-      description: "Only official label information, no generated content"
+      title: t('features.evidenceBased'),
+      description: t('features.evidenceDescription')
     }
   ];
 
@@ -65,6 +78,7 @@ const Index = () => {
     return (
       <CameraCapture 
         onClose={() => setShowCamera(false)}
+        onScanResult={handleScanResult}
         language={language}
       />
     );
@@ -93,27 +107,27 @@ const Index = () => {
               <LanguageSelector value={language} onChange={setLanguage} />
               <Button variant="ghost" onClick={() => navigate("/history")} className="gap-2">
                 <History className="h-4 w-4" />
-                History
+                <TranslatedText translationKey="navigation.history" />
               </Button>
               <Button variant="ghost" onClick={() => navigate("/medications")} className="gap-2">
                 <Pill className="h-4 w-4" />
-                Medications
+                <TranslatedText translationKey="navigation.medications" />
               </Button>
               <Button variant="ghost" onClick={() => navigate("/family")} className="gap-2">
                 <Users className="h-4 w-4" />
-                Family
+                <TranslatedText translationKey="navigation.family" />
               </Button>
               <Button variant="ghost" onClick={() => navigate("/reminders")} className="gap-2">
                 <Bell className="h-4 w-4" />
-                Reminders
+                <TranslatedText translationKey="navigation.reminders" />
               </Button>
               <Button variant="ghost" onClick={() => navigate("/security")} className="gap-2">
                 <BarChart3 className="h-4 w-4" />
-                Security
+                <TranslatedText translationKey="navigation.security" />
               </Button>
               <Button variant="ghost" onClick={handleSignOut} className="gap-2">
                 <LogOut className="h-4 w-4" />
-                Sign Out
+                <TranslatedText translationKey="auth.signOut" />
               </Button>
             </div>
           </div>
@@ -125,20 +139,21 @@ const Index = () => {
         {/* Hero Section */}
         <div className={`text-center ${!isMobile ? 'mb-12' : 'mb-8'}`}>
           <Badge className={`mb-4 bg-primary-light text-primary font-medium ${isMobile ? 'text-xs' : ''}`}>
-            Privacy-First • Safety-Focused
+            <TranslatedText translationKey="hero.badge" fallback="Privacy-First • Safety-Focused" />
           </Badge>
           <h2 className={`font-bold text-foreground mb-6 leading-tight ${
             isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'
           }`}>
-            Snap. Scan. Understand.
+            <TranslatedText translationKey="hero.title1" fallback="Snap. Scan. Understand." />
             <br />
-            <span className="text-primary">Your Medication</span>
+            <span className="text-primary">
+              <TranslatedText translationKey="hero.title2" fallback="Your Medication" />
+            </span>
           </h2>
           <p className={`text-muted-foreground mb-8 max-w-2xl mx-auto ${
             isMobile ? 'text-base px-2' : 'text-xl'
           }`}>
-            Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets. 
-            Safe, accurate, and sourced from official labels only.
+            <TranslatedText translationKey="hero.description" fallback="Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets. Safe, accurate, and sourced from official labels only." />
           </p>
 
           {/* Hero Image - Show smaller on mobile */}
@@ -162,7 +177,7 @@ const Index = () => {
               }`}
             >
               <Camera className="w-6 h-6 mr-3" />
-              Scan Medication
+              <TranslatedText translationKey="scanner.scanMedication" fallback="Scan Medication" />
             </Button>
             
             <Button 
@@ -174,7 +189,7 @@ const Index = () => {
               }`}
             >
               <History className="w-6 h-6 mr-3" />
-              View History
+              <TranslatedText translationKey="navigation.history" fallback="View History" />
             </Button>
           </div>
         </div>
@@ -205,22 +220,34 @@ const Index = () => {
               <Shield className={`text-warning ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
             </div>
             <div>
-              <h3 className={`font-semibold text-foreground mb-2 ${isMobile ? 'text-sm' : ''}`}>Important Safety Information</h3>
+              <h3 className={`font-semibold text-foreground mb-2 ${isMobile ? 'text-sm' : ''}`}>
+                <TranslatedText translationKey="safety.importantInfo" fallback="Important Safety Information" />
+              </h3>
               <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
-                PharmaLens provides information extracted from official medication labels and leaflets. 
-                This is not medical advice. Always consult your healthcare provider or pharmacist for 
-                personalized medical guidance, especially for high-risk medications.
+                <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance, especially for high-risk medications." />
               </p>
             </div>
           </div>
         </Card>
       </main>
+
+      {/* Scan Result Dialog */}
+      {scanResultData && (
+        <ScanResultDialog
+          open={showScanResult}
+          onClose={() => {
+            setShowScanResult(false);
+            setScanResultData(null);
+          }}
+          medicationData={scanResultData}
+        />
+      )}
     </div>
   );
 
   if (isMobile) {
     return (
-      <MobileLayout title="PharmaLens">
+      <MobileLayout title={t('app.title', 'PharmaLens')}>
         {content}
       </MobileLayout>
     );

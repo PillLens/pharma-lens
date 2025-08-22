@@ -16,10 +16,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface CameraCaptureProps {
   onClose: () => void;
+  onScanResult?: (medicationData: any) => void;
   language: string;
 }
 
-export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
+export const CameraCapture = ({ onClose, onScanResult, language }: CameraCaptureProps) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ocrText, setOcrText] = useState<string>("");
@@ -270,7 +271,11 @@ export const CameraCapture = ({ onClose, language }: CameraCaptureProps) => {
   };
 
   const handleContinue = () => {
-    setShowFeedback(true);
+    if (onScanResult && extractedData) {
+      onScanResult(extractedData);
+    } else {
+      setShowFeedback(true);
+    }
   };
 
   const handleFeedbackComplete = () => {

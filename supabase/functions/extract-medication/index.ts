@@ -31,8 +31,8 @@ serve(async (req) => {
       );
     }
 
-    // Create extraction prompt based on language and region
-    const extractionPrompt = `Extract medication information from this text. Return ONLY a valid JSON object with the following structure:
+    // Create comprehensive extraction prompt
+    const extractionPrompt = `Extract comprehensive medication information from this text. Return ONLY a valid JSON object with the following structure:
 {
   "brand_name": "string (required)",
   "generic_name": "string or null",
@@ -40,9 +40,22 @@ serve(async (req) => {
   "form": "string or null (tablet, capsule, syrup, etc)",
   "manufacturer": "string or null",
   "indications": ["string array of uses/conditions"],
-  "dosage": "string or null",
-  "warnings": ["string array of warnings/side effects"],
+  "contraindications": ["string array of who should not use"],
+  "warnings": ["string array of warnings"],
+  "side_effects": ["string array of side effects"],
   "active_ingredients": ["string array"],
+  "usage_instructions": {
+    "dosage": "string - how much to take",
+    "frequency": "string - how often (daily, twice daily, etc)",
+    "duration": "string - how long to take (days, weeks, or ongoing)",
+    "timing": "string - when to take (morning, evening, with meals, etc)",
+    "route": "string - how to take (oral, topical, etc)",
+    "special_instructions": "string - any special instructions"
+  },
+  "storage_instructions": "string - how to store the medication",
+  "drug_interactions": ["string array of known interactions"],
+  "pregnancy_safety": "string or null - safety during pregnancy",
+  "age_restrictions": "string or null - age limitations",
   "expiry_date": "YYYY-MM-DD or null",
   "barcode": "string or null",
   "confidence_score": number between 0.0 and 1.0
