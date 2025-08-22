@@ -202,11 +202,10 @@ const MedicationManager: React.FC = () => {
             </div>
             <MobileButton
               onClick={() => setIsAddSheetOpen(true)}
-              className="rounded-2xl px-6 shadow-lg"
+              className="rounded-2xl w-12 h-12 p-0 shadow-lg"
               haptic
             >
-              <Plus className="w-5 h-5 mr-2" />
-              Add Medication
+              <Plus className="w-5 h-5" />
             </MobileButton>
           </div>
 
