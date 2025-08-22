@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          identifier: string
+          is_blocked: boolean
+          request_count: number
+          updated_at: string
+          window_end: string
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          identifier: string
+          is_blocked?: boolean
+          request_count?: number
+          updated_at?: string
+          window_end?: string
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          identifier?: string
+          is_blocked?: boolean
+          request_count?: number
+          updated_at?: string
+          window_end?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       crash_reports: {
         Row: {
           app_version: string
@@ -588,6 +624,54 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_logs: {
+        Row: {
+          action: string
+          additional_context: Json | null
+          failure_reason: string | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          sensitive_data_accessed: boolean
+          session_id: string | null
+          success: boolean
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          additional_context?: Json | null
+          failure_reason?: string | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          sensitive_data_accessed?: boolean
+          session_id?: string | null
+          success?: boolean
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          additional_context?: Json | null
+          failure_reason?: string | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          sensitive_data_accessed?: boolean
+          session_id?: string | null
+          success?: boolean
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       sessions: {
         Row: {
           barcode_value: string | null
@@ -796,7 +880,19 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string
+          p_identifier: string
+          p_limit?: number
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
+      cleanup_expired_rate_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -27,7 +27,7 @@ class PerformanceMonitoringService {
   private scanMetrics: ScanPerformanceData[] = [];
 
   constructor() {
-    this.sessionId = `perf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this.sessionId = crypto.randomUUID(); // Use proper UUID
     this.setupPerformanceObservers();
     this.trackAppStartup();
   }
