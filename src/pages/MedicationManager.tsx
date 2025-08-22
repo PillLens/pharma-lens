@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
-import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
 import SwipeableCard from '@/components/mobile/SwipeableCard';
 import MobileMedicationCard from '@/components/mobile/MobileMedicationCard';
@@ -19,14 +17,13 @@ import { UserMedication } from '@/hooks/useMedicationHistory';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
-  const isMobile = useIsMobile();
   const { 
     medications, 
     loading, 
     addMedication, 
     updateMedication, 
     removeMedication,
-    refetch 
+    refetch
   } = useMedicationHistory();
 
   // Modal states
@@ -41,9 +38,9 @@ const MedicationManager: React.FC = () => {
   const handleRefresh = async () => {
     try {
       await refetch();
-      toast.success('Medications refreshed');
+      toast.success(t('medications.refreshed'));
     } catch (error) {
-      toast.error('Failed to refresh medications');
+      toast.error(t('medications.refreshError'));
     }
   };
 
@@ -136,142 +133,74 @@ const MedicationManager: React.FC = () => {
     </MobileCard>
   );
 
-  // Desktop layout (simplified)
-  if (!isMobile) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-primary/5 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('medications.title')}</h1>
-              <p className="text-muted-foreground">{t('medications.subtitle')}</p>
-            </div>
-            <Button onClick={() => setIsAddSheetOpen(true)} className="rounded-2xl">
-              <Plus className="w-4 h-4 mr-2" />
-              {t('medications.add')}
-            </Button>
-          </div>
-
-          {loading ? (
-            <div className="grid gap-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
-          ) : medications.length === 0 ? (
-            <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
-          ) : (
-            <div className="grid gap-4">
-              {medications.map((medication) => (
-                <SwipeableCard
-                  key={medication.id}
-                  onDelete={() => handleDelete(medication)}
-                >
-                  <div onClick={() => handleCardTap(medication)} className="cursor-pointer">
-                    <MobileMedicationCard
-                      medication={medication}
-                      onEdit={() => handleEdit(medication)}
-                      onDelete={() => handleDelete(medication)}
-                      onToggleActive={() => handleToggleActive(medication)}
-                    />
-                  </div>
-                </SwipeableCard>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Form and Detail Sheets */}
-        <MedicationFormSheet
-          isOpen={isAddSheetOpen}
-          onClose={() => setIsAddSheetOpen(false)}
-          onSave={handleAddMedication}
-          isLoading={isSubmitting}
-        />
-
-        <MedicationFormSheet
-          isOpen={isEditSheetOpen}
-          onClose={() => setIsEditSheetOpen(false)}
-          medication={selectedMedication}
-          onSave={handleUpdateMedication}
-          isLoading={isSubmitting}
-        />
-
-        <MedicationDetailsSheet
-          isOpen={isDetailsSheetOpen}
-          onClose={() => setIsDetailsSheetOpen(false)}
-          medication={selectedMedication}
-          onEdit={handleEditFromDetails}
-        />
-
-        {/* Delete Confirmation */}
-        <AlertDialog open={!!medicationToDelete} onOpenChange={() => setMedicationToDelete(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t('medications.confirmDelete')}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('medications.confirmDeleteText')}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteMedication} className="bg-destructive text-destructive-foreground">
-                {t('common.delete')}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    );
-  }
-
-  // Mobile layout
+  // Mobile-first layout
   return (
-    <ProfessionalMobileLayout title={t('medications.title')}>
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div className="px-4 py-6 space-y-6">
-          {/* Header Section */}
+    <div className="min-h-screen bg-background">
+      {/* Mobile Header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className="text-sm text-muted-foreground mb-2">
+              <h1 className="text-xl font-semibold text-foreground">
+                {t('medications.title')}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
                 {t('medications.subtitle')}
               </p>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
-                  {medications.length} {medications.length === 1 ? 'medication' : 'medications'}
-                </span>
-              </div>
             </div>
             
-            {/* Quick Add Button */}
+            {/* Add Button */}
             <Button
               onClick={() => setIsAddSheetOpen(true)}
               size="sm"
-              className="rounded-2xl shadow-sm"
+              className="rounded-2xl shadow-sm min-w-[44px] h-[44px]"
             >
-              <Plus className="w-4 h-4 mr-1" />
-              {t('common.add')}
+              <Plus className="w-5 h-5" />
             </Button>
           </div>
+        </div>
+      </div>
 
-          {/* Content */}
+      {/* Content */}
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="px-4 pb-safe-area-bottom">
+          {/* Stats Bar */}
+          {!loading && (
+            <div className="py-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {medications.length} {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
+                </span>
+                <span className="text-muted-foreground">
+                  {medications.filter(m => m.is_active).length} {t('medications.active')}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content */}
           {loading ? (
-            <div className="space-y-4">
+            <div className="space-y-3 pt-2">
               {Array.from({ length: 4 }).map((_, i) => (
                 <SkeletonCard key={i} />
               ))}
             </div>
           ) : medications.length === 0 ? (
-            <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+            <div className="pt-8">
+              <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+            </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2 pb-6">
               {medications.map((medication) => (
                 <SwipeableCard
                   key={medication.id}
-                  onDelete={() => handleDelete(medication)}  
-                  className="hover:shadow-md transition-shadow duration-200"
+                  onDelete={() => handleDelete(medication)}
+                  className="rounded-2xl shadow-sm border border-border/50"
                 >
-                  <div onClick={() => handleCardTap(medication)}>
+                  <div 
+                    onClick={() => handleCardTap(medication)}
+                    className="min-h-[44px] active:scale-[0.98] transition-transform duration-100"
+                  >
                     <MobileMedicationCard
                       medication={medication}
                       onEdit={() => handleEdit(medication)}
@@ -311,25 +240,25 @@ const MedicationManager: React.FC = () => {
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!medicationToDelete} onOpenChange={() => setMedicationToDelete(null)}>
-        <AlertDialogContent className="mx-4 rounded-2xl">
+        <AlertDialogContent className="mx-4 rounded-2xl max-w-sm">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('medications.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
               {t('medications.confirmDeleteText')}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="rounded-xl">{t('common.cancel')}</AlertDialogCancel>
+          <AlertDialogFooter className="gap-2 sm:gap-2">
+            <AlertDialogCancel className="rounded-xl flex-1">{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteMedication} 
-              className="bg-destructive text-destructive-foreground rounded-xl"
+              className="bg-destructive text-destructive-foreground rounded-xl flex-1"
             >
               {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </ProfessionalMobileLayout>
+    </div>
   );
 };
 

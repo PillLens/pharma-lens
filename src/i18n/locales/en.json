@@ -84,6 +84,11 @@
     "subtitle": "Track what you take and when",
     "add": "Add Medication",
     "addFirst": "Add Your First Medication",
+    "medication": "medication",
+    "medications": "medications",
+    "active": "active",
+    "refreshed": "Medications refreshed",
+    "refreshError": "Failed to refresh medications",
     "empty": {
       "title": "No medications yet",
       "description": "Start by adding your first medication to keep track of your treatment.",
