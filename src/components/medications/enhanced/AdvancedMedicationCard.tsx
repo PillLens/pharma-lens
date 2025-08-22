@@ -137,7 +137,7 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
             <Clock className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">Next Dose</span>
           </div>
-          <span className={`text-sm font-semibold ${isDueNow ? 'text-warning animate-pulse' : 'text-foreground'}`}>
+          <span className={`text-sm font-semibold ${isDueNow ? 'text-warning' : 'text-foreground'}`}>
             {nextDoseStatus}
           </span>
         </div>

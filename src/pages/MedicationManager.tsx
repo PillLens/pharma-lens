@@ -416,7 +416,7 @@ const MedicationManager: React.FC = () => {
                         onDelete={() => handleDelete(medication)}
                         onToggleActive={() => handleToggleActive(medication)}
                         onMarkTaken={() => handleMarkTaken(medication.id)}
-                        className="shadow-lg border-l-4 border-l-primary animate-pulse"
+                        className="shadow-lg border-l-4 border-l-primary"
                       />
                     ))}
                   </div>
