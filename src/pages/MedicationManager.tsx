@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import EnhancedMedicationCard from '@/components/medications/enhanced/EnhancedMedicationCard';
+import DraggableFAB from '@/components/mobile/DraggableFAB';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 
 const MedicationManager: React.FC = () => {
@@ -614,14 +615,13 @@ const MedicationManager: React.FC = () => {
     <ProfessionalMobileLayout>
       {mainContent}
 
-      {/* Floating Action Button */}
-      <MobileButton
+      {/* Draggable Floating Action Button */}
+      <DraggableFAB 
         onClick={() => setIsAddSheetOpen(true)}
-        className="fixed bottom-24 right-6 w-14 h-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-primary/80 border-0 z-50 hover:scale-110 transition-all duration-300"
-        haptic
+        routeKey="medications"
       >
         <Plus className="w-6 h-6 text-primary-foreground" />
-      </MobileButton>
+      </DraggableFAB>
 
       {/* Sheets */}
       <MedicationFormSheet
