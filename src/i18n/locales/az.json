@@ -28,13 +28,20 @@
   "navigation": {
     "home": "Əsas",
     "medications": "Dərmanlar",
-    "scanner": "Skaner",
+    "scanner": "Skaner", 
     "history": "Tarixçə",
     "profile": "Profil",
     "settings": "Tənzimləmələr",
     "family": "Ailə",
     "reminders": "Xatırlatmalar",
-    "security": "Təhlükəsizlik"
+    "security": "Təhlükəsizlik",
+    "auth": "Giriş",
+    "more": "Daha çox",
+    "moreOptions": "Daha çox seçim",
+    "language": "Dil",
+    "signOut": "Çıxış",
+    "endSession": "Seansı bitir",
+    "medicationGuide": "Dərman Bələdçisi"
   },
   "auth": {
     "signIn": "Daxil ol",
@@ -59,6 +66,20 @@
     "resultsDescription": "Ani dərman məlumatları üçün cihazda OCR",
     "evidenceBased": "Dəlil Əsaslı",
     "evidenceDescription": "Yalnız rəsmi etiket məlumatları, yaradılmış məzmun yox"
+  },
+  "dashboard": {
+    "quickStats": "Sürətli Statistika",
+    "medications": "Dərmanlar",
+    "reminders": "Xatırlatmalar",
+    "todaysOverview": "Bugünkü İcmal"
+  },
+  "descriptions": {
+    "scanMedications": "Dərmanları skan et",
+    "viewHistory": "Skan tarixçəsini gör",
+    "manageMedications": "Dərmanları idarə et",
+    "familyCaregivers": "Ailə və qayğıkeşlər",
+    "medicationReminders": "Dərman xatırlatmaları",
+    "securityDashboard": "Təhlükəsizlik paneli"
   },
   "scanner": {
     "scanMedication": "Dərmanı Skan Et",
@@ -146,7 +167,12 @@
     "morningDose": "Səhər dozası",
     "afternoonDose": "Günorta dozası",
     "eveningDose": "Axşam dozası",
-    "nightDose": "Gecə dozası"
+    "nightDose": "Gecə dozası",
+    "summary": {
+      "active": "Aktiv Xatırlatmalar",
+      "medications": "Əhatə edilən Dərmanlar",
+      "today": "Bugünkü Dozalar"
+    }
   },
   "family": {
     "title": "Ailə və Baxıcılar",

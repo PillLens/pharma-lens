@@ -36,7 +36,14 @@
     "settings": "Settings",
     "family": "Family",
     "reminders": "Reminders",
-    "security": "Security"
+    "security": "Security",
+    "auth": "Auth",
+    "more": "More",
+    "moreOptions": "More Options",
+    "language": "Language",
+    "signOut": "Sign Out",
+    "endSession": "End your session",
+    "medicationGuide": "Medication Guide"
   },
   "auth": {
     "signIn": "Sign In",
@@ -57,10 +64,24 @@
     "safetyDescription": "Medical-grade accuracy with official source verification",
     "multiLanguage": "Multi-Language",
     "languageDescription": "Support for AZ, EN, RU, TR languages",
-    "instantResults": "Instant Results",
+    "instantResults": "Instant Results",  
     "resultsDescription": "On-device OCR for immediate medication information",
     "evidenceBased": "Evidence-Based",
     "evidenceDescription": "Only official label information, no generated content"
+  },
+  "dashboard": {
+    "quickStats": "Quick Stats",
+    "medications": "Medications",
+    "reminders": "Reminders",
+    "todaysOverview": "Today's Overview"
+  },
+  "descriptions": {
+    "scanMedications": "Scan medications",
+    "viewHistory": "View scan history",
+    "manageMedications": "Manage medications", 
+    "familyCaregivers": "Family & caregivers",
+    "medicationReminders": "Medication reminders",
+    "securityDashboard": "Security dashboard"
   },
   "scanner": {
     "scanMedication": "Scan Medication",
@@ -304,7 +325,7 @@
     "summary": {
       "active": "Active Reminders",
       "medications": "Medications Covered", 
-      "todayDoses": "Today's Doses"
+      "today": "Today's Doses"
     },
     "status": {
       "active": "Active",

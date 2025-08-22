@@ -12,31 +12,34 @@ import {
 } from '@/components/ui/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { TranslatedText } from '@/components/TranslatedText';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const EnhancedMobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success('Signed out successfully');
+      toast.success(t('auth.signOutSuccess'));
       navigate('/auth');
       setIsOpen(false);
     } catch (error) {
-      toast.error('Failed to sign out');
+      toast.error(t('common.error'));
     }
   };
 
   const navigationItems = [
-    { icon: Home, label: 'Scanner', href: '/', description: 'Scan medications' },
-    { icon: History, label: 'History', href: '/history', description: 'View scan history' },
-    { icon: Pill, label: 'Medications', href: '/medications', description: 'Manage medications' },
-    { icon: Users, label: 'Family', href: '/family', description: 'Family & caregivers' },
-    { icon: Bell, label: 'Reminders', href: '/reminders', description: 'Medication reminders' },
-    { icon: Shield, label: 'Security', href: '/security', description: 'Security dashboard' },
+    { icon: Home, labelKey: 'navigation.scanner', href: '/', descriptionKey: 'descriptions.scanMedications' },
+    { icon: History, labelKey: 'navigation.history', href: '/history', descriptionKey: 'descriptions.viewHistory' },
+    { icon: Pill, labelKey: 'navigation.medications', href: '/medications', descriptionKey: 'descriptions.manageMedications' },
+    { icon: Users, labelKey: 'navigation.family', href: '/family', descriptionKey: 'descriptions.familyCaregivers' },
+    { icon: Bell, labelKey: 'navigation.reminders', href: '/reminders', descriptionKey: 'descriptions.medicationReminders' },
+    { icon: Shield, labelKey: 'navigation.security', href: '/security', descriptionKey: 'descriptions.securityDashboard' },
   ];
 
   return (
@@ -60,9 +63,11 @@ const EnhancedMobileNavigation = () => {
               </div>
               <div>
                 <DrawerTitle className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  PharmaLens
+                  <TranslatedText translationKey="app.title" />
                 </DrawerTitle>
-                <p className="text-xs text-muted-foreground">Medication Guide</p>
+                <p className="text-xs text-muted-foreground">
+                  <TranslatedText translationKey="navigation.medicationGuide" />
+                </p>
               </div>
             </div>
             <DrawerClose asChild>
@@ -103,11 +108,13 @@ const EnhancedMobileNavigation = () => {
                         }`} />
                       </div>
                       <div>
-                        <span className="font-semibold text-base">{item.label}</span>
+                        <span className="font-semibold text-base">
+                          <TranslatedText translationKey={item.labelKey} />
+                        </span>
                         <p className={`text-xs ${
                           isActive ? 'text-white/80' : 'text-muted-foreground'
                         }`}>
-                          {item.description}
+                          <TranslatedText translationKey={item.descriptionKey} />
                         </p>
                       </div>
                     </div>
@@ -130,8 +137,12 @@ const EnhancedMobileNavigation = () => {
                 <LogOut className="h-5 w-5" />
               </div>
               <div className="text-left">
-                <span className="font-semibold text-base">Sign Out</span>
-                <p className="text-xs text-muted-foreground">End your session</p>
+                <span className="font-semibold text-base">
+                  <TranslatedText translationKey="navigation.signOut" />
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  <TranslatedText translationKey="navigation.endSession" />
+                </p>
               </div>
             </Button>
           </div>

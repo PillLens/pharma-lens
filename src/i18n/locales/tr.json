@@ -34,7 +34,14 @@
     "settings": "Ayarlar",
     "family": "Aile",
     "reminders": "Hatırlatıcılar",
-    "security": "Güvenlik"
+    "security": "Güvenlik",
+    "auth": "Kimlik Doğrulama",
+    "more": "Daha Fazla",
+    "moreOptions": "Daha Fazla Seçenek",
+    "language": "Dil",
+    "signOut": "Çıkış",
+    "endSession": "Oturumu sonlandır",
+    "medicationGuide": "İlaç Rehberi"
   },
   "auth": {
     "signIn": "Giriş Yap",
@@ -59,6 +66,20 @@
     "resultsDescription": "Anında ilaç bilgisi için cihaz üzerinde OCR",
     "evidenceBased": "Kanıt Tabanlı",
     "evidenceDescription": "Sadece resmi etiket bilgileri, üretilmiş içerik yok"
+  },
+  "dashboard": {
+    "quickStats": "Hızlı İstatistikler",
+    "medications": "İlaçlar",
+    "reminders": "Hatırlatıcılar",
+    "todaysOverview": "Bugünün Özeti"
+  },
+  "descriptions": {
+    "scanMedications": "İlaçları tara",
+    "viewHistory": "Tarama geçmişini görüntüle",
+    "manageMedications": "İlaçları yönet",
+    "familyCaregivers": "Aile ve bakıcılar",
+    "medicationReminders": "İlaç hatırlatıcıları",
+    "securityDashboard": "Güvenlik panosu"
   },
   "scanner": {
     "scanMedication": "İlacı Tara",
@@ -146,7 +167,12 @@
     "morningDose": "Sabah dozu",
     "afternoonDose": "Öğleden sonra dozu",
     "eveningDose": "Akşam dozu",
-    "nightDose": "Gece dozu"
+    "nightDose": "Gece dozu",
+    "summary": {
+      "active": "Aktif Hatırlatıcılar",
+      "medications": "Kapsanan İlaçlar",
+      "today": "Bugünkü Dozlar"
+    }
   },
   "family": {
     "title": "Aile ve Bakıcılar",

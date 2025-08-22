@@ -12,31 +12,34 @@ import {
 } from '@/components/ui/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { TranslatedText } from '@/components/TranslatedText';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success('Signed out successfully');
+      toast.success(t('auth.signOutSuccess'));
       navigate('/auth');
       setIsOpen(false);
     } catch (error) {
-      toast.error('Failed to sign out');
+      toast.error(t('common.error'));
     }
   };
 
   const navigationItems = [
-    { icon: Home, label: 'Scanner', href: '/' },
-    { icon: History, label: 'History', href: '/history' },
-    { icon: Pill, label: 'Medications', href: '/medications' },
-    { icon: Users, label: 'Family', href: '/family' },
-    { icon: Bell, label: 'Reminders', href: '/reminders' },
-    { icon: Shield, label: 'Security', href: '/security' },
+    { icon: Home, labelKey: 'navigation.scanner', href: '/' },
+    { icon: History, labelKey: 'navigation.history', href: '/history' },
+    { icon: Pill, labelKey: 'navigation.medications', href: '/medications' },
+    { icon: Users, labelKey: 'navigation.family', href: '/family' },
+    { icon: Bell, labelKey: 'navigation.reminders', href: '/reminders' },
+    { icon: Shield, labelKey: 'navigation.security', href: '/security' },
   ];
 
   return (
@@ -55,7 +58,7 @@ const MobileNavigation = () => {
         <DrawerHeader className="text-left">
           <div className="flex items-center justify-between">
             <DrawerTitle className="text-xl font-bold text-primary">
-              CareCapsule
+              <TranslatedText translationKey="app.title" />
             </DrawerTitle>
             <DrawerClose asChild>
               <Button variant="ghost" size="sm" className="p-2">
@@ -81,7 +84,9 @@ const MobileNavigation = () => {
                   onClick={() => setIsOpen(false)}
                 >
                   <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium">
+                    <TranslatedText translationKey={item.labelKey} />
+                  </span>
                 </Link>
               );
             })}
@@ -94,7 +99,7 @@ const MobileNavigation = () => {
               onClick={handleSignOut}
             >
               <LogOut className="h-5 w-5" />
-              Sign Out
+              <TranslatedText translationKey="navigation.signOut" />
             </Button>
           </div>
         </div>

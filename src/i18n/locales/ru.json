@@ -34,7 +34,14 @@
     "settings": "Настройки",
     "family": "Семья",
     "reminders": "Напоминания",
-    "security": "Безопасность"
+    "security": "Безопасность",
+    "auth": "Авторизация",
+    "more": "Еще",
+    "moreOptions": "Дополнительные опции",
+    "language": "Язык",
+    "signOut": "Выход",
+    "endSession": "Завершить сеанс",
+    "medicationGuide": "Руководство по лекарствам"
   },
   "auth": {
     "signIn": "Войти",
@@ -59,6 +66,20 @@
     "resultsDescription": "OCR на устройстве для немедленной информации о лекарствах",
     "evidenceBased": "На Основе Доказательств",
     "evidenceDescription": "Только официальная информация с этикеток, никакого сгенерированного контента"
+  },
+  "dashboard": {
+    "quickStats": "Быстрая статистика",
+    "medications": "Лекарства",
+    "reminders": "Напоминания",
+    "todaysOverview": "Сегодняшний обзор"
+  },
+  "descriptions": {
+    "scanMedications": "Сканировать лекарства",
+    "viewHistory": "Просмотр истории сканирований",
+    "manageMedications": "Управление лекарствами",
+    "familyCaregivers": "Семья и опекуны",
+    "medicationReminders": "Напоминания о лекарствах",
+    "securityDashboard": "Панель безопасности"
   },
   "scanner": {
     "scanMedication": "Сканировать Лекарство",
@@ -146,7 +167,12 @@
     "morningDose": "Утренняя доза",
     "afternoonDose": "Дневная доза",
     "eveningDose": "Вечерняя доза",
-    "nightDose": "Ночная доза"
+    "nightDose": "Ночная доза",
+    "summary": {
+      "active": "Активные напоминания",
+      "medications": "Покрываемые лекарства",
+      "today": "Сегодняшние дозы"
+    }
   },
   "family": {
     "title": "Семья и Опекуны",

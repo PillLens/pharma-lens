@@ -12,30 +12,31 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { TranslatedText } from '@/components/TranslatedText';
 
 // Main navigation items (4 most important)
 const mainNavigationItems = [
   {
     icon: Home,
-    label: 'Home',
+    labelKey: 'navigation.home',
     href: '/',
     category: 'core'
   },
   {
     icon: History,
-    label: 'History',
+    labelKey: 'navigation.history',
     href: '/history',
     category: 'core'
   },
   {
     icon: Pill,
-    label: 'Medications',
+    labelKey: 'navigation.medications',
     href: '/medications',
     category: 'medical'
   },
   {
     icon: Bell,
-    label: 'Reminders',
+    labelKey: 'navigation.reminders',
     href: '/reminders',
     category: 'medical'
   },
@@ -45,25 +46,25 @@ const mainNavigationItems = [
 const moreNavigationItems = [
   {
     icon: Users,
-    label: 'Family',
+    labelKey: 'navigation.family',
     href: '/family',
     category: 'social'
   },
   {
     icon: Shield,
-    label: 'Security',
+    labelKey: 'navigation.security',
     href: '/security',
     category: 'system'
   },
   {
     icon: User,
-    label: 'Auth',
+    labelKey: 'navigation.auth',
     href: '/auth',
     category: 'system'
   },
   {
     icon: Globe2,
-    label: 'Language',
+    labelKey: 'navigation.language',
     href: '#language',
     category: 'system',
     isLanguageSelector: true
@@ -127,11 +128,11 @@ const MobileTabNavigation: React.FC = () => {
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                   onTouchStart={() => handleTabPress(index)}
-                  aria-label={item.label}
+                  aria-label={item.labelKey}
                 >
                   <Icon className={cn("w-5 h-5 mb-1", isActive && "text-white")} />
                   <span className={cn("text-xs font-medium", isActive && "text-white")}>
-                    {item.label}
+                    <TranslatedText translationKey={item.labelKey} />
                   </span>
                   {isActive && (
                     <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
@@ -154,13 +155,17 @@ const MobileTabNavigation: React.FC = () => {
                   aria-label="More options"
                 >
                   <MoreHorizontal className="w-5 h-5 mb-1" />
-                  <span className="text-xs font-medium">More</span>
+                  <span className="text-xs font-medium">
+                    <TranslatedText translationKey="navigation.more" />
+                  </span>
                 </button>
               </DrawerTrigger>
 
               <DrawerContent className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/50 dark:border-slate-700/50">
                 <DrawerHeader className="text-center border-b border-slate-200/50 dark:border-slate-700/50">
-                  <DrawerTitle className="text-lg font-semibold">More Options</DrawerTitle>
+                  <DrawerTitle className="text-lg font-semibold">
+                    <TranslatedText translationKey="navigation.moreOptions" />
+                  </DrawerTitle>
                 </DrawerHeader>
                 
                 <div className="px-6 py-6">
@@ -178,7 +183,7 @@ const MobileTabNavigation: React.FC = () => {
                           >
                             <Icon className="w-6 h-6 mb-2 text-slate-600 dark:text-slate-400" />
                             <span className="text-sm font-medium text-slate-900 dark:text-slate-200 mb-3">
-                              {item.label}
+                              <TranslatedText translationKey={item.labelKey} />
                             </span>
                             <LanguageSelector />
                           </div>
@@ -196,11 +201,11 @@ const MobileTabNavigation: React.FC = () => {
                               : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                           )}
                           onTouchStart={handleMoreItemPress}
-                          aria-label={item.label}
+                          aria-label={item.labelKey}
                         >
                           <Icon className="w-6 h-6 mb-2" />
                           <span className="text-sm font-medium text-center">
-                            {item.label}
+                            <TranslatedText translationKey={item.labelKey} />
                           </span>
                         </NavLink>
                       );
