@@ -1,46 +1,111 @@
 import React from 'react';
-import { Loader2, Activity, Stethoscope } from 'lucide-react';
+import { Loader2, Shield, Camera, Heart, Pill, Activity, Zap } from 'lucide-react';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from './MobileCard';
 import { cn } from '@/lib/utils';
 
 interface MobileLoadingStateProps {
   message?: string;
   subMessage?: string;
-  type?: 'default' | 'medical' | 'scanning';
+  type?: 'default' | 'medical' | 'scanning' | 'medication' | 'emergency' | 'processing' | 'analyzing';
   className?: string;
+  progress?: number; // 0-100 for progress indication
 }
 
 export const MobileLoadingState: React.FC<MobileLoadingStateProps> = ({
   message = 'Loading...',
   subMessage,
   type = 'default',
-  className
+  className,
+  progress
 }) => {
   const getIcon = () => {
     switch (type) {
       case 'medical':
-        return <Stethoscope className="w-8 h-8 text-primary animate-medical-pulse" />;
+        return <Shield className="w-8 h-8 text-primary animate-medical-pulse" />;
       case 'scanning':
-        return <Activity className="w-8 h-8 text-primary animate-scan-line" />;
+        return <Camera className="w-8 h-8 text-primary animate-bounce" />;
+      case 'medication':
+        return <Pill className="w-8 h-8 text-success animate-heartbeat" />;
+      case 'emergency':
+        return <Zap className="w-8 h-8 text-emergency animate-safety-blink" />;
+      case 'processing':
+        return <Activity className="w-8 h-8 text-info animate-medical-pulse" />;
+      case 'analyzing':
+        return <Heart className="w-8 h-8 text-primary animate-heartbeat" />;
       default:
         return <Loader2 className="w-8 h-8 text-primary animate-spin" />;
     }
   };
 
+  const getCardVariant = () => {
+    switch (type) {
+      case 'emergency':
+        return 'emergency';
+      case 'medical':
+        return 'medical';
+      case 'medication':
+        return 'success';
+      case 'processing':
+        return 'info';
+      default:
+        return 'medical';
+    }
+  };
+
   return (
     <div className={cn("flex items-center justify-center p-8", className)}>
-      <MobileCard variant="medical" className="text-center max-w-sm w-full">
+      <MobileCard 
+        variant={getCardVariant()} 
+        className="text-center max-w-sm w-full"
+      >
         <MobileCardHeader>
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4 relative">
             {getIcon()}
+            {type === 'scanning' && (
+              <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping" />
+            )}
+            {type === 'emergency' && (
+              <div className="absolute inset-0 border-2 border-emergency/40 rounded-full animate-ping" />
+            )}
           </div>
-          <MobileCardTitle className="text-base">
+          <MobileCardTitle className={cn(
+            "text-base",
+            type === 'emergency' && "text-emergency",
+            type === 'medical' && "text-primary",
+            type === 'medication' && "text-success"
+          )}>
             {message}
           </MobileCardTitle>
         </MobileCardHeader>
-        {subMessage && (
+        {(subMessage || progress !== undefined) && (
           <MobileCardContent>
-            <p className="text-sm text-muted-foreground">{subMessage}</p>
+            {progress !== undefined && (
+              <div className="w-full mb-4">
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className={cn(
+                      "h-full transition-all duration-500 rounded-full animate-progress-glow",
+                      type === 'emergency' ? 'bg-gradient-to-r from-emergency to-emergency-light' :
+                      type === 'medical' ? 'bg-gradient-to-r from-primary to-primary-light' :
+                      type === 'medication' ? 'bg-gradient-to-r from-success to-success-light' :
+                      'bg-gradient-to-r from-primary to-primary-light'
+                    )}
+                    style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 text-center">{Math.round(progress)}% complete</p>
+              </div>
+            )}
+            {subMessage && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{subMessage}</p>
+            )}
+            {/* Trust indicators */}
+            {type === 'medical' && (
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-3">
+                <Shield className="w-3 h-3" />
+                <span>Medical-grade security</span>
+              </div>
+            )}
           </MobileCardContent>
         )}
       </MobileCard>

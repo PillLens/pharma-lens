@@ -8,69 +8,127 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Medical-grade color palette */
-    --background: 0 0% 100%;
-    --foreground: 210 11% 15%;
+    /* Medical-Grade Color System */
+    --background: 210 45% 98%;
+    --foreground: 215 25% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card-foreground: 215 25% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover-foreground: 215 25% 15%;
     
-    /* Primary: Medical blue with trust and professionalism */
-    --primary: 213 94% 68%;
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 213 94% 85%;
-    --primary-glow: 213 94% 78%;
+    /* Primary Medical Blue - Professional & Trustworthy */
+    --primary: 205 95% 52%;
+    --primary-foreground: 210 45% 98%;
+    --primary-light: 205 95% 65%;
+    --primary-dark: 205 95% 38%;
+    --primary-glow: 205 95% 75%;
     
-    /* Secondary: Clean medical grays */
-    --secondary: 210 16% 93%;
-    --secondary-foreground: 210 11% 15%;
-    --secondary-light: 210 16% 98%;
+    /* Secondary - Clean Medical Gray */
+    --secondary: 210 25% 94%;
+    --secondary-foreground: 215 25% 20%;
+    --secondary-light: 210 25% 97%;
     
-    /* Muted: Subtle backgrounds */
-    --muted: 210 16% 95%;
-    --muted-foreground: 210 11% 45%;
+    /* Medical Status Colors */
+    --success: 145 80% 42%;
+    --success-foreground: 145 100% 97%;
+    --success-light: 145 80% 55%;
+    --success-glow: 145 80% 85%;
     
-    /* Accent: Complementary to primary */
-    --accent: 210 16% 93%;
-    --accent-foreground: 210 11% 15%;
+    --warning: 35 95% 58%;
+    --warning-foreground: 35 100% 10%;
+    --warning-light: 35 95% 70%;
+    --warning-glow: 35 95% 88%;
     
-    /* Medical status colors */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 355 85% 60%;
+    --destructive-foreground: 355 100% 97%;
+    --destructive-light: 355 85% 72%;
+    --destructive-glow: 355 85% 90%;
     
-    /* Interface elements */
-    --border: 210 16% 90%;
-    --input: 210 16% 90%;
-    --ring: 213 94% 68%;
+    /* Critical Medical Emergency */
+    --emergency: 0 90% 55%;
+    --emergency-foreground: 0 100% 97%;
+    --emergency-light: 0 90% 68%;
+    --emergency-glow: 0 90% 85%;
     
-    /* Medical chart colors */
-    --chart-1: 213 94% 68%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 271 81% 56%;
-    --chart-5: 0 84% 60%;
+    /* Medical Information Hierarchy */
+    --info: 200 95% 55%;
+    --info-foreground: 200 100% 97%;
+    --info-light: 200 95% 68%;
+    --info-glow: 200 95% 85%;
     
-    /* Enhanced shadows for medical interface */
-    --shadow-soft: 0 2px 8px -2px hsl(210 16% 82% / 0.3);
-    --shadow-card: 0 4px 16px -4px hsl(210 16% 82% / 0.4);
-    --shadow-floating: 0 8px 32px -8px hsl(213 94% 68% / 0.25);
-    --shadow-medical: 0 1px 3px 0 hsl(210 16% 82% / 0.4), 0 1px 2px 0 hsl(210 16% 82% / 0.2);
+    /* Neutral Medical Palette */
+    --muted: 210 25% 94%;
+    --muted-foreground: 215 15% 45%;
+    --accent: 210 30% 92%;
+    --accent-foreground: 215 25% 20%;
     
-    /* Gradients for premium feel */
-    --gradient-medical: linear-gradient(135deg, hsl(213 94% 68%), hsl(213 94% 78%));
-    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 16% 98%));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.9), hsl(210 16% 98% / 0.8));
-    
-    /* Transitions for smooth interactions */
-    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
+    /* Interactive Elements */
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 205 95% 52%;
     --radius: 0.75rem;
+
+    /* Medical chart colors */
+    --chart-1: 205 95% 52%;
+    --chart-2: 145 80% 42%;
+    --chart-3: 35 95% 58%;
+    --chart-4: 271 81% 56%;
+    --chart-5: 355 85% 60%;
+
+    /* Medical Gradients - Professional & Trustworthy */
+    --gradient-medical: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
+    --gradient-medical-soft: linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--primary-light) / 0.05) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success-light)) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(var(--warning-light)) 100%);
+    --gradient-emergency: linear-gradient(135deg, hsl(var(--emergency)) 0%, hsl(var(--emergency-light)) 100%);
+    --gradient-info: linear-gradient(135deg, hsl(var(--info)) 0%, hsl(var(--info-light)) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(var(--background), 0.95) 0%, hsla(var(--background), 0.8) 100%);
+    --gradient-scan: linear-gradient(90deg, transparent 0%, hsl(var(--primary)) 50%, transparent 100%);
+    --gradient-pulse: linear-gradient(90deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.8) 50%, hsl(var(--primary) / 0.2) 100%);
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 25% 98%));
+
+    /* Medical Shadows - Depth & Hierarchy */
+    --shadow-soft: 0 2px 8px hsla(var(--foreground), 0.08);
+    --shadow-card: 0 4px 16px hsla(var(--foreground), 0.12);
+    --shadow-floating: 0 8px 32px hsla(var(--foreground), 0.16);
+    --shadow-medical: 0 2px 12px hsla(var(--primary), 0.15);
+    --shadow-glow: 0 0 24px hsla(var(--primary), 0.3);
+    --shadow-success: 0 2px 12px hsla(var(--success), 0.2);
+    --shadow-warning: 0 2px 12px hsla(var(--warning), 0.2);
+    --shadow-emergency: 0 2px 16px hsla(var(--emergency), 0.3);
+    --shadow-inset: inset 0 2px 4px hsla(var(--foreground), 0.06);
+
+    /* Medical Transitions - Smooth & Professional */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-medical: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-scan: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Medical Typography Scale - Mobile First */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    
+    /* Medical Spacing Scale - 8px Grid System */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    
+    /* Touch Target Minimum - 44px for accessibility */
+    --touch-target: 2.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -281,7 +339,106 @@ All colors MUST be HSL.
     animation: success-bounce 0.5s ease-out;
   }
 
-  /* Medical mobile utilities */
+/* Medical Loading Animations - Enhanced */
+.animate-scan-line {
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+.animate-medical-pulse {
+  animation: medical-pulse 2s ease-in-out infinite;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.animate-medication-scan {
+  animation: medication-scan 3s ease-in-out infinite;
+}
+
+.animate-progress-glow {
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+.animate-safety-blink {
+  animation: safety-blink 1s ease-in-out infinite;
+}
+
+.animate-safety-pulse {
+  animation: safety-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+  0%, 100% { transform: translateX(-100%); opacity: 0; }
+  50% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes medical-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes heartbeat {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 hsl(var(--success)));
+  }
+  25% { 
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px hsl(var(--success) / 0.4));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px hsl(var(--success) / 0.6));
+  }
+}
+
+@keyframes medication-scan {
+  0% { 
+    background-position: -100% 0;
+    opacity: 0.3;
+  }
+  50% { 
+    background-position: 200% 0;
+    opacity: 1;
+  }
+  100% { 
+    background-position: 300% 0;
+    opacity: 0.3;
+  }
+}
+
+@keyframes progress-glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px hsl(var(--primary) / 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.4);
+  }
+}
+
+@keyframes safety-blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.6; }
+}
+
+@keyframes safety-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+  /* Medical mobile utilities - Enhanced */
   .touch-target {
     min-height: 48px;
     min-width: 48px;
@@ -290,6 +447,22 @@ All colors MUST be HSL.
   .touch-target-large {
     min-height: 56px;
     min-width: 56px;
+  }
+
+  .min-h-touch {
+    min-height: var(--touch-target);
+  }
+
+  .min-w-touch {
+    min-width: var(--touch-target);
+  }
+
+  .h-touch {
+    height: var(--touch-target);
+  }
+
+  .w-touch {
+    width: var(--touch-target);
   }
 
   /* Safe area support with medical spacing */

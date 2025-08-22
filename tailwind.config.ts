@@ -28,7 +28,8 @@ export default {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
 					light: 'hsl(var(--primary-light))',
-					dark: 'hsl(var(--primary-dark))'
+					dark: 'hsl(var(--primary-dark))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -37,15 +38,33 @@ export default {
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					foreground: 'hsl(var(--destructive-foreground))',
+					light: 'hsl(var(--destructive-light))',
+					glow: 'hsl(var(--destructive-glow))'
 				},
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))'
+					foreground: 'hsl(var(--warning-foreground))',
+					light: 'hsl(var(--warning-light))',
+					glow: 'hsl(var(--warning-glow))'
 				},
 				success: {
 					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))'
+					foreground: 'hsl(var(--success-foreground))',
+					light: 'hsl(var(--success-light))',
+					glow: 'hsl(var(--success-glow))'
+				},
+				emergency: {
+					DEFAULT: 'hsl(var(--emergency))',
+					foreground: 'hsl(var(--emergency-foreground))',
+					light: 'hsl(var(--emergency-light))',
+					glow: 'hsl(var(--emergency-glow))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))',
+					light: 'hsl(var(--info-light))',
+					glow: 'hsl(var(--info-glow))'
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
@@ -95,11 +114,34 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'medical-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 5px hsl(var(--primary) / 0.5)'
+					},
+					'50%': {
+						boxShadow: '0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.4)'
+					}
+				},
+				'safety-pulse': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						opacity: '0.8'
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'medical-glow': 'medical-glow 2s ease-in-out infinite',
+				'safety-pulse': 'safety-pulse 2s ease-in-out infinite'
+			},
+			spacing: {
+				'touch': 'var(--touch-target)'
 			}
 		}
 	},
