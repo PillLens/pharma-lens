@@ -120,11 +120,11 @@
        "reminders": "Xatırlatmalar",
        "history": "Tarixçə"
      },
-      "form": {
-        "basics": "Əsas Məlumatlar",
-        "dosageFrequency": "Dozaj və Tezlik",
-        "datesStatus": "Tarixlər və Status"
-      },
+     "form": {
+       "basics": "Əsaslar",
+       "dosageFrequency": "Dozaj və Tezlik",
+       "datesStatus": "Tarix və Status"
+     },
      "status": {
        "active": "Aktiv",
        "inactive": "Qeyri-aktiv",
@@ -143,11 +143,11 @@
        "every12h": "Hər 12 saatda",
        "asNeeded": "Ehtiyac duyulduqca",
        "custom": "Xüsusi"
-      },
-      "brandName": "Brend Adı",
-      "genericName": "Ümumi Ad",
-      "strength": "Güc",
-      "form": "Forma",
+     },
+     "brandName": "Brend Adı",
+     "genericName": "Ümumi Ad",
+     "strength": "Güc",
+     "form": "Forma",
      "manufacturer": "İstehsalçı",
      "dosage": "Dozaj",
      "frequency": "Tezlik",
@@ -164,11 +164,14 @@
     "whatItsFor": "Nə Üçün İstifadə Olunur",
     "howToUse": "Necə İstifadə Etmək",
     "storage": "Saxlama Təlimatları",
-     "specialInstructions": "Xüsusi Təlimatlar",
-     "howItWorks": "Necə İşləyir",
-     "setReminders": "Xatırlatmalar Təyin Et",
-     "selectFrequency": "Tezlik seçin",
-     "withFood": "Yemeklə birlikdə",
+    "specialInstructions": "Xüsusi Təlimatlar",
+    "selectFrequency": "Tezlik seçin",
+    "onceDaily": "Gündə bir dəfə",
+    "twiceDaily": "Gündə iki dəfə",
+    "threeTimes": "Gündə üç dəfə",
+    "fourTimes": "Gündə dörd dəfə",
+    "asNeeded": "Ehtiyac duyulduqca",
+    "withFood": "Yemeklə birlikdə",
     "beforeFood": "Yeməkdən əvvəl",
     "afterFood": "Yeməkdən sonra",
     "indications": "Göstərişlər",

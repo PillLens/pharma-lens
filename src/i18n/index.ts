@@ -9,18 +9,10 @@ import ruTranslation from './locales/ru.json';
 import trTranslation from './locales/tr.json';
 
 const resources = {
-  az: { translation: azTranslation },
-  en: { translation: enTranslation },
-  ru: { translation: ruTranslation },
-  tr: { translation: trTranslation },
-};
-
-// Force set language to Azerbaijani and load immediately
-const setLanguage = () => {
-  const savedLang = localStorage.getItem('selectedLanguage') || 'az';
-  localStorage.setItem('selectedLanguage', 'az');
-  localStorage.setItem('i18nextLng', 'az');
-  return 'az';
+  AZ: { translation: azTranslation },
+  EN: { translation: enTranslation },
+  RU: { translation: ruTranslation },
+  TR: { translation: trTranslation },
 };
 
 i18n
@@ -28,9 +20,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'az',
-    lng: setLanguage(), // Force Azerbaijani
-    debug: true,
+    fallbackLng: 'EN',
+    lng: 'AZ', // Default to Azerbaijani
+    debug: process.env.NODE_ENV === 'development',
     
     interpolation: {
       escapeValue: false,
@@ -39,13 +31,11 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'selectedLanguage',
     },
     
     react: {
       useSuspense: false,
     },
   });
-
 
 export default i18n;

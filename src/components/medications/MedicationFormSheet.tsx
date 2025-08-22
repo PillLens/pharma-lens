@@ -155,7 +155,6 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
     }
   ];
 
-
   const currentSection = formSections[currentStep];
   const isLastStep = currentStep === formSections.length - 1;
 
