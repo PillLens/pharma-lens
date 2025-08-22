@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { Plus, Pill, Clock, Heart, Activity, Calendar } from 'lucide-react';
+import { Plus, Pill, Clock, Activity, Calendar, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
+import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
+import FloatingActionButton from '@/components/mobile/FloatingActionButton';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
 import SwipeableCard from '@/components/mobile/SwipeableCard';
-import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
+import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
+import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { Skeleton } from '@/components/ui/skeleton';
 import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
+import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
 import { UserMedication } from '@/hooks/useMedicationHistory';
-import EnhancedMobileNavigation from '@/components/EnhancedMobileNavigation';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const { 
     medications, 
     loading, 
@@ -118,105 +124,189 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Premium Glass Header */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 shadow-lg">
-        <div className="px-6 py-6 safe-area-top">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Pill className="w-5 h-5 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
-                  My Medications
-                </h1>
-              </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Track and manage your daily medications
-              </p>
+  // Desktop content
+  const desktopContent = (
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-secondary-light/10">
+      {/* Desktop Header */}
+      <header className="px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+              <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
-            
-            <Button
-              onClick={() => setIsAddSheetOpen(true)}
-              className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 border-0"
-            >
-              <Plus className="w-6 h-6 text-white" />
-            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">My Medications</h1>
+              <p className="text-sm text-muted-foreground">Track and manage your medications</p>
+            </div>
           </div>
+          <Button onClick={() => setIsAddSheetOpen(true)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add Medication
+          </Button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 px-6 pb-32">
-        <PullToRefresh onRefresh={handleRefresh}>
-          {/* Premium Stats Cards */}
-          {!loading && medications.length > 0 && (
-            <div className="py-6">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/20 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30 dark:border-blue-500/20">
-                  <div className="text-center">
-                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                      <Pill className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
-                      {totalMeds}
-                    </p>
-                    <p className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium">
-                      Total
-                    </p>
-                  </div>
+      {/* Desktop Content */}
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* Stats Cards */}
+        {!loading && medications.length > 0 && (
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <MobileCard variant="medical" className="text-center">
+              <MobileCardHeader>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                  <Pill className="w-6 h-6 text-white" />
                 </div>
-                
-                <div className="bg-gradient-to-br from-green-500/10 to-green-600/20 backdrop-blur-sm rounded-2xl p-4 border border-green-200/30 dark:border-green-500/20">
-                  <div className="text-center">
-                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
-                      <Activity className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                      {activeMeds}
-                    </p>
-                    <p className="text-xs text-green-600/80 dark:text-green-400/80 font-medium">
-                      Active
-                    </p>
-                  </div>
+                <MobileCardTitle className="text-2xl font-bold text-primary">
+                  {totalMeds}
+                </MobileCardTitle>
+                <MobileCardDescription>Total Medications</MobileCardDescription>
+              </MobileCardHeader>
+            </MobileCard>
+            
+            <MobileCard variant="medical" className="text-center">
+              <MobileCardHeader>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
+                  <Activity className="w-6 h-6 text-white" />
                 </div>
-                
-                <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/20 backdrop-blur-sm rounded-2xl p-4 border border-amber-200/30 dark:border-amber-500/20">
-                  <div className="text-center">
-                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
-                      <Clock className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">
-                      {expiringSoon}
-                    </p>
-                    <p className="text-xs text-amber-600/80 dark:text-amber-400/80 font-medium">
-                      Expiring
-                    </p>
-                  </div>
+                <MobileCardTitle className="text-2xl font-bold text-primary">
+                  {activeMeds}
+                </MobileCardTitle>
+                <MobileCardDescription>Active</MobileCardDescription>
+              </MobileCardHeader>
+            </MobileCard>
+            
+            <MobileCard variant="medical" className="text-center">
+              <MobileCardHeader>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
+                  <Clock className="w-6 h-6 text-white" />
                 </div>
-              </div>
-            </div>
-          )}
+                <MobileCardTitle className="text-2xl font-bold text-primary">
+                  {expiringSoon}
+                </MobileCardTitle>
+                <MobileCardDescription>Expiring Soon</MobileCardDescription>
+              </MobileCardHeader>
+            </MobileCard>
+          </div>
+        )}
 
-          {/* Content */}
+        {/* Medications List */}
+        {loading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <MobileCard key={i} className="animate-pulse">
+                <MobileCardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-5 w-40" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                    <Skeleton className="h-8 w-16 rounded-full" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                </MobileCardContent>
+              </MobileCard>
+            ))}
+          </div>
+        ) : medications.length === 0 ? (
+          <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+        ) : (
+          <div className="space-y-4">
+            {medications.map((medication) => (
+              <div
+                key={medication.id}
+                className="cursor-pointer transition-transform hover:scale-[1.02]"
+                onClick={() => handleCardTap(medication)}
+              >
+                <EnhancedMedicationCard
+                  medication={medication}
+                  onEdit={() => handleEdit(medication)}
+                  onDelete={() => handleDelete(medication)}
+                  onToggleActive={() => handleToggleActive(medication)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+
+  // Mobile content with proper layout
+  const mobileContent = (
+    <>
+      <PullToRefresh onRefresh={handleRefresh}>
+        {/* Mobile Header */}
+        <div className="px-4 pt-6 pb-4">
+          <div className="flex items-center justify-between mb-1">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">My Medications</h1>
+              <p className="text-base text-muted-foreground">Track and manage your daily medications</p>
+            </div>
+            <MobileButton
+              size="sm"
+              onClick={() => setIsAddSheetOpen(true)}
+              className="w-12 h-12 rounded-full"
+              haptic
+            >
+              <Plus className="w-5 h-5" />
+            </MobileButton>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        {!loading && medications.length > 0 && (
+          <div className="px-4 pb-6">
+            <div className="grid grid-cols-3 gap-3">
+              <MobileCard variant="medical" className="text-center p-4">
+                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-medical">
+                  <Pill className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-xl font-bold text-primary">{totalMeds}</p>
+                <p className="text-xs text-muted-foreground">Total</p>
+              </MobileCard>
+              
+              <MobileCard variant="medical" className="text-center p-4">
+                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-medical">
+                  <Activity className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-xl font-bold text-primary">{activeMeds}</p>
+                <p className="text-xs text-muted-foreground">Active</p>
+              </MobileCard>
+              
+              <MobileCard variant="medical" className="text-center p-4">
+                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-medical">
+                  <Clock className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-xl font-bold text-primary">{expiringSoon}</p>
+                <p className="text-xs text-muted-foreground">Expiring</p>
+              </MobileCard>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="px-4">
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg animate-pulse border border-white/20 dark:border-slate-700/30">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="space-y-2">
-                      <Skeleton className="h-6 w-40 bg-slate-200/50 dark:bg-slate-700/50" />
-                      <Skeleton className="h-4 w-24 bg-slate-200/50 dark:bg-slate-700/50" />
+                <MobileCard key={i} variant="glass" className="animate-pulse">
+                  <MobileCardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-5 w-40 bg-muted/50" />
+                        <Skeleton className="h-4 w-24 bg-muted/50" />
+                      </div>
+                      <Skeleton className="h-8 w-16 rounded-full bg-muted/50" />
                     </div>
-                    <Skeleton className="h-8 w-16 rounded-full bg-slate-200/50 dark:bg-slate-700/50" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Skeleton className="h-4 w-20 bg-slate-200/50 dark:bg-slate-700/50" />
-                    <Skeleton className="h-4 w-24 bg-slate-200/50 dark:bg-slate-700/50" />
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Skeleton className="h-4 w-20 bg-muted/50" />
+                      <Skeleton className="h-4 w-24 bg-muted/50" />
+                    </div>
+                  </MobileCardContent>
+                </MobileCard>
               ))}
             </div>
           ) : medications.length === 0 ? (
@@ -247,22 +337,20 @@ const MedicationManager: React.FC = () => {
               ))}
             </div>
           )}
-        </PullToRefresh>
-      </main>
+        </div>
+      </PullToRefresh>
 
-      {/* Premium Floating Action Button */}
+      {/* Floating Action Button */}
       {!loading && (
-        <Button
-          onClick={() => setIsAddSheetOpen(true)}
-          className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-90 border-0"
-        >
-          <Plus className="w-7 h-7 text-white" />
-        </Button>
+        <FloatingActionButton onClick={() => setIsAddSheetOpen(true)} />
       )}
+    </>
+  );
 
-      {/* Bottom Navigation */}
-      <EnhancedMobileNavigation />
-
+  const content = isMobile ? (
+    <ProfessionalMobileLayout title="Medications" showHeader={false}>
+      {mobileContent}
+      
       {/* Bottom Sheets */}
       <MedicationFormSheet
         isOpen={isAddSheetOpen}
@@ -289,38 +377,37 @@ const MedicationManager: React.FC = () => {
         }}
       />
 
-      {/* Premium Delete Modal */}
+      {/* Delete Confirmation Modal */}
       {medicationToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMedicationToDelete(null)}></div>
-          <div className="relative bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/30 p-8 max-w-sm mx-auto">
+          <MobileCard variant="glass" className="relative max-w-sm mx-auto p-6 shadow-2xl">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg">
-                <Pill className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-destructive to-destructive/80 flex items-center justify-center shadow-medical">
+                <AlertTriangle className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                Delete Medication?
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-8">
+              <MobileCardTitle className="mb-2">Delete Medication?</MobileCardTitle>
+              <MobileCardDescription className="mb-6">
                 This action cannot be undone. The medication will be permanently removed.
-              </p>
+              </MobileCardDescription>
               <div className="flex gap-3">
-                <Button
+                <MobileButton
                   variant="outline"
                   onClick={() => setMedicationToDelete(null)}
-                  className="flex-1 rounded-2xl border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  className="flex-1"
                 >
                   Cancel
-                </Button>
-                <Button
+                </MobileButton>
+                <MobileButton
+                  variant="destructive"
                   onClick={handleDeleteMedication}
-                  className="flex-1 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg"
+                  className="flex-1"
                 >
                   Delete
-                </Button>
+                </MobileButton>
               </div>
             </div>
-          </div>
+          </MobileCard>
         </div>
       )}
 
@@ -336,8 +423,10 @@ const MedicationManager: React.FC = () => {
           }
         }
       `}</style>
-    </div>
-  );
+    </ProfessionalMobileLayout>
+  ) : desktopContent;
+
+  return content;
 };
 
 export default MedicationManager;
