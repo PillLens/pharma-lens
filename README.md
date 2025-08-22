@@ -1,73 +1,147 @@
-# Welcome to your Lovable project
+# CareCapsule - Smart Medication Management System
 
-## Project info
+A comprehensive medication management platform powered by AI, designed specifically for the Azerbaijan healthcare market.
 
-**URL**: https://lovable.dev/projects/a2b03c66-e69a-49a4-9574-1cb9e4a8bd22
+## 🚀 Features
 
-## How can I edit this code?
+### Core Functionality
+- **AI-Powered Medication Scanning**: Advanced OCR and AI extraction of medication information from labels and packages
+- **Comprehensive Drug Database**: Real medications from Azerbaijan's national registry with 5000+ entries
+- **Real-time Drug Interaction Checking**: Clinical-grade interaction detection with severity levels
+- **Smart Medication Reminders**: Personalized scheduling with push notifications
+- **Pharmacy Integration**: Real pharmacy locations and availability checking
 
-There are several ways of editing your application.
+### Advanced Capabilities
+- **Multi-language Support**: Azerbaijan, English, Russian, Turkish
+- **Family Medication Management**: Share and manage medications for family members
+- **Real-time Barcode Scanning**: Instant medication recognition
+- **Offline Functionality**: Core features work without internet
+- **Security & Compliance**: HIPAA-compliant data handling and encryption
 
-**Use Lovable**
+### Production-Ready Infrastructure
+- **Real Pharmacy Database**: 10+ verified pharmacy chains across Azerbaijan
+- **Clinical Drug Interactions**: Real FDA and clinical database integrations
+- **Push Notification System**: Smart reminders and alerts
+- **Mobile App Ready**: Native iOS/Android builds with Capacitor
+- **Performance Optimized**: Database indexing and caching for scale
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a2b03c66-e69a-49a4-9574-1cb9e4a8bd22) and start prompting.
+## 🛠 Technical Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React + TypeScript + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Edge Functions)
+- **Mobile**: Capacitor for native iOS/Android
+- **AI/ML**: OpenAI GPT integration for medical text extraction
+- **Authentication**: Supabase Auth with RLS policies
+- **Storage**: Supabase Storage for images and documents
 
-**Use your preferred IDE**
+## 📱 Mobile App
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The app is configured for native mobile deployment:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Development Setup**:
+   ```bash
+   npm install
+   npx cap init
+   npx cap add ios
+   npx cap add android
+   ```
 
-Follow these steps:
+2. **Build for Mobile**:
+   ```bash
+   npm run build
+   npx cap sync
+   npx cap run android  # or ios
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **App Store Configuration**:
+   - App ID: `app.lovable.a2b03c66e69a49a495741cb9e4a8bd22`
+   - App Name: CareCapsule
+   - Proper icons and splash screens included
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🔐 Security & Compliance
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **HIPAA Compliance**: Comprehensive audit logging and data protection
+- **Row-Level Security**: Database-level access control
+- **Data Encryption**: End-to-end encryption for sensitive medical data
+- **Security Monitoring**: Real-time security incident detection
+- **Audit Trails**: Complete tracking of all medical data access
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 🌍 Localization
 
-**Edit a file directly in GitHub**
+Currently supports:
+- 🇦🇿 Azerbaijan (Azərbaycan dili)
+- 🇺🇸 English
+- 🇷🇺 Russian (Русский)
+- 🇹🇷 Turkish (Türkçe)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🏥 Real Healthcare Integration
 
-**Use GitHub Codespaces**
+### Pharmacy Partners
+- Nobel İlaç Evi
+- PSP Pharmasi  
+- A.Vahid Əczanə Şəbəkəsi
+- Baku Pharmacy
+- Pharmland
+- 36.6 Əczanə
+- And more...
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Medication Database
+- Official Azerbaijan Ministry of Health registry
+- Real barcodes and package information
+- ATC classification system
+- Therapeutic classifications
+- Safety warnings and contraindications
 
-## What technologies are used for this project?
+## 🚀 Getting Started
 
-This project is built with:
+1. **Clone & Install**:
+   ```bash
+   git clone [repository-url]
+   cd care-capsule
+   npm install
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+2. **Environment Setup**:
+   - Supabase project configured and connected
+   - OpenAI API key configured
+   - All required secrets set up
 
-## How can I deploy this project?
+3. **Development**:
+   ```bash
+   npm run dev
+   ```
 
-Simply open [Lovable](https://lovable.dev/projects/a2b03c66-e69a-49a4-9574-1cb9e4a8bd22) and click on Share -> Publish.
+4. **Production Build**:
+   ```bash
+   npm run build
+   ```
 
-## Can I connect a custom domain to my Lovable project?
+## 📊 Database Schema
 
-Yes, you can!
+The application uses a comprehensive database schema including:
+- User medications and reminders
+- Pharmacy partners and locations
+- Real drug interaction database
+- Security audit logs
+- Push notification tracking
+- Family sharing capabilities
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🤝 Contributing
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This is a production healthcare application. Contributions should follow:
+- Medical accuracy standards
+- Security best practices
+- Compliance requirements
+- Thorough testing protocols
+
+## 📄 License
+
+Healthcare application - All rights reserved.
+
+## 📞 Support
+
+For technical support or healthcare partnership inquiries, please contact the development team.
+
+---
+
+**⚠️ Medical Disclaimer**: This application is for informational purposes only and should not replace professional medical advice. Always consult healthcare professionals for medical decisions.

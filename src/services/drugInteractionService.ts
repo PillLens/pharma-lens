@@ -50,33 +50,63 @@ class DrugInteractionService {
     try {
       const interactions: DrugInteraction[] = [];
       
-      // Check each combination of medications
-      for (let i = 0; i < medications.length; i++) {
-        for (let j = i + 1; j < medications.length; j++) {
-          const medA = medications[i].toLowerCase();
-          const medB = medications[j].toLowerCase();
+      // First, get product IDs for the medications by name
+      const productIds: string[] = [];
+      for (const medicationName of medications) {
+        const { data: products, error } = await supabase
+          .from('products')
+          .select('id')
+          .or(`brand_name.ilike.%${medicationName}%,generic_name.ilike.%${medicationName}%`)
+          .limit(1);
+        
+        if (!error && products && products.length > 0) {
+          productIds.push(products[0].id);
+        }
+      }
+
+      if (productIds.length < 2) {
+        return { interactions: [], source: 'local', lastUpdated: new Date().toISOString() };
+      }
+
+      // Check for interactions between each pair of medication IDs
+      for (let i = 0; i < productIds.length; i++) {
+        for (let j = i + 1; j < productIds.length; j++) {
+          const medId1 = productIds[i];
+          const medId2 = productIds[j];
           
+          // Query the database for interactions using actual medication IDs
           const { data, error } = await supabase
             .from('medication_interactions')
-            .select('*')
-            .or(`and(medication_a_id.ilike.%${medA}%,medication_b_id.ilike.%${medB}%),and(medication_a_id.ilike.%${medB}%,medication_b_id.ilike.%${medA}%)`);
+            .select(`
+              id,
+              interaction_type,
+              description,
+              severity_score,
+              management_advice,
+              evidence_level,
+              medication_a_id,
+              medication_b_id
+            `)
+            .or(`and(medication_a_id.eq.${medId1},medication_b_id.eq.${medId2}),and(medication_a_id.eq.${medId2},medication_b_id.eq.${medId1})`);
 
           if (error) {
-            console.error('Database interaction query failed:', error);
+            console.error('Error querying interactions:', error);
             continue;
           }
 
           if (data && data.length > 0) {
-            interactions.push(...data.map(interaction => ({
-              id: interaction.id,
-              drugA: medA,
-              drugB: medB,
-              severity: this.mapSeverity(interaction.severity_score),
-              description: interaction.description,
-              management: interaction.management_advice || 'Consult healthcare provider',
-              evidenceLevel: interaction.evidence_level || 'Clinical',
-              source: 'local_database'
-            })));
+            for (const interaction of data) {
+              interactions.push({
+                id: interaction.id,
+                drugA: medications[i],
+                drugB: medications[j],
+                severity: this.mapSeverity(interaction.severity_score),
+                description: interaction.description,
+                management: interaction.management_advice || 'Consult with healthcare provider',
+                evidenceLevel: interaction.evidence_level || 'moderate',
+                source: 'local_database'
+              });
+            }
           }
         }
       }

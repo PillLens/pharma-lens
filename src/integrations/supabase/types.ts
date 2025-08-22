@@ -89,6 +89,39 @@ export type Database = {
         }
         Relationships: []
       }
+      device_tokens: {
+        Row: {
+          app_version: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          platform: string
+          token: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          platform: string
+          token: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          platform?: string
+          token?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       error_reports: {
         Row: {
           context: Json | null
@@ -621,6 +654,45 @@ export type Database = {
           therapeutic_class?: string | null
           updated_at?: string
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      push_notifications: {
+        Row: {
+          body: string
+          created_at: string | null
+          data: Json | null
+          delivered_at: string | null
+          device_token: string | null
+          error_message: string | null
+          id: string
+          status: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          data?: Json | null
+          delivered_at?: string | null
+          device_token?: string | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          data?: Json | null
+          delivered_at?: string | null
+          device_token?: string | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          title?: string
+          user_id?: string | null
         }
         Relationships: []
       }
