@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { MobileCard } from '@/components/ui/mobile/MobileCard';
 import { MobileLoadingState } from '@/components/ui/mobile/MobileLoadingState';
@@ -15,6 +15,7 @@ import { Loader2, Shield, Stethoscope, Fingerprint, Lock, Eye, EyeOff } from 'lu
 export default function Auth() {
   const { signUp, signIn, user, loading } = useAuth();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
