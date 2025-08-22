@@ -227,25 +227,24 @@ export const MobileSecurityDashboard: React.FC = () => {
         </CardHeader>
         <CardContent>
           {auditLogs.length === 0 ? (
-            <div className="text-center py-6">
-              <EmptyStateIllustration 
-                type="health"
-                className="w-16 h-16 mx-auto mb-3"
-              />
-              <p className="text-sm text-muted-foreground">No recent security events</p>
+            <div className="text-center py-8">
+              <div className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse" />
+                <Shield className="w-8 h-8 text-slate-400 dark:text-slate-500 relative z-10" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">All Secure</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                No recent security events detected. Your account activity is being monitored safely.
+              </p>
             </div>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {auditLogs.slice(0, 5).map((log) => (
-                <div key={log.id} className="flex items-center justify-between p-2 rounded-lg border border-border/30">
-                  <div className="flex items-center gap-2">
-                    {log.success ? (
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    ) : (
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    )}
+                <div key={log.id} className="flex items-center justify-between p-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-border/30">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2.5 h-2.5 rounded-full ${log.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
                     <div>
-                      <p className="text-xs font-medium">{log.action}</p>
+                      <p className="text-sm font-medium text-foreground">{log.action}</p>
                       <p className="text-xs text-muted-foreground">{log.resourceType}</p>
                     </div>
                   </div>
