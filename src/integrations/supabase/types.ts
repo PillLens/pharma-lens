@@ -50,6 +50,140 @@ export type Database = {
         }
         Relationships: []
       }
+      care_tasks: {
+        Row: {
+          assigned_by: string
+          assigned_to: string
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          family_group_id: string
+          id: string
+          priority: string
+          status: string
+          task_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by: string
+          assigned_to: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          family_group_id: string
+          id?: string
+          priority?: string
+          status?: string
+          task_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string
+          assigned_to?: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          family_group_id?: string
+          id?: string
+          priority?: string
+          status?: string
+          task_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_tasks_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_tasks_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communication_logs: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          family_group_id: string
+          id: string
+          is_emergency: boolean
+          message_content: string | null
+          message_data: Json | null
+          message_type: string
+          read_at: string | null
+          recipient_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          family_group_id: string
+          id?: string
+          is_emergency?: boolean
+          message_content?: string | null
+          message_data?: Json | null
+          message_type: string
+          read_at?: string | null
+          recipient_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          family_group_id?: string
+          id?: string
+          is_emergency?: boolean
+          message_content?: string | null
+          message_data?: Json | null
+          message_type?: string
+          read_at?: string | null
+          recipient_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_logs_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_logs_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communication_logs_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crash_reports: {
         Row: {
           app_version: string
@@ -121,6 +255,53 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      emergency_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          priority: number
+          relationship: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          phone: string
+          priority?: number
+          relationship: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string
+          priority?: number
+          relationship?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       error_reports: {
         Row: {
@@ -217,6 +398,130 @@ export type Database = {
           },
         ]
       }
+      family_activity_log: {
+        Row: {
+          activity_data: Json
+          activity_type: string
+          created_at: string
+          family_group_id: string
+          id: string
+          priority: string
+          user_id: string
+        }
+        Insert: {
+          activity_data?: Json
+          activity_type: string
+          created_at?: string
+          family_group_id: string
+          id?: string
+          priority?: string
+          user_id: string
+        }
+        Update: {
+          activity_data?: Json
+          activity_type?: string
+          created_at?: string
+          family_group_id?: string
+          id?: string
+          priority?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_activity_log_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_activity_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_appointments: {
+        Row: {
+          appointment_date: string
+          appointment_type: string
+          created_at: string
+          created_by: string
+          description: string | null
+          duration_minutes: number | null
+          family_group_id: string
+          id: string
+          location: string | null
+          patient_id: string
+          provider_contact: string | null
+          provider_name: string | null
+          reminder_sent: boolean
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_type?: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration_minutes?: number | null
+          family_group_id: string
+          id?: string
+          location?: string | null
+          patient_id: string
+          provider_contact?: string | null
+          provider_name?: string | null
+          reminder_sent?: boolean
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_type?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration_minutes?: number | null
+          family_group_id?: string
+          id?: string
+          location?: string | null
+          patient_id?: string
+          provider_contact?: string | null
+          provider_name?: string | null
+          reminder_sent?: boolean
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_appointments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_appointments_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_groups: {
         Row: {
           created_at: string
@@ -240,6 +545,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      family_health_insights: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          family_group_id: string
+          id: string
+          insight_data: Json
+          insight_type: string
+          is_actionable: boolean
+          priority: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          family_group_id: string
+          id?: string
+          insight_data?: Json
+          insight_type: string
+          is_actionable?: boolean
+          priority?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          family_group_id?: string
+          id?: string
+          insight_data?: Json
+          insight_type?: string
+          is_actionable?: boolean
+          priority?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_health_insights_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       family_members: {
         Row: {
@@ -375,6 +721,118 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_sharing: {
+        Row: {
+          accuracy: number | null
+          address: string | null
+          created_at: string
+          expires_at: string | null
+          family_group_id: string
+          id: string
+          is_emergency: boolean
+          latitude: number | null
+          longitude: number | null
+          user_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          address?: string | null
+          created_at?: string
+          expires_at?: string | null
+          family_group_id: string
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          user_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          address?: string | null
+          created_at?: string
+          expires_at?: string | null
+          family_group_id?: string
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_sharing_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_sharing_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medication_adherence_log: {
+        Row: {
+          created_at: string
+          id: string
+          medication_id: string
+          notes: string | null
+          reported_by: string | null
+          scheduled_time: string
+          status: string
+          taken_time: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          medication_id: string
+          notes?: string | null
+          reported_by?: string | null
+          scheduled_time: string
+          status?: string
+          taken_time?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          medication_id?: string
+          notes?: string | null
+          reported_by?: string | null
+          scheduled_time?: string
+          status?: string
+          taken_time?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_adherence_log_medication_id_fkey"
+            columns: ["medication_id"]
+            isOneToOne: false
+            referencedRelation: "user_medications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medication_adherence_log_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medication_adherence_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -701,26 +1159,56 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
           email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
           id: string
+          last_seen: string | null
+          medical_conditions: string[] | null
+          notification_preferences: Json | null
+          phone: string | null
+          preferred_language: string | null
+          timezone: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
           email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           id: string
+          last_seen?: string | null
+          medical_conditions?: string[] | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          preferred_language?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
           email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
           id?: string
+          last_seen?: string | null
+          medical_conditions?: string[] | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          preferred_language?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -763,6 +1251,44 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      real_time_channels: {
+        Row: {
+          channel_name: string
+          channel_type: string
+          created_at: string
+          family_group_id: string
+          id: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          channel_name: string
+          channel_type?: string
+          created_at?: string
+          family_group_id: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          channel_name?: string
+          channel_type?: string
+          created_at?: string
+          family_group_id?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "real_time_channels_family_group_id_fkey"
+            columns: ["family_group_id"]
+            isOneToOne: false
+            referencedRelation: "family_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       security_audit_logs: {
         Row: {
