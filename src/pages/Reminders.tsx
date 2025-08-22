@@ -273,9 +273,24 @@ const Reminders: React.FC = () => {
           {/* Interactive Timeline */}
           {timelineEntries.length > 0 && <div className="px-4">
               <InteractiveTimelineCard entries={timelineEntries} onMarkTaken={entryId => {
+          // Extract reminder ID and time from the entry ID
+          const [reminderId, time] = entryId.split('-');
+          
+          // Update the reminder's adherence rate
+          setReminders(prev => prev.map(reminder => {
+            if (reminder.id === reminderId) {
+              return {
+                ...reminder,
+                adherenceRate: Math.min(100, (reminder.adherenceRate || 85) + 2),
+                lastTaken: new Date().toISOString()
+              };
+            }
+            return reminder;
+          }));
+          
           toast({
             title: 'Dose Marked as Taken',
-            description: 'Great job staying on track!'
+            description: 'Great job staying on track! 🎉'
           });
         }} onSnooze={entryId => {
           toast({
