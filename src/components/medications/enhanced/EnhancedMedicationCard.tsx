@@ -231,14 +231,14 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   return (
     <MobileCard 
       variant={isDueNow ? 'warning' : 'default'} 
-      className={`group transition-all duration-300 hover:shadow-lg ${className} ${isDueNow ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
+      className={`group transition-all duration-300 hover:shadow-lg ${className} ${(isDueNow && !recentlyTaken) ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
       onClick={onClick}
     >
       <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-              isDueNow 
+              (isDueNow && !recentlyTaken)
                 ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
                 : 'bg-gradient-to-br from-primary/70 to-primary/50'
             }`}>
@@ -258,7 +258,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
-                {isDueNow && (
+                {isDueNow && !recentlyTaken && (
                   <Badge variant="destructive" className="text-xs animate-pulse px-2 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
