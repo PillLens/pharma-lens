@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Users, UserPlus, Settings, Heart } from 'lucide-react';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from '@/components/ui/mobile/MobileCard';
@@ -6,7 +5,7 @@ import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { EnhancedMobileButton } from '@/components/mobile/EnhancedMobileButton';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PullToRefreshWrapper } from '@/components/mobile/PullToRefreshWrapper';
+import PullToRefreshWrapper from '@/components/mobile/PullToRefreshWrapper';
 import { GestureNavigationWrapper } from '@/components/mobile/GestureNavigationWrapper';
 import { MobileFamilyMemberCard } from './MobileFamilyMemberCard';
 import { MobileFamilyInvitationWizard } from './MobileFamilyInvitationWizard';
@@ -219,8 +218,8 @@ export const MobileFamilyManagement: React.FC = () => {
                         <EnhancedMobileButton 
                           size="sm" 
                           onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
-                          className="flex-1 h-10"
-                          variant="success"
+                          className="flex-1 h-10 bg-green-500 hover:bg-green-600 text-white"
+                          variant="default"
                           hapticPattern="success"
                           rippleEffect={true}
                         >
@@ -325,9 +324,9 @@ export const MobileFamilyManagement: React.FC = () => {
                 hapticService.buttonPress();
                 setCreateGroupDialog(true);
               }}
-              size="xl"
-              className="h-16 w-16 rounded-full shadow-floating hover:shadow-glow hover:scale-110 transition-all duration-300"
-              variant="medical"
+              size="lg"
+              className="h-16 w-16 rounded-full shadow-floating hover:shadow-glow hover:scale-110 transition-all duration-300 bg-gradient-to-r from-primary to-primary-light"
+              variant="default"
               hapticPattern="medium"
               rippleEffect={true}
             >
