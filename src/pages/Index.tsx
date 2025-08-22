@@ -19,6 +19,7 @@ import FloatingActionButton from "@/components/mobile/FloatingActionButton";
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from "@/components/ui/mobile/MobileCard";
 import { MobileButton } from "@/components/ui/mobile/MobileButton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import MobileDashboard from "@/components/mobile/MobileDashboard";
 
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
@@ -264,8 +265,23 @@ const Index = () => {
 
   if (isMobile) {
     return (
-      <ProfessionalMobileLayout title={t('app.title', 'PharmaLens')}>
-        {content}
+      <ProfessionalMobileLayout title={t('app.title', 'PharmaLens')} showHeader={false}>
+        <MobileDashboard 
+          onScanPress={() => setShowCamera(true)}
+          language={language}
+        />
+        
+        {/* Scan Result Dialog */}
+        {scanResultData && (
+          <ScanResultDialog
+            open={showScanResult}
+            onClose={() => {
+              setShowScanResult(false);
+              setScanResultData(null);
+            }}
+            medicationData={scanResultData}
+          />
+        )}
       </ProfessionalMobileLayout>
     );
   }
