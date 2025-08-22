@@ -5,12 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, Lock, Eye, AlertTriangle, CheckCircle, Download } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileSecurityDashboard } from '@/components/mobile/MobileSecurityDashboard';
 import { securityAuditService, SecurityMetrics, AuditLogEntry } from '@/services/securityAuditService';
 import { hipaaComplianceService, HIPAAComplianceData } from '@/services/hipaaComplianceService';
 import { rateLimitingService, RateLimitResult } from '@/services/rateLimitingService';
 import { useToast } from '@/hooks/use-toast';
 
 export function SecurityDashboard() {
+  const isMobile = useIsMobile();
+
+  // Use mobile version on mobile devices
+  if (isMobile) {
+    return <MobileSecurityDashboard />;
+  }
   const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics | null>(null);
   const [complianceData, setComplianceData] = useState<HIPAAComplianceData | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);

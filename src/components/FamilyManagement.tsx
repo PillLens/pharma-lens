@@ -10,6 +10,8 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileFamilyManagement } from '@/components/mobile/MobileFamilyManagement';
 import { 
   familySharingService, 
   FamilyGroup, 
@@ -18,6 +20,12 @@ import {
 } from '@/services/familySharingService';
 
 export const FamilyManagement: React.FC = () => {
+  const isMobile = useIsMobile();
+
+  // Use mobile version on mobile devices
+  if (isMobile) {
+    return <MobileFamilyManagement />;
+  }
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
   const [pendingInvitations, setPendingInvitations] = useState<FamilyInvitation[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
