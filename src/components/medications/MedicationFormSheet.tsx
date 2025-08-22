@@ -384,7 +384,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose}
-      height="xl"
+      height="full"
       title={medication ? `${t('common.edit')} ${t('medications.title')}` : t('medications.add')}
     >
       <div className="flex flex-col h-full">

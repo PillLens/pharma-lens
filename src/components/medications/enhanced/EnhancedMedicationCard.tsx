@@ -289,8 +289,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
       </MobileCardHeader>
 
       <MobileCardContent className="space-y-4">
-        {/* Take Now Button - Show for due or overdue medications */}
-        {medication.is_active && (isDueNow || isOverdue) && !recentlyTaken && (
+        {/* Take Now Button - Show for due medications or always for overdue medications */}
+        {medication.is_active && ((isDueNow && !recentlyTaken) || isOverdue) && (
           <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
