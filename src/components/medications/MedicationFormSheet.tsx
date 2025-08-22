@@ -217,7 +217,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background border shadow-lg z-50">
                     <SelectItem value="tablet">{t('medications.tablet')}</SelectItem>
                     <SelectItem value="capsule">{t('medications.capsule')}</SelectItem>
                     <SelectItem value="syrup">{t('medications.syrup')}</SelectItem>
@@ -286,7 +286,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
                       {form.watch('startDate') ? format(form.watch('startDate'), "MMM dd, yyyy") : "Select date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                   <PopoverContent className="w-auto p-0 bg-background border shadow-lg z-50" align="start">
                     <CalendarComponent
                       mode="single"
                       selected={form.watch('startDate')}
@@ -321,7 +321,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
                       {form.watch('endDate') ? format(form.watch('endDate'), "MMM dd, yyyy") : "Optional"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 bg-background border shadow-lg z-50" align="start">
                     <CalendarComponent
                       mode="single"
                       selected={form.watch('endDate')}

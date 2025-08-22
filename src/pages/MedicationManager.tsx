@@ -13,6 +13,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
+import MedicationFloatingActionButton from '@/components/medications/MedicationFloatingActionButton';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 
 const MedicationManager: React.FC = () => {
@@ -153,7 +154,7 @@ const MedicationManager: React.FC = () => {
             <Button
               onClick={() => setIsAddSheetOpen(true)}
               size="sm"
-              className="rounded-2xl shadow-sm min-w-[44px] h-[44px]"
+              className="rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] min-w-[44px] h-[44px]"
             >
               <Plus className="w-5 h-5" />
             </Button>
@@ -165,15 +166,21 @@ const MedicationManager: React.FC = () => {
       <PullToRefresh onRefresh={handleRefresh}>
         <div className="px-4 pb-safe-area-bottom">
           {/* Stats Bar */}
-          {!loading && (
+          {!loading && medications.length > 0 && (
             <div className="py-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {medications.length} {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
-                </span>
-                <span className="text-muted-foreground">
-                  {medications.filter(m => m.is_active).length} {t('medications.active')}
-                </span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="px-3 py-2 rounded-xl bg-card shadow-sm border">
+                    <span className="text-sm font-medium text-foreground">
+                      {medications.length} {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
+                    </span>
+                  </div>
+                  <div className="px-3 py-2 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <span className="text-sm font-medium text-green-600">
+                      {medications.filter(m => m.is_active).length} {t('medications.active')}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -192,14 +199,14 @@ const MedicationManager: React.FC = () => {
           ) : (
             <div className="space-y-3 pt-2 pb-6">
               {medications.map((medication) => (
-                <SwipeableCard
+                  <SwipeableCard
                   key={medication.id}
                   onDelete={() => handleDelete(medication)}
-                  className="rounded-2xl shadow-sm border border-border/50"
+                  className="rounded-2xl shadow-md hover:shadow-lg border border-border/50 transition-all duration-200"
                 >
                   <div 
                     onClick={() => handleCardTap(medication)}
-                    className="min-h-[44px] active:scale-[0.98] transition-transform duration-100"
+                    className="min-h-[44px] active:scale-[0.98] transition-transform duration-200 cursor-pointer"
                   >
                     <MobileMedicationCard
                       medication={medication}
@@ -214,6 +221,13 @@ const MedicationManager: React.FC = () => {
           )}
         </div>
       </PullToRefresh>
+
+      {/* Floating Action Button */}
+      {!loading && (
+        <MedicationFloatingActionButton
+          onClick={() => setIsAddSheetOpen(true)}
+        />
+      )}
 
       {/* Bottom Sheets */}
       <MedicationFormSheet

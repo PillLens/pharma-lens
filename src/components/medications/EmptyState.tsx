@@ -14,11 +14,14 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onAddClick }) => {
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
       {/* Medical Illustration */}
       <div className="relative mb-8">
-        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/10 to-primary-light/20 flex items-center justify-center mb-4">
+        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-4 shadow-lg">
           <Pill className="w-12 h-12 text-primary" />
         </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shadow-md animate-pulse">
           <Plus className="w-4 h-4 text-primary" />
+        </div>
+        <div className="absolute -bottom-2 -left-2 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+          <div className="w-2 h-2 rounded-full bg-green-500" />
         </div>
       </div>
 
@@ -36,7 +39,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onAddClick }) => {
       <Button
         onClick={onAddClick}
         size="lg"
-        className="w-full max-w-xs rounded-2xl"
+        className="w-full max-w-xs rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98]"
       >
         <Plus className="w-5 h-5 mr-2" />
         {t('medications.empty.cta')}
