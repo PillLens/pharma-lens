@@ -200,48 +200,53 @@ const MedicationManager: React.FC = () => {
                 </p>
               </div>
             </div>
-            <MobileButton
-              onClick={() => setIsAddSheetOpen(true)}
-              className="rounded-2xl w-12 h-12 p-0 shadow-lg"
-              haptic
-            >
-              <Plus className="w-5 h-5" />
-            </MobileButton>
-          </div>
-
-          {/* Quick Action Bar */}
-          {!loading && medications.length > 0 && (
-            <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
-              {dueMedications.length > 0 && (
-                <MobileButton
-                  size="sm"
-                  onClick={handleQuickActions.markAllTaken}
-                  className="rounded-xl whitespace-nowrap bg-success/10 text-success border-success/20 hover:bg-success/20"
-                  haptic
-                >
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Mark All Taken ({dueMedications.length})
-                </MobileButton>
+            <div className="flex items-center gap-3">
+              {/* Quick Action Buttons moved to top right */}
+              {!loading && medications.length > 0 && (
+                <>
+                  <MobileButton
+                    size="sm"
+                    onClick={handleQuickActions.viewInteractions}
+                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
+                    haptic
+                  >
+                    <AlertTriangle className="w-4 h-4 mr-2" />
+                    Safety Check
+                  </MobileButton>
+                  
+                  <MobileButton
+                    size="sm"
+                    onClick={() => handleQuickActions.snoozeReminders(30)}
+                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
+                    haptic
+                  >
+                    <Bell className="w-4 h-4 mr-2" />
+                    Snooze
+                  </MobileButton>
+                </>
               )}
               
               <MobileButton
-                size="sm"
-                onClick={handleQuickActions.viewInteractions}
-                className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
+                onClick={() => setIsAddSheetOpen(true)}
+                className="rounded-2xl w-12 h-12 p-0 shadow-lg"
                 haptic
               >
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                Safety Check
+                <Plus className="w-5 h-5" />
               </MobileButton>
+            </div>
+          </div>
 
+          {/* Mark All Taken button - only show when there are due medications */}
+          {!loading && dueMedications.length > 0 && (
+            <div className="flex justify-center pb-2">
               <MobileButton
                 size="sm"
-                onClick={() => handleQuickActions.snoozeReminders(30)}
-                className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
+                onClick={handleQuickActions.markAllTaken}
+                className="rounded-xl whitespace-nowrap bg-success/10 text-success border-success/20 hover:bg-success/20"
                 haptic
               >
-                <Bell className="w-4 h-4 mr-2" />
-                Snooze
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Mark All Taken ({dueMedications.length})
               </MobileButton>
             </div>
           )}
