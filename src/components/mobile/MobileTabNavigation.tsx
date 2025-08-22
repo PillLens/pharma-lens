@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, History, Pill, Bell, MoreHorizontal } from 'lucide-react';
+import { Home, History, Pill, Bell, LayoutDashboard } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -96,9 +96,9 @@ const MobileTabNavigation: React.FC = () => {
               onTouchStart={async () => await hapticService.feedback('light')}
               aria-label="Dashboard"
             >
-              <MoreHorizontal className={cn("w-5 h-5 mb-1", location.pathname === '/dashboard' && "text-white")} />
+              <LayoutDashboard className={cn("w-5 h-5 mb-1", location.pathname === '/dashboard' && "text-white")} />
               <span className={cn("text-xs font-medium", location.pathname === '/dashboard' && "text-white")}>
-                <TranslatedText translationKey="navigation.dashboard" />
+                Dashboard
               </span>
               {location.pathname === '/dashboard' && (
                 <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
