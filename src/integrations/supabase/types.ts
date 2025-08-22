@@ -1166,13 +1166,19 @@ export type Database = {
           email: string
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
+          entitlements: Json | null
           id: string
+          is_trial_eligible: boolean | null
           last_seen: string | null
           medical_conditions: string[] | null
           notification_preferences: Json | null
           phone: string | null
+          plan: string | null
           preferred_language: string | null
+          stripe_customer_id: string | null
           timezone: string | null
+          trial_expires_at: string | null
+          trial_started_at: string | null
           updated_at: string
         }
         Insert: {
@@ -1184,13 +1190,19 @@ export type Database = {
           email: string
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          entitlements?: Json | null
           id: string
+          is_trial_eligible?: boolean | null
           last_seen?: string | null
           medical_conditions?: string[] | null
           notification_preferences?: Json | null
           phone?: string | null
+          plan?: string | null
           preferred_language?: string | null
+          stripe_customer_id?: string | null
           timezone?: string | null
+          trial_expires_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -1202,13 +1214,19 @@ export type Database = {
           email?: string
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          entitlements?: Json | null
           id?: string
+          is_trial_eligible?: boolean | null
           last_seen?: string | null
           medical_conditions?: string[] | null
           notification_preferences?: Json | null
           phone?: string | null
+          plan?: string | null
           preferred_language?: string | null
+          stripe_customer_id?: string | null
           timezone?: string | null
+          trial_expires_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1437,6 +1455,42 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          id: string
+          plan: string
+          status: string
+          stripe_sub_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan: string
+          status?: string
+          stripe_sub_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          status?: string
+          stripe_sub_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       usage_analytics: {
         Row: {
           event_data: Json | null
@@ -1521,6 +1575,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          created_at: string
+          dashboard_preferences: Json | null
+          fab_positions: Json | null
+          id: string
+          notification_preferences: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dashboard_preferences?: Json | null
+          fab_positions?: Json | null
+          id?: string
+          notification_preferences?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dashboard_preferences?: Json | null
+          fab_positions?: Json | null
+          id?: string
+          notification_preferences?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1547,6 +1631,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: string
       }
+      get_family_member_status: {
+        Args: { group_uuid: string; member_uuid: string }
+        Returns: Json
+      }
       get_profile: {
         Args: { user_uuid: string }
         Returns: {
@@ -1556,6 +1644,10 @@ export type Database = {
           id: string
         }[]
       }
+      get_user_entitlements: {
+        Args: { user_uuid: string }
+        Returns: Json
+      }
       get_user_family_groups: {
         Args: { user_uuid: string }
         Returns: {
@@ -1564,6 +1656,10 @@ export type Database = {
       }
       is_family_member: {
         Args: { group_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
+      is_user_in_trial: {
+        Args: { user_uuid: string }
         Returns: boolean
       }
     }
