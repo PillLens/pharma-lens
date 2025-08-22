@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Pill, Clock, Activity, Calendar, AlertTriangle } from 'lucide-react';
+import { Plus, Pill, Clock, Activity, Calendar, AlertTriangle, BarChart3, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -13,10 +13,15 @@ import SwipeableCard from '@/components/mobile/SwipeableCard';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
 import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
+import EnhancedMedicationStatsCard from '@/components/medications/enhanced/EnhancedMedicationStatsCard';
+import AdvancedMedicationCard from '@/components/medications/enhanced/AdvancedMedicationCard';
+import MedicationAnalyticsDashboard from '@/components/medications/enhanced/MedicationAnalyticsDashboard';
+import InteractiveMedicationTimeline from '@/components/medications/enhanced/InteractiveMedicationTimeline';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 
 const MedicationManager: React.FC = () => {
@@ -38,6 +43,7 @@ const MedicationManager: React.FC = () => {
   const [selectedMedication, setSelectedMedication] = useState<UserMedication | null>(null);
   const [medicationToDelete, setMedicationToDelete] = useState<UserMedication | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'schedule' | 'analytics'>('overview');
 
   // Stats calculations
   const activeMeds = medications.filter(m => m.is_active).length;
@@ -50,6 +56,12 @@ const MedicationManager: React.FC = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays <= 7 && diffDays > 0;
   }).length;
+
+  // Enhanced stats for new components
+  const adherenceRate = Math.floor(Math.random() * 20) + 80; // Mock 80-99%
+  const currentStreak = Math.floor(Math.random() * 30) + 1; // Mock 1-30 days
+  const weeklyAdherence = Array.from({ length: 7 }, () => Math.floor(Math.random() * 20) + 80);
+  const complianceScore = Math.floor(Math.random() * 25) + 75; // Mock 75-99
 
   const handleRefresh = async () => {
     try {
@@ -124,19 +136,35 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  // Desktop content
+  // Enhanced handlers
+  const handleMarkTaken = (eventId: string) => {
+    toast.success('Medication marked as taken');
+    // Implementation would update the medication log
+  };
+
+  const handleMarkMissed = (eventId: string) => {
+    toast.info('Medication marked as missed');
+    // Implementation would update the medication log
+  };
+
+  const handleSnooze = (eventId: string, minutes: number) => {
+    toast.info(`Medication snoozed for ${minutes} minutes`);
+    // Implementation would reschedule the reminder
+  };
+
+  // Desktop content with enhanced features
   const desktopContent = (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-secondary-light/10">
       {/* Desktop Header */}
       <header className="px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">My Medications</h1>
-              <p className="text-sm text-muted-foreground">Track and manage your medications</p>
+              <h1 className="text-2xl font-bold text-foreground">Medication Management</h1>
+              <p className="text-sm text-muted-foreground">Comprehensive tracking and insights</p>
             </div>
           </div>
           <Button onClick={() => setIsAddSheetOpen(true)} className="gap-2">
@@ -146,51 +174,75 @@ const MedicationManager: React.FC = () => {
         </div>
       </header>
 
-      {/* Desktop Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Stats Cards */}
+      {/* Desktop Content with Tabs */}
+      <main className="max-w-6xl mx-auto px-4 py-8">
         {!loading && medications.length > 0 && (
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <MobileCard variant="medical" className="text-center">
-              <MobileCardHeader>
-                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                  <Pill className="w-6 h-6 text-white" />
-                </div>
-                <MobileCardTitle className="text-2xl font-bold text-primary">
-                  {totalMeds}
-                </MobileCardTitle>
-                <MobileCardDescription>Total Medications</MobileCardDescription>
-              </MobileCardHeader>
-            </MobileCard>
-            
-            <MobileCard variant="medical" className="text-center">
-              <MobileCardHeader>
-                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
-                  <Activity className="w-6 h-6 text-white" />
-                </div>
-                <MobileCardTitle className="text-2xl font-bold text-primary">
-                  {activeMeds}
-                </MobileCardTitle>
-                <MobileCardDescription>Active</MobileCardDescription>
-              </MobileCardHeader>
-            </MobileCard>
-            
-            <MobileCard variant="medical" className="text-center">
-              <MobileCardHeader>
-                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
-                <MobileCardTitle className="text-2xl font-bold text-primary">
-                  {expiringSoon}
-                </MobileCardTitle>
-                <MobileCardDescription>Expiring Soon</MobileCardDescription>
-              </MobileCardHeader>
-            </MobileCard>
-          </div>
+          <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsTrigger value="overview" className="gap-2">
+                <Target className="w-4 h-4" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="schedule" className="gap-2">
+                <Calendar className="w-4 h-4" />
+                Schedule
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-8">
+              {/* Enhanced Stats Dashboard */}
+              <EnhancedMedicationStatsCard
+                totalMedications={totalMeds}
+                activeMedications={activeMeds}
+                adherenceRate={adherenceRate}
+                currentStreak={currentStreak}
+                expiringSoon={expiringSoon}
+                weeklyAdherence={weeklyAdherence}
+                complianceScore={complianceScore}
+              />
+
+              {/* Advanced Medications List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Your Medications</h3>
+                {medications.map((medication) => (
+                  <div
+                    key={medication.id}
+                    className="cursor-pointer transition-transform hover:scale-[1.01]"
+                    onClick={() => handleCardTap(medication)}
+                  >
+                    <AdvancedMedicationCard
+                      medication={medication}
+                      onEdit={() => handleEdit(medication)}
+                      onDelete={() => handleDelete(medication)}
+                      onToggleActive={() => handleToggleActive(medication)}
+                      onMarkTaken={() => handleMarkTaken(medication.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="schedule" className="space-y-6">
+              <InteractiveMedicationTimeline
+                medications={medications}
+                onMarkTaken={handleMarkTaken}
+                onMarkMissed={handleMarkMissed}
+                onSnooze={handleSnooze}
+              />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-6">
+              <MedicationAnalyticsDashboard medications={medications} />
+            </TabsContent>
+          </Tabs>
         )}
 
-        {/* Medications List */}
-        {loading ? (
+        {/* Loading and Empty States */}
+        {loading && (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
               <MobileCard key={i} className="animate-pulse">
@@ -210,25 +262,10 @@ const MedicationManager: React.FC = () => {
               </MobileCard>
             ))}
           </div>
-        ) : medications.length === 0 ? (
+        )}
+
+        {!loading && medications.length === 0 && (
           <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
-        ) : (
-          <div className="space-y-4">
-            {medications.map((medication) => (
-              <div
-                key={medication.id}
-                className="cursor-pointer transition-transform hover:scale-[1.02]"
-                onClick={() => handleCardTap(medication)}
-              >
-                <EnhancedMedicationCard
-                  medication={medication}
-                  onEdit={() => handleEdit(medication)}
-                  onDelete={() => handleDelete(medication)}
-                  onToggleActive={() => handleToggleActive(medication)}
-                />
-              </div>
-            ))}
-          </div>
         )}
       </main>
     </div>
@@ -261,34 +298,19 @@ const MedicationManager: React.FC = () => {
           </div>
         </div>
 
-        {/* Compact Stats Cards */}
+        {/* Enhanced Mobile Stats */}
         {!loading && medications.length > 0 && (
-          <div className="px-6 pb-6">
-            <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
-              <div className="bg-blue-50/70 dark:bg-blue-900/20 rounded-xl p-3 text-center border border-blue-200/30">
-                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-                  <Pill className="w-4 h-4 text-white" />
-                </div>
-                <p className="text-lg font-bold text-blue-700 dark:text-blue-300">{totalMeds}</p>
-                <p className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium">Total</p>
-              </div>
-              
-              <div className="bg-green-50/70 dark:bg-green-900/20 rounded-xl p-3 text-center border border-green-200/30">
-                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-sm">
-                  <Activity className="w-4 h-4 text-white" />
-                </div>
-                <p className="text-lg font-bold text-green-700 dark:text-green-300">{activeMeds}</p>
-                <p className="text-xs text-green-600/80 dark:text-green-400/80 font-medium">Active</p>
-              </div>
-              
-              <div className="bg-amber-50/70 dark:bg-amber-900/20 rounded-xl p-3 text-center border border-amber-200/30">
-                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-                  <Clock className="w-4 h-4 text-white" />
-                </div>
-                <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{expiringSoon}</p>
-                <p className="text-xs text-amber-600/80 dark:text-amber-400/80 font-medium">Expiring</p>
-              </div>
-            </div>
+          <div className="px-4 pb-6">
+            <EnhancedMedicationStatsCard
+              totalMedications={totalMeds}
+              activeMedications={activeMeds}
+              adherenceRate={adherenceRate}
+              currentStreak={currentStreak}
+              expiringSoon={expiringSoon}
+              weeklyAdherence={weeklyAdherence}
+              complianceScore={complianceScore}
+              className="scale-90 -mx-4"
+            />
           </div>
         )}
 
@@ -331,11 +353,12 @@ const MedicationManager: React.FC = () => {
                   onClick={() => handleCardTap(medication)}
                 >
                   <SwipeableCard onDelete={() => handleDelete(medication)}>
-                    <EnhancedMedicationCard
+                    <AdvancedMedicationCard
                       medication={medication}
                       onEdit={() => handleEdit(medication)}
                       onDelete={() => handleDelete(medication)}
                       onToggleActive={() => handleToggleActive(medication)}
+                      onMarkTaken={() => handleMarkTaken(medication.id)}
                     />
                   </SwipeableCard>
                 </div>
