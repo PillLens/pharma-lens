@@ -23,6 +23,8 @@ serve(async (req) => {
       );
     }
 
+    console.log('Processing request - text length:', text?.length || 0, 'barcode:', barcode);
+
     // Try barcode lookup first if barcode is provided
     if (barcode) {
       const knownMedications = await getKnownMedicationByBarcode(barcode);
@@ -75,6 +77,7 @@ serve(async (req) => {
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
+      console.error('OpenAI API key not configured');
       return new Response(
         JSON.stringify({ error: 'OpenAI API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -140,7 +143,7 @@ Important: All text fields (except dates, barcodes, and confidence_score) must b
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           {
             role: 'system',
@@ -155,34 +158,89 @@ When extracting medication information, be very generous in identifying medicati
 - Common medication forms (tablet, capsule, syrup, cream)
 - Manufacturer names (Bayer, Teva, Nobel İlaç, etc.)
 
-If you can identify ANY medication information from the text, return a proper medication entry with high confidence rather than marking it as unknown.`
+If you can identify ANY medication information from the text, return a proper medication entry with high confidence rather than marking it as unknown.
+
+IMPORTANT: You must respond with ONLY valid JSON, no markdown formatting, no additional text, just the JSON object.`
           },
           {
             role: 'user',
             content: extractionPrompt
           }
         ],
-        max_completion_tokens: 1000
+        max_completion_tokens: 1500,
+        temperature: 0.3
       }),
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', response.status, await response.text());
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    // Check if the response has the expected structure
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected OpenAI response structure:', JSON.stringify(data));
+      throw new Error('Invalid response structure from OpenAI');
+    }
+    
     const extractedText = data.choices[0].message.content;
-
-    console.log('OpenAI response received:', extractedText);
+    console.log('OpenAI response received (first 200 chars):', extractedText?.substring(0, 200) + '...');
 
     // Parse the JSON response
     let extractedData;
     try {
-      extractedData = JSON.parse(extractedText);
+      if (!extractedText || extractedText.trim() === '') {
+        throw new Error('Empty response from OpenAI');
+      }
+      
+      // Clean the response - remove any markdown formatting
+      let cleanedText = extractedText.trim();
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      console.log('Attempting to parse cleaned JSON (first 200 chars):', cleanedText.substring(0, 200) + '...');
+      extractedData = JSON.parse(cleanedText);
+      console.log('Successfully parsed JSON response');
+      
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', extractedText);
-      throw new Error('Invalid JSON response from OpenAI');
+      console.error('Failed to parse OpenAI response as JSON. Raw response:', extractedText);
+      console.error('Parse error:', parseError.message);
+      
+      // Fallback: create a generic medication entry
+      extractedData = {
+        brand_name: text ? `Medication from Scan: ${text.substring(0, 50)}` : 'Unidentified Medication',
+        generic_name: null,
+        strength: null,
+        form: null,
+        manufacturer: null,
+        confidence_score: 0.1,
+        barcode: barcode,
+        active_ingredients: [],
+        indications: [],
+        contraindications: [],
+        warnings: ['Please consult with healthcare provider'],
+        side_effects: [],
+        usage_instructions: {
+          dosage: 'As prescribed by physician',
+          frequency: 'As prescribed',
+          duration: 'As prescribed',
+          timing: 'As directed',
+          route: 'As directed',
+          special_instructions: 'Follow healthcare provider instructions'
+        },
+        storage_instructions: 'Store as directed on package',
+        drug_interactions: [],
+        pregnancy_safety: null,
+        age_restrictions: null,
+        expiry_date: null
+      };
+      console.log('Created fallback medication entry');
     }
 
     // Validate required fields - be more descriptive for unknown medications
@@ -199,6 +257,12 @@ If you can identify ANY medication information from the text, return a proper me
     if (typeof extractedData.confidence_score !== 'number') {
       extractedData.confidence_score = 0.5;
     }
+
+    console.log('Final extracted data:', JSON.stringify({
+      brand_name: extractedData.brand_name,
+      confidence_score: extractedData.confidence_score,
+      source: 'ai_extraction'
+    }));
 
     // Store in database if user is authenticated
     const authHeader = req.headers.get('Authorization');
@@ -542,7 +606,7 @@ async function storeExtraction(authHeader: string, extractedData: any) {
           user_id: user.user.id,
           extracted_json: extractedData,
           quality_score: extractedData.confidence_score,
-          model_version: extractedData.confidence_score > 0.9 ? 'barcode_db' : 'gpt-4o-mini'
+          model_version: extractedData.confidence_score > 0.9 ? 'barcode_db' : 'gpt-4.1-2025-04-14'
         });
 
       if (dbError) {
