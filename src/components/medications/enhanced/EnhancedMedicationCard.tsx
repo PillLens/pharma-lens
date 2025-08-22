@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Pill, AlertTriangle, CheckCircle, XCircle, Edit, Clock, TrendingUp, Heart, Zap, MoreVertical } from 'lucide-react';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
 import { Progress } from '@/components/ui/progress';
@@ -8,6 +8,8 @@ import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { format } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EnhancedMedicationCardProps {
   medication: UserMedication;
@@ -28,6 +30,80 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   className,
   onClick
 }) => {
+  const { user } = useAuth();
+  const [recentlyTaken, setRecentlyTaken] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check if medication was taken recently
+  useEffect(() => {
+    const checkRecentDose = async () => {
+      if (!user) return;
+      
+      try {
+        const now = new Date();
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        // Check for doses taken today for this medication
+        const { data, error } = await supabase
+          .from('medication_adherence_log')
+          .select('taken_time, scheduled_time')
+          .eq('user_id', user.id)
+          .eq('medication_id', medication.id)
+          .eq('status', 'taken')
+          .gte('taken_time', startOfDay.toISOString())
+          .order('taken_time', { ascending: false });
+
+        if (error) {
+          console.error('Error checking recent doses:', error);
+          setLoading(false);
+          return;
+        }
+
+        // Check if a dose was taken in the current time window
+        const hour = now.getHours();
+        let takenInCurrentWindow = false;
+
+        if (data && data.length > 0) {
+          data.forEach(dose => {
+            const takenTime = new Date(dose.taken_time);
+            const takenHour = takenTime.getHours();
+            
+            switch (medication.frequency) {
+              case 'once_daily':
+                // If taken any time today
+                takenInCurrentWindow = true;
+                break;
+              case 'twice_daily':
+                // Morning (6-14) or Evening (18-24)
+                if ((hour >= 6 && hour < 18 && takenHour >= 6 && takenHour < 18) ||
+                    (hour >= 18 && takenHour >= 18)) {
+                  takenInCurrentWindow = true;
+                }
+                break;
+              case 'three_times_daily':
+                // Morning (6-12), Afternoon (12-18), Evening (18-24)
+                if ((hour >= 6 && hour < 12 && takenHour >= 6 && takenHour < 12) ||
+                    (hour >= 12 && hour < 18 && takenHour >= 12 && takenHour < 18) ||
+                    (hour >= 18 && takenHour >= 18)) {
+                  takenInCurrentWindow = true;
+                }
+                break;
+            }
+          });
+        }
+
+        setRecentlyTaken(takenInCurrentWindow);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error checking recent doses:', error);
+        setLoading(false);
+      }
+    };
+
+    checkRecentDose();
+  }, [user, medication]);
+
   // Generate stable data based on medication ID to prevent constant changes
   const generateStableValue = (seed: string, min: number, max: number) => {
     let hash = 0;
@@ -50,6 +126,23 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
     const now = new Date();
     const hour = now.getHours();
     
+    // If recently taken, show next dose time
+    if (recentlyTaken) {
+      switch (medication.frequency) {
+        case 'once_daily':
+          return 'Next: Tomorrow 8:00 AM';
+        case 'twice_daily':
+          if (hour < 18) return 'Next: Today 8:00 PM';
+          return 'Next: Tomorrow 8:00 AM';
+        case 'three_times_daily':
+          if (hour < 12) return 'Next: Today 2:00 PM';
+          if (hour < 18) return 'Next: Today 8:00 PM';
+          return 'Next: Tomorrow 8:00 AM';
+        default:
+          return 'As needed';
+      }
+    }
+    
     switch (medication.frequency) {
       case 'once_daily':
         return hour < 8 ? 'Due at 8:00 AM' : 'Next: Tomorrow 8:00 AM';
@@ -68,7 +161,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   };
 
   const nextDoseStatus = getNextDoseStatus();
-  const isDueNow = nextDoseStatus.includes('Due at');
+  const isDueNow = nextDoseStatus.includes('Due at') && !recentlyTaken;
 
   const getFrequencyLabel = (frequency: string) => {
     const frequencyMap: Record<string, string> = {
@@ -94,13 +187,17 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   return (
     <MobileCard 
       variant={isDueNow ? 'warning' : 'default'} 
-      className={`group transition-all duration-300 hover:shadow-lg ${className} ${isDueNow ? 'animate-pulse' : ''}`}
+      className={`group transition-all duration-300 hover:shadow-lg ${className} ${isDueNow ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
       onClick={onClick}
     >
       <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-sm">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
+              isDueNow 
+                ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
+                : 'bg-gradient-to-br from-primary/70 to-primary/50'
+            }`}>
               <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
@@ -121,6 +218,12 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                   <Badge variant="destructive" className="text-xs animate-pulse px-2 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
+                  </Badge>
+                )}
+                {recentlyTaken && (
+                  <Badge variant="secondary" className="text-xs px-2 py-1 bg-success/10 text-success border-success/20">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Taken Today
                   </Badge>
                 )}
               </div>
@@ -156,31 +259,33 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
       <MobileCardContent className="space-y-4">
         {/* Due Now Action - Always show if active and due */}
         {isDueNow && medication.is_active && (
-          <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-                <Clock className="w-4 h-4 text-primary" />
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+                <Clock className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="text-sm font-medium">Time to take your dose!</div>
+                <div className="text-sm font-semibold text-primary">Time to take your dose!</div>
                 <div className="text-xs text-muted-foreground">
                   {nextDoseStatus}
                 </div>
               </div>
             </div>
             <MobileButton
-              size="sm"
+              size="lg"
               onClick={(e) => {
                 e.stopPropagation();
                 if (onMarkTaken) {
                   onMarkTaken();
+                  // Update local state immediately for better UX
+                  setRecentlyTaken(true);
                 }
               }}
-              className="h-9 px-4 rounded-xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80 text-success-foreground shadow-sm transition-all duration-200 hover:shadow-md"
+              className="h-12 px-6 rounded-2xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80 text-success-foreground shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
               haptic
             >
-              <CheckCircle className="w-4 h-4 mr-1" />
-              Mark Taken
+              <CheckCircle className="w-5 h-5 mr-2" />
+              Take Now
             </MobileButton>
           </div>
         )}
@@ -196,7 +301,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
             <div className="text-xs text-muted-foreground">Day Streak</div>
           </div>
           <div className="text-center p-2 rounded-lg bg-muted/30">
-            <div className="text-sm font-bold ${inventoryDays <= 7 ? 'text-destructive' : inventoryDays <= 14 ? 'text-warning' : 'text-success'}">{inventoryDays}</div>
+            <div className={`text-sm font-bold ${inventoryDays <= 7 ? 'text-destructive' : inventoryDays <= 14 ? 'text-warning' : 'text-success'}`}>{inventoryDays}</div>
             <div className="text-xs text-muted-foreground">Days Left</div>
           </div>
         </div>
