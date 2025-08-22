@@ -292,6 +292,78 @@
       "roleRequired": "Please select a role"
     }
   },
+  "reminders": {
+    "title": "Reminders",
+    "subtitle": "Never miss a dose with smart notifications",
+    "empty": {
+      "title": "No Reminders Set",
+      "subtitle": "Stay on track with smart notifications",
+      "description": "Set up medication reminders to help you maintain your medication schedule.",
+      "createButton": "Add Your First Reminder"
+    },
+    "summary": {
+      "active": "Active Reminders",
+      "medications": "Medications Covered", 
+      "todayDoses": "Today's Doses"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "inactive": "Inactive"
+    },
+    "frequency": {
+      "once": "Once daily",
+      "twice": "Twice daily", 
+      "custom": "Custom",
+      "everyHour": "Every {{hours}} hours",
+      "asNeeded": "As needed"
+    },
+    "details": {
+      "title": "Reminder Details",
+      "schedule": "Schedule",
+      "frequency": "Frequency", 
+      "nextDose": "Next dose",
+      "notes": "Notes",
+      "editButton": "Edit Reminder"
+    },
+    "form": {
+      "title": "Add Reminder",
+      "editTitle": "Edit Reminder",
+      "medication": "Medication",
+      "medicationPlaceholder": "Select medication",
+      "dosage": "Dosage",
+      "dosagePlaceholder": "e.g., 1 tablet",
+      "frequency": "Frequency",
+      "times": "Times",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "notes": "Notes",
+      "notesPlaceholder": "Optional notes...",
+      "save": "Save Reminder",
+      "cancel": "Cancel",
+      "update": "Update Reminder"
+    },
+    "validation": {
+      "medicationRequired": "Please select a medication",
+      "dosageRequired": "Please enter dosage",
+      "timesRequired": "Please add at least one time",
+      "startDateRequired": "Please select start date"
+    },
+    "messages": {
+      "reminderAdded": "Reminder Added",
+      "reminderUpdated": "Reminder Updated", 
+      "reminderDeleted": "Reminder Deleted",
+      "reminderPaused": "Reminder Paused",
+      "reminderActivated": "Reminder Activated"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "pause": "Pause",
+      "activate": "Activate",
+      "addReminder": "Add Reminder"
+    }
+  },
   "errors": {
     "networkError": "Network error occurred",
     "serverError": "Server error occurred",
