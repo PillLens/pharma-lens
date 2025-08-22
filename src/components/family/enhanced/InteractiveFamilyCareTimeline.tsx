@@ -203,176 +203,141 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
       </div>
 
       {/* Care Timeline */}
-      <Card className="w-full max-w-full">
-        <CardHeader className="pb-3 px-4">
-          <div className="flex items-center justify-between gap-2">
-            <CardTitle className="text-base flex items-center gap-2 flex-1 min-w-0">
-              <Activity className="w-4 h-4 text-primary flex-shrink-0" />
-              <span className="truncate">Care Timeline</span>
-            </CardTitle>
-            <div className="flex gap-1 flex-shrink-0">
-              <Button size="sm" variant="outline" onClick={onScheduleReminder}>
-                <Bell className="w-4 h-4" />
-              </Button>
-              <Button size="sm" onClick={onAddEvent}>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold flex items-center gap-2">
+            <Activity className="w-4 h-4 text-primary" />
+            Care Timeline
+          </h2>
+          <div className="flex gap-1">
+            <Button size="sm" variant="outline" onClick={onScheduleReminder}>
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button size="sm" onClick={onAddEvent}>
+              <Plus className="w-4 h-4" />
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent className="px-4 pb-4 w-full max-w-full">
-          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-3 mb-4">
-              <TabsTrigger value="today">Today</TabsTrigger>
-              <TabsTrigger value="week">This Week</TabsTrigger>
-              <TabsTrigger value="month">This Month</TabsTrigger>
-            </TabsList>
+        </div>
 
-            <TabsContent value="today">
-              <ScrollArea className="h-96">
-                <div className="space-y-4">
-                  {timelineEvents.today.map((event, index) => {
-                    const StatusIcon = getStatusIcon(event.status);
-                    const EventIcon = event.icon;
+        <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="today">Today</TabsTrigger>
+            <TabsTrigger value="week">This Week</TabsTrigger>
+            <TabsTrigger value="month">This Month</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="today" className="space-y-3">
+            {timelineEvents.today.map((event, index) => {
+              const StatusIcon = getStatusIcon(event.status);
+              const EventIcon = event.icon;
+              
+              return (
+                <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border hover:bg-muted/50 transition-colors">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    event.status === 'completed' ? 'bg-success/20' :
+                    event.status === 'upcoming' ? 'bg-warning/20' :
+                    event.status === 'pending' ? 'bg-destructive/20' :
+                    'bg-muted'
+                  }`}>
+                    <EventIcon className={`w-4 h-4 ${
+                      event.status === 'completed' ? 'text-success' :
+                      event.status === 'upcoming' ? 'text-warning' :
+                      event.status === 'pending' ? 'text-destructive' :
+                      'text-muted-foreground'
+                    }`} />
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {event.time}
+                      </span>
+                      <Badge className={`text-xs ${
+                        event.status === 'completed' ? 'bg-success/10 text-success' :
+                        event.status === 'upcoming' ? 'bg-warning/10 text-warning' :
+                        event.status === 'pending' ? 'bg-destructive/10 text-destructive' :
+                        'bg-muted/50 text-muted-foreground'
+                      }`}>
+                        {event.status}
+                      </Badge>
+                      <StatusIcon className={`w-4 h-4 ml-auto ${
+                        event.status === 'completed' ? 'text-success' :
+                        event.status === 'upcoming' ? 'text-warning' :
+                        'text-destructive'
+                      }`} />
+                    </div>
                     
-                    return (
-                      <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors w-full max-w-full">
-                        <div className="flex flex-col items-center">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            event.status === 'completed' ? 'bg-success/20' :
-                            event.status === 'upcoming' ? 'bg-warning/20' :
-                            event.status === 'pending' ? 'bg-destructive/20' :
-                            'bg-muted'
-                          }`}>
-                            <EventIcon className={`w-5 h-5 ${
-                              event.status === 'completed' ? 'text-success' :
-                              event.status === 'upcoming' ? 'text-warning' :
-                              event.status === 'pending' ? 'text-destructive' :
-                              'text-muted-foreground'
-                            }`} />
-                          </div>
-                          {index < timelineEvents.today.length - 1 && (
-                            <div className="w-0.5 h-8 bg-border mt-2" />
-                          )}
-                        </div>
-
-                        <div className="flex-1 min-w-0 overflow-hidden">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
-                                {event.time}
-                              </span>
-                              <Badge className={`text-xs whitespace-nowrap ${
-                                event.status === 'completed' ? 'bg-success/10 text-success' :
-                                event.status === 'upcoming' ? 'bg-warning/10 text-warning' :
-                                event.status === 'pending' ? 'bg-destructive/10 text-destructive' :
-                                'bg-muted/50 text-muted-foreground'
-                              }`}>
-                                {event.status}
-                              </Badge>
-                            </div>
-                            <StatusIcon className={`w-4 h-4 flex-shrink-0 ${
-                              event.status === 'completed' ? 'text-success' :
-                              event.status === 'upcoming' ? 'text-warning' :
-                              'text-destructive'
-                            }`} />
-                          </div>
-                          
-                          <h4 className="font-medium text-foreground mb-1 truncate">{event.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-2 line-clamp-2 break-words">{event.description}</p>
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                              <Avatar className="w-6 h-6 flex-shrink-0">
-                                <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                                  {event.member.avatar}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-xs text-muted-foreground truncate">
-                                {event.member.name}
-                              </span>
-                            </div>
-                            
-                            {event.status !== 'completed' && (
-                              <div className="flex gap-1 flex-shrink-0">
-                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                  <MessageCircle className="w-3 h-3" />
-                                </Button>
-                                <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                  <Phone className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                    <h4 className="font-medium text-foreground mb-1">{event.title}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">{event.description}</p>
+                    
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-6 h-6">
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                          {event.member.avatar}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs text-muted-foreground">
+                        {event.member.name}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </ScrollArea>
-            </TabsContent>
+              );
+            })}
+          </TabsContent>
 
-            <TabsContent value="week">
-              <ScrollArea className="h-96">
-                <div className="space-y-6 overflow-hidden">
-                  {timelineEvents.week.map((day) => (
-                    <div key={day.id} className="overflow-hidden">
-                      <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="truncate">{day.date}</span>
-                      </h3>
-                      <div className="space-y-3 ml-6 overflow-hidden">
-                        {day.events.map((event, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 overflow-hidden">
-                            <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-                            <div className="flex-1 min-w-0 overflow-hidden">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-sm font-medium whitespace-nowrap">{event.time}</span>
-                                <Badge className="text-xs bg-primary/10 text-primary whitespace-nowrap">
-                                  {event.status}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground truncate">{event.title}</p>
-                            </div>
-                          </div>
-                        ))}
+          <TabsContent value="week" className="space-y-4">
+            {timelineEvents.week.map((day) => (
+              <div key={day.id}>
+                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  {day.date}
+                </h3>
+                <div className="space-y-3 ml-6">
+                  {day.events.map((event, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-medium">{event.time}</span>
+                          <Badge className="text-xs bg-primary/10 text-primary">
+                            {event.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{event.title}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
-            </TabsContent>
+              </div>
+            ))}
+          </TabsContent>
 
-            <TabsContent value="month">
-              <ScrollArea className="h-96">
-                <div className="space-y-6 overflow-hidden">
-                  {timelineEvents.month.map((period) => (
-                    <div key={period.id} className="overflow-hidden">
-                      <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="truncate">{period.date}</span>
-                      </h3>
-                      <div className="space-y-3 ml-6 overflow-hidden">
-                        {period.events.map((event, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 overflow-hidden">
-                            <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-                            <div className="flex-1 min-w-0 overflow-hidden">
-                              <p className="text-sm font-medium truncate">{event.title}</p>
-                              <Badge className="text-xs bg-primary/10 text-primary mt-1 whitespace-nowrap">
-                                {event.status}
-                              </Badge>
-                            </div>
-                          </div>
-                        ))}
+          <TabsContent value="month" className="space-y-4">
+            {timelineEvents.month.map((period) => (
+              <div key={period.id}>
+                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  {period.date}
+                </h3>
+                <div className="space-y-3 ml-6">
+                  {period.events.map((event, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{event.title}</p>
+                        <Badge className="text-xs bg-primary/10 text-primary mt-1">
+                          {event.status}
+                        </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+              </div>
+            ))}
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
