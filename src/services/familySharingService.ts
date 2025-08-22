@@ -87,13 +87,25 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      const { data, error } = await supabase
+      // First get the family group IDs the user is a member of
+      const userGroupIds = await this.getUserFamilyGroupIds();
+      
+      // Build the query condition
+      let query = supabase
         .from('family_groups')
         .select(`
           *,
           members:family_members!family_members_family_group_id_fkey(count)
-        `)
-        .or(`creator_id.eq.${user.id},id.in.(${await this.getUserFamilyGroupIds()})`);
+        `);
+
+      // Apply the filter - either creator or member
+      if (userGroupIds) {
+        query = query.or(`creator_id.eq.${user.id},id.in.(${userGroupIds})`);
+      } else {
+        query = query.eq('creator_id', user.id);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
