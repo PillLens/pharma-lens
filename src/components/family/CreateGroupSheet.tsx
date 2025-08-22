@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Heart, Shield, Users2 } from 'lucide-react';
+import { FamilyGroupTemplate } from './enhanced/EnhancedFamilyEmptyState';
 import {
   Sheet,
   SheetContent,
@@ -15,8 +16,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 interface CreateGroupSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (groupName: string) => void;
+  onCreate: (groupName: string, template?: FamilyGroupTemplate) => void;
   isLoading?: boolean;
+  template?: FamilyGroupTemplate;
 }
 
 const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
@@ -24,11 +26,20 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
   onClose,
   onCreate,
   isLoading = false,
+  template,
 }) => {
   const { t } = useTranslation();
   const [groupName, setGroupName] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  // Auto-fill group name when template is provided
+  useEffect(() => {
+    if (template && isOpen) {
+      setGroupName(template.name);
+      setSelectedSuggestion(template.name);
+    }
+  }, [template, isOpen]);
 
   const suggestions = [
     { name: 'Family', icon: Heart, color: 'bg-medical-success/20 text-medical-success' },
@@ -45,7 +56,7 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
       return;
     }
 
-    onCreate(groupName.trim());
+    onCreate(groupName.trim(), template);
     setGroupName('');
     setSelectedSuggestion(null);
     setError('');
@@ -67,12 +78,17 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="w-6 h-6 text-primary" />
               </div>
-              <div>
-                <SheetTitle>{t('family.actions.createGroup')}</SheetTitle>
-                <p className="text-sm text-muted-foreground">
-                  Create a group to share medications with trusted people
-                </p>
-              </div>
+            <div>
+              <SheetTitle>
+                {template ? `Create ${template.name} Group` : t('family.actions.createGroup')}
+              </SheetTitle>
+              <p className="text-sm text-muted-foreground">
+                {template 
+                  ? template.description 
+                  : "Create a group to share medications with trusted people"
+                }
+              </p>
+            </div>
             </div>
           </SheetHeader>
 
@@ -101,38 +117,67 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
               </div>
             </div>
 
-            {/* Suggestions */}
-            <div className="space-y-3">
-              <h3 className="font-medium text-foreground">Popular Group Names</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {suggestions.map((suggestion) => {
-                  const Icon = suggestion.icon;
-                  const isSelected = selectedSuggestion === suggestion.name;
-                  
-                  return (
-                    <button
-                      key={suggestion.name}
-                      type="button"
-                      onClick={() => handleSuggestionClick(suggestion.name)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                        isSelected 
-                          ? 'border-primary bg-primary/5' 
-                          : 'border-border hover:border-muted-foreground/50'
-                      }`}
-                    >
+            {/* Template Info or Suggestions */}
+            {template ? (
+              <div className="space-y-3">
+                <h3 className="font-medium text-foreground">Template Members</h3>
+                <div className="space-y-2">
+                  {template.members.map((member, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${suggestion.color}`}>
-                          <Icon className="w-4 h-4" />
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Users className="w-4 h-4 text-primary" />
                         </div>
-                        <div>
-                          <p className="font-medium text-sm">{suggestion.name}</p>
-                        </div>
+                        <span className="font-medium text-sm">{member.role}</span>
                       </div>
-                    </button>
-                  );
-                })}
+                      <div className="flex gap-1">
+                        {member.permissions.view_medications && (
+                          <Badge variant="secondary" className="text-xs">View</Badge>
+                        )}
+                        {member.permissions.edit_medications && (
+                          <Badge variant="secondary" className="text-xs">Edit</Badge>
+                        )}
+                        {member.permissions.receive_alerts && (
+                          <Badge variant="secondary" className="text-xs">Alerts</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3">
+                <h3 className="font-medium text-foreground">Popular Group Names</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {suggestions.map((suggestion) => {
+                    const Icon = suggestion.icon;
+                    const isSelected = selectedSuggestion === suggestion.name;
+                    
+                    return (
+                      <button
+                        key={suggestion.name}
+                        type="button"
+                        onClick={() => handleSuggestionClick(suggestion.name)}
+                        className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
+                          isSelected 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-muted-foreground/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${suggestion.color}`}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{suggestion.name}</p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Info Box */}
             <div className="p-4 rounded-xl bg-muted/50">

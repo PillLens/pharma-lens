@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from '@/hooks/use-toast';
 import { familySharingService, FamilyGroup, FamilyInvitation } from '@/services/familySharingService';
-import EnhancedFamilyEmptyState from '@/components/family/enhanced/EnhancedFamilyEmptyState';
+import EnhancedFamilyEmptyState, { FamilyGroupTemplate } from '@/components/family/enhanced/EnhancedFamilyEmptyState';
 import AdvancedFamilyGroupCard from '@/components/family/enhanced/AdvancedFamilyGroupCard';
 import EnhancedFamilyDashboard from '@/components/family/enhanced/EnhancedFamilyDashboard';
 import InteractiveFamilyCareTimeline from '@/components/family/enhanced/InteractiveFamilyCareTimeline';
@@ -37,6 +37,7 @@ const FamilyManager: React.FC = () => {
   const [showInviteMember, setShowInviteMember] = useState(false);
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [isInvitingMember, setIsInvitingMember] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<FamilyGroupTemplate | undefined>(undefined);
 
   // Load family data
   const loadFamilyData = async () => {
@@ -66,16 +67,17 @@ const FamilyManager: React.FC = () => {
   }, []);
 
   // Handlers
-  const handleCreateGroup = async (groupName: string) => {
+  const handleCreateGroup = async (groupName: string, template?: FamilyGroupTemplate) => {
     try {
       setIsCreatingGroup(true);
       const newGroup = await familySharingService.createFamilyGroup(groupName);
       if (newGroup) {
         setFamilyGroups(prev => [...prev, newGroup]);
         setShowCreateGroup(false);
+        setSelectedTemplate(undefined);
         toast({
           title: t('family.messages.groupCreated'),
-          description: `Group "${groupName}" created successfully`,
+          description: `${template ? `${template.name} group` : 'Group'} "${groupName}" created successfully`,
         });
       }
     } catch (error) {
@@ -241,7 +243,10 @@ const FamilyManager: React.FC = () => {
         </div>
       ) : familyGroups.length === 0 ? (
         <EnhancedFamilyEmptyState 
-          onCreateGroup={() => setShowCreateGroup(true)}
+          onCreateGroup={(template) => {
+            setSelectedTemplate(template);
+            setShowCreateGroup(true);
+          }}
           onImportContacts={handleImportContacts}
           onWatchDemo={handleWatchDemo}
         />
@@ -379,9 +384,13 @@ const FamilyManager: React.FC = () => {
       {/* Bottom Sheets */}
       <CreateGroupSheet
         isOpen={showCreateGroup}
-        onClose={() => setShowCreateGroup(false)}
+        onClose={() => {
+          setShowCreateGroup(false);
+          setSelectedTemplate(undefined);
+        }}
         onCreate={handleCreateGroup}
         isLoading={isCreatingGroup}
+        template={selectedTemplate}
       />
 
       <GroupDetailsSheet
