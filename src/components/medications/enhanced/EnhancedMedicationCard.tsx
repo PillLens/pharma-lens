@@ -35,6 +35,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const { toast } = useToast();
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [manuallyMarkedTaken, setManuallyMarkedTaken] = useState(false);
 
   // Check if medication was taken recently
   useEffect(() => {
@@ -126,7 +127,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         }
 
         console.log('Taken in current window:', takenInCurrentWindow);
-        setRecentlyTaken(takenInCurrentWindow);
+        // Don't override manual state changes
+        if (!manuallyMarkedTaken) {
+          setRecentlyTaken(takenInCurrentWindow);
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error checking recent doses:', error);
@@ -135,7 +139,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
     };
 
     checkRecentDose();
-  }, [user, medication]);
+  }, [user, medication, manuallyMarkedTaken]);
 
   // Generate stable data based on medication ID to prevent constant changes
   const generateStableValue = (seed: string, min: number, max: number) => {
@@ -339,6 +343,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                     
                      // Update local state immediately to stop pulsing
                     setRecentlyTaken(true);
+                    setManuallyMarkedTaken(true);
                     console.log('Take Now clicked - setting recentlyTaken to true');
                     
                     // Show success toast
