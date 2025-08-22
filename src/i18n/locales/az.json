@@ -27,17 +27,17 @@
   },
   "navigation": {
     "home": "Əsas",
-    "medications": "Dərmanlar",
+    "medications": "Dərman",
     "scanner": "Skaner", 
     "history": "Tarixçə",
     "profile": "Profil",
     "settings": "Tənzimləmələr",
     "family": "Ailə",
-    "reminders": "Xatırlatmalar",
+    "reminders": "Xatırlatma",
     "security": "Təhlükəsizlik",
     "auth": "Giriş",
-    "more": "Daha çox",
-    "moreOptions": "Daha çox seçim",
+    "more": "Ətraflı",
+    "moreOptions": "Ətraflı seçimlər",
     "language": "Dil",
     "signOut": "Çıxış",
     "endSession": "Seansı bitir",
@@ -69,8 +69,8 @@
   },
   "dashboard": {
     "quickStats": "Sürətli Statistika",
-    "medications": "Dərmanlar",
-    "reminders": "Xatırlatmalar",
+    "medications": "Dərman",
+    "reminders": "Xatırlatma",
     "todaysOverview": "Bugünkü İcmal"
   },
   "descriptions": {
@@ -169,8 +169,8 @@
     "eveningDose": "Axşam dozası",
     "nightDose": "Gecə dozası",
     "summary": {
-      "active": "Aktiv Xatırlatmalar",
-      "medications": "Əhatə edilən Dərmanlar",
+      "active": "Aktiv Xatırlatma",
+      "medications": "Əhatə edilən Dərman",
       "today": "Bugünkü Dozalar"
     }
   },
