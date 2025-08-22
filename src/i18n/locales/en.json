@@ -23,7 +23,9 @@
     "retry": "Retry",
     "back": "Back",
     "next": "Next",
-    "done": "Done"
+    "done": "Done",
+    "confirm": "Confirm",
+    "continue": "Continue"
   },
   "navigation": {
     "home": "Home",
@@ -78,6 +80,46 @@
     "scanInstructions": "Place medication label clearly in the frame"
   },
   "medications": {
+    "title": "Medications",
+    "subtitle": "Track what you take and when",
+    "add": "Add Medication",
+    "addFirst": "Add Your First Medication",
+    "empty": {
+      "title": "No medications yet",
+      "description": "Start by adding your first medication to keep track of your treatment.",
+      "cta": "Add Medication"
+    },
+    "details": {
+      "title": "Medication Details",
+      "dosageSchedule": "Dosage & Schedule",
+      "refillNotes": "Refill & Notes", 
+      "reminders": "Reminders",
+      "history": "History"
+    },
+    "form": {
+      "basics": "Basics",
+      "dosageFrequency": "Dosage & Frequency",
+      "datesStatus": "Dates & Status"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "paused": "Paused",
+      "completed": "Completed",
+      "expiring": "Expiring Soon",
+      "expired": "Expired"
+    },
+    "frequency": {
+      "onceDaily": "Once daily",
+      "twiceDaily": "Twice daily", 
+      "threeTimes": "Three times daily",
+      "fourTimes": "Four times daily",
+      "every6h": "Every 6 hours",
+      "every8h": "Every 8 hours",
+      "every12h": "Every 12 hours",
+      "asNeeded": "As needed",
+      "custom": "Custom"
+    },
     "brandName": "Brand Name",
     "genericName": "Generic Name",
     "strength": "Strength",
@@ -95,6 +137,10 @@
     "createSchedule": "Create Medication Schedule",
     "saveMedication": "Save Medication",
     "medicationAdded": "Medication added successfully",
+    "medicationUpdated": "Medication updated successfully",
+    "medicationDeleted": "Medication deleted successfully",
+    "confirmDelete": "Are you sure you want to delete this medication?",
+    "confirmDeleteText": "This action cannot be undone.",
     "whatItsFor": "What It's For",
     "howToUse": "How to Use",
     "storage": "Storage Instructions",
@@ -126,7 +172,14 @@
     "drops": "Drops",
     "spray": "Spray",
     "patch": "Patch",
-    "gel": "Gel"
+    "gel": "Gel",
+    "validation": {
+      "nameRequired": "Medication name is required",
+      "startDateRequired": "Start date is required",
+      "endDateAfterStart": "End date must be after start date",
+      "frequencyRequired": "Frequency is required",
+      "timesRequired": "At least one reminder time is required"
+    }
   },
   "safety": {
     "warnings": "Warnings",
