@@ -235,6 +235,16 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const inventoryStatus = getInventoryStatus(inventoryDays);
 
   const shouldPulse = isDueNow && !recentlyTaken && !animationDisabled;
+  
+  console.log('RENDER STATE:', {
+    medicationName: medication.medication_name,
+    isDueNow,
+    recentlyTaken,
+    animationDisabled,
+    shouldPulse,
+    componentKey,
+    manuallyMarkedTaken
+  });
 
   return (
     <MobileCard 
@@ -346,12 +356,26 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                         notes: 'Marked via Take Now button'
                       });
                     
+                     console.log('BEFORE TAKE NOW:', {
+                       medicationName: medication.medication_name,
+                       isDueNow,
+                       recentlyTaken,
+                       animationDisabled,
+                       shouldPulse
+                     });
+                     
                      // Immediately disable animations and update state
-                    setAnimationDisabled(true);
-                    setRecentlyTaken(true);
-                    setManuallyMarkedTaken(true);
-                    setComponentKey(prev => prev + 1); // Force re-render to reset CSS animations
-                    console.log('Take Now clicked - disabling animations and updating state');
+                     setAnimationDisabled(true);
+                     setRecentlyTaken(true);
+                     setManuallyMarkedTaken(true);
+                     setComponentKey(prev => prev + 1); // Force re-render to reset CSS animations
+                     
+                     console.log('AFTER STATE UPDATES:', {
+                       medicationName: medication.medication_name,
+                       newAnimationDisabled: true,
+                       newRecentlyTaken: true,
+                       newManuallyMarkedTaken: true
+                     });
                     
                     // Show success toast
                     toast({
