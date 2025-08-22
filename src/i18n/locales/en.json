@@ -206,6 +206,92 @@
     "eveningDose": "Evening dose",
     "nightDose": "Night dose"
   },
+  "family": {
+    "title": "Family & Caregivers",
+    "subtitle": "Share medication plans with people who care for you",
+    "empty": {
+      "title": "Start Your Care Network",
+      "subtitle": "Connect with family members and caregivers to share safely",
+      "description": "Family groups help you coordinate care with trusted people in your life.",
+      "createButton": "Create Family Group"
+    },
+    "group": {
+      "create": "Create Group",
+      "name": "Group Name",
+      "members": "members",
+      "member": "member",
+      "noMembers": "No members yet",
+      "viewDetails": "View Details",
+      "edit": "Edit Group",
+      "delete": "Delete Group",
+      "settings": "Group Settings"
+    },
+    "member": {
+      "invite": "Invite Member",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "role": "Role",
+      "permissions": "Permissions",
+      "status": "Status",
+      "remove": "Remove Member",
+      "resend": "Resend Invite",
+      "call": "Call",
+      "message": "Message",
+      "share": "Share"
+    },
+    "roles": {
+      "patient": "Patient",
+      "caregiver": "Caregiver",
+      "family": "Family Member",
+      "emergency": "Emergency Contact"
+    },
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "invited": "Invited",
+      "offline": "Offline",
+      "declined": "Declined"
+    },
+    "permissions": {
+      "view": "View Medications",
+      "edit": "Edit Medications",
+      "notifications": "Receive Notifications",
+      "emergencyAccess": "Emergency Access"
+    },
+    "invitations": {
+      "pending": "Pending Invitations",
+      "accept": "Accept",
+      "decline": "Decline",
+      "from": "from",
+      "invitedYou": "invited you to join",
+      "noInvitations": "No pending invitations"
+    },
+    "actions": {
+      "createGroup": "Create Group",
+      "inviteMember": "Invite Member",
+      "saveGroup": "Save Group",
+      "sendInvite": "Send Invite",
+      "cancel": "Cancel",
+      "done": "Done"
+    },
+    "messages": {
+      "groupCreated": "Family group created successfully",
+      "memberInvited": "Member invited successfully",
+      "invitationSent": "Invitation sent",
+      "groupDeleted": "Group deleted",
+      "memberRemoved": "Member removed",
+      "invitationAccepted": "Invitation accepted",
+      "invitationDeclined": "Invitation declined"
+    },
+    "validation": {
+      "groupNameRequired": "Group name is required",
+      "memberNameRequired": "Member name is required",
+      "emailRequired": "Email address is required",
+      "invalidEmail": "Invalid email address",
+      "roleRequired": "Please select a role"
+    }
+  },
   "errors": {
     "networkError": "Network error occurred",
     "serverError": "Server error occurred",

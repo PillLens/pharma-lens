@@ -148,6 +148,92 @@
     "eveningDose": "Axşam dozası",
     "nightDose": "Gecə dozası"
   },
+  "family": {
+    "title": "Ailə və Baxıcılar",
+    "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
+    "empty": {
+      "title": "Qayğı Şəbəkənizi Başladın",
+      "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
+      "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
+      "createButton": "Ailə Qrupu Yarat"
+    },
+    "group": {
+      "create": "Qrup Yarat",
+      "name": "Qrup Adı",
+      "members": "üzv",
+      "member": "üzv",
+      "noMembers": "Hələ üzv yoxdur",
+      "viewDetails": "Təfərrüatları Göstər",
+      "edit": "Qrupu Redaktə Et",
+      "delete": "Qrupu Sil",
+      "settings": "Qrup Tənzimləmələri"
+    },
+    "member": {
+      "invite": "Üzv Dəvət Et",
+      "name": "Ad Soyad",
+      "email": "E-poçt Ünvanı",
+      "phone": "Telefon Nömrəsi",
+      "role": "Rol",
+      "permissions": "İcazələr",
+      "status": "Status",
+      "remove": "Üzvü Çıxart",
+      "resend": "Dəvəti Yenidən Göndər",
+      "call": "Zəng Et",
+      "message": "Mesaj",
+      "share": "Paylaş"
+    },
+    "roles": {
+      "patient": "Xəstə",
+      "caregiver": "Baxıcı",
+      "family": "Ailə Üzvü",
+      "emergency": "Təcili Əlaqə"
+    },
+    "status": {
+      "active": "Aktiv",
+      "pending": "Gözləyir",
+      "invited": "Dəvət Edilib",
+      "offline": "Offlayn",
+      "declined": "Rədd Edilib"
+    },
+    "permissions": {
+      "view": "Dərmanları Gör",
+      "edit": "Dərmanları Redaktə Et",
+      "notifications": "Bildirişlər Al",
+      "emergencyAccess": "Təcili Giriş"
+    },
+    "invitations": {
+      "pending": "Gözləyən Dəvətlər",
+      "accept": "Qəbul Et",
+      "decline": "Rədd Et",
+      "from": "göndərən",
+      "invitedYou": "sizi dəvət etdi",
+      "noInvitations": "Gözləyən dəvət yoxdur"
+    },
+    "actions": {
+      "createGroup": "Qrup Yarat",
+      "inviteMember": "Üzv Dəvət Et",
+      "saveGroup": "Qrupu Saxla",
+      "sendInvite": "Dəvət Göndər",
+      "cancel": "Ləğv Et",
+      "done": "Hazır"
+    },
+    "messages": {
+      "groupCreated": "Ailə qrupu uğurla yaradıldı",
+      "memberInvited": "Üzv uğurla dəvət edildi",
+      "invitationSent": "Dəvət göndərildi",
+      "groupDeleted": "Qrup silindi",
+      "memberRemoved": "Üzv çıxarıldı",
+      "invitationAccepted": "Dəvət qəbul edildi",
+      "invitationDeclined": "Dəvət rədd edildi"
+    },
+    "validation": {
+      "groupNameRequired": "Qrup adı tələb olunur",
+      "memberNameRequired": "Üzv adı tələb olunur",
+      "emailRequired": "E-poçt ünvanı tələb olunur",
+      "invalidEmail": "Etibarsız e-poçt ünvanı",
+      "roleRequired": "Zəhmət olmasa rol seçin"
+    }
+  },
   "errors": {
     "networkError": "Şəbəkə xətası baş verdi",
     "serverError": "Server xətası baş verdi",

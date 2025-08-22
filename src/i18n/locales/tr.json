@@ -148,6 +148,92 @@
     "eveningDose": "Akşam dozu",
     "nightDose": "Gece dozu"
   },
+  "family": {
+    "title": "Aile ve Bakıcılar",
+    "subtitle": "İlaç planlarınızı size değer veren kişilerle paylaşın",
+    "empty": {
+      "title": "Bakım Ağınızı Başlatın",
+      "subtitle": "Güvenli paylaşım için aile üyeleri ve bakıcılarla bağlantı kurun",
+      "description": "Aile grupları, hayatınızdaki güvenilir kişilerle bakımı koordine etmenize yardımcı olur.",
+      "createButton": "Aile Grubu Oluştur"
+    },
+    "group": {
+      "create": "Grup Oluştur",
+      "name": "Grup Adı",
+      "members": "üye",
+      "member": "üye",
+      "noMembers": "Henüz üye yok",
+      "viewDetails": "Detayları Görüntüle",
+      "edit": "Grubu Düzenle",
+      "delete": "Grubu Sil",
+      "settings": "Grup Ayarları"
+    },
+    "member": {
+      "invite": "Üye Davet Et",
+      "name": "Ad Soyad",
+      "email": "E-posta Adresi",
+      "phone": "Telefon Numarası",
+      "role": "Rol",
+      "permissions": "İzinler",
+      "status": "Durum",
+      "remove": "Üyeyi Kaldır",
+      "resend": "Daveti Tekrar Gönder",
+      "call": "Ara",
+      "message": "Mesaj",
+      "share": "Paylaş"
+    },
+    "roles": {
+      "patient": "Hasta",
+      "caregiver": "Bakıcı",
+      "family": "Aile Üyesi",
+      "emergency": "Acil Durum Kişisi"
+    },
+    "status": {
+      "active": "Aktif",
+      "pending": "Beklemede",
+      "invited": "Davet Edildi",
+      "offline": "Çevrimdışı",
+      "declined": "Reddedildi"
+    },
+    "permissions": {
+      "view": "İlaçları Görüntüle",
+      "edit": "İlaçları Düzenle",
+      "notifications": "Bildirim Al",
+      "emergencyAccess": "Acil Durum Erişimi"
+    },
+    "invitations": {
+      "pending": "Bekleyen Davetler",
+      "accept": "Kabul Et",
+      "decline": "Reddet",
+      "from": "gönderen",
+      "invitedYou": "sizi davet etti",
+      "noInvitations": "Bekleyen davet yok"
+    },
+    "actions": {
+      "createGroup": "Grup Oluştur",
+      "inviteMember": "Üye Davet Et",
+      "saveGroup": "Grubu Kaydet",
+      "sendInvite": "Davet Gönder",
+      "cancel": "İptal",
+      "done": "Tamam"
+    },
+    "messages": {
+      "groupCreated": "Aile grubu başarıyla oluşturuldu",
+      "memberInvited": "Üye başarıyla davet edildi",
+      "invitationSent": "Davet gönderildi",
+      "groupDeleted": "Grup silindi",
+      "memberRemoved": "Üye kaldırıldı",
+      "invitationAccepted": "Davet kabul edildi",
+      "invitationDeclined": "Davet reddedildi"
+    },
+    "validation": {
+      "groupNameRequired": "Grup adı gerekli",
+      "memberNameRequired": "Üye adı gerekli",
+      "emailRequired": "E-posta adresi gerekli",
+      "invalidEmail": "Geçersiz e-posta adresi",
+      "roleRequired": "Lütfen bir rol seçin"
+    }
+  },
   "errors": {
     "networkError": "Ağ hatası oluştu",
     "serverError": "Sunucu hatası oluştu",

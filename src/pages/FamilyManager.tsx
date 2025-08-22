@@ -1,48 +1,346 @@
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
+import { Users, Bell, Phone, MessageCircle, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { FamilyManagement } from '@/components/FamilyManagement';
-import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/useTranslation';
+import { toast } from '@/hooks/use-toast';
+import { familySharingService, FamilyGroup, FamilyInvitation } from '@/services/familySharingService';
+import FamilyEmptyState from '@/components/family/FamilyEmptyState';
+import FamilyGroupCard from '@/components/family/FamilyGroupCard';
+import GroupDetailsSheet from '@/components/family/GroupDetailsSheet';
+import InviteMemberSheet from '@/components/family/InviteMemberSheet';
+import CreateGroupSheet from '@/components/family/CreateGroupSheet';
+import FamilyFloatingActionButton from '@/components/family/FamilyFloatingActionButton';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const FamilyManager: React.FC = () => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
-  const content = (
-    <div className={`min-h-screen ${!isMobile ? 'bg-gradient-to-br from-blue-50 to-indigo-100 p-4' : ''}`}>
-      <div className={!isMobile ? 'max-w-4xl mx-auto' : ''}>
-        {/* Header - Only show on desktop */}
-        {!isMobile && (
-          <div className="flex items-center gap-4 mb-6">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Scanner
-            </Button>
+  // State management
+  const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
+  const [pendingInvitations, setPendingInvitations] = useState<FamilyInvitation[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Sheet states
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [showGroupDetails, setShowGroupDetails] = useState(false);
+  const [showInviteMember, setShowInviteMember] = useState(false);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [isInvitingMember, setIsInvitingMember] = useState(false);
+
+  // Load family data
+  const loadFamilyData = async () => {
+    try {
+      setLoading(true);
+      const [groups, invitations] = await Promise.all([
+        familySharingService.getUserFamilyGroups(),
+        familySharingService.getUserPendingInvitations(),
+      ]);
+      setFamilyGroups(groups);
+      setPendingInvitations(invitations);
+    } catch (error) {
+      console.error('Error loading family data:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to load family data',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effects
+  useEffect(() => {
+    loadFamilyData();
+  }, []);
+
+  // Handlers
+  const handleCreateGroup = async (groupName: string) => {
+    try {
+      setIsCreatingGroup(true);
+      const newGroup = await familySharingService.createFamilyGroup(groupName);
+      if (newGroup) {
+        setFamilyGroups(prev => [...prev, newGroup]);
+        setShowCreateGroup(false);
+        toast({
+          title: t('family.messages.groupCreated'),
+          description: `Group "${groupName}" created successfully`,
+        });
+      }
+    } catch (error) {
+      console.error('Error creating group:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to create group',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsCreatingGroup(false);
+    }
+  };
+
+  const handleInviteMember = async (memberData: any) => {
+    if (!selectedGroup) return;
+
+    try {
+      setIsInvitingMember(true);
+      const success = await familySharingService.inviteFamilyMember(
+        selectedGroup.id,
+        memberData.email,
+        memberData.role,
+        {
+          view_medications: memberData.permissions.canView,
+          edit_medications: memberData.permissions.canEdit,
+          receive_alerts: memberData.permissions.receiveNotifications,
+        }
+      );
+
+      if (success) {
+        setShowInviteMember(false);
+        loadFamilyData(); // Refresh data
+        toast({
+          title: t('family.messages.memberInvited'),
+          description: `Invitation sent to ${memberData.email}`,
+        });
+      }
+    } catch (error) {
+      console.error('Error inviting member:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to send invitation',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsInvitingMember(false);
+    }
+  };
+
+  const handleInvitationResponse = async (familyGroupId: string, response: 'accepted' | 'declined') => {
+    try {
+      const success = await familySharingService.respondToInvitation(familyGroupId, response);
+      if (success) {
+        loadFamilyData(); // Refresh data
+        toast({
+          title: response === 'accepted' ? t('family.messages.invitationAccepted') : t('family.messages.invitationDeclined'),
+          description: `Invitation ${response}`,
+        });
+      }
+    } catch (error) {
+      console.error('Error responding to invitation:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to respond to invitation',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleMemberAction = (memberId: string, action: 'call' | 'message' | 'share' | 'remove') => {
+    // Handle member actions
+    switch (action) {
+      case 'call':
+        toast({ title: 'Call feature', description: 'Calling member...' });
+        break;
+      case 'message':
+        toast({ title: 'Message feature', description: 'Opening messages...' });
+        break;
+      case 'share':
+        toast({ title: 'Share feature', description: 'Sharing information...' });
+        break;
+      case 'remove':
+        toast({ title: 'Remove member', description: 'Member removal coming soon...' });
+        break;
+    }
+  };
+
+  const handleGroupCardTap = (group: FamilyGroup) => {
+    setSelectedGroup(group);
+    setShowGroupDetails(true);
+  };
+
+  const handleInviteFromGroup = (group: FamilyGroup) => {
+    setSelectedGroup(group);
+    setShowInviteMember(true);
+  };
+
+  const handleDeleteGroup = (group: FamilyGroup) => {
+    // Handle group deletion
+    toast({ title: 'Delete group', description: 'Group deletion coming soon...' });
+  };
+
+  const handleEditGroup = (group: FamilyGroup) => {
+    // Handle group editing
+    toast({ title: 'Edit group', description: 'Group editing coming soon...' });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-surface">
+      {/* Mobile-First Header */}
+      <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
+        <div className="px-4 py-4">
+          <div className="text-center">
+            <h1 className="text-lg font-semibold text-foreground tracking-tight">
+              {t('family.title')}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('family.subtitle')}
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto pb-24">
+        {loading ? (
+          <LoadingSkeleton />
+        ) : (
+          <div className="space-y-4">
+            {/* Pending Invitations */}
+            {pendingInvitations.length > 0 && (
+              <div className="px-4 pt-4">
+                <h2 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Bell className="w-4 h-4" />
+                  {t('family.invitations.pending')} ({pendingInvitations.length})
+                </h2>
+                <div className="space-y-3">
+                  {pendingInvitations.map((invitation) => (
+                    <Card key={invitation.familyGroupId} className="rounded-2xl shadow-md border-0">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">
+                              {invitation.familyGroupName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {t('family.invitations.from')} {invitation.inviterName || invitation.invitedBy}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
+                              className="rounded-lg"
+                            >
+                              {t('family.invitations.decline')}
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
+                              className="rounded-lg"
+                            >
+                              {t('family.invitations.accept')}
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Family Groups */}
+            <div className="px-4">
+              {familyGroups.length === 0 ? (
+                <FamilyEmptyState onCreateGroup={() => setShowCreateGroup(true)} />
+              ) : (
+                <div className="space-y-3">
+                  <h2 className="font-medium text-foreground flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Your Groups ({familyGroups.length})
+                  </h2>
+                  {familyGroups.map((group) => (
+                    <FamilyGroupCard
+                      key={group.id}
+                      group={group}
+                      onTap={() => handleGroupCardTap(group)}
+                      onInviteMember={() => handleInviteFromGroup(group)}
+                      onEditGroup={() => handleEditGroup(group)}
+                      onDeleteGroup={() => handleDeleteGroup(group)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
+      </main>
 
-        {/* Main Content */}
-        <FamilyManagement />
-      </div>
+      {/* Floating Action Button */}
+      <FamilyFloatingActionButton
+        onClick={() => setShowCreateGroup(true)}
+      />
+
+      {/* Bottom Sheets */}
+      <CreateGroupSheet
+        isOpen={showCreateGroup}
+        onClose={() => setShowCreateGroup(false)}
+        onCreate={handleCreateGroup}
+        isLoading={isCreatingGroup}
+      />
+
+      <GroupDetailsSheet
+        group={selectedGroup}
+        isOpen={showGroupDetails}
+        onClose={() => setShowGroupDetails(false)}
+        onInviteMember={() => {
+          setShowGroupDetails(false);
+          setShowInviteMember(true);
+        }}
+        onMemberAction={handleMemberAction}
+      />
+
+      <InviteMemberSheet
+        isOpen={showInviteMember}
+        onClose={() => setShowInviteMember(false)}
+        onInvite={handleInviteMember}
+        isLoading={isInvitingMember}
+      />
     </div>
   );
-
-  if (isMobile) {
-    return (
-      <ProfessionalMobileLayout title="Family & Caregivers">
-        {content}
-      </ProfessionalMobileLayout>
-    );
-  }
-
-  return content;
 };
+
+// Loading Skeleton Component
+const LoadingSkeleton: React.FC = () => (
+  <div className="p-4 space-y-4">
+    <div className="space-y-3">
+      <Skeleton className="h-6 w-32" />
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="rounded-2xl">
+            <CardContent className="p-5">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3].map((j) => (
+                      <Skeleton key={j} className="w-8 h-8 rounded-full" />
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export default FamilyManager;

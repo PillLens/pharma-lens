@@ -1,0 +1,155 @@
+import React from 'react';
+import { Users, MoreVertical, UserPlus, Settings } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useTranslation } from '@/hooks/useTranslation';
+import { FamilyGroup } from '@/services/familySharingService';
+
+interface FamilyGroupCardProps {
+  group: FamilyGroup;
+  onTap: () => void;
+  onInviteMember: () => void;
+  onEditGroup: () => void;
+  onDeleteGroup: () => void;
+}
+
+const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
+  group,
+  onTap,
+  onInviteMember,
+  onEditGroup,
+  onDeleteGroup,
+}) => {
+  const { t } = useTranslation();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getMemberCountText = (count: number) => {
+    return count === 1 ? t('family.group.member') : t('family.group.members');
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'patient':
+        return 'bg-medical-info/20 text-medical-info';
+      case 'caregiver':
+        return 'bg-medical-success/20 text-medical-success';
+      default:
+        return 'bg-muted text-muted-foreground';
+    }
+  };
+
+  return (
+    <Card className="rounded-2xl shadow-md border-0 bg-card hover:shadow-lg transition-all duration-200 active:scale-[0.98]">
+      <CardContent className="p-5">
+        <div className="space-y-4">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex-1" onClick={onTap}>
+              <h3 className="font-semibold text-foreground mb-1">{group.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {group.members?.length || 0} {getMemberCountText(group.members?.length || 0)}
+                {group.members && group.members.length > 0 && (
+                  <>
+                    {' • '}
+                    {group.members.filter(m => m.role === 'caregiver').length > 0 && (
+                      <span>
+                        {group.members.filter(m => m.role === 'caregiver').length} {t('family.roles.caregiver').toLowerCase()}
+                      </span>
+                    )}
+                  </>
+                )}
+              </p>
+            </div>
+
+            {/* Actions Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-full w-8 h-8 hover:bg-muted"
+                >
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={onInviteMember}>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {t('family.member.invite')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onEditGroup}>
+                  <Settings className="w-4 h-4 mr-2" />
+                  {t('family.group.settings')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDeleteGroup} className="text-destructive">
+                  {t('common.delete')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Member Avatars */}
+          <div className="flex items-center justify-between">
+            <div className="flex -space-x-2">
+              {group.members && group.members.length > 0 ? (
+                <>
+                  {group.members.slice(0, 4).map((member, index) => (
+                    <Avatar key={member.id} className="w-8 h-8 border-2 border-background">
+                      <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                        {getInitials(member.display_name || member.user_email || 'U')}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {group.members.length > 4 && (
+                    <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                      <span className="text-xs text-muted-foreground font-medium">
+                        +{group.members.length - 4}
+                      </span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span className="text-xs">{t('family.group.noMembers')}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Status Badges */}
+            <div className="flex gap-2">
+              {group.members && group.members.some(m => m.invitation_status === 'pending') && (
+                <Badge variant="secondary" className="text-xs bg-medical-warning/20 text-medical-warning">
+                  {t('family.status.pending')}
+                </Badge>
+              )}
+              {group.members && group.members.some(m => m.invitation_status === 'accepted') && (
+                <Badge variant="secondary" className="text-xs bg-medical-success/20 text-medical-success">
+                  {t('family.status.active')}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default FamilyGroupCard;
