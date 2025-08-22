@@ -22,7 +22,7 @@ i18n
     resources,
     fallbackLng: 'az', // Changed to Azerbaijani as fallback
     lng: 'az', // Default to Azerbaijani
-    debug: true, // Enable debug mode temporarily
+    debug: false, // Disable debug mode
     
     interpolation: {
       escapeValue: false,
