@@ -36,8 +36,6 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
   const [manuallyMarkedTaken, setManuallyMarkedTaken] = useState(false);
-  const [animationDisabled, setAnimationDisabled] = useState(false);
-  const [componentKey, setComponentKey] = useState(0);
 
   // Check if medication was taken recently
   useEffect(() => {
@@ -234,36 +232,17 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
   const inventoryStatus = getInventoryStatus(inventoryDays);
 
-  const shouldPulse = isDueNow && !recentlyTaken && !animationDisabled;
-  
-  console.log('RENDER STATE:', {
-    medicationName: medication.medication_name,
-    isDueNow,
-    recentlyTaken,
-    animationDisabled,
-    shouldPulse,
-    componentKey,
-    manuallyMarkedTaken
-  });
-
   return (
     <MobileCard 
-      key={componentKey}
       variant={isDueNow ? 'warning' : 'default'} 
-      className={`group transition-all duration-300 hover:shadow-lg ${className} ${shouldPulse ? 'animate-pulse border-2 border-primary/50 shadow-lg shadow-primary/20' : ''}`}
-      style={animationDisabled ? { animation: 'none !important' } : {}}
+      className={`group transition-all duration-300 hover:shadow-lg ${className}`}
       onClick={onClick}
     >
       <MobileCardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div 
-              className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-                shouldPulse
-                  ? 'bg-gradient-to-br from-primary to-primary/80 animate-pulse' 
-                  : 'bg-gradient-to-br from-primary/70 to-primary/50'
-              }`}
-              style={animationDisabled ? { animation: 'none !important' } : {}}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm bg-gradient-to-br from-primary/70 to-primary/50`}
             >
               <Pill className="w-6 h-6 text-primary-foreground" />
             </div>
@@ -281,12 +260,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
-                {shouldPulse && (
-                  <Badge 
-                    variant="destructive" 
-                    className="text-xs animate-pulse px-2 py-1"
-                    style={animationDisabled ? { animation: 'none !important' } : {}}
-                  >
+                {isDueNow && !recentlyTaken && (
+                  <Badge variant="destructive" className="text-xs px-2 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Due Now
                   </Badge>
@@ -364,26 +339,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                         notes: 'Marked via Take Now button'
                       });
                     
-                     console.log('BEFORE TAKE NOW:', {
-                       medicationName: medication.medication_name,
-                       isDueNow,
-                       recentlyTaken,
-                       animationDisabled,
-                       shouldPulse
-                     });
-                     
-                     // Immediately disable animations and update state
-                     setAnimationDisabled(true);
+                     // Immediately update state
                      setRecentlyTaken(true);
                      setManuallyMarkedTaken(true);
-                     setComponentKey(prev => prev + 1); // Force re-render to reset CSS animations
-                     
-                     console.log('AFTER STATE UPDATES:', {
-                       medicationName: medication.medication_name,
-                       newAnimationDisabled: true,
-                       newRecentlyTaken: true,
-                       newManuallyMarkedTaken: true
-                     });
+                     console.log('Take Now clicked - updating state');
                     
                     // Show success toast
                     toast({
