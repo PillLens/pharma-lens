@@ -72,16 +72,16 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
   const COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--destructive))', 'hsl(var(--primary))'];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-hidden">
       {/* Header with Controls */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-semibold text-foreground">Family Analytics</h3>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-xl font-semibold text-foreground truncate">Family Analytics</h3>
           <p className="text-sm text-muted-foreground">Comprehensive family health insights</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-28 sm:w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -91,73 +91,73 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
               <SelectItem value="1y">1 Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" onClick={onExportReport}>
-            <Download className="w-4 h-4 mr-2" />
-            Export
+          <Button variant="outline" size="sm" onClick={onExportReport} className="flex-shrink-0">
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
         </div>
       </div>
 
       {/* Key Metrics Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="border-0 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground font-medium">Overall Adherence</p>
-                <p className="text-2xl font-bold text-primary">91.2%</p>
+                <p className="text-xl sm:text-2xl font-bold text-primary">91.2%</p>
                 <div className="flex items-center gap-1 mt-1">
                   <TrendingUp className="w-3 h-3 text-success" />
-                  <p className="text-xs text-success">+2.3% vs last week</p>
+                  <p className="text-xs text-success truncate">+2.3% vs last week</p>
                 </div>
               </div>
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-primary" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-0 bg-gradient-to-br from-success/5 to-success/10">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground font-medium">Active Members</p>
-                <p className="text-2xl font-bold text-success">4</p>
-                <p className="text-xs text-muted-foreground">All participating</p>
+                <p className="text-xl sm:text-2xl font-bold text-success">4</p>
+                <p className="text-xs text-muted-foreground truncate">All participating</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
-                <Users className="w-5 h-5 text-success" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-success" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-0 bg-gradient-to-br from-blue-500/5 to-blue-500/10">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground font-medium">Health Score</p>
-                <p className="text-2xl font-bold text-blue-600">A+</p>
-                <p className="text-xs text-blue-600">Excellent progress</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">A+</p>
+                <p className="text-xs text-blue-600 truncate">Excellent progress</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-blue-600" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-0 bg-gradient-to-br from-warning/5 to-warning/10">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground font-medium">Alerts</p>
-                <p className="text-2xl font-bold text-warning">2</p>
-                <p className="text-xs text-muted-foreground">Require attention</p>
+                <p className="text-xl sm:text-2xl font-bold text-warning">2</p>
+                <p className="text-xs text-muted-foreground truncate">Require attention</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-warning" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-warning" />
               </div>
             </div>
           </CardContent>
@@ -171,15 +171,15 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
         </CardHeader>
         <CardContent>
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="adherence">Adherence</TabsTrigger>
-              <TabsTrigger value="health">Health Metrics</TabsTrigger>
-              <TabsTrigger value="trends">Trends</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+              <TabsTrigger value="adherence" className="text-xs sm:text-sm">Adherence</TabsTrigger>
+              <TabsTrigger value="health" className="text-xs sm:text-sm">Health</TabsTrigger>
+              <TabsTrigger value="trends" className="text-xs sm:text-sm">Trends</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-6 mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TabsContent value="overview" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Medication Status Distribution */}
                 <Card className="border-0 bg-muted/20">
                   <CardHeader className="pb-3">
@@ -189,7 +189,7 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-40 flex items-center justify-center">
+                    <div className="h-32 sm:h-40 flex items-center justify-center">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -231,7 +231,7 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-40">
+                    <div className="h-32 sm:h-40">
                       <ResponsiveContainer width="100%" height="100%">
                         <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="80%" data={memberPerformanceData}>
                           <RadialBar dataKey="adherence" cornerRadius={10} fill="hsl(var(--primary))" />
@@ -369,7 +369,7 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
       </Card>
 
       {/* Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:shadow-lg transition-all cursor-pointer" onClick={onContactProvider}>
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
