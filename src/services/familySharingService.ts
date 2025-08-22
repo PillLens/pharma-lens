@@ -1,6 +1,14 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  display_name?: string;
+  avatar_url?: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface FamilyGroup {
   id: string;
@@ -10,6 +18,7 @@ export interface FamilyGroup {
   updated_at: string;
   members?: FamilyMember[];
   member_count?: number;
+  creator_profile?: UserProfile;
 }
 
 export interface FamilyMember {
@@ -26,8 +35,11 @@ export interface FamilyMember {
   invitation_status: 'pending' | 'accepted' | 'declined';
   invited_at: string;
   accepted_at?: string;
-  user_email?: string; // For display purposes
+  user_profile?: UserProfile;
+  inviter_profile?: UserProfile;
+  // Legacy properties for backwards compatibility
   display_name?: string;
+  user_email?: string;
 }
 
 export interface SharedMedication {
@@ -42,10 +54,12 @@ export interface SharedMedication {
   };
   created_at: string;
   updated_at: string;
-  medication?: any; // Will contain medication details
+  medication?: any;
+  shared_by_profile?: UserProfile;
 }
 
 export interface FamilyInvitation {
+  id: string;
   familyGroupId: string;
   familyGroupName: string;
   invitedBy: string;
@@ -54,10 +68,62 @@ export interface FamilyInvitation {
   invitedAt: string;
 }
 
+// Templates for Quick Setup
+export interface FamilyGroupTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  suggestedRoles: Array<{
+    role: 'caregiver' | 'patient' | 'emergency_contact';
+    permissions: {
+      view_medications: boolean;
+      edit_medications: boolean;
+      receive_alerts: boolean;
+    };
+  }>;
+}
+
 export class FamilySharingService {
   
+  // Profile Management
+  async findUserByEmail(email: string): Promise<UserProfile | null> {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', email.toLowerCase().trim())
+        .single();
+
+      if (error) return null;
+      return data;
+    } catch (error) {
+      console.error('Error finding user by email:', error);
+      return null;
+    }
+  }
+
+  async getCurrentUserProfile(): Promise<UserProfile | null> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) return null;
+      return data;
+    } catch (error) {
+      console.error('Error getting current user profile:', error);
+      return null;
+    }
+  }
+
   // Family Group Management
-  async createFamilyGroup(name: string): Promise<FamilyGroup | null> {
+  async createFamilyGroup(name: string, template?: FamilyGroupTemplate): Promise<FamilyGroup | null> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
@@ -87,53 +153,41 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      // First get the family group IDs the user is a member of
-      const userGroupIds = await this.getUserFamilyGroupIds();
-      
-      // Build the query condition
-      let query = supabase
+      const { data, error } = await supabase
         .from('family_groups')
-        .select(`
-          *,
-          members:family_members!family_members_family_group_id_fkey(count)
-        `);
-
-      // Apply the filter - either creator or member
-      if (userGroupIds) {
-        query = query.or(`creator_id.eq.${user.id},id.in.(${userGroupIds})`);
-      } else {
-        query = query.eq('creator_id', user.id);
-      }
-
-      const { data, error } = await query;
+        .select('*');
 
       if (error) throw error;
 
-      return data?.map(group => ({
-        ...group,
-        members: undefined,
-        member_count: (group.members as any)?.[0]?.count || 0
-      })) || [];
+      // Get creator profiles and member counts
+      const groupsWithDetails = await Promise.all(
+        (data || []).map(async (group) => {
+          // Get creator profile
+          const { data: creatorProfile } = await supabase
+            .from('profiles')
+            .select('id, email, display_name, avatar_url, created_at, updated_at')
+            .eq('id', group.creator_id)
+            .single();
+
+          // Count members
+          const { count } = await supabase
+            .from('family_members')
+            .select('*', { count: 'exact', head: true })
+            .eq('family_group_id', group.id)
+            .eq('invitation_status', 'accepted');
+
+          return {
+            ...group,
+            creator_profile: creatorProfile || undefined,
+            member_count: (count || 0) + 1 // +1 for creator
+          };
+        })
+      );
+
+      return groupsWithDetails;
     } catch (error) {
       console.error('Error fetching family groups:', error);
       return [];
-    }
-  }
-
-  private async getUserFamilyGroupIds(): Promise<string> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return '';
-
-      const { data } = await supabase
-        .from('family_members')
-        .select('family_group_id')
-        .eq('user_id', user.id)
-        .eq('invitation_status', 'accepted');
-
-      return data?.map(m => m.family_group_id).join(',') || '';
-    } catch {
-      return '';
     }
   }
 
@@ -141,39 +195,66 @@ export class FamilySharingService {
     try {
       const { data, error } = await supabase
         .from('family_groups')
-        .select(`
-          *,
-          members:family_members!family_members_family_group_id_fkey(
-            id,
-            user_id,
-            role,
-            permissions,
-            invitation_status,
-            invited_at,
-            accepted_at,
-            invited_by
-          )
-        `)
+        .select('*')
         .eq('id', groupId)
         .single();
 
       if (error) throw error;
-      
-      // Transform the data to match our interface
-      const familyGroup: FamilyGroup = {
+
+      // Get creator profile
+      const { data: creatorProfile } = await supabase
+        .from('profiles')
+        .select('id, email, display_name, avatar_url, created_at, updated_at')
+        .eq('id', data.creator_id)
+        .single();
+
+      // Get members
+      const { data: members, error: membersError } = await supabase
+        .from('family_members')
+        .select('*')
+        .eq('family_group_id', groupId);
+
+      if (membersError) {
+        console.error('Error fetching members:', membersError);
+      }
+
+      // Get profiles for each member
+      const membersWithProfiles = await Promise.all(
+        (members || []).map(async (member) => {
+          const { data: userProfile } = await supabase
+            .from('profiles')
+            .select('id, email, display_name, avatar_url, created_at, updated_at')
+            .eq('id', member.user_id)
+            .single();
+
+          const { data: inviterProfile } = member.invited_by ? await supabase
+            .from('profiles')
+            .select('id, email, display_name, avatar_url, created_at, updated_at')
+            .eq('id', member.invited_by)
+            .single() : { data: null };
+
+          return {
+            ...member,
+            role: member.role as 'caregiver' | 'patient' | 'emergency_contact',
+            invitation_status: member.invitation_status as 'pending' | 'accepted' | 'declined',
+            permissions: member.permissions as {
+              view_medications: boolean;
+              edit_medications: boolean;
+              receive_alerts: boolean;
+            },
+            user_profile: userProfile || undefined,
+            inviter_profile: inviterProfile || undefined,
+            display_name: userProfile?.display_name || userProfile?.email,
+            user_email: userProfile?.email
+          };
+        })
+      );
+
+      return {
         ...data,
-        members: data.members?.map((member: any) => ({
-          ...member,
-          family_group_id: groupId,
-          permissions: member.permissions as {
-            view_medications: boolean;
-            edit_medications: boolean;
-            receive_alerts: boolean;
-          }
-        }))
+        creator_profile: creatorProfile || undefined,
+        members: membersWithProfiles
       };
-      
-      return familyGroup;
     } catch (error) {
       console.error('Error fetching family group details:', error);
       return null;
@@ -231,13 +312,31 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // For now, we'll use email as user_id (in a real app, you'd look up the user by email)
-      // This is a simplified implementation
+      // Find user by email
+      const invitedUser = await this.findUserByEmail(userEmail);
+      if (!invitedUser) {
+        toast.error('User not found. They need to create an account first.');
+        return false;
+      }
+
+      // Check if user is already a member
+      const { data: existingMember } = await supabase
+        .from('family_members')
+        .select('id')
+        .eq('family_group_id', groupId)
+        .eq('user_id', invitedUser.id)
+        .single();
+
+      if (existingMember) {
+        toast.error('User is already a member of this group');
+        return false;
+      }
+
       const { error } = await supabase
         .from('family_members')
         .insert({
           family_group_id: groupId,
-          user_id: userEmail, // In production, resolve email to user_id
+          user_id: invitedUser.id,
           role,
           permissions,
           invited_by: user.id,
@@ -385,13 +484,18 @@ export class FamilySharingService {
             is_active,
             prescriber,
             notes
+          ),
+          shared_by_profile:profiles!shared_medications_shared_by_fkey(
+            id,
+            email,
+            display_name,
+            avatar_url
           )
         `)
         .eq('family_group_id', groupId);
 
       if (error) throw error;
       
-      // Transform the data to match our interface
       return data?.map((item: any) => ({
         ...item,
         sharing_permissions: item.sharing_permissions as {
@@ -457,26 +561,40 @@ export class FamilySharingService {
 
       const { data, error } = await supabase
         .from('family_members')
-        .select(`
-          family_group_id,
-          role,
-          invited_at,
-          family_groups!family_members_family_group_id_fkey(
-            name
-          )
-        `)
+        .select('id, family_group_id, role, invited_at, invited_by')
         .eq('user_id', user.id)
         .eq('invitation_status', 'pending');
 
       if (error) throw error;
 
-      return data?.map(invitation => ({
-        familyGroupId: invitation.family_group_id,
-        familyGroupName: invitation.family_groups?.name || 'Unknown Group',
-        invitedBy: '',
-        role: invitation.role as any,
-        invitedAt: invitation.invited_at
-      })) || [];
+      // Get group names and inviter profiles
+      const invitationsWithDetails = await Promise.all(
+        (data || []).map(async (invitation) => {
+          const { data: group } = await supabase
+            .from('family_groups')
+            .select('name')
+            .eq('id', invitation.family_group_id)
+            .single();
+
+          const { data: inviterProfile } = invitation.invited_by ? await supabase
+            .from('profiles')
+            .select('display_name, email')
+            .eq('id', invitation.invited_by)
+            .single() : { data: null };
+
+          return {
+            id: invitation.id,
+            familyGroupId: invitation.family_group_id,
+            familyGroupName: group?.name || 'Unknown Group',
+            invitedBy: invitation.invited_by || '',
+            inviterName: inviterProfile?.display_name || inviterProfile?.email,
+            role: invitation.role as 'caregiver' | 'patient' | 'emergency_contact',
+            invitedAt: invitation.invited_at
+          };
+        })
+      );
+
+      return invitationsWithDetails;
     } catch (error) {
       console.error('Error fetching pending invitations:', error);
       return [];
@@ -502,37 +620,36 @@ export class FamilySharingService {
       if (ownedMedication) return true;
 
       // Check if user has access through family sharing
-      const { data: sharedMedication, error } = await supabase
+      const { data: sharedMedications, error } = await supabase
         .from('shared_medications')
         .select(`
           sharing_permissions,
-          family_group_id,
-          family_members!family_members_family_group_id_fkey(
-            user_id,
-            invitation_status
-          )
+          family_group_id
         `)
         .eq('medication_id', medicationId);
 
-      if (error || !sharedMedication) return false;
+      if (error || !sharedMedications) return false;
 
-      // Check if user is a member of the family group with the required permission
-      for (const shared of sharedMedication) {
-        const familyMembers = Array.isArray(shared.family_members) ? shared.family_members : [];
-        const isMember = familyMembers.some(
-          (member: any) => 
-            member.user_id === user.id && 
-            member.invitation_status === 'accepted'
-        );
+      // Check if user is a member of any family group with the required permission
+      for (const shared of sharedMedications) {
+        const { data: membership } = await supabase
+          .from('family_members')
+          .select('id')
+          .eq('family_group_id', shared.family_group_id)
+          .eq('user_id', user.id)
+          .eq('invitation_status', 'accepted')
+          .single();
 
-        const permissions = shared.sharing_permissions as {
-          view: boolean;
-          edit: boolean;
-          delete: boolean;
-        };
+        if (membership) {
+          const permissions = shared.sharing_permissions as {
+            view: boolean;
+            edit: boolean;
+            delete: boolean;
+          };
 
-        if (isMember && permissions[requiredPermission]) {
-          return true;
+          if (permissions[requiredPermission]) {
+            return true;
+          }
         }
       }
 
@@ -541,6 +658,118 @@ export class FamilySharingService {
       console.error('Error checking medication access:', error);
       return false;
     }
+  }
+
+  // Real-time features
+  async subscribeFamilyUpdates(
+    groupId: string,
+    onUpdate: (payload: any) => void
+  ): Promise<() => void> {
+    const channel = supabase
+      .channel(`family_group_${groupId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'family_members',
+          filter: `family_group_id=eq.${groupId}`
+        },
+        onUpdate
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'shared_medications',
+          filter: `family_group_id=eq.${groupId}`
+        },
+        onUpdate
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }
+
+  // Family Templates
+  getFamilyTemplates(): FamilyGroupTemplate[] {
+    return [
+      {
+        id: 'eldercare',
+        name: 'Elder Care',
+        description: 'Perfect for families caring for elderly parents or grandparents',
+        icon: '👴',
+        suggestedRoles: [
+          {
+            role: 'patient',
+            permissions: {
+              view_medications: true,
+              edit_medications: false,
+              receive_alerts: true
+            }
+          },
+          {
+            role: 'caregiver',
+            permissions: {
+              view_medications: true,
+              edit_medications: true,
+              receive_alerts: true
+            }
+          }
+        ]
+      },
+      {
+        id: 'chronic_care',
+        name: 'Chronic Condition',
+        description: 'Manage chronic conditions with family support',
+        icon: '🏥',
+        suggestedRoles: [
+          {
+            role: 'patient',
+            permissions: {
+              view_medications: true,
+              edit_medications: true,
+              receive_alerts: true
+            }
+          },
+          {
+            role: 'caregiver',
+            permissions: {
+              view_medications: true,
+              edit_medications: false,
+              receive_alerts: true
+            }
+          }
+        ]
+      },
+      {
+        id: 'child_care',
+        name: 'Child Care',
+        description: 'Coordinate care for children with multiple caregivers',
+        icon: '👶',
+        suggestedRoles: [
+          {
+            role: 'caregiver',
+            permissions: {
+              view_medications: true,
+              edit_medications: true,
+              receive_alerts: true
+            }
+          },
+          {
+            role: 'emergency_contact',
+            permissions: {
+              view_medications: true,
+              edit_medications: false,
+              receive_alerts: true
+            }
+          }
+        ]
+      }
+    ];
   }
 }
 

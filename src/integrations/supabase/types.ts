@@ -477,6 +477,47 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          emergency_notifications: boolean | null
+          family_invitations: boolean | null
+          health_alerts: boolean | null
+          id: string
+          medication_reminders: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emergency_notifications?: boolean | null
+          family_invitations?: boolean | null
+          health_alerts?: boolean | null
+          id?: string
+          medication_reminders?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emergency_notifications?: boolean | null
+          family_invitations?: boolean | null
+          health_alerts?: boolean | null
+          id?: string
+          medication_reminders?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_labels: {
         Row: {
           created_at: string
@@ -654,6 +695,33 @@ export type Database = {
           therapeutic_class?: string | null
           updated_at?: string
           verification_status?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -932,6 +1000,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_invite_to_group: {
+        Args: { group_uuid: string; user_uuid: string }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           p_endpoint: string
@@ -944,6 +1016,29 @@ export type Database = {
       cleanup_expired_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      find_user_by_email: {
+        Args: { user_email: string }
+        Returns: string
+      }
+      get_profile: {
+        Args: { user_uuid: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          email: string
+          id: string
+        }[]
+      }
+      get_user_family_groups: {
+        Args: { user_uuid: string }
+        Returns: {
+          family_group_id: string
+        }[]
+      }
+      is_family_member: {
+        Args: { group_uuid: string; user_uuid: string }
+        Returns: boolean
       }
     }
     Enums: {
