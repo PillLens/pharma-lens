@@ -11,6 +11,8 @@ import { ScanHistory } from "./pages/ScanHistory";
 import MedicationManager from "./pages/MedicationManager";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { SecurityDashboard } from "@/components/SecurityDashboard";
+import { FamilyManagement } from "@/components/FamilyManagement";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import { useEffect } from "react";
 
@@ -45,6 +47,16 @@ const App = () => {
                 <Route path="/medications" element={
                   <ProtectedRoute>
                     <MedicationManager />
+                  </ProtectedRoute>
+                } />
+                <Route path="/security" element={
+                  <ProtectedRoute>
+                    <SecurityDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/family" element={
+                  <ProtectedRoute>
+                    <FamilyManagement />
                   </ProtectedRoute>
                 } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
