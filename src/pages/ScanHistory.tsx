@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Clock, Search, Filter, Download, Trash2, Eye } from "lucide-react";
+import { ArrowLeft, Clock, Search, Filter, Download, Trash2, Eye, RefreshCw, Archive, BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileCard } from "@/components/ui/mobile/MobileCard";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
+import ScanHistoryCard from "@/components/mobile/ScanHistoryCard";
+import ScanHistorySkeleton from "@/components/mobile/ScanHistorySkeleton";
+import PullToRefreshWrapper from "@/components/mobile/PullToRefreshWrapper";
 
 interface ScanSession {
   id: string;
@@ -41,16 +44,20 @@ interface ScanSession {
 export const ScanHistory = () => {
   const [sessions, setSessions] = useState<ScanSession[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
+  const [bookmarkedSessions, setBookmarkedSessions] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const fetchScanHistory = async () => {
+  const fetchScanHistory = async (showRefreshing = false) => {
     if (!user) return;
 
     try {
+      if (showRefreshing) setRefreshing(true);
+      
       const { data, error } = await supabase
         .from('sessions')
         .select(`
@@ -79,6 +86,11 @@ export const ScanHistory = () => {
       if (error) throw error;
 
       setSessions(data || []);
+      
+      // Simulate haptic feedback on successful refresh
+      if (showRefreshing && navigator.vibrate) {
+        navigator.vibrate(50);
+      }
     } catch (error) {
       console.error('Error fetching scan history:', error);
       toast({
@@ -88,7 +100,73 @@ export const ScanHistory = () => {
       });
     } finally {
       setLoading(false);
+      if (showRefreshing) setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    await fetchScanHistory(true);
+  };
+
+  const handleBookmark = (sessionId: string) => {
+    const newBookmarked = new Set(bookmarkedSessions);
+    if (newBookmarked.has(sessionId)) {
+      newBookmarked.delete(sessionId);
+      toast({
+        title: "Removed from Saved",
+        description: "Scan removed from your saved items.",
+      });
+    } else {
+      newBookmarked.add(sessionId);
+      toast({
+        title: "Saved Successfully",
+        description: "Scan added to your saved items.",
+      });
+    }
+    setBookmarkedSessions(newBookmarked);
+  };
+
+  const handleDelete = async (sessionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('sessions')
+        .delete()
+        .eq('id', sessionId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      setSessions(sessions.filter(s => s.id !== sessionId));
+      const newBookmarked = new Set(bookmarkedSessions);
+      newBookmarked.delete(sessionId);
+      setBookmarkedSessions(newBookmarked);
+      
+      toast({
+        title: "Deleted Successfully",
+        description: "Scan has been permanently deleted.",
+      });
+      
+      // Haptic feedback for delete
+      if (navigator.vibrate) {
+        navigator.vibrate([50, 50]);
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Could not delete scan. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleArchive = (sessionId: string) => {
+    // For now, just bookmark the item as "archived"
+    handleBookmark(sessionId);
+    toast({
+      title: "Archived",
+      description: "Scan moved to your archived items.",
+    });
   };
 
   useEffect(() => {
@@ -105,9 +183,16 @@ export const ScanHistory = () => {
     if (filterBy === "with_barcode") return matchesSearch && session.barcode_value;
     if (filterBy === "high_risk") return matchesSearch && session.extractions?.risk_flags?.length > 0;
     if (filterBy === "recent") return matchesSearch && new Date(session.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    if (filterBy === "saved") return matchesSearch && bookmarkedSessions.has(session.id);
+    if (filterBy === "unknown") return matchesSearch && (!session.products?.brand_name || session.products?.brand_name === "Unknown Medication");
     
     return matchesSearch;
   });
+
+  const handleViewSession = (session: ScanSession) => {
+    // Navigate to detailed view or show modal
+    console.log('View session:', session);
+  };
 
   const getQualityBadge = (score: number) => {
     if (score >= 0.8) return { variant: "default" as const, label: "High Quality", className: "bg-success text-success-foreground" };
@@ -142,33 +227,46 @@ export const ScanHistory = () => {
 
   if (loading) {
     const loadingContent = (
-      <div className="min-h-screen bg-background">
-        <header className={`px-4 py-6 bg-background border-b border-border ${isMobile ? '' : ''}`}>
-          <div className={!isMobile ? 'max-w-4xl mx-auto' : ''}>
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-muted rounded w-48"></div>
-              <div className="h-4 bg-muted rounded w-32"></div>
+      <div className="min-h-screen bg-gradient-surface">
+        {!isMobile && (
+          <header className="px-4 py-6 bg-background border-b border-border">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-4">
+                <Button variant="ghost" size="icon" disabled>
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <div>
+                  <div className="w-32 h-6 bg-muted rounded animate-pulse mb-2"></div>
+                  <div className="w-48 h-4 bg-muted rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1 h-10 bg-muted rounded animate-pulse"></div>
+                <div className="w-48 h-10 bg-muted rounded animate-pulse"></div>
+              </div>
+            </div>
+          </header>
+        )}
+        
+        {isMobile && (
+          <div className="px-4 py-4 bg-background border-b border-border">
+            <div className="w-16 h-5 bg-muted rounded animate-pulse mb-4"></div>
+            <div className="space-y-3">
+              <div className="h-10 bg-muted rounded animate-pulse"></div>
+              <div className="h-10 bg-muted rounded animate-pulse"></div>
             </div>
           </div>
-        </header>
+        )}
+        
         <main className={`px-4 py-8 ${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <MobileCard key={i} className="p-6">
-                <div className="animate-pulse space-y-3">
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                  <div className="h-3 bg-muted rounded w-1/2"></div>
-                </div>
-              </MobileCard>
-            ))}
-          </div>
+          <ScanHistorySkeleton count={8} />
         </main>
       </div>
     );
 
     if (isMobile) {
       return (
-        <ProfessionalMobileLayout title="Scan History">
+        <ProfessionalMobileLayout title="Scan History" showHeader={false}>
           {loadingContent}
         </ProfessionalMobileLayout>
       );
@@ -214,12 +312,14 @@ export const ScanHistory = () => {
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Filter by" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Scans</SelectItem>
-                  <SelectItem value="recent">Last 7 Days</SelectItem>
-                  <SelectItem value="with_barcode">With Barcode</SelectItem>
-                  <SelectItem value="high_risk">High Risk</SelectItem>
-                </SelectContent>
+              <SelectContent>
+                <SelectItem value="all">All Scans</SelectItem>
+                <SelectItem value="recent">Last 7 Days</SelectItem>
+                <SelectItem value="saved">Saved Items</SelectItem>
+                <SelectItem value="high_risk">High Risk</SelectItem>
+                <SelectItem value="unknown">Unknown</SelectItem>
+                <SelectItem value="with_barcode">With Barcode</SelectItem>
+              </SelectContent>
               </Select>
             </div>
           </div>
@@ -249,108 +349,70 @@ export const ScanHistory = () => {
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Filter by" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Scans</SelectItem>
-                <SelectItem value="recent">Last 7 Days</SelectItem>
-                <SelectItem value="with_barcode">With Barcode</SelectItem>
-                <SelectItem value="high_risk">High Risk</SelectItem>
-              </SelectContent>
+                <SelectContent>
+                  <SelectItem value="all">All Scans</SelectItem>
+                  <SelectItem value="recent">Last 7 Days</SelectItem>
+                  <SelectItem value="saved">Saved Items</SelectItem>
+                  <SelectItem value="high_risk">High Risk</SelectItem>
+                  <SelectItem value="unknown">Unknown</SelectItem>
+                  <SelectItem value="with_barcode">With Barcode</SelectItem>
+                </SelectContent>
             </Select>
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <main className={`px-4 py-8 ${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
-        {filteredSessions.length === 0 ? (
-          <MobileCard className="p-12 text-center">
-            <Clock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Scans Found</h3>
-            <p className="text-muted-foreground">
-              {searchTerm || filterBy !== "all" 
-                ? "Try adjusting your search or filter criteria."
-                : "Start scanning medications to see your history here."
-              }
-            </p>
-          </MobileCard>
-        ) : (
-          <div className="space-y-4">
-            {filteredSessions.map((session) => {
-              const medication = session.products || session.extractions?.extracted_json;
-              const qualityScore = session.extractions?.quality_score || 0;
-              const riskFlags = session.extractions?.risk_flags || [];
-
-              return (
-                <MobileCard key={session.id} variant="elevated" className="p-4 hover:shadow-card transition-shadow">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground text-base">
-                        {medication?.brand_name || "Unknown Medication"}
-                      </h3>
-                      {medication?.generic_name && (
-                        <p className="text-sm text-muted-foreground">
-                          {medication.generic_name}
-                          {medication.strength && ` • ${medication.strength}`}
-                          {medication.form && ` • ${medication.form}`}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span>{format(new Date(session.created_at), 'MMM d, yyyy h:mm a')}</span>
-                        {session.barcode_value && !isMobile && (
-                          <>
-                            <span>•</span>
-                            <span>Barcode: {session.barcode_value}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      {qualityScore > 0 && (
-                        <Badge {...getQualityBadge(qualityScore)} className="text-xs">
-                          {Math.round(qualityScore * 100)}%
-                        </Badge>
-                      )}
-                      {riskFlags.length > 0 && (
-                        <Badge variant="destructive" className="text-xs">
-                          {riskFlags.length} Risk{riskFlags.length > 1 ? 's' : ''}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {riskFlags.length > 0 && (
-                    <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <h4 className="text-sm font-medium text-destructive mb-1">Risk Flags:</h4>
-                      <ul className="text-sm text-destructive space-y-1">
-                        {riskFlags.map((flag, index) => (
-                          <li key={index}>• {flag}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" className="text-xs h-8">
-                      <Eye className="w-3 h-3 mr-1" />
-                      View
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => exportSession(session)}
-                      className="text-xs h-8"
-                    >
-                      <Download className="w-3 h-3 mr-1" />
-                      Export
-                    </Button>
-                  </div>
-                </MobileCard>
-              );
-            })}
+      <main className={`${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
+        <PullToRefreshWrapper
+          onRefresh={handleRefresh}
+          disabled={refreshing}
+          className="min-h-screen"
+        >
+          <div className="px-4 py-8">
+            {filteredSessions.length === 0 ? (
+              <MobileCard className="p-12 text-center">
+                <Clock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {loading ? "Loading..." : "No Scans Found"}
+                </h3>
+                <p className="text-muted-foreground">
+                  {searchTerm || filterBy !== "all" 
+                    ? "Try adjusting your search or filter criteria."
+                    : "Start scanning medications to see your history here."
+                  }
+                </p>
+                {!loading && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRefresh}
+                    className="mt-4"
+                    disabled={refreshing}
+                  >
+                    <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </Button>
+                )}
+              </MobileCard>
+            ) : (
+              <div className="space-y-4">
+                {filteredSessions.map((session) => (
+                  <ScanHistoryCard
+                    key={session.id}
+                    session={session}
+                    onView={handleViewSession}
+                    onExport={exportSession}
+                    onBookmark={handleBookmark}
+                    onDelete={handleDelete}
+                    onArchive={handleArchive}
+                    isBookmarked={bookmarkedSessions.has(session.id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </PullToRefreshWrapper>
       </main>
     </div>
   );

@@ -564,3 +564,17 @@ All colors MUST be HSL.
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
