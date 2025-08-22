@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useTranslation } from '@/hooks/useTranslation';
 import { UserMedication } from '@/hooks/useMedicationHistory';
+import { useReminders } from '@/hooks/useReminders';
 import FrequencyChips from './FrequencyChips';
 
 interface MedicationFormSheetProps {
@@ -43,7 +44,10 @@ const medicationSchema = z.object({
   endDate: z.date().optional(),
   prescriber: z.string().optional(),
   notes: z.string().optional(),
-  status: z.enum(['active', 'inactive', 'completed'])
+  status: z.enum(['active', 'inactive', 'completed']),
+  reminderTimes: z.array(z.string()).optional(),
+  reminderDays: z.array(z.number()).optional(),
+  enableReminders: z.boolean().optional()
 }).refine((data) => {
   if (data.endDate && data.startDate) {
     return data.endDate > data.startDate;
@@ -64,6 +68,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
   isLoading = false
 }) => {
   const { t } = useTranslation();
+  const { addReminder } = useReminders();
   const [currentStep, setCurrentStep] = useState(0);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
@@ -81,7 +86,10 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
       endDate: undefined,
       prescriber: '',
       notes: '',
-      status: 'active'
+      status: 'active',
+      reminderTimes: ['08:00'],
+      reminderDays: [1, 2, 3, 4, 5, 6, 7],
+      enableReminders: true
     }
   });
 
@@ -112,7 +120,10 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         endDate: undefined,
         prescriber: '',
         notes: '',
-        status: 'active'
+        status: 'active',
+        reminderTimes: ['08:00'],
+        reminderDays: [1, 2, 3, 4, 5, 6, 7],
+        enableReminders: true
       });
     }
     setCurrentStep(0);
@@ -120,7 +131,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
 
   const handleSave = async (data: MedicationFormData) => {
     try {
-      await onSave({
+      const medicationData = {
         medication_name: data.name,
         generic_name: data.genericName,
         dosage: data.dosage,
@@ -129,8 +140,16 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         end_date: data.endDate?.toISOString(),
         prescriber: data.prescriber,
         notes: data.notes,
-        is_active: data.status === 'active'
-      });
+        is_active: data.status === 'active',
+        // Pass reminder data along for parent to handle
+        _reminderSettings: data.enableReminders ? {
+          reminderTimes: data.reminderTimes || [],
+          reminderDays: data.reminderDays || [],
+          enableReminders: data.enableReminders
+        } : undefined
+      };
+      
+      await onSave(medicationData);
       onClose();
     } catch (error) {
       console.error('Error saving medication:', error);
@@ -152,6 +171,11 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
       title: t('medications.form.datesStatus'),
       icon: Calendar,
       fields: ['startDate', 'endDate', 'prescriber', 'notes', 'status']
+    },
+    {
+      title: 'Reminders',
+      icon: Clock,
+      fields: ['enableReminders', 'reminderTimes', 'reminderDays']
     }
   ];
 
@@ -372,6 +396,106 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
                 onCheckedChange={(checked) => form.setValue('status', checked ? 'active' : 'inactive')}
               />
             </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-accent/50 rounded-xl">
+              <div className="space-y-1">
+                <Label htmlFor="enableReminders" className="text-sm font-medium">Enable Reminders</Label>
+                <p className="text-xs text-muted-foreground">Set up automatic medication reminders</p>
+              </div>
+              <Switch
+                id="enableReminders"
+                checked={form.watch('enableReminders')}
+                onCheckedChange={(checked) => form.setValue('enableReminders', checked)}
+              />
+            </div>
+
+            {form.watch('enableReminders') && (
+              <>
+                <div className="space-y-4">
+                  <Label>Reminder Times</Label>
+                  <div className="space-y-3">
+                    {form.watch('reminderTimes')?.map((time, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          value={time}
+                          onChange={(e) => {
+                            const times = [...(form.watch('reminderTimes') || [])];
+                            times[index] = e.target.value;
+                            form.setValue('reminderTimes', times);
+                          }}
+                          className="flex-1 rounded-xl"
+                        />
+                        {(form.watch('reminderTimes')?.length || 0) > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              const times = [...(form.watch('reminderTimes') || [])];
+                              times.splice(index, 1);
+                              form.setValue('reminderTimes', times);
+                            }}
+                            className="p-2"
+                          >
+                            ×
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const times = [...(form.watch('reminderTimes') || [])];
+                        times.push('08:00');
+                        form.setValue('reminderTimes', times);
+                      }}
+                      className="w-full rounded-xl"
+                    >
+                      + Add Another Time
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label>Days of Week</Label>
+                  <div className="grid grid-cols-7 gap-2">
+                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => {
+                      const dayNumber = index + 1;
+                      const isSelected = form.watch('reminderDays')?.includes(dayNumber);
+                      return (
+                        <Button
+                          key={day}
+                          type="button"
+                          variant={isSelected ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            const days = [...(form.watch('reminderDays') || [])];
+                            if (isSelected) {
+                              const dayIndex = days.indexOf(dayNumber);
+                              if (dayIndex > -1) days.splice(dayIndex, 1);
+                            } else {
+                              days.push(dayNumber);
+                            }
+                            form.setValue('reminderDays', days);
+                          }}
+                          className="aspect-square p-0 text-xs"
+                        >
+                          {day}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         );
 

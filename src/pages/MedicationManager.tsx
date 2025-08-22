@@ -22,6 +22,7 @@ import { UserMedication } from '@/hooks/useMedicationHistory';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
+import { useReminders } from '@/hooks/useReminders';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ const MedicationManager: React.FC = () => {
     removeMedication,
     refetch
   } = useMedicationHistory();
+  const { addReminder } = useReminders();
 
   // States
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
@@ -141,10 +143,36 @@ const MedicationManager: React.FC = () => {
 
   const filteredMedications = getFilteredMedications();
 
-  const handleAddMedication = async (data: Partial<UserMedication>) => {
+  const handleAddMedication = async (data: Partial<UserMedication> & { _reminderSettings?: any }) => {
     setIsSubmitting(true);
     try {
-      await addMedication(data as Omit<UserMedication, 'id' | 'created_at'>);
+      const newMedication = await addMedication(data as Omit<UserMedication, 'id' | 'created_at'>);
+      
+      // Handle reminders if they were set
+      if (data._reminderSettings && newMedication?.id) {
+        const { reminderTimes, reminderDays } = data._reminderSettings;
+        
+        // Create reminders for each time
+        if (reminderTimes && reminderDays) {
+          for (const time of reminderTimes) {
+            try {
+              await addReminder({
+                medication_id: newMedication.id,
+                reminder_time: time,
+                days_of_week: reminderDays,
+                notification_settings: {
+                  sound: true,
+                  vibration: true,
+                  led: true
+                }
+              });
+            } catch (reminderError) {
+              console.error('Error creating reminder:', reminderError);
+            }
+          }
+        }
+      }
+      
       toast.success('Medication added successfully');
       setIsAddSheetOpen(false);
     } catch (error) {
