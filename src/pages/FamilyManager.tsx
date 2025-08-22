@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Bell, Phone, MessageCircle, Share2 } from 'lucide-react';
+import { Users, Bell, Phone, MessageCircle, Share2, BarChart3, Activity, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from '@/hooks/use-toast';
 import { familySharingService, FamilyGroup, FamilyInvitation } from '@/services/familySharingService';
-import FamilyEmptyState from '@/components/family/FamilyEmptyState';
-import FamilyGroupCard from '@/components/family/FamilyGroupCard';
+import EnhancedFamilyEmptyState from '@/components/family/enhanced/EnhancedFamilyEmptyState';
+import AdvancedFamilyGroupCard from '@/components/family/enhanced/AdvancedFamilyGroupCard';
+import EnhancedFamilyDashboard from '@/components/family/enhanced/EnhancedFamilyDashboard';
+import InteractiveFamilyCareTimeline from '@/components/family/enhanced/InteractiveFamilyCareTimeline';
+import FamilyAnalyticsDashboard from '@/components/family/enhanced/FamilyAnalyticsDashboard';
 import GroupDetailsSheet from '@/components/family/GroupDetailsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
@@ -15,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const FamilyManager: React.FC = () => {
   const navigate = useNavigate();
@@ -25,6 +29,7 @@ const FamilyManager: React.FC = () => {
   const [pendingInvitations, setPendingInvitations] = useState<FamilyInvitation[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Sheet states
   const [showCreateGroup, setShowCreateGroup] = useState(false);
@@ -179,97 +184,192 @@ const FamilyManager: React.FC = () => {
     toast({ title: 'Edit group', description: 'Group editing coming soon...' });
   };
 
+  // Enhanced handlers for new features
+  const handleEmergencyCall = () => {
+    toast({ title: 'Emergency Call', description: 'Initiating emergency contact...' });
+  };
+
+  const handleQuickAction = (action: string) => {
+    toast({ title: 'Quick Action', description: `${action} feature coming soon...` });
+  };
+
+  const handleCall = (memberId: string) => {
+    toast({ title: 'Call Member', description: 'Initiating call...' });
+  };
+
+  const handleMessage = (memberId: string) => {
+    toast({ title: 'Message Member', description: 'Opening messages...' });
+  };
+
+  const handleVideoCall = (memberId: string) => {
+    toast({ title: 'Video Call', description: 'Starting video call...' });
+  };
+
+  const handleExportReport = () => {
+    toast({ title: 'Export Report', description: 'Preparing family health report...' });
+  };
+
+  const handleContactProvider = () => {
+    toast({ title: 'Contact Provider', description: 'Contacting healthcare provider...' });
+  };
+
+  const handleAddEvent = () => {
+    toast({ title: 'Add Event', description: 'Adding new care event...' });
+  };
+
+  const handleScheduleReminder = () => {
+    toast({ title: 'Schedule Reminder', description: 'Setting up reminder...' });
+  };
+
+  const handleImportContacts = () => {
+    toast({ title: 'Import Contacts', description: 'Importing contacts...' });
+  };
+
+  const handleWatchDemo = () => {
+    toast({ title: 'Demo', description: 'Starting demo video...' });
+  };
+
   return (
     <ProfessionalMobileLayout 
       title={t('family.title')}
       showHeader={true}
       className="bg-background"
     >
-      <div className="space-y-6 p-6">
-        {/* Subtitle */}
-        <div className="text-center">
-          <p className="text-muted-foreground">
-            {t('family.subtitle')}
-          </p>
-        </div>
-
-        {loading ? (
+      {loading ? (
+        <div className="p-6">
           <LoadingSkeleton />
-        ) : (
-          <div className="space-y-6 max-w-4xl mx-auto">
-            {/* Pending Invitations */}
-            {pendingInvitations.length > 0 && (
-              <div>
-                <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Bell className="w-5 h-5" />
-                  {t('family.invitations.pending')} ({pendingInvitations.length})
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {pendingInvitations.map((invitation) => (
-                    <Card key={invitation.familyGroupId} className="border border-border/50 hover:border-border transition-colors">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <p className="font-medium text-sm">
-                              {invitation.familyGroupName}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {t('family.invitations.from')} {invitation.inviterName || invitation.invitedBy}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
-                              className="h-8"
-                            >
-                              {t('family.invitations.decline')}
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
-                              className="h-8"
-                            >
-                              {t('family.invitations.accept')}
-                            </Button>
-                          </div>
+        </div>
+      ) : familyGroups.length === 0 ? (
+        <EnhancedFamilyEmptyState 
+          onCreateGroup={() => setShowCreateGroup(true)}
+          onImportContacts={handleImportContacts}
+          onWatchDemo={handleWatchDemo}
+        />
+      ) : (
+        <div className="p-6">
+          {/* Pending Invitations */}
+          {pendingInvitations.length > 0 && (
+            <div className="mb-6">
+              <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Bell className="w-5 h-5" />
+                {t('family.invitations.pending')} ({pendingInvitations.length})
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {pendingInvitations.map((invitation) => (
+                  <Card key={invitation.familyGroupId} className="border border-border/50 hover:border-border transition-colors">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">
+                            {invitation.familyGroupName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {t('family.invitations.from')} {invitation.inviterName || invitation.invitedBy}
+                          </p>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleInvitationResponse(invitation.familyGroupId, 'declined')}
+                            className="h-8"
+                          >
+                            {t('family.invitations.decline')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleInvitationResponse(invitation.familyGroupId, 'accepted')}
+                            className="h-8"
+                          >
+                            {t('family.invitations.accept')}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Enhanced Family Management with Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                <span className="hidden sm:inline">Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="groups" className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span className="hidden sm:inline">Groups</span>
+              </TabsTrigger>
+              <TabsTrigger value="timeline" className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span className="hidden sm:inline">Timeline</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2">
+                <Activity className="w-4 h-4" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview">
+              <EnhancedFamilyDashboard 
+                familyGroups={familyGroups}
+                onEmergencyCall={handleEmergencyCall}
+                onQuickAction={handleQuickAction}
+              />
+            </TabsContent>
+
+            <TabsContent value="groups">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Your Family Groups ({familyGroups.length})
+                  </h2>
+                  <Button onClick={() => setShowCreateGroup(true)}>
+                    <Users className="w-4 h-4 mr-2" />
+                    Add Group
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {familyGroups.map((group) => (
+                    <AdvancedFamilyGroupCard
+                      key={group.id}
+                      group={group}
+                      onTap={() => handleGroupCardTap(group)}
+                      onInviteMember={() => handleInviteFromGroup(group)}
+                      onEditGroup={() => handleEditGroup(group)}
+                      onDeleteGroup={() => handleDeleteGroup(group)}
+                      onCall={handleCall}
+                      onMessage={handleMessage}
+                      onVideoCall={handleVideoCall}
+                    />
                   ))}
                 </div>
               </div>
-            )}
+            </TabsContent>
 
-            {/* Family Groups */}
-            <div>
-              {familyGroups.length === 0 ? (
-                <FamilyEmptyState onCreateGroup={() => setShowCreateGroup(true)} />
-              ) : (
-                <div className="space-y-4">
-                  <h2 className="font-semibold text-foreground flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Your Groups ({familyGroups.length})
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {familyGroups.map((group) => (
-                      <FamilyGroupCard
-                        key={group.id}
-                        group={group}
-                        onTap={() => handleGroupCardTap(group)}
-                        onInviteMember={() => handleInviteFromGroup(group)}
-                        onEditGroup={() => handleEditGroup(group)}
-                        onDeleteGroup={() => handleDeleteGroup(group)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+            <TabsContent value="timeline">
+              <InteractiveFamilyCareTimeline 
+                familyGroups={familyGroups}
+                onAddEvent={handleAddEvent}
+                onScheduleReminder={handleScheduleReminder}
+                onEmergencyCall={handleEmergencyCall}
+              />
+            </TabsContent>
+
+            <TabsContent value="analytics">
+              <FamilyAnalyticsDashboard 
+                familyGroups={familyGroups}
+                onExportReport={handleExportReport}
+                onContactProvider={handleContactProvider}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      )}
 
       {/* Floating Action Button */}
       <FamilyFloatingActionButton
