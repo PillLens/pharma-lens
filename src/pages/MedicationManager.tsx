@@ -237,11 +237,11 @@ const MedicationManager: React.FC = () => {
               <MobileButton
                 size="sm"
                 onClick={() => handleQuickActions.snoozeReminders(30)}
-                className="rounded-xl whitespace-nowrap bg-info/10 text-info border-info/20 hover:bg-info/20"
+                className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
                 haptic
               >
                 <Bell className="w-4 h-4 mr-2" />
-                Snooze 30min
+                Snooze
               </MobileButton>
             </div>
           )}
