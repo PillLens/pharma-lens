@@ -98,8 +98,53 @@
     "goodLighting": "İyi aydınlatma sağlayın",
     "scanInstructions": "İlaç etiketini çerçevede net bir şekilde yerleştirin"
   },
-  "medications": {
-    "brandName": "Marka Adı",
+   "medications": {
+     "title": "İlaçlar",
+     "subtitle": "Ne aldığınızı ve ne zaman aldığınızı takip edin",
+     "add": "İlaç Ekle",
+     "addFirst": "İlk İlacınızı Ekleyin",
+     "medication": "ilaç",
+     "medications": "ilaçlar",
+     "active": "aktif",
+     "refreshed": "İlaçlar yenilendi",
+     "refreshError": "İlaçları yenileme başarısız oldu",
+     "empty": {
+       "title": "Henüz ilaç yok",
+       "description": "Tedavinizi takip etmek için ilk ilacınızı ekleyerek başlayın.",
+       "cta": "İlaç Ekle"
+     },
+     "details": {
+       "title": "İlaç Detayları",
+       "dosageSchedule": "Dozaj ve Program",
+       "refillNotes": "Yenileme ve Notlar",
+       "reminders": "Hatırlatıcılar",
+       "history": "Geçmiş"
+     },
+     "form": {
+       "basics": "Temel Bilgiler",
+       "dosageFrequency": "Dozaj ve Sıklık",
+       "datesStatus": "Tarihler ve Durum"
+     },
+     "status": {
+       "active": "Aktif",
+       "inactive": "İnaktif",
+       "paused": "Duraklatıldı",
+       "completed": "Tamamlandı",
+       "expiring": "Yakında Bitecek",
+       "expired": "Süresi Dolmuş"
+     },
+     "frequency": {
+       "onceDaily": "Günde bir kez",
+       "twiceDaily": "Günde iki kez", 
+       "threeTimes": "Günde üç kez",
+       "fourTimes": "Günde dört kez",
+       "every6h": "Her 6 saatte",
+       "every8h": "Her 8 saatte",
+       "every12h": "Her 12 saatte",
+       "asNeeded": "Gerektiğinde",
+       "custom": "Özel"
+     },
+     "brandName": "Marka Adı",
     "genericName": "Jenerik Ad",
     "strength": "Güç",
     "form": "Form",
@@ -147,7 +192,14 @@
     "drops": "Damla",
     "spray": "Sprey",
     "patch": "Yama",
-    "gel": "Jel"
+     "gel": "Jel",
+     "validation": {
+       "nameRequired": "İlaç adı gerekli",
+       "startDateRequired": "Başlangıç tarihi gerekli",
+       "endDateAfterStart": "Bitiş tarihi başlangıç tarihinden sonra olmalı",
+       "frequencyRequired": "Sıklık gerekli",
+       "timesRequired": "En az bir hatırlatıcı zamanı gerekli"
+     }
   },
   "safety": {
     "warnings": "Uyarılar",

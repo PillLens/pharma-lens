@@ -98,8 +98,53 @@
     "goodLighting": "Yaxşı işıqlandırma təmin edin",
     "scanInstructions": "Dərman etiketini çərçivədə aydın şəkildə yerləşdirin"
   },
-  "medications": {
-    "brandName": "Brend Adı",
+   "medications": {
+     "title": "Dərman",
+     "subtitle": "Nə götürdüyünüzü və nə vaxt götürdüyünüzü izləyin",
+     "add": "Dərman Əlavə Et",
+     "addFirst": "İlk Dərmanınızı Əlavə Edin",
+     "medication": "dərman",
+     "medications": "dərman",
+     "active": "aktiv",
+     "refreshed": "Dərmanlar yeniləndi",
+     "refreshError": "Dərmanları yeniləmək uğursuz oldu",
+     "empty": {
+       "title": "Hələ dərman yoxdur",
+       "description": "Müalicənizi izləmək üçün ilk dərmanınızı əlavə etməklə başlayın.",
+       "cta": "Dərman Əlavə Et"
+     },
+     "details": {
+       "title": "Dərman Detalları",
+       "dosageSchedule": "Dozaj və Cədvəl",
+       "refillNotes": "Yenidən Doldurma və Qeydlər",
+       "reminders": "Xatırlatmalar",
+       "history": "Tarixçə"
+     },
+     "form": {
+       "basics": "Əsaslar",
+       "dosageFrequency": "Dozaj və Tezlik",
+       "datesStatus": "Tarix və Status"
+     },
+     "status": {
+       "active": "Aktiv",
+       "inactive": "Qeyri-aktiv",
+       "paused": "Dayandırılmış",
+       "completed": "Tamamlanmış",
+       "expiring": "Tezliklə Bitir",
+       "expired": "Bitmiş"
+     },
+     "frequency": {
+       "onceDaily": "Gündə bir dəfə",
+       "twiceDaily": "Gündə iki dəfə", 
+       "threeTimes": "Gündə üç dəfə",
+       "fourTimes": "Gündə dörd dəfə",
+       "every6h": "Hər 6 saatda",
+       "every8h": "Hər 8 saatda",
+       "every12h": "Hər 12 saatda",
+       "asNeeded": "Ehtiyac duyulduqca",
+       "custom": "Xüsusi"
+     },
+     "brandName": "Brend Adı",
     "genericName": "Ümumi Ad",
     "strength": "Güc",
     "form": "Forma",
@@ -147,7 +192,14 @@
     "drops": "Damcı",
     "spray": "Sprey",
     "patch": "Yama",
-    "gel": "Gel"
+     "gel": "Gel",
+     "validation": {
+       "nameRequired": "Dərman adı tələb olunur",
+       "startDateRequired": "Başlama tarixi tələb olunur",
+       "endDateAfterStart": "Bitiş tarixi başlama tarixindən sonra olmalıdır",
+       "frequencyRequired": "Tezlik tələb olunur",
+       "timesRequired": "Ən azı bir xatırlatma vaxtı tələb olunur"
+     }
   },
   "safety": {
     "warnings": "Xəbərdarlıqlar",
