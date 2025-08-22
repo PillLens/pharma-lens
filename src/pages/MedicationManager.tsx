@@ -227,11 +227,11 @@ const MedicationManager: React.FC = () => {
               <MobileButton
                 size="sm"
                 onClick={handleQuickActions.viewInteractions}
-                className="rounded-xl whitespace-nowrap bg-warning/10 text-warning border-warning/20 hover:bg-warning/20"
+                className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
                 haptic
               >
                 <AlertTriangle className="w-4 h-4 mr-2" />
-                Check Interactions
+                Safety Check
               </MobileButton>
 
               <MobileButton
