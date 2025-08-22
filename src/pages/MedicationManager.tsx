@@ -256,33 +256,33 @@ const MedicationManager: React.FC = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Compact Stats Cards */}
         {!loading && medications.length > 0 && (
-          <div className="px-4 pb-6">
-            <div className="grid grid-cols-3 gap-3">
-              <MobileCard variant="medical" className="text-center p-4">
-                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-medical">
-                  <Pill className="w-5 h-5 text-white" />
+          <div className="px-6 pb-6">
+            <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+              <div className="bg-blue-50/70 dark:bg-blue-900/20 rounded-xl p-3 text-center border border-blue-200/30">
+                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                  <Pill className="w-4 h-4 text-white" />
                 </div>
-                <p className="text-xl font-bold text-primary">{totalMeds}</p>
-                <p className="text-xs text-muted-foreground">Total</p>
-              </MobileCard>
+                <p className="text-lg font-bold text-blue-700 dark:text-blue-300">{totalMeds}</p>
+                <p className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium">Total</p>
+              </div>
               
-              <MobileCard variant="medical" className="text-center p-4">
-                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-medical">
-                  <Activity className="w-5 h-5 text-white" />
+              <div className="bg-green-50/70 dark:bg-green-900/20 rounded-xl p-3 text-center border border-green-200/30">
+                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-sm">
+                  <Activity className="w-4 h-4 text-white" />
                 </div>
-                <p className="text-xl font-bold text-primary">{activeMeds}</p>
-                <p className="text-xs text-muted-foreground">Active</p>
-              </MobileCard>
+                <p className="text-lg font-bold text-green-700 dark:text-green-300">{activeMeds}</p>
+                <p className="text-xs text-green-600/80 dark:text-green-400/80 font-medium">Active</p>
+              </div>
               
-              <MobileCard variant="medical" className="text-center p-4">
-                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-medical">
-                  <Clock className="w-5 h-5 text-white" />
+              <div className="bg-amber-50/70 dark:bg-amber-900/20 rounded-xl p-3 text-center border border-amber-200/30">
+                <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
+                  <Clock className="w-4 h-4 text-white" />
                 </div>
-                <p className="text-xl font-bold text-primary">{expiringSoon}</p>
-                <p className="text-xs text-muted-foreground">Expiring</p>
-              </MobileCard>
+                <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{expiringSoon}</p>
+                <p className="text-xs text-amber-600/80 dark:text-amber-400/80 font-medium">Expiring</p>
+              </div>
             </div>
           </div>
         )}
