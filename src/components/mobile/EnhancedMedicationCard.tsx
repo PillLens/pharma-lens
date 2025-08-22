@@ -79,46 +79,46 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
   return (
     <div className={cn(
-      "bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl shadow-md border border-white/30 dark:border-slate-700/30 overflow-hidden max-w-sm mx-auto",
-      !medication.is_active && 'opacity-60',
+      "bg-white dark:bg-slate-900 rounded-2xl shadow-sm border-0 overflow-hidden",
+      !medication.is_active && 'opacity-70',
       className
     )}>
       <div className="p-4">
-        {/* Compact Header */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg flex-shrink-0">
-            <Pill className="w-5 h-5 text-white" />
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1">
-              {medication.medication_name}
-            </h3>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge 
-                className={cn(
-                  "text-xs font-medium px-2 py-0.5 rounded-full",
-                  medication.is_active 
-                    ? "bg-green-100 text-green-700" 
-                    : "bg-slate-100 text-slate-600"
+        {/* Modern Header with iOS-style layout */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+              <Pill className="w-6 h-6 text-white" />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white line-clamp-1 mb-0.5">
+                {medication.medication_name}
+              </h3>
+              <div className="flex items-center gap-2">
+                <Badge 
+                  className={cn(
+                    "text-xs font-medium px-2.5 py-1 rounded-full border-0",
+                    medication.is_active 
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
+                      : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                  )}
+                >
+                  {medication.is_active ? 'Active' : 'Paused'}
+                </Badge>
+                
+                {isExpiringSoon() && (
+                  <Badge className="text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 px-2.5 py-1 rounded-full border-0">
+                    Expiring Soon
+                  </Badge>
                 )}
-              >
-                {medication.is_active ? 'Active' : 'Inactive'}
-              </Badge>
-              
-              {isExpiringSoon() && (
-                <Badge className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-pulse">
-                  <Clock className="w-3 h-3 mr-1" />
-                  Expiring
-                </Badge>
-              )}
-              
-              {isExpired() && (
-                <Badge className="text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  Expired
-                </Badge>
-              )}
+                
+                {isExpired() && (
+                  <Badge className="text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 px-2.5 py-1 rounded-full border-0">
+                    Expired
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
@@ -127,23 +127,26 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-1.5 h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex-shrink-0"
+                className="p-2 h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical className="w-4 h-4 text-slate-600 dark:text-slate-400" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuItem onClick={() => onEdit(medication)} className="gap-2 text-sm">
-                <Edit2 className="w-4 h-4" />
-                Edit
+            <DropdownMenuContent 
+              align="end" 
+              className="w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg rounded-xl p-1 z-50"
+            >
+              <DropdownMenuItem onClick={() => onEdit(medication)} className="gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+                <Edit2 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                Edit Medication
               </DropdownMenuItem>
               {onToggleActive && (
-                <DropdownMenuItem onClick={() => onToggleActive(medication)} className="gap-2 text-sm">
-                  <Activity className="w-4 h-4" />
-                  {medication.is_active ? 'Pause' : 'Activate'}
+                <DropdownMenuItem onClick={() => onToggleActive(medication)} className="gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+                  <Activity className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                  {medication.is_active ? 'Pause' : 'Resume'}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => onDelete(medication)} className="gap-2 text-sm text-red-600">
+              <DropdownMenuItem onClick={() => onDelete(medication)} className="gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400">
                 <Trash2 className="w-4 h-4" />
                 Delete
               </DropdownMenuItem>
@@ -151,51 +154,69 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* Compact Info Grid */}
+        {/* Native-style Info Sections */}
         <div className="space-y-3">
-          {/* Dosage and Frequency Row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-slate-50/70 dark:bg-slate-700/30 rounded-xl p-3">
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">DOSAGE</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{medication.dosage}</p>
+          {/* Dosage & Frequency Row */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                Dosage
+              </div>
+              <div className="text-base font-semibold text-slate-900 dark:text-white">
+                {medication.dosage}
+              </div>
             </div>
-            <div className="bg-slate-50/70 dark:bg-slate-700/30 rounded-xl p-3">
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">FREQUENCY</p>
-              <Badge className={cn('text-xs px-2 py-0.5 rounded-lg', getFrequencyColor(medication.frequency))}>
+            <div className="w-px h-8 bg-slate-200 dark:bg-slate-700"></div>
+            <div className="flex-1">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                Frequency
+              </div>
+              <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {getFrequencyLabel(medication.frequency)}
-              </Badge>
+              </div>
             </div>
           </div>
 
-          {/* Timeline Row */}
-          <div className="bg-slate-50/70 dark:bg-slate-700/30 rounded-xl p-3">
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Started: <span className="font-semibold text-slate-900 dark:text-white">{formatDate(medication.start_date)}</span></span>
-              </div>
+          {/* Timeline */}
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-2 text-sm">
+              <Calendar className="w-4 h-4 text-slate-400" />
+              <span className="text-slate-600 dark:text-slate-400">
+                Started {formatDate(medication.start_date)}
+              </span>
               {medication.end_date && (
-                <div className="text-slate-600 dark:text-slate-400">
-                  Until: <span className={cn('font-semibold', isExpired() ? 'text-red-600' : isExpiringSoon() ? 'text-amber-600' : 'text-slate-900 dark:text-white')}>
-                    {formatDate(medication.end_date)}
+                <>
+                  <span className="text-slate-300 dark:text-slate-600">•</span>
+                  <span className={cn(
+                    'font-medium',
+                    isExpired() ? 'text-red-600 dark:text-red-400' : 
+                    isExpiringSoon() ? 'text-amber-600 dark:text-amber-400' : 
+                    'text-slate-600 dark:text-slate-400'
+                  )}>
+                    Until {formatDate(medication.end_date)}
                   </span>
-                </div>
+                </>
               )}
             </div>
           </div>
 
-          {/* Prescriber (if exists) */}
+          {/* Doctor Info (if exists) */}
           {medication.prescriber && (
-            <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-              <User className="w-3.5 h-3.5" />
-              <span>Dr. {medication.prescriber}</span>
+            <div className="flex items-center gap-2 pt-2 text-sm">
+              <User className="w-4 h-4 text-slate-400" />
+              <span className="text-slate-600 dark:text-slate-400">
+                Prescribed by Dr. {medication.prescriber}
+              </span>
             </div>
           )}
 
-          {/* Notes (if exists) */}
+          {/* Notes (if exists) - iOS style */}
           {medication.notes && (
-            <div className="bg-amber-50/70 dark:bg-amber-900/20 rounded-xl p-3">
-              <p className="text-xs text-amber-800 dark:text-amber-200 line-clamp-2">
+            <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+                Notes
+              </div>
+              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed line-clamp-2">
                 {medication.notes}
               </p>
             </div>
