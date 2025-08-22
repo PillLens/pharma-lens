@@ -36,17 +36,21 @@ export const MobileFamilyManagement: React.FC = () => {
   }, []);
 
   const loadFamilyData = async () => {
+    console.log('MobileFamilyManagement: Starting to load family data');
     setLoading(true);
     try {
+      console.log('MobileFamilyManagement: Calling family sharing service');
       const [groups, invitations] = await Promise.all([
         familySharingService.getUserFamilyGroups(),
         familySharingService.getUserPendingInvitations()
       ]);
       
+      console.log('MobileFamilyManagement: Successfully loaded data', { groups, invitations });
       setFamilyGroups(groups);
       setPendingInvitations(invitations);
     } catch (error) {
-      console.error('Error loading family data:', error);
+      console.error('MobileFamilyManagement: Error loading family data:', error);
+      toast.error('Failed to load family data. Please try again.');
     } finally {
       setLoading(false);
     }
