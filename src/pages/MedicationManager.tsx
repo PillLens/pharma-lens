@@ -200,40 +200,13 @@ const MedicationManager: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {/* Quick Action Buttons moved to top right */}
-              {!loading && medications.length > 0 && (
-                <>
-                  <MobileButton
-                    size="sm"
-                    onClick={handleQuickActions.viewInteractions}
-                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
-                    haptic
-                  >
-                    <AlertTriangle className="w-4 h-4 mr-2" />
-                    Safety Check
-                  </MobileButton>
-                  
-                  <MobileButton
-                    size="sm"
-                    onClick={() => handleQuickActions.snoozeReminders(30)}
-                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
-                    haptic
-                  >
-                    <Bell className="w-4 h-4 mr-2" />
-                    Snooze
-                  </MobileButton>
-                </>
-              )}
-              
-              <MobileButton
-                onClick={() => setIsAddSheetOpen(true)}
-                className="rounded-2xl w-12 h-12 p-0 shadow-lg"
-                haptic
-              >
-                <Plus className="w-5 h-5" />
-              </MobileButton>
-            </div>
+            <MobileButton
+              onClick={() => setIsAddSheetOpen(true)}
+              className="rounded-2xl w-12 h-12 p-0 shadow-lg"
+              haptic
+            >
+              <Plus className="w-5 h-5" />
+            </MobileButton>
           </div>
 
           {/* Mark All Taken button - only show when there are due medications */}
@@ -621,6 +594,33 @@ const MedicationManager: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Bottom Action Bar */}
+      {!loading && medications.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border p-4 safe-area-bottom">
+          <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
+            <MobileButton
+              size="sm"
+              onClick={handleQuickActions.viewInteractions}
+              className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/30 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
+              haptic
+            >
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Safety Check
+            </MobileButton>
+            
+            <MobileButton
+              size="sm"
+              onClick={() => handleQuickActions.snoozeReminders(30)}
+              className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-info/20 to-info/10 text-info border border-info/30 hover:from-info/30 hover:to-info/20 shadow-sm hover:shadow-md transition-all duration-200"
+              haptic
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Snooze
+            </MobileButton>
+          </div>
+        </div>
+      )}
     </div>
   );
 
