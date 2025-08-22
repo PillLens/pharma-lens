@@ -251,7 +251,7 @@ const FamilyManager: React.FC = () => {
           onWatchDemo={handleWatchDemo}
         />
       ) : (
-        <div className="p-4 max-w-full overflow-x-hidden">
+        <div className="px-4 py-2 w-full">
           {/* Pending Invitations */}
           {pendingInvitations.length > 0 && (
             <div className="mb-6">

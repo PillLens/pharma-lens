@@ -158,9 +158,9 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
   };
 
   return (
-    <div className="space-y-6 overflow-hidden">
+    <div className="space-y-4 w-full max-w-full">
       {/* Quick Stats and Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <Card className="border-0 bg-gradient-to-br from-primary/5 to-primary/10">
           <CardContent className="p-4 text-center">
             <div className="w-8 h-8 mx-auto mb-2 rounded-full bg-primary/20 flex items-center justify-center">
@@ -203,26 +203,24 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
       </div>
 
       {/* Care Timeline */}
-      <Card className="overflow-hidden">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2 min-w-0">
-              <Activity className="w-5 h-5 text-primary flex-shrink-0" />
-              <span className="truncate">Family Care Timeline</span>
+      <Card className="w-full max-w-full">
+        <CardHeader className="pb-3 px-4">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-base flex items-center gap-2 flex-1 min-w-0">
+              <Activity className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="truncate">Care Timeline</span>
             </CardTitle>
-            <div className="flex gap-2 flex-shrink-0">
-              <Button size="sm" variant="outline" onClick={onScheduleReminder} className="whitespace-nowrap">
-                <Bell className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">Reminder</span>
+            <div className="flex gap-1 flex-shrink-0">
+              <Button size="sm" variant="outline" onClick={onScheduleReminder}>
+                <Bell className="w-4 h-4" />
               </Button>
-              <Button size="sm" onClick={onAddEvent} className="whitespace-nowrap">
-                <Plus className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">Add Event</span>
+              <Button size="sm" onClick={onAddEvent}>
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="overflow-hidden">
+        <CardContent className="px-4 pb-4 w-full max-w-full">
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="today">Today</TabsTrigger>
@@ -238,7 +236,7 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
                     const EventIcon = event.icon;
                     
                     return (
-                      <div key={event.id} className="flex items-start gap-4 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden">
+                      <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors w-full max-w-full">
                         <div className="flex flex-col items-center">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                             event.status === 'completed' ? 'bg-success/20' :
