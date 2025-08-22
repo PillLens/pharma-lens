@@ -10,6 +10,7 @@ import ReminderCard from '@/components/reminders/ReminderCard';
 import ReminderDetailsSheet from '@/components/reminders/ReminderDetailsSheet';
 import AddReminderSheet from '@/components/reminders/AddReminderSheet';
 import RemindersFloatingActionButton from '@/components/reminders/RemindersFloatingActionButton';
+import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 
 // Type definition for reminder
 type Reminder = {
@@ -183,76 +184,61 @@ const Reminders: React.FC = () => {
     .reduce((total, r) => total + r.times.length, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-surface">
-      {/* Mobile-First Header */}
-      <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-center flex-1">
-              <h1 className="text-lg font-semibold text-foreground tracking-tight">
-                {t('reminders.title')}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('reminders.subtitle')}
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowAddReminder(true)}
-              className="ml-2 text-primary hover:text-primary/80"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
+    <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
+      <div className="flex items-center justify-end px-4 py-2 border-b border-border/50">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowAddReminder(true)}
+          className="text-primary hover:text-primary/80"
+        >
+          <Plus className="w-5 h-5" />
+        </Button>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-24">
-        {loading ? (
-          <LoadingSkeleton />
-        ) : (
-          <div className="space-y-6">
-            {/* Summary Cards */}
-            <div className="pt-4">
-              <ReminderSummaryCards
-                activeReminders={activeReminders}
-                medicationsCovered={medicationsCovered}
-                todaysDoses={todaysDoses}
-                onCardTap={handleSummaryCardTap}
-              />
-            </div>
-
-            {/* Reminders List */}
-            <div className="px-4">
-              {reminders.length === 0 ? (
-                <RemindersEmptyState onAddReminder={() => setShowAddReminder(true)} />
-              ) : (
-                <div className="space-y-3">
-                  <h2 className="font-medium text-foreground flex items-center gap-2 mb-4">
-                    <Bell className="w-4 h-4" />
-                    Your Reminders ({reminders.length})
-                  </h2>
-                  {reminders.map((reminder) => (
-                    <ReminderCard
-                      key={reminder.id}
-                      reminder={reminder}
-                      onTap={() => handleReminderTap(reminder)}
-                      onEdit={() => {
-                        setSelectedReminder(reminder);
-                        handleEditReminder();
-                      }}
-                      onDelete={() => handleDeleteReminder(reminder.id)}
-                      onToggleStatus={() => handleToggleReminderStatus(reminder.id)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+      {loading ? (
+        <LoadingSkeleton />
+      ) : (
+        <div className="space-y-6">
+          {/* Summary Cards */}
+          <div className="pt-4">
+            <ReminderSummaryCards
+              activeReminders={activeReminders}
+              medicationsCovered={medicationsCovered}
+              todaysDoses={todaysDoses}
+              onCardTap={handleSummaryCardTap}
+            />
           </div>
-        )}
-      </main>
+
+          {/* Reminders List */}
+          <div className="px-4">
+            {reminders.length === 0 ? (
+              <RemindersEmptyState onAddReminder={() => setShowAddReminder(true)} />
+            ) : (
+              <div className="space-y-3">
+                <h2 className="font-medium text-foreground flex items-center gap-2 mb-4">
+                  <Bell className="w-4 h-4" />
+                  Your Reminders ({reminders.length})
+                </h2>
+                {reminders.map((reminder) => (
+                  <ReminderCard
+                    key={reminder.id}
+                    reminder={reminder}
+                    onTap={() => handleReminderTap(reminder)}
+                    onEdit={() => {
+                      setSelectedReminder(reminder);
+                      handleEditReminder();
+                    }}
+                    onDelete={() => handleDeleteReminder(reminder.id)}
+                    onToggleStatus={() => handleToggleReminderStatus(reminder.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Floating Action Button */}
       <RemindersFloatingActionButton
@@ -274,7 +260,7 @@ const Reminders: React.FC = () => {
         onClose={() => setShowReminderDetails(false)}
         onEdit={handleEditReminder}
       />
-    </div>
+    </ProfessionalMobileLayout>
   );
 };
 
