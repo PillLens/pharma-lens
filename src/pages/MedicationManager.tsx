@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { Plus, Clock, Pill } from 'lucide-react';
+import { Plus, Pill, Clock, Heart, Activity, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
 import SwipeableCard from '@/components/mobile/SwipeableCard';
-import MobileMedicationCard from '@/components/mobile/MobileMedicationCard';
-import { MobileCard } from '@/components/ui/mobile/MobileCard';
+import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
-import MedicationFloatingActionButton from '@/components/medications/MedicationFloatingActionButton';
-import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
 import { UserMedication } from '@/hooks/useMedicationHistory';
+import EnhancedMobileNavigation from '@/components/EnhancedMobileNavigation';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +25,7 @@ const MedicationManager: React.FC = () => {
     refetch
   } = useMedicationHistory();
 
-  // Modal states
+  // States
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
@@ -36,22 +33,32 @@ const MedicationManager: React.FC = () => {
   const [medicationToDelete, setMedicationToDelete] = useState<UserMedication | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Refresh handler for pull-to-refresh
+  // Stats calculations
+  const activeMeds = medications.filter(m => m.is_active).length;
+  const totalMeds = medications.length;
+  const expiringSoon = medications.filter(m => {
+    if (!m.end_date) return false;
+    const endDate = new Date(m.end_date);
+    const today = new Date();
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7 && diffDays > 0;
+  }).length;
+
   const handleRefresh = async () => {
     try {
       await refetch();
-      toast.success(t('medications.refreshed'));
+      toast.success('Medications refreshed');
     } catch (error) {
-      toast.error(t('medications.refreshError'));
+      toast.error('Failed to refresh medications');
     }
   };
 
-  // Add medication handler
   const handleAddMedication = async (data: Partial<UserMedication>) => {
     setIsSubmitting(true);
     try {
       await addMedication(data as Omit<UserMedication, 'id' | 'created_at'>);
-      toast.success(t('medications.medicationAdded'));
+      toast.success('Medication added successfully');
       setIsAddSheetOpen(false);
     } catch (error) {
       toast.error('Failed to add medication');
@@ -60,14 +67,13 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  // Update medication handler
   const handleUpdateMedication = async (data: Partial<UserMedication>) => {
     if (!selectedMedication) return;
     
     setIsSubmitting(true);
     try {
       await updateMedication(selectedMedication.id, data);
-      toast.success(t('medications.medicationUpdated'));
+      toast.success('Medication updated successfully');
       setIsEditSheetOpen(false);
       setSelectedMedication(null);
     } catch (error) {
@@ -77,28 +83,21 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  // Delete medication handler
   const handleDeleteMedication = async () => {
     if (!medicationToDelete) return;
     
     try {
       await removeMedication(medicationToDelete.id);
-      toast.success(t('medications.medicationDeleted'));
+      toast.success('Medication deleted');
       setMedicationToDelete(null);
     } catch (error) {
       toast.error('Failed to delete medication');
     }
   };
 
-  // Card interaction handlers
   const handleCardTap = (medication: UserMedication) => {
     setSelectedMedication(medication);
     setIsDetailsSheetOpen(true);
-  };
-
-  const handleEditFromDetails = () => {
-    setIsDetailsSheetOpen(false);
-    setIsEditSheetOpen(true);
   };
 
   const handleEdit = (medication: UserMedication) => {
@@ -119,151 +118,150 @@ const MedicationManager: React.FC = () => {
     }
   };
 
-  // Skeleton loading component
-  const SkeletonCard = () => (
-    <MobileCard className="p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-6 w-16 rounded-full" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-4 w-16" />
-        <Skeleton className="h-4 w-20" />
-      </div>
-    </MobileCard>
-  );
-
-  // Mobile-first layout
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      {/* Mobile Header */}      
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-sm">
-        <div className="px-4 py-4 safe-area-top">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Premium Glass Header */}
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/30 shadow-lg">
+        <div className="px-6 py-6 safe-area-top">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {t('medications.title')}
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                {t('medications.subtitle')}
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                  <Pill className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">
+                  My Medications
+                </h1>
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Track and manage your daily medications
               </p>
             </div>
             
-            {/* Add Button */}
             <Button
               onClick={() => setIsAddSheetOpen(true)}
-              size="sm"
-              className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 min-w-[44px] h-[44px] border-0"
+              className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 border-0"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-6 h-6 text-white" />
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 overflow-y-auto pb-safe-area-bottom">
+      {/* Main Content */}
+      <main className="flex-1 px-6 pb-32">
         <PullToRefresh onRefresh={handleRefresh}>
-          <div className="px-4">
-            {/* Stats Bar - Enhanced Cards */}
-            {!loading && medications.length > 0 && (
-              <div className="py-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <Pill className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                          {medications.length}
-                        </p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                          {medications.length === 1 ? t('medications.medication') : t('medications.medications')}
-                        </p>
-                      </div>
+          {/* Premium Stats Cards */}
+          {!loading && medications.length > 0 && (
+            <div className="py-6">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/20 backdrop-blur-sm rounded-2xl p-4 border border-blue-200/30 dark:border-blue-500/20">
+                  <div className="text-center">
+                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                      <Pill className="w-5 h-5 text-white" />
                     </div>
+                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+                      {totalMeds}
+                    </p>
+                    <p className="text-xs text-blue-600/80 dark:text-blue-400/80 font-medium">
+                      Total
+                    </p>
                   </div>
-                  
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                          {medications.filter(m => m.is_active).length}
-                        </p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-                          {t('medications.active')}
-                        </p>
-                      </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-500/10 to-green-600/20 backdrop-blur-sm rounded-2xl p-4 border border-green-200/30 dark:border-green-500/20">
+                  <div className="text-center">
+                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
+                      <Activity className="w-5 h-5 text-white" />
                     </div>
+                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
+                      {activeMeds}
+                    </p>
+                    <p className="text-xs text-green-600/80 dark:text-green-400/80 font-medium">
+                      Active
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/20 backdrop-blur-sm rounded-2xl p-4 border border-amber-200/30 dark:border-amber-500/20">
+                  <div className="text-center">
+                    <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
+                      <Clock className="w-5 h-5 text-white" />
+                    </div>
+                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">
+                      {expiringSoon}
+                    </p>
+                    <p className="text-xs text-amber-600/80 dark:text-amber-400/80 font-medium">
+                      Expiring
+                    </p>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Main Content */}
-            {loading ? (
-              <div className="space-y-4 py-4">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg animate-pulse">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="space-y-2">
-                        <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded-lg w-32"></div>
-                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24"></div>
-                      </div>
-                      <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+          {/* Content */}
+          {loading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-3xl p-6 shadow-lg animate-pulse border border-white/20 dark:border-slate-700/30">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-40 bg-slate-200/50 dark:bg-slate-700/50" />
+                      <Skeleton className="h-4 w-24 bg-slate-200/50 dark:bg-slate-700/50" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24"></div>
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
-                    </div>
+                    <Skeleton className="h-8 w-16 rounded-full bg-slate-200/50 dark:bg-slate-700/50" />
                   </div>
-                ))}
-              </div>
-            ) : medications.length === 0 ? (
-              <div className="py-8">
-                <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
-              </div>
-            ) : (
-              <div className="space-y-4 py-4 pb-24">
-                {medications.map((medication) => (
-                  <div
-                    key={medication.id}
-                    className="transition-all duration-200 active:scale-[0.98] cursor-pointer"
-                    onClick={() => handleCardTap(medication)}
-                  >
-                    <SwipeableCard onDelete={() => handleDelete(medication)}>
-                      <EnhancedMedicationCard
-                        medication={medication}
-                        onEdit={() => handleEdit(medication)}
-                        onDelete={() => handleDelete(medication)}
-                        onToggleActive={() => handleToggleActive(medication)}
-                      />
-                    </SwipeableCard>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-4 w-20 bg-slate-200/50 dark:bg-slate-700/50" />
+                    <Skeleton className="h-4 w-24 bg-slate-200/50 dark:bg-slate-700/50" />
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          ) : medications.length === 0 ? (
+            <div className="py-16">
+              <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+            </div>
+          ) : (
+            <div className="space-y-4 pb-8">
+              {medications.map((medication, index) => (
+                <div
+                  key={medication.id}
+                  className="transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ 
+                    animationDelay: `${index * 100}ms`,
+                    animation: 'fadeInUp 0.6s ease-out forwards'
+                  }}
+                  onClick={() => handleCardTap(medication)}
+                >
+                  <SwipeableCard onDelete={() => handleDelete(medication)}>
+                    <EnhancedMedicationCard
+                      medication={medication}
+                      onEdit={() => handleEdit(medication)}
+                      onDelete={() => handleDelete(medication)}
+                      onToggleActive={() => handleToggleActive(medication)}
+                    />
+                  </SwipeableCard>
+                </div>
+              ))}
+            </div>
+          )}
         </PullToRefresh>
       </main>
 
-      {/* Floating Action Button */}
+      {/* Premium Floating Action Button */}
       {!loading && (
         <Button
           onClick={() => setIsAddSheetOpen(true)}
-          className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-2xl hover:shadow-3xl transition-all duration-200 active:scale-95 border-0"
+          className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-90 border-0"
         >
-          <Plus className="w-6 h-6" />
+          <Plus className="w-7 h-7 text-white" />
         </Button>
       )}
+
+      {/* Bottom Navigation */}
+      <EnhancedMobileNavigation />
 
       {/* Bottom Sheets */}
       <MedicationFormSheet
@@ -285,36 +283,59 @@ const MedicationManager: React.FC = () => {
         isOpen={isDetailsSheetOpen}
         onClose={() => setIsDetailsSheetOpen(false)}
         medication={selectedMedication}
-        onEdit={handleEditFromDetails}
+        onEdit={() => {
+          setIsDetailsSheetOpen(false);
+          setIsEditSheetOpen(true);
+        }}
       />
 
-      {/* Delete Confirmation */}
-      <div className={`fixed inset-0 z-50 ${medicationToDelete ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMedicationToDelete(null)}></div>
-        <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 max-w-sm mx-auto">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-            {t('medications.confirmDelete')}
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-            {t('medications.confirmDeleteText')}
-          </p>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setMedicationToDelete(null)}
-              className="flex-1 rounded-xl border-slate-300 dark:border-slate-600"
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              onClick={handleDeleteMedication}
-              className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white border-0"
-            >
-              {t('common.delete')}
-            </Button>
+      {/* Premium Delete Modal */}
+      {medicationToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMedicationToDelete(null)}></div>
+          <div className="relative bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/30 p-8 max-w-sm mx-auto">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg">
+                <Pill className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                Delete Medication?
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-8">
+                This action cannot be undone. The medication will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setMedicationToDelete(null)}
+                  className="flex-1 rounded-2xl border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteMedication}
+                  className="flex-1 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 shadow-lg"
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
