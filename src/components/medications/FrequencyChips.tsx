@@ -19,8 +19,8 @@ const FrequencyChips: React.FC<FrequencyChipsProps> = ({
   const frequencies = [
     { key: 'once_daily', label: t('medications.frequency.onceDaily') },
     { key: 'twice_daily', label: t('medications.frequency.twiceDaily') },
-    { key: 'three_times', label: t('medications.frequency.threeTimes') },
-    { key: 'four_times', label: t('medications.frequency.fourTimes') },
+    { key: 'three_times_daily', label: t('medications.frequency.threeTimes') },
+    { key: 'four_times_daily', label: t('medications.frequency.fourTimes') },
     { key: 'every_8h', label: t('medications.frequency.every8h') },
     { key: 'every_12h', label: t('medications.frequency.every12h') },
     { key: 'as_needed', label: t('medications.frequency.asNeeded') },
