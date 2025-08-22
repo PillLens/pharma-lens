@@ -15,14 +15,22 @@ const resources = {
   tr: { translation: trTranslation },
 };
 
+// Force set language to Azerbaijani and load immediately
+const setLanguage = () => {
+  const savedLang = localStorage.getItem('selectedLanguage') || 'az';
+  localStorage.setItem('selectedLanguage', 'az');
+  localStorage.setItem('i18nextLng', 'az');
+  return 'az';
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'az', // Changed to Azerbaijani as fallback
-    lng: 'az', // Default to Azerbaijani
-    debug: true, // Enable debug to see what's happening
+    fallbackLng: 'az',
+    lng: setLanguage(), // Force Azerbaijani
+    debug: true,
     
     interpolation: {
       escapeValue: false,
@@ -31,7 +39,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'selectedLanguage', // Match the key used by language selector
+      lookupLocalStorage: 'selectedLanguage',
     },
     
     react: {
