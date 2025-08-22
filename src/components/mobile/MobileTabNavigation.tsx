@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, History, Pill, Bell, Users, Shield, User, MoreHorizontal, Globe2 } from 'lucide-react';
+import { Home, History, Pill, Bell, MoreHorizontal } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
-import { 
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import { TranslatedText } from '@/components/TranslatedText';
 
 // Main navigation items (4 most important)
@@ -41,44 +33,9 @@ const mainNavigationItems = [
   },
 ];
 
-// Additional items shown in More menu
-const moreNavigationItems = [
-  {
-    icon: Users,
-    labelKey: 'navigation.family',
-    href: '/family',
-    category: 'social'
-  },
-  {
-    icon: Shield,
-    labelKey: 'navigation.security',
-    href: '/security',
-    category: 'system'
-  },
-  {
-    icon: User,
-    labelKey: 'navigation.auth',
-    href: '/auth',
-    category: 'system'
-  },
-  {
-    icon: Globe2,
-    labelKey: 'navigation.language',
-    href: '#language',
-    category: 'system',
-    isLanguageSelector: true
-  },
-];
-
 const MobileTabNavigation: React.FC = () => {
   const location = useLocation();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPressed, setIsPressed] = useState<number | null>(null);
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
-
-  // Check if current path is in main navigation or more navigation
-  const isMainNavActive = mainNavigationItems.some(item => item.href === location.pathname);
-  const isMoreNavActive = moreNavigationItems.some(item => item.href === location.pathname);
 
   useEffect(() => {
     const currentMainIndex = mainNavigationItems.findIndex(item => item.href === location.pathname);
@@ -88,21 +45,8 @@ const MobileTabNavigation: React.FC = () => {
   }, [location.pathname]);
 
   const handleTabPress = async (index: number) => {
-    setIsPressed(index);
     await hapticService.feedback('light');
     setActiveIndex(index);
-    
-    setTimeout(() => setIsPressed(null), 150);
-  };
-
-  const handleMorePress = async () => {
-    await hapticService.feedback('light');
-    setIsMoreOpen(true);
-  };
-
-  const handleMoreItemPress = async () => {
-    await hapticService.feedback('light');
-    setIsMoreOpen(false);
   };
 
   return (
@@ -140,79 +84,26 @@ const MobileTabNavigation: React.FC = () => {
               );
             })}
 
-            {/* More button */}
-            <Drawer open={isMoreOpen} onOpenChange={setIsMoreOpen}>
-              <DrawerTrigger asChild>
-                <button
-                  className={cn(
-                    "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px]",
-                    isMoreNavActive 
-                      ? "text-white bg-primary shadow-lg" 
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-                  )}
-                  onTouchStart={handleMorePress}
-                  aria-label="More options"
-                >
-                  <MoreHorizontal className="w-5 h-5 mb-1" />
-                  <span className="text-xs font-medium">
-                    <TranslatedText translationKey="navigation.more" />
-                  </span>
-                </button>
-              </DrawerTrigger>
-
-              <DrawerContent className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-slate-200/50 dark:border-slate-700/50">
-                <DrawerHeader className="text-center border-b border-slate-200/50 dark:border-slate-700/50">
-                  <DrawerTitle className="text-lg font-semibold">
-                    <TranslatedText translationKey="navigation.moreOptions" />
-                  </DrawerTitle>
-                </DrawerHeader>
-                
-                <div className="px-6 py-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    {moreNavigationItems.map((item) => {
-                      const isActive = location.pathname === item.href;
-                      const Icon = item.icon;
-                      
-                      // Special handling for language selector
-                      if (item.isLanguageSelector) {
-                        return (
-                          <div
-                            key={item.href}
-                            className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50"
-                          >
-                            <Icon className="w-6 h-6 mb-2 text-slate-600 dark:text-slate-400" />
-                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200 mb-3">
-                              <TranslatedText translationKey={item.labelKey} />
-                            </span>
-                            <LanguageSelector />
-                          </div>
-                        );
-                      }
-                      
-                      return (
-                        <NavLink
-                          key={item.href}
-                          to={item.href}
-                          className={cn(
-                            "flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-200 border",
-                            isActive 
-                              ? "text-white bg-primary border-primary shadow-lg" 
-                              : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50 border-slate-200 dark:border-slate-700"
-                          )}
-                          onTouchStart={handleMoreItemPress}
-                          aria-label={item.labelKey}
-                        >
-                          <Icon className="w-6 h-6 mb-2" />
-                          <span className="text-sm font-medium text-center">
-                            <TranslatedText translationKey={item.labelKey} />
-                          </span>
-                        </NavLink>
-                      );
-                    })}
-                  </div>
-                </div>
-              </DrawerContent>
-            </Drawer>
+            {/* Dashboard button */}
+            <NavLink
+              to="/dashboard"
+              className={cn(
+                "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px] relative",
+                location.pathname === '/dashboard'
+                  ? "text-white bg-primary shadow-lg" 
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              )}
+              onTouchStart={async () => await hapticService.feedback('light')}
+              aria-label="Dashboard"
+            >
+              <MoreHorizontal className={cn("w-5 h-5 mb-1", location.pathname === '/dashboard' && "text-white")} />
+              <span className={cn("text-xs font-medium", location.pathname === '/dashboard' && "text-white")}>
+                <TranslatedText translationKey="navigation.dashboard" />
+              </span>
+              {location.pathname === '/dashboard' && (
+                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
+              )}
+            </NavLink>
           </div>
         </div>
         
