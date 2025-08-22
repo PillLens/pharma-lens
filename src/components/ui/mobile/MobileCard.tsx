@@ -4,21 +4,25 @@ import { cn } from "@/lib/utils";
 const MobileCard = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    variant?: 'default' | 'elevated' | 'outline';
+    variant?: 'default' | 'elevated' | 'medical' | 'glass' | 'outline';
+    interactive?: boolean;
   }
->(({ className, variant = 'default', ...props }, ref) => {
+>(({ className, variant = 'default', interactive = false, ...props }, ref) => {
   const variantClasses = {
     default: "bg-card border border-border shadow-soft",
-    elevated: "bg-card border border-border shadow-card",
-    outline: "bg-card border-2 border-border"
+    elevated: "medical-card shadow-card hover:shadow-floating",
+    medical: "medical-surface shadow-medical",
+    glass: "bg-gradient-glass backdrop-blur-sm border border-border/50 shadow-soft",
+    outline: "bg-card border-2 border-primary/20 shadow-soft"
   };
 
   return (
     <div
       ref={ref}
       className={cn(
-        "rounded-lg p-4 transition-colors",
+        "rounded-lg p-4 transition-all duration-200",
         variantClasses[variant],
+        interactive && "cursor-pointer hover:scale-[1.02] hover:-translate-y-1",
         className
       )}
       {...props}
@@ -46,7 +50,7 @@ const MobileCardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight text-foreground",
+      "text-lg font-semibold leading-tight tracking-tight text-foreground",
       className
     )}
     {...props}

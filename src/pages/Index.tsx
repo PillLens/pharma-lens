@@ -197,36 +197,45 @@ const Index = () => {
           )}
         </div>
 
-        {/* Features Grid */}
+        {/* Premium Features Grid */}
         <div className={`grid gap-4 mb-8 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
           {features.map((feature, index) => (
-            <MobileCard key={index} variant="elevated" className="text-center">
+            <MobileCard 
+              key={index} 
+              variant="medical" 
+              interactive
+              className="text-center group hover:border-primary/30 transition-all duration-300"
+            >
               <MobileCardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <feature.icon className="w-6 h-6 text-primary" />
+                <div className="w-14 h-14 rounded-xl bg-gradient-medical flex items-center justify-center mx-auto mb-4 shadow-medical group-hover:shadow-floating group-hover:scale-110 transition-all duration-300">
+                  <feature.icon className="w-7 h-7 text-white" />
                 </div>
-                <MobileCardTitle className="text-base">{feature.title}</MobileCardTitle>
+                <MobileCardTitle className="text-base group-hover:text-primary transition-colors">
+                  {feature.title}
+                </MobileCardTitle>
               </MobileCardHeader>
               <MobileCardContent>
-                <MobileCardDescription>{feature.description}</MobileCardDescription>
+                <MobileCardDescription className="text-sm leading-relaxed">
+                  {feature.description}
+                </MobileCardDescription>
               </MobileCardContent>
             </MobileCard>
           ))}
         </div>
 
-        {/* Safety Notice */}
-        <MobileCard variant="outline" className="border-warning/30 bg-warning/5">
+        {/* Premium Safety Notice */}
+        <MobileCard variant="glass" className="border-warning/40 bg-gradient-to-r from-warning/5 to-warning/10 shadow-medical">
           <MobileCardHeader>
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
-                <Shield className="w-5 h-5 text-warning" />
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning to-warning/80 flex items-center justify-center flex-shrink-0 shadow-medical">
+                <Shield className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <MobileCardTitle className="text-base mb-2">
-                  <TranslatedText translationKey="safety.importantInfo" fallback="Important Safety Information" />
+              <div className="flex-1">
+                <MobileCardTitle className="text-base mb-3 text-warning-foreground">
+                  <TranslatedText translationKey="safety.importantInfo" fallback="Important Medical Information" />
                 </MobileCardTitle>
-                <MobileCardDescription>
-                  <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance." />
+                <MobileCardDescription className="text-sm leading-relaxed text-muted-foreground">
+                  <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance and treatment decisions." />
                 </MobileCardDescription>
               </div>
             </div>

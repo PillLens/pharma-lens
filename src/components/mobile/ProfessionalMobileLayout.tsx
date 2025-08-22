@@ -23,29 +23,30 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Clean Mobile Header */}
+    <div className="min-h-screen bg-gradient-surface flex flex-col">
+      {/* Premium Mobile Header */}
       {showHeader && title && (
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border safe-area-top">
-          <div className="flex items-center justify-center px-4 py-3">
-            <h1 className="text-lg font-semibold text-foreground">
+        <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
+          <div className="flex items-center justify-center px-4 py-4">
+            <h1 className="text-lg font-semibold text-foreground tracking-tight">
               {title}
             </h1>
           </div>
         </header>
       )}
 
-      {/* Scrollable Content Area */}
+      {/* Optimized Scrollable Content Area */}
       <main className={cn(
-        "flex-1 overflow-y-auto smooth-scroll",
+        "flex-1 overflow-y-auto overscroll-contain",
+        "scroll-smooth webkit-overflow-scrolling-touch",
         className
       )}>
-        <div className="pb-20">
+        <div className="pb-24 min-h-0">
           {children}
         </div>
       </main>
 
-      {/* Bottom Navigation */}
+      {/* Enhanced Bottom Navigation */}
       <MobileTabNavigation />
     </div>
   );

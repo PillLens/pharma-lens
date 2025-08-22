@@ -17,11 +17,13 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       onClick={onClick}
       size="icon"
       className={cn(
-        "fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full shadow-floating bg-primary hover:bg-primary/90",
+        "fixed bottom-28 right-4 z-50 w-16 h-16 rounded-full shadow-floating",
+        "medical-button hover:scale-110 active:scale-95",
+        "animate-medical-pulse transition-all duration-200",
         className
       )}
     >
-      <Camera className="w-6 h-6" />
+      <Camera className="w-7 h-7" />
     </MobileButton>
   );
 };
