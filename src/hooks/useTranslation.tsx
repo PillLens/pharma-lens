@@ -4,8 +4,8 @@ export const useTranslation = (namespace?: string) => {
   const { t, i18n } = useReactI18next(namespace);
   
   const changeLanguage = (language: string) => {
-    i18n.changeLanguage(language);
     localStorage.setItem('selectedLanguage', language);
+    i18n.changeLanguage(language);
   };
 
   return {

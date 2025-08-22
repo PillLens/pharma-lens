@@ -20,9 +20,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: 'az', // Changed to Azerbaijani as fallback
     lng: 'az', // Default to Azerbaijani
-    debug: false,
+    debug: true, // Enable debug mode temporarily
     
     interpolation: {
       escapeValue: false,
@@ -31,6 +31,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'selectedLanguage', // Match the key used by language selector
     },
     
     react: {
