@@ -26,6 +26,7 @@ export const FamilyManagement: React.FC = () => {
   if (isMobile) {
     return <MobileFamilyManagement />;
   }
+
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
   const [pendingInvitations, setPendingInvitations] = useState<FamilyInvitation[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<FamilyGroup | null>(null);
