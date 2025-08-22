@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, Pill, Clock, Activity, Calendar, AlertTriangle, BarChart3, Target } from 'lucide-react';
+import { Plus, Pill, Clock, Activity, Calendar, AlertTriangle, BarChart3, Target, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
@@ -17,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EmptyState from '@/components/medications/EmptyState';
 import MedicationDetailsSheet from '@/components/medications/MedicationDetailsSheet';
 import MedicationFormSheet from '@/components/medications/MedicationFormSheet';
-import EnhancedMedicationCard from '@/components/mobile/EnhancedMedicationCard';
+import EnhancedMedicationCard from '@/components/medications/enhanced/EnhancedMedicationCard';
 import EnhancedMedicationStatsCard from '@/components/medications/enhanced/EnhancedMedicationStatsCard';
 import AdvancedMedicationCard from '@/components/medications/enhanced/AdvancedMedicationCard';
 import MedicationAnalyticsDashboard from '@/components/medications/enhanced/MedicationAnalyticsDashboard';
@@ -288,42 +289,59 @@ const MedicationManager: React.FC = () => {
     <>
       <PullToRefresh onRefresh={handleRefresh}>
         {/* Redesigned Mobile Header */}
-        <div className="px-6 pt-4 pb-3">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <Pill className="w-5 h-5 text-white" />
+        <div className="px-6 pt-6 pb-4 bg-gradient-to-br from-primary/5 to-primary/10 border-b border-border/50">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
+                <Pill className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Medications</h1>
+                <h1 className="text-2xl font-bold text-foreground">Medications</h1>
                 <p className="text-sm text-muted-foreground">Manage your daily meds</p>
               </div>
             </div>
             <MobileButton
               size="sm"
               onClick={() => setIsAddSheetOpen(true)}
-              className="w-10 h-10 rounded-xl bg-primary hover:bg-primary/90 shadow-lg"
+              className="w-12 h-12 rounded-2xl bg-primary hover:bg-primary/90 shadow-lg"
               haptic
             >
-              <Plus className="w-5 h-5 text-white" />
+              <Plus className="w-6 h-6 text-white" />
             </MobileButton>
           </div>
-        </div>
 
-        {/* Enhanced Mobile Stats */}
-        {!loading && medications.length > 0 && (
-          <div className="px-6 pb-6">
-            <EnhancedMedicationStatsCard
-              totalMedications={totalMeds}
-              activeMedications={activeMeds}
-              adherenceRate={adherenceRate}
-              currentStreak={currentStreak}
-              expiringSoon={expiringSoon}
-              weeklyAdherence={weeklyAdherence}
-              complianceScore={complianceScore}
-            />
-          </div>
-        )}
+          {/* Quick Stats Overview */}
+          {!loading && medications.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-4 border border-border/50">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-success/10 flex items-center justify-center">
+                    <Target className="w-4 h-4 text-success" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{activeMeds}</div>
+                    <div className="text-xs text-muted-foreground">of {totalMeds} active</div>
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-foreground">Active Medications</div>
+              </div>
+
+              <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-4 border border-border/50">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Activity className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-primary">{adherenceRate}%</div>
+                    <div className="text-xs text-muted-foreground">{currentStreak} day streak</div>
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-foreground">Adherence Rate</div>
+                <Progress value={adherenceRate} className="h-1.5 mt-2" />
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Content */}
         <div className="px-6">
@@ -332,49 +350,147 @@ const MedicationManager: React.FC = () => {
               {Array.from({ length: 3 }).map((_, i) => (
                 <MobileCard key={i} className="animate-pulse">
                   <MobileCardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Skeleton className="h-10 w-10 rounded-xl" />
+                    <div className="flex items-center gap-4 mb-4">
+                      <Skeleton className="h-12 w-12 rounded-2xl" />
                       <div className="flex-1 space-y-2">
-                        <Skeleton className="h-5 w-32" />
+                        <Skeleton className="h-5 w-40" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <Skeleton className="h-8 w-20 rounded-2xl" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
+                        <Skeleton className="h-4 w-20" />
                         <Skeleton className="h-4 w-24" />
                       </div>
-                      <Skeleton className="h-6 w-16 rounded-full" />
-                    </div>
-                    <div className="space-y-3">
-                      <Skeleton className="h-12 w-full rounded-lg" />
-                      <Skeleton className="h-4 w-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-2 w-full" />
+                      </div>
+                      <Skeleton className="h-10 w-full rounded-xl" />
                     </div>
                   </MobileCardContent>
                 </MobileCard>
               ))}
             </div>
           ) : medications.length === 0 ? (
-            <div className="py-16">
-              <EmptyState onAddClick={() => setIsAddSheetOpen(true)} />
+            <div className="py-20 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-muted/30 flex items-center justify-center">
+                <Pill className="w-10 h-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No medications yet</h3>
+              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                Start managing your medications by adding your first one.
+              </p>
+              <MobileButton
+                onClick={() => setIsAddSheetOpen(true)}
+                className="rounded-2xl px-8"
+                haptic
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Add Medication
+              </MobileButton>
             </div>
           ) : (
-            <div className="space-y-6 pb-8">
-              {medications.map((medication, index) => (
-                <div
-                  key={medication.id}
-                  className="animate-fade-in hover:scale-[1.01] active:scale-[0.99] transition-transform duration-200"
-                  style={{ 
-                    animationDelay: `${index * 50}ms`
-                  }}
-                  onClick={() => handleCardTap(medication)}
-                >
-                  <SwipeableCard onDelete={() => handleDelete(medication)}>
-                    <AdvancedMedicationCard
-                      medication={medication}
-                      onEdit={() => handleEdit(medication)}
-                      onDelete={() => handleDelete(medication)}
-                      onToggleActive={() => handleToggleActive(medication)}
-                      onMarkTaken={() => handleMarkTaken(medication.id)}
-                    />
-                  </SwipeableCard>
+            <>
+              {/* Today's Overview Section */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">Today's Schedule</h2>
+                  <Badge variant="outline" className="text-xs">
+                    <Clock className="w-3 h-3 mr-1" />
+                    {medications.filter(m => m.is_active).length} active
+                  </Badge>
                 </div>
-              ))}
-            </div>
+
+                {/* Due Now / Upcoming */}
+                <div className="space-y-3 mb-6">
+                  {medications.filter(m => m.is_active).slice(0, 2).map((medication, index) => {
+                    const isDueNow = index === 0; // Mock: first one is due now
+                    const nextTime = isDueNow ? 'Due Now' : '2:00 PM';
+                    
+                    return (
+                      <MobileCard 
+                        key={`due-${medication.id}`}
+                        variant={isDueNow ? 'warning' : 'default'} 
+                        className={`border-l-4 ${isDueNow ? 'border-l-destructive animate-pulse' : 'border-l-primary'}`}
+                      >
+                        <MobileCardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                isDueNow ? 'bg-destructive/10' : 'bg-primary/10'
+                              }`}>
+                                <Pill className={`w-5 h-5 ${isDueNow ? 'text-destructive' : 'text-primary'}`} />
+                              </div>
+                              <div>
+                                <div className="font-medium text-foreground">{medication.medication_name}</div>
+                                <div className="text-sm text-muted-foreground">{medication.dosage}</div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className={`text-sm font-bold ${isDueNow ? 'text-destructive' : 'text-primary'}`}>
+                                {nextTime}
+                              </div>
+                              {isDueNow && (
+                                <MobileButton
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkTaken(medication.id);
+                                  }}
+                                  className="mt-2 h-8 px-4 rounded-xl"
+                                  haptic
+                                >
+                                  <CheckCircle className="w-4 h-4 mr-1" />
+                                  Take
+                                </MobileButton>
+                              )}
+                            </div>
+                          </div>
+                        </MobileCardContent>
+                      </MobileCard>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* All Medications Section */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">All Medications</h2>
+                  <div className="flex items-center gap-2">
+                    {expiringSoon > 0 && (
+                      <Badge variant="destructive" className="text-xs">
+                        <AlertTriangle className="w-3 h-3 mr-1" />
+                        {expiringSoon} expiring
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4 pb-8">
+                  {medications.map((medication, index) => (
+                    <div
+                      key={medication.id}
+                      className="animate-fade-in hover:scale-[1.01] active:scale-[0.99] transition-transform duration-200"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                      onClick={() => handleCardTap(medication)}
+                    >
+                      <SwipeableCard onDelete={() => handleDelete(medication)}>
+                        <EnhancedMedicationCard
+                          medication={medication}
+                          onEdit={() => handleEdit(medication)}
+                          onDelete={() => handleDelete(medication)}
+                          onToggleActive={() => handleToggleActive(medication)}
+                          onMarkTaken={() => handleMarkTaken(medication.id)}
+                        />
+                      </SwipeableCard>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
         </div>
       </PullToRefresh>
