@@ -16,6 +16,7 @@ interface EnhancedMedicationCardProps {
   onToggleActive: () => void;
   onMarkTaken?: () => void;
   className?: string;
+  onClick?: () => void;
 }
 
 const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
@@ -24,7 +25,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   onDelete,
   onToggleActive,
   onMarkTaken,
-  className
+  className,
+  onClick
 }) => {
   // Generate stable data based on medication ID to prevent constant changes
   const generateStableValue = (seed: string, min: number, max: number) => {
@@ -93,6 +95,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
     <MobileCard 
       variant={isDueNow ? 'warning' : 'default'} 
       className={`group transition-all duration-300 hover:shadow-lg ${className}`}
+      onClick={onClick}
     >
       <MobileCardHeader className="pb-4">
         <div className="flex items-start justify-between">
