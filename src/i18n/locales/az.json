@@ -244,9 +244,7 @@
         "reminderUpdated": "Xatırlatma uğurla yeniləndi"
       }
     },
-       "history": "Tarixçə"
-     },
-     "form": {
+    "form": {
        "basics": "Əsaslar",
        "dosageFrequency": "Dozaj və Tezlik",
        "datesStatus": "Tarix və Status"
