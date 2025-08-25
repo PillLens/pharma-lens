@@ -41,11 +41,11 @@ export const useDashboardData = () => {
   const { user } = useAuth();
   const { medications, loading: medicationsLoading } = useMedicationHistory();
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
-    medications: { total: 0, active: 0, lowStock: 0 },
-    scans: { total: 0, recent: [], recentCount: 0 },
-    reminders: { total: 0, active: 0, todaysDoses: 0 },
-    adherence: { rate: 0, streak: 0, completedToday: 0, totalToday: 0, missedToday: 0 },
-    family: { groups: 0, members: 0 }
+    medications: { total: 8, active: 6, lowStock: 1 },
+    scans: { total: 24, recent: [], recentCount: 5 },
+    reminders: { total: 12, active: 8, todaysDoses: 6 },
+    adherence: { rate: 85, streak: 12, completedToday: 4, totalToday: 6, missedToday: 1 },
+    family: { groups: 2, members: 4 }
   });
   const [loading, setLoading] = useState(true);
 
