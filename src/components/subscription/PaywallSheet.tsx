@@ -25,7 +25,18 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
   const pricing = entitlementsService.getPricingPlans();
 
-  const handleUpgrade = async (plan: 'pro_individual' | 'pro_family') => {
+  const handleUpgrade = async (plan: 'pro_individual' | 'pro_family', event?: React.MouseEvent) => {
+    // Prevent event bubbling and double clicks
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    if (loading) {
+      console.log('[CHECKOUT] Already loading, ignoring click');
+      return;
+    }
+
     try {
       console.log('[CHECKOUT] Starting upgrade process', { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' });
       setLoading(true);
@@ -214,7 +225,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                 </div>
 
                 <Button 
-                  onClick={() => handleUpgrade('pro_individual')}
+                  onClick={(e) => handleUpgrade('pro_individual', e)}
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-primary to-primary-glow"
                 >
@@ -286,7 +297,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                 </div>
 
                 <Button 
-                  onClick={() => handleUpgrade('pro_family')}
+                  onClick={(e) => handleUpgrade('pro_family', e)}
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-primary to-primary-glow"
                 >
