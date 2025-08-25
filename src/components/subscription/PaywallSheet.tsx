@@ -61,17 +61,26 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
         console.log('[CHECKOUT] Got checkout URL:', data.url);
         console.log('[CHECKOUT] Attempting to open checkout...');
         
-        // Open Stripe checkout in a new tab (more reliable and standard for payments)
-        const newWindow = window.open(data.url, '_blank');
+        // Check if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        console.log('[CHECKOUT] Is mobile device:', isMobile);
         
-        if (!newWindow) {
-          console.error('[CHECKOUT] Popup blocked, trying redirect...');
-          // Fallback to same-tab redirect if popup was blocked
+        if (isMobile) {
+          // On mobile, always use same-tab redirect for better compatibility
+          console.log('[CHECKOUT] Mobile detected, using same-tab redirect');
           window.location.href = data.url;
         } else {
-          console.log('[CHECKOUT] Checkout opened in new tab');
-          // Close the paywall sheet since checkout opened successfully
-          onClose();
+          // On desktop, try new tab first, fallback to same-tab
+          const newWindow = window.open(data.url, '_blank');
+          
+          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            console.error('[CHECKOUT] Popup blocked, using same-tab redirect...');
+            window.location.href = data.url;
+          } else {
+            console.log('[CHECKOUT] Checkout opened in new tab');
+            // Close the paywall sheet since checkout opened successfully
+            onClose();
+          }
         }
       } else {
         console.error('[CHECKOUT] No URL in response:', data);
