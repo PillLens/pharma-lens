@@ -17,13 +17,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, getUserTimezone, isDoseTime } from '@/utils/timezoneUtils';
 
-// Mock medications for the add reminder sheet - replace with real data
-const mockMedications = [
-  { id: '1', name: 'Amoxicillin' },
-  { id: '2', name: 'Ibuprofen' },
-  { id: '3', name: 'Metformin' },
-  { id: '4', name: 'Lisinopril' }
-];
+// This will be populated with real user medications
+const [userMedications, setUserMedications] = useState<any[]>([]);
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
@@ -298,7 +293,7 @@ const Reminders: React.FC = () => {
         onClose={() => setShowAddReminder(false)}
         onSave={handleAddReminder}
         isLoading={isAddingReminder}
-        medications={mockMedications}
+        medications={userMedications}
       />
 
       <ReminderDetailsSheet

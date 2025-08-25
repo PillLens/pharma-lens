@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Clock, Calendar, Activity, Heart, Phone, MessageCircle, 
   AlertTriangle, CheckCircle, Users, Pill, Thermometer,
@@ -10,7 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/useTranslation';
+import { familyCareTimelineService, TimelineEvent, DayTimelineData, TimelineStats } from '@/services/familyCareTimelineService';
 
 interface InteractiveFamilyCareTimelineProps {
   familyGroups: any[];
@@ -27,117 +29,47 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
 }) => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState('today');
+  const [timelineStats, setTimelineStats] = useState<TimelineStats | null>(null);
+  const [todayEvents, setTodayEvents] = useState<TimelineEvent[]>([]);
+  const [weekEvents, setWeekEvents] = useState<DayTimelineData[]>([]);
+  const [monthEvents, setMonthEvents] = useState<DayTimelineData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock timeline data
-  const timelineEvents = {
-    today: [
-      {
-        id: 1,
-        time: '08:00',
-        type: 'medication',
-        title: 'Morning Medication - Sarah',
-        description: 'Metformin 500mg + Vitamin D',
-        status: 'completed',
-        member: { name: 'Sarah Johnson', avatar: 'SJ' },
-        icon: Pill,
-        color: 'success'
-      },
-      {
-        id: 2,
-        time: '09:30',
-        type: 'checkup',
-        title: 'Blood Pressure Check - John',
-        description: '120/80 mmHg - Normal',
-        status: 'completed',
-        member: { name: 'John Doe', avatar: 'JD' },
-        icon: Thermometer,
-        color: 'primary'
-      },
-      {
-        id: 3,
-        time: '12:00',
-        type: 'medication',
-        title: 'Lunch Medication - Sarah',
-        description: 'Insulin injection due',
-        status: 'upcoming',
-        member: { name: 'Sarah Johnson', avatar: 'SJ' },
-        icon: Pill,
-        color: 'warning'
-      },
-      {
-        id: 4,
-        time: '14:30',
-        type: 'appointment',
-        title: 'Doctor Appointment - John',
-        description: 'Cardiology follow-up at City Hospital',
-        status: 'upcoming',
-        member: { name: 'John Doe', avatar: 'JD' },
-        icon: Calendar,
-        color: 'blue'
-      },
-      {
-        id: 5,
-        time: '18:00',
-        type: 'medication',
-        title: 'Evening Medication - Sarah',
-        description: 'Blood pressure medication',
-        status: 'pending',
-        member: { name: 'Sarah Johnson', avatar: 'SJ' },
-        icon: Pill,
-        color: 'muted'
+  useEffect(() => {
+    const loadTimelineData = async () => {
+      try {
+        setLoading(true);
+        
+        // Load timeline stats
+        const stats = await familyCareTimelineService.getTimelineStats(familyGroups);
+        setTimelineStats(stats);
+
+        // Load today's timeline
+        const today = await familyCareTimelineService.getTodayTimeline(familyGroups);
+        setTodayEvents(today);
+
+        // Load week timeline
+        const week = await familyCareTimelineService.getWeekTimeline(familyGroups);
+        setWeekEvents(week);
+
+        // Load month timeline
+        const month = await familyCareTimelineService.getMonthTimeline(familyGroups);
+        setMonthEvents(month);
+      } catch (error) {
+        console.error('Error loading timeline data:', error);
+      } finally {
+        setLoading(false);
       }
-    ],
-    week: [
-      {
-        id: 6,
-        date: 'Tomorrow',
-        events: [
-          {
-            time: '08:00',
-            title: 'Physical Therapy - John',
-            type: 'appointment',
-            status: 'scheduled'
-          },
-          {
-            time: '10:00',
-            title: 'Medication Review - Sarah',
-            type: 'checkup',
-            status: 'scheduled'
-          }
-        ]
-      },
-      {
-        id: 7,
-        date: 'Wednesday',
-        events: [
-          {
-            time: '15:00',
-            title: 'Blood Test - Sarah',
-            type: 'appointment',
-            status: 'scheduled'
-          }
-        ]
-      }
-    ],
-    month: [
-      {
-        id: 8,
-        date: 'Next Week',
-        events: [
-          {
-            title: 'Monthly Medication Refill',
-            type: 'medication',
-            status: 'scheduled'
-          },
-          {
-            title: 'Family Care Review',
-            type: 'checkup',
-            status: 'scheduled'
-          }
-        ]
-      }
-    ]
-  };
+    };
+
+    if (familyGroups.length > 0) {
+      loadTimelineData();
+    } else {
+      setLoading(false);
+    }
+  }, [familyGroups]);
+
+  // Helper functions for status handling
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -167,7 +99,7 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
               <Calendar className="w-4 h-4 text-primary" />
             </div>
             <p className="text-sm font-semibold text-primary">Today's Events</p>
-            <p className="text-xs text-muted-foreground">{timelineEvents.today.length} scheduled</p>
+            <p className="text-xs text-muted-foreground">{timelineStats?.todayEvents || 0} scheduled</p>
           </CardContent>
         </Card>
 
@@ -177,7 +109,7 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
               <CheckCircle className="w-4 h-4 text-success" />
             </div>
             <p className="text-sm font-semibold text-success">Completed</p>
-            <p className="text-xs text-muted-foreground">2 of 5 today</p>
+            <p className="text-xs text-muted-foreground">{timelineStats?.completed || 0} today</p>
           </CardContent>
         </Card>
 
@@ -187,7 +119,7 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
               <Clock className="w-4 h-4 text-warning" />
             </div>
             <p className="text-sm font-semibold text-warning">Upcoming</p>
-            <p className="text-xs text-muted-foreground">2 in next 2hrs</p>
+            <p className="text-xs text-muted-foreground">{timelineStats?.upcoming || 0} upcoming</p>
           </CardContent>
         </Card>
 
@@ -227,114 +159,200 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
           </TabsList>
 
           <TabsContent value="today" className="space-y-3">
-            {timelineEvents.today.map((event, index) => {
-              const StatusIcon = getStatusIcon(event.status);
-              const EventIcon = event.icon;
-              
-              return (
-                <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border hover:bg-muted/50 transition-colors">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    event.status === 'completed' ? 'bg-success/20' :
-                    event.status === 'upcoming' ? 'bg-warning/20' :
-                    event.status === 'pending' ? 'bg-destructive/20' :
-                    'bg-muted'
-                  }`}>
-                    <EventIcon className={`w-4 h-4 ${
-                      event.status === 'completed' ? 'text-success' :
-                      event.status === 'upcoming' ? 'text-warning' :
-                      event.status === 'pending' ? 'text-destructive' :
-                      'text-muted-foreground'
-                    }`} />
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border">
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-5 w-20" />
+                      </div>
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-3 w-2/3" />
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="w-6 h-6 rounded-full" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {event.time}
-                      </span>
-                      <Badge className={`text-xs ${
-                        event.status === 'completed' ? 'bg-success/10 text-success' :
-                        event.status === 'upcoming' ? 'bg-warning/10 text-warning' :
-                        event.status === 'pending' ? 'bg-destructive/10 text-destructive' :
-                        'bg-muted/50 text-muted-foreground'
-                      }`}>
-                        {event.status}
-                      </Badge>
-                      <StatusIcon className={`w-4 h-4 ml-auto ${
+                ))}
+              </div>
+            ) : todayEvents.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No events scheduled for today</p>
+              </div>
+            ) : (
+              todayEvents.map((event) => {
+                const StatusIcon = getStatusIcon(event.status);
+                const iconMap: any = { Pill, Calendar, CheckSquare: Activity };
+                const EventIcon = iconMap[event.icon] || Activity;
+                
+                return (
+                  <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border hover:bg-muted/50 transition-colors">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      event.status === 'completed' ? 'bg-success/20' :
+                      event.status === 'upcoming' ? 'bg-warning/20' :
+                      event.status === 'pending' || event.status === 'overdue' ? 'bg-destructive/20' :
+                      'bg-muted'
+                    }`}>
+                      <EventIcon className={`w-4 h-4 ${
                         event.status === 'completed' ? 'text-success' :
                         event.status === 'upcoming' ? 'text-warning' :
-                        'text-destructive'
+                        event.status === 'pending' || event.status === 'overdue' ? 'text-destructive' :
+                        'text-muted-foreground'
                       }`} />
                     </div>
-                    
-                    <h4 className="font-medium text-foreground mb-1">{event.title}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">{event.description}</p>
-                    
-                    <div className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                          {event.member.avatar}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-xs text-muted-foreground">
-                        {event.member.name}
-                      </span>
+
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {event.time}
+                        </span>
+                        <Badge className={`text-xs ${
+                          event.status === 'completed' ? 'bg-success/10 text-success' :
+                          event.status === 'upcoming' ? 'bg-warning/10 text-warning' :
+                          event.status === 'pending' || event.status === 'overdue' ? 'bg-destructive/10 text-destructive' :
+                          'bg-muted/50 text-muted-foreground'
+                        }`}>
+                          {event.status}
+                        </Badge>
+                        <StatusIcon className={`w-4 h-4 ml-auto ${
+                          event.status === 'completed' ? 'text-success' :
+                          event.status === 'upcoming' ? 'text-warning' :
+                          'text-destructive'
+                        }`} />
+                      </div>
+                      
+                      <h4 className="font-medium text-foreground mb-1">{event.title}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{event.description}</p>
+                      
+                      <div className="flex items-center gap-2">
+                        <Avatar className="w-6 h-6">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {event.member.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs text-muted-foreground">
+                          {event.member.name}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </TabsContent>
 
           <TabsContent value="week" className="space-y-4">
-            {timelineEvents.week.map((day) => (
-              <div key={day.id}>
-                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  {day.date}
-                </h3>
-                <div className="space-y-3 ml-6">
-                  {day.events.map((event, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-medium">{event.time}</span>
-                          <Badge className="text-xs bg-primary/10 text-primary">
-                            {event.status}
-                          </Badge>
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2].map(i => (
+                  <div key={i}>
+                    <Skeleton className="h-6 w-32 mb-3" />
+                    <div className="space-y-3 ml-6">
+                      {[1, 2].map(j => (
+                        <div key={j} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                          <Skeleton className="w-2 h-2 rounded-full" />
+                          <div className="flex-1 space-y-1">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-full" />
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">{event.title}</p>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : weekEvents.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No events scheduled this week</p>
+              </div>
+            ) : (
+              weekEvents.map((day) => (
+                <div key={day.id}>
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    {day.date}
+                  </h3>
+                  <div className="space-y-3 ml-6">
+                    {day.events.map((event) => (
+                      <div key={event.id} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-medium">{event.time}</span>
+                            <Badge className={`text-xs ${
+                              event.status === 'completed' ? 'bg-success/10 text-success' :
+                              'bg-primary/10 text-primary'
+                            }`}>
+                              {event.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{event.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="month" className="space-y-4">
-            {timelineEvents.month.map((period) => (
-              <div key={period.id}>
-                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  {period.date}
-                </h3>
-                <div className="space-y-3 ml-6">
-                  {period.events.map((event, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{event.title}</p>
-                        <Badge className="text-xs bg-primary/10 text-primary mt-1">
-                          {event.status}
-                        </Badge>
-                      </div>
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2].map(i => (
+                  <div key={i}>
+                    <Skeleton className="h-6 w-32 mb-3" />
+                    <div className="space-y-3 ml-6">
+                      {[1, 2].map(j => (
+                        <div key={j} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                          <Skeleton className="w-2 h-2 rounded-full" />
+                          <div className="flex-1 space-y-1">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-5 w-20" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : monthEvents.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No events scheduled this month</p>
+              </div>
+            ) : (
+              monthEvents.map((period) => (
+                <div key={period.id}>
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    {period.date}
+                  </h3>
+                  <div className="space-y-3 ml-6">
+                    {period.events.map((event) => (
+                      <div key={event.id} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{event.title}</p>
+                          <Badge className={`text-xs mt-1 ${
+                            event.status === 'completed' ? 'bg-success/10 text-success' :
+                            'bg-primary/10 text-primary'
+                          }`}>
+                            {event.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </div>
