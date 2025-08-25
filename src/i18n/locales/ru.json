@@ -109,7 +109,8 @@
     "viewAll": "Показать Все",
     "noScans": "Нет недавних сканирований",
     "noScansDescription": "Начните со сканирования вашего первого лекарства",
-    "quickActions": "Быстрые Действия"
+    "quickActions": "Быстрые Действия",
+    "todaysFocus": "Сегодня в Фокусе"
   },
   "descriptions": {
     "scanMedications": "Сканировать лекарства",

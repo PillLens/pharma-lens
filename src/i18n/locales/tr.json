@@ -109,7 +109,8 @@
     "viewAll": "Tümünü Gör",
     "noScans": "Son tarama yok",
     "noScansDescription": "İlk ilacınızı tarayarak başlayın",
-    "quickActions": "Hızlı İşlemler"
+    "quickActions": "Hızlı İşlemler",
+    "todaysFocus": "Bugünkü Odak"
   },
   "descriptions": {
     "scanMedications": "İlaçları tara",
