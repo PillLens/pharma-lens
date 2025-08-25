@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useDashboardData } from '@/hooks/useDashboardData';
@@ -45,26 +47,28 @@ const Dashboard: React.FC = () => {
     return 'default';
   };
 
+  const { t } = useTranslation();
+
   const getPlanDisplayName = () => {
     if (isInTrial) {
-      return `Trial (${trialDaysRemaining}d left)`;
+      return `${t('dashboard.trial', 'Trial')} (${trialDaysRemaining}${t('common.daysLeft', 'd left')})`;
     }
     
     switch (subscription.plan) {
       case 'pro_individual':
-        return 'Pro Individual';
+        return t('dashboard.proIndividual', 'Pro Individual');
       case 'pro_family':
-        return 'Pro Family';
+        return t('dashboard.proFamily', 'Pro Family');
       default:
-        return 'Free';
+        return t('dashboard.free', 'Free');
     }
   };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return t('dashboard.goodMorning', 'Good morning');
+    if (hour < 17) return t('dashboard.goodAfternoon', 'Good afternoon');
+    return t('dashboard.goodEvening', 'Good evening');
   };
 
   const getGreetingIcon = () => {
@@ -80,7 +84,7 @@ const Dashboard: React.FC = () => {
     {
       icon: Pill,
       value: dashboardStats.medications.active,
-      label: 'Active Medications',
+      label: t('dashboard.activeMedications', 'Active Medications'),
       color: 'from-blue-500 to-cyan-500',
       bgColor: 'bg-blue-500/10',
       route: '/medications'
@@ -88,7 +92,7 @@ const Dashboard: React.FC = () => {
     {
       icon: Bell,
       value: dashboardStats.reminders.active,
-      label: 'Active Reminders',
+      label: t('dashboard.activeReminders', 'Active Reminders'),
       color: 'from-amber-500 to-orange-500',
       bgColor: 'bg-amber-500/10',
       route: '/reminders'
@@ -96,7 +100,7 @@ const Dashboard: React.FC = () => {
     {
       icon: TrendingUp,
       value: `${dashboardStats.adherence.rate}%`,
-      label: 'Adherence Rate',
+      label: t('dashboard.adherenceRate', 'Adherence Rate'),
       color: 'from-green-500 to-emerald-500',
       bgColor: 'bg-green-500/10',
       route: '/medications'
@@ -104,7 +108,7 @@ const Dashboard: React.FC = () => {
     {
       icon: Users,
       value: dashboardStats.family.members,
-      label: 'Family Members',
+      label: t('dashboard.familyMembers', 'Family Members'),
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-purple-500/10',
       route: '/family'
@@ -151,20 +155,23 @@ const Dashboard: React.FC = () => {
                   
                   {/* Plan badge with enhanced styling */}
                   <div className="flex flex-col items-end gap-2 ml-4">
-                    <Badge 
-                      variant={getPlanBadgeVariant()} 
-                      className={cn(
-                        "px-4 py-2 text-xs font-bold shadow-lg border-0 backdrop-blur-sm",
-                        isInTrial 
-                          ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 animate-glow-pulse" 
-                          : subscription.plan === 'free'
-                          ? "bg-gradient-to-r from-muted/50 to-muted/30 text-muted-foreground"
-                          : "bg-gradient-to-r from-primary/20 to-primary/10 text-primary"
-                      )}
-                    >
-                      <Crown className="w-3 h-3 mr-1" />
-                      {getPlanDisplayName()}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <LanguageSelector />
+                      <Badge 
+                        variant={getPlanBadgeVariant()} 
+                        className={cn(
+                          "px-4 py-2 text-xs font-bold shadow-lg border-0 backdrop-blur-sm",
+                          isInTrial 
+                            ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 animate-glow-pulse" 
+                            : subscription.plan === 'free'
+                            ? "bg-gradient-to-r from-muted/50 to-muted/30 text-muted-foreground"
+                            : "bg-gradient-to-r from-primary/20 to-primary/10 text-primary"
+                        )}
+                      >
+                        <Crown className="w-3 h-3 mr-1" />
+                        {getPlanDisplayName()}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
 
