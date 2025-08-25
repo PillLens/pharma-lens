@@ -18,7 +18,7 @@ interface PaywallSheetProps {
 }
 
 export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
-  const { subscription, canStartTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
+  const { subscription, canStartTrial, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
   const { toast } = useToast();
   const [isYearly, setIsYearly] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -209,7 +209,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-primary to-primary-glow"
                 >
-                  {canStartTrial ? (
+                  {canStartTrial && !isInTrial ? (
                     <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
                   ) : (
                     <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />
@@ -281,7 +281,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-primary to-primary-glow"
                 >
-                  {canStartTrial ? (
+                  {canStartTrial && !isInTrial ? (
                     <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
                   ) : (
                     <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />

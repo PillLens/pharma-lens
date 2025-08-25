@@ -210,7 +210,13 @@ const Settings: React.FC = () => {
   };
 
   const handleManageSubscription = async () => {
-    if (subscription.plan === 'free') {
+    if (subscription.plan === 'free' && !isInTrial) {
+      setShowPaywall(true);
+      return;
+    }
+    
+    // For paid users and trial users, open customer portal or paywall
+    if (subscription.plan === 'free' && isInTrial) {
       setShowPaywall(true);
       return;
     }

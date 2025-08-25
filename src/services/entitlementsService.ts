@@ -142,7 +142,7 @@ class EntitlementsService {
 
   async canStartTrial(userId: string): Promise<boolean> {
     const subscription = await this.getUserSubscription(userId);
-    return subscription.is_trial_eligible && subscription.plan === 'free';
+    return subscription.is_trial_eligible && subscription.plan === 'free' && subscription.status !== 'trialing';
   }
 
   clearCache(userId?: string): void {
