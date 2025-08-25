@@ -69,7 +69,17 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Parse request body
-    const { plan, billing_cycle = 'monthly' } = await req.json();
+    logStep("Parsing request body");
+    let requestBody;
+    try {
+      requestBody = await req.json();
+      logStep("Request body parsed successfully", { body: requestBody });
+    } catch (parseError) {
+      logStep("Failed to parse request body", { error: parseError.message });
+      throw new Error(`Invalid JSON in request body: ${parseError.message}`);
+    }
+    
+    const { plan, billing_cycle = 'monthly' } = requestBody;
     if (!plan) {
       throw new Error("Missing plan in request body");
     }
@@ -167,8 +177,22 @@ serve(async (req) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in create-checkout", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    logStep("ERROR in create-checkout", { 
+      message: errorMessage, 
+      stack: errorStack,
+      errorType: typeof error,
+      errorConstructor: error?.constructor?.name
+    });
+    
+    console.error("Full error details:", error);
+    console.error("Error message:", errorMessage);
+    console.error("Error stack:", errorStack);
+    
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      details: "Check edge function logs for more information"
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
