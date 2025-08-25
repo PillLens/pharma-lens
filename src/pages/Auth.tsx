@@ -195,7 +195,7 @@ export default function Auth() {
                         <Input
                           id="signup-password"
                           type={showPassword ? "text" : "password"}
-                          placeholder={t('authPage.minCharacters')}
+                          placeholder={t('authPage.createPasswordPlaceholder')}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="h-12 text-base pr-12 medical-input"
@@ -233,6 +233,23 @@ export default function Auth() {
                   </form>
                 </TabsContent>
               </Tabs>
+              
+              {/* Security Notice */}
+              <div className="mt-8 p-4 medical-surface rounded-2xl border border-border/20">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-foreground mb-1">
+                      <TranslatedText translationKey="authPage.medicalGradeSecurity" />
+                    </h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      <TranslatedText translationKey="authPage.securityNotice" />
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </MobileCard>
         </div>
@@ -252,12 +269,12 @@ export default function Auth() {
                 <TranslatedText translationKey="app.title" />
               </h1>
             </div>
-            <h2 className="text-xl font-semibold">
-              <TranslatedText translationKey="authPage.welcome" />
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              <TranslatedText translationKey="authPage.signInDescription" />
-            </p>
+             <h2 className="text-xl font-semibold">
+               <TranslatedText translationKey="authPage.welcomeMessage" />
+             </h2>
+             <p className="text-muted-foreground mt-2">
+               <TranslatedText translationKey="authPage.welcomeDescription" />
+             </p>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -279,7 +296,7 @@ export default function Auth() {
                   <Input
                     id="desktop-email"
                     type="email"
-                    placeholder={t('authPage.enterEmail')}
+                     placeholder={t('authPage.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -292,7 +309,7 @@ export default function Auth() {
                   <Input
                     id="desktop-password"
                     type="password"
-                    placeholder={t('authPage.enterPassword')}
+                    placeholder={t('authPage.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -318,7 +335,7 @@ export default function Auth() {
                   <Input
                     id="desktop-signup-email"
                     type="email"
-                    placeholder={t('authPage.enterEmail')}
+                    placeholder={t('authPage.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -344,7 +361,7 @@ export default function Auth() {
                   </Alert>
                 )}
                 <MobileButton type="submit" className="w-full" disabled={isLoading} loading={isLoading}>
-                  {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createAccount" />}
+                  {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createSecureAccount" />}
                 </MobileButton>
               </form>
             </TabsContent>
@@ -353,7 +370,7 @@ export default function Auth() {
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <div className="flex items-center text-sm text-muted-foreground">
               <Shield className="h-4 w-4 mr-2" />
-              <TranslatedText translationKey="authPage.dataSecure" />
+              <TranslatedText translationKey="authPage.dataEncryptedSecure" />
             </div>
           </div>
         </div>
