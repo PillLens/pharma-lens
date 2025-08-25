@@ -483,25 +483,25 @@ const Settings: React.FC = () => {
                 <p className="font-medium">{t('settings.notifications.masterToggle')}</p>
                 <p className="text-sm text-muted-foreground">{t('settings.notifications.masterDescription')}</p>
               </div>
-              <Switch
-                checked={profileData.notification_preferences.enabled}
-                onCheckedChange={(checked) => handleNotificationChange('enabled', checked)}
-              />
+                  <Switch
+                    checked={profileData.notification_preferences?.enabled || false}
+                    onCheckedChange={(checked) => handleNotificationChange('enabled', checked)}
+                  />
             </div>
 
             <Separator />
 
             {/* Individual toggles */}
-            <div className="space-y-4 opacity-50" style={{ opacity: profileData.notification_preferences.enabled ? 1 : 0.5 }}>
+            <div className="space-y-4 opacity-50" style={{ opacity: profileData.notification_preferences?.enabled ? 1 : 0.5 }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">{t('settings.notifications.reminders')}</p>
                   <p className="text-sm text-muted-foreground">{t('settings.notifications.remindersDescription')}</p>
                 </div>
                 <Switch
-                  checked={profileData.notification_preferences.reminders}
+                  checked={profileData.notification_preferences?.reminders || false}
                   onCheckedChange={(checked) => handleNotificationChange('reminders', checked)}
-                  disabled={!profileData.notification_preferences.enabled}
+                  disabled={!profileData.notification_preferences?.enabled}
                 />
               </div>
 
@@ -511,9 +511,9 @@ const Settings: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t('settings.notifications.missedDoseDescription')}</p>
                 </div>
                 <Switch
-                  checked={profileData.notification_preferences.missedDose}
+                  checked={profileData.notification_preferences?.missedDose || false}
                   onCheckedChange={(checked) => handleNotificationChange('missedDose', checked)}
-                  disabled={!profileData.notification_preferences.enabled}
+                  disabled={!profileData.notification_preferences?.enabled}
                 />
               </div>
 
@@ -523,9 +523,9 @@ const Settings: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t('settings.notifications.familyDescription')}</p>
                 </div>
                 <Switch
-                  checked={profileData.notification_preferences.family}
+                  checked={profileData.notification_preferences?.family || false}
                   onCheckedChange={(checked) => handleNotificationChange('family', checked)}
-                  disabled={!profileData.notification_preferences.enabled}
+                  disabled={!profileData.notification_preferences?.enabled}
                 />
               </div>
 
@@ -535,9 +535,9 @@ const Settings: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{t('settings.notifications.productDescription')}</p>
                 </div>
                 <Switch
-                  checked={profileData.notification_preferences.product}
+                  checked={profileData.notification_preferences?.product || false}
                   onCheckedChange={(checked) => handleNotificationChange('product', checked)}
-                  disabled={!profileData.notification_preferences.enabled}
+                  disabled={!profileData.notification_preferences?.enabled}
                 />
               </div>
 
@@ -551,19 +551,19 @@ const Settings: React.FC = () => {
                     <p className="text-sm text-muted-foreground">{t('settings.notifications.quietHoursDescription')}</p>
                   </div>
                   <Switch
-                    checked={profileData.notification_preferences.quietHours.enabled}
-                    onCheckedChange={(checked) => handleNotificationChange('quietHours', { ...profileData.notification_preferences.quietHours, enabled: checked })}
-                    disabled={!profileData.notification_preferences.enabled}
+                    checked={profileData.notification_preferences?.quietHours?.enabled || false}
+                    onCheckedChange={(checked) => handleNotificationChange('quietHours', { ...profileData.notification_preferences?.quietHours, enabled: checked })}
+                    disabled={!profileData.notification_preferences?.enabled}
                   />
                 </div>
 
-                {profileData.notification_preferences.quietHours.enabled && (
+                {profileData.notification_preferences?.quietHours?.enabled && (
                   <div className="flex gap-4 pl-4">
                     <div className="flex-1">
                       <Label className="text-xs">{t('settings.notifications.from')}</Label>
                       <Input
                         type="time"
-                        value={profileData.notification_preferences.quietHours.start}
+                        value={profileData.notification_preferences?.quietHours?.start || '22:00'}
                         onChange={(e) => handleQuietHoursChange('start', e.target.value)}
                         className="mt-1"
                       />
@@ -572,7 +572,7 @@ const Settings: React.FC = () => {
                       <Label className="text-xs">{t('settings.notifications.to')}</Label>
                       <Input
                         type="time"
-                        value={profileData.notification_preferences.quietHours.end}
+                        value={profileData.notification_preferences?.quietHours?.end || '07:00'}
                         onChange={(e) => handleQuietHoursChange('end', e.target.value)}
                         className="mt-1"
                       />

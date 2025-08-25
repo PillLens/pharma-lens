@@ -18,12 +18,12 @@ import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
+  React.useEffect(() => {
     // Track app startup performance
     performanceMonitoringService.trackPageLoad('app_init');
   }, []);
