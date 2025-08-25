@@ -44,8 +44,8 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
       if (data?.url) {
         console.log('[CHECKOUT] Got checkout URL:', data.url);
-        window.open(data.url, '_blank');
-        onClose();
+        // Redirect to Stripe checkout in the same tab for better user experience
+        window.location.href = data.url;
       } else {
         console.error('[CHECKOUT] No URL in response:', data);
         throw new Error('No checkout URL received');

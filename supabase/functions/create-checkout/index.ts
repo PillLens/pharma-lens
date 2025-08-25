@@ -89,7 +89,7 @@ serve(async (req) => {
     logStep("Creating checkout session", { plan, billing_cycle, amount: priceInfo.amount });
 
     // Create checkout session
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    const origin = req.headers.get("origin") || "https://a2b03c66-e69a-49a4-9574-1cb9e4a8bd22.sandbox.lovable.dev";
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -110,7 +110,7 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${origin}/dashboard?checkout=success`,
+      success_url: `${origin}/dashboard?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard?checkout=cancelled`,
       metadata: {
         user_id: user.id,
