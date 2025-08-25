@@ -146,17 +146,23 @@ const MedicationManager: React.FC = () => {
   const handleAddMedication = async (data: Partial<UserMedication> & { _reminderSettings?: any }) => {
     setIsSubmitting(true);
     try {
+      console.log('Adding medication with data:', data);
       const newMedication = await addMedication(data as Omit<UserMedication, 'id' | 'created_at'>);
+      console.log('New medication created:', newMedication);
       
       // Handle reminders if they were set
       if (data._reminderSettings && newMedication?.id) {
-        const { reminderTimes, reminderDays } = data._reminderSettings;
+        const { reminderTimes, reminderDays, enableReminders } = data._reminderSettings;
+        console.log('Creating reminders:', { reminderTimes, reminderDays, enableReminders });
         
-        // Create reminders for each time
-        if (reminderTimes && reminderDays) {
+        if (enableReminders && reminderTimes && reminderDays && reminderTimes.length > 0) {
+          let remindersCreated = 0;
+          let reminderErrors = 0;
+          
           for (const time of reminderTimes) {
             try {
-              await addReminder({
+              console.log('Creating reminder for time:', time);
+              const result = await addReminder({
                 medication_id: newMedication.id,
                 reminder_time: time,
                 days_of_week: reminderDays,
@@ -166,32 +172,69 @@ const MedicationManager: React.FC = () => {
                   led: true
                 }
               });
+              
+              if (result) {
+                remindersCreated++;
+                console.log('Reminder created successfully for time:', time);
+              } else {
+                reminderErrors++;
+                console.error('Failed to create reminder for time:', time);
+              }
             } catch (reminderError) {
-              console.error('Error creating reminder:', reminderError);
+              reminderErrors++;
+              console.error('Error creating reminder for time:', time, reminderError);
             }
           }
+          
+          // Provide user feedback about reminder creation
+          if (remindersCreated > 0) {
+            toast.success(`Medication added with ${remindersCreated} reminder${remindersCreated > 1 ? 's' : ''}! 🔔`);
+          } else if (reminderErrors > 0) {
+            toast.error(`Medication added but failed to create ${reminderErrors} reminder${reminderErrors > 1 ? 's' : ''}. Please add reminders manually.`);
+          }
+        } else {
+          toast.success('Medication added successfully');
         }
+      } else {
+        toast.success('Medication added successfully');
       }
       
-      toast.success('Medication added successfully');
       setIsAddSheetOpen(false);
     } catch (error) {
+      console.error('Error adding medication:', error);
       toast.error('Failed to add medication');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUpdateMedication = async (data: Partial<UserMedication>) => {
+  const handleUpdateMedication = async (data: Partial<UserMedication> & { _reminderSettings?: any }) => {
     if (!selectedMedication) return;
     
     setIsSubmitting(true);
     try {
+      console.log('Updating medication with data:', data);
       await updateMedication(selectedMedication.id, data);
-      toast.success('Medication updated successfully');
+      
+      // Handle reminder updates if they were set
+      if (data._reminderSettings) {
+        const { reminderTimes, reminderDays, enableReminders } = data._reminderSettings;
+        console.log('Updating reminders:', { reminderTimes, reminderDays, enableReminders });
+        
+        // TODO: Implement reminder updates - for now, inform user to manage reminders separately
+        if (enableReminders && reminderTimes && reminderDays) {
+          toast.success('Medication updated! Please manage reminders in the Reminders tab.');
+        } else {
+          toast.success('Medication updated successfully');
+        }
+      } else {
+        toast.success('Medication updated successfully');
+      }
+      
       setIsEditSheetOpen(false);
       setSelectedMedication(null);
     } catch (error) {
+      console.error('Error updating medication:', error);
       toast.error('Failed to update medication');
     } finally {
       setIsSubmitting(false);
