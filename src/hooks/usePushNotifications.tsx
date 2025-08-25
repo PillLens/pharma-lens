@@ -51,7 +51,19 @@ export const usePushNotifications = () => {
       if (error) throw error;
 
       if (data?.notification_preferences) {
-        setPreferences(data.notification_preferences as any);
+        const dbPreferences = data.notification_preferences as any;
+        // Ensure all required fields exist with defaults
+        setPreferences({
+          enabled: dbPreferences.enabled ?? true,
+          reminders: dbPreferences.reminders ?? true,
+          missedDose: dbPreferences.missedDose ?? true,
+          family: dbPreferences.family ?? true,
+          product: dbPreferences.product ?? false,
+          quietHours: {
+            start: dbPreferences.quietHours?.start ?? '22:00',
+            end: dbPreferences.quietHours?.end ?? '07:00'
+          }
+        });
       }
     } catch (error) {
       console.error('Error loading notification preferences:', error);
