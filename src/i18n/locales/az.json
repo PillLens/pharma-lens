@@ -312,14 +312,31 @@
       "roleRequired": "Zəhmət olmasa rol seçin"
     }
   },
-  "errors": {
-    "networkError": "Şəbəkə xətası baş verdi",
-    "serverError": "Server xətası baş verdi",
-    "scanFailed": "Skan uğursuz oldu",
-    "cameraError": "Kamera xətası",
-    "permissionDenied": "İcazə verilmədi",
-    "unsupportedFormat": "Dəstəklənməyən format",
-    "processingFailed": "İşləmə uğursuz oldu",
-    "extractionFailed": "Məlumat çıxarılması uğursuz oldu"
-  }
+  "settings": {
+    "notifications": {
+      "title": "Bildirişlər",
+      "pushNotifications": "Push Bildirişləri",
+      "pushDescription": "Bu cihazda bildirişlər alın",
+      "medicationReminders": "Dərman Xatırlatmaları",
+      "missedDose": "Qaçırılmış Doza Xəbərdarlıqları",
+      "familyUpdates": "Ailə Yenilikləri",
+      "productAlerts": "Məhsul Xəbərdarlıqları",
+      "quietHours": "Sakit Saatlar",
+      "quietStart": "Başlama Vaxtı",
+      "quietEnd": "Bitmə Vaxtı",
+      "testNotification": "Test Bildirişi Göndər",
+      "masterToggle": "Bildirişləri Aktiv Et",
+      "masterDescription": "Bu tətbiq üçün bildirişləri aç",
+      "reminders": "Dərman Xatırlatmaları",
+      "remindersDescription": "Dərman içmə vaxtı gəldikdə xatırladılın",
+      "missedDoseDescription": "Qaçırılmış dərmanların gündəlik xülasəsi",
+      "family": "Ailə Bildirişləri",
+      "familyDescription": "Ailə qayğı qrupunuzdan yeniliklər",
+      "product": "Məhsul Xəbərdarlıqları",
+      "productDescription": "Təhlükəsizlik xəbərdarlıqları və dərman yenilikləri",
+      "quietHoursDescription": "Bu saatlarda bildiriş yoxdur",
+      "from": "Başlanğıc",
+      "to": "Son"
+    }
+  },
 }

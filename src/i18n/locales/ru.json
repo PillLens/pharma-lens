@@ -312,14 +312,31 @@
       "roleRequired": "Пожалуйста, выберите роль"
     }
   },
-  "errors": {
-    "networkError": "Произошла ошибка сети",
-    "serverError": "Произошла ошибка сервера",
-    "scanFailed": "Сканирование не удалось",
-    "cameraError": "Ошибка камеры",
-    "permissionDenied": "Доступ запрещен",
-    "unsupportedFormat": "Неподдерживаемый формат",
-    "processingFailed": "Обработка не удалась",
-    "extractionFailed": "Извлечение информации не удалось"
-  }
+  "settings": {
+    "notifications": {
+      "title": "Уведомления",
+      "pushNotifications": "Push Уведомления",
+      "pushDescription": "Получать уведомления на этом устройстве",
+      "medicationReminders": "Напоминания о лекарствах",
+      "missedDose": "Оповещения о пропущенных дозах",
+      "familyUpdates": "Семейные обновления",
+      "productAlerts": "Оповещения о продуктах",
+      "quietHours": "Тихие часы",
+      "quietStart": "Время начала",
+      "quietEnd": "Время окончания",
+      "testNotification": "Отправить тестовое уведомление",
+      "masterToggle": "Включить уведомления",
+      "masterDescription": "Включить уведомления для этого приложения",
+      "reminders": "Напоминания о лекарствах",
+      "remindersDescription": "Получать напоминания о времени приема лекарств",
+      "missedDoseDescription": "Ежедневная сводка пропущенных лекарств",
+      "family": "Семейные уведомления",
+      "familyDescription": "Обновления от семейной группы заботы",
+      "product": "Оповещения о продуктах",
+      "productDescription": "Предупреждения безопасности и обновления лекарств",
+      "quietHoursDescription": "Никаких уведомлений в эти часы",
+      "from": "С",
+      "to": "До"
+    }
+  },
 }

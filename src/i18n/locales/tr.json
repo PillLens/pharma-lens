@@ -312,14 +312,31 @@
       "roleRequired": "Lütfen bir rol seçin"
     }
   },
-  "errors": {
-    "networkError": "Ağ hatası oluştu",
-    "serverError": "Sunucu hatası oluştu",
-    "scanFailed": "Tarama başarısız oldu",
-    "cameraError": "Kamera hatası",
-    "permissionDenied": "İzin reddedildi",
-    "unsupportedFormat": "Desteklenmeyen format",
-    "processingFailed": "İşleme başarısız oldu",
-    "extractionFailed": "Bilgi çıkarma başarısız oldu"
-  }
+  "settings": {
+    "notifications": {
+      "title": "Bildirimler",
+      "pushNotifications": "Push Bildirimleri",
+      "pushDescription": "Bu cihazda bildirim alın",
+      "medicationReminders": "İlaç Hatırlatmaları",
+      "missedDose": "Kaçırılan Doz Uyarıları",
+      "familyUpdates": "Aile Güncellemeleri",
+      "productAlerts": "Ürün Uyarıları",
+      "quietHours": "Sessiz Saatler",
+      "quietStart": "Başlangıç Saati",
+      "quietEnd": "Bitiş Saati",
+      "testNotification": "Test Bildirimi Gönder",
+      "masterToggle": "Bildirimleri Etkinleştir",
+      "masterDescription": "Bu uygulama için bildirimleri aç",
+      "reminders": "İlaç Hatırlatmaları",
+      "remindersDescription": "İlaç alma zamanı geldiğinde hatırlatılın",
+      "missedDoseDescription": "Kaçırılan ilaçların günlük özeti",
+      "family": "Aile Bildirimleri",
+      "familyDescription": "Aile bakım grubunuzdan güncellemeler",
+      "product": "Ürün Uyarıları",
+      "productDescription": "Güvenlik uyarıları ve ilaç güncellemeleri",
+      "quietHoursDescription": "Bu saatlerde bildirim yok",
+      "from": "Başlangıç",
+      "to": "Bitiş"
+    }
+  },
 }
