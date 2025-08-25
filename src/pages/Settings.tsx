@@ -41,6 +41,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { TranslatedText } from '@/components/TranslatedText';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { LocationTimezoneSettings } from '@/components/settings/LocationTimezoneSettings';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -515,6 +516,9 @@ const Settings: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Location & Timezone */}
+        <LocationTimezoneSettings />
 
         {/* Notifications */}
         <NotificationSettings className="rounded-2xl shadow-md" />

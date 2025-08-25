@@ -1268,6 +1268,8 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          city: string | null
+          country: string | null
           created_at: string
           date_of_birth: string | null
           display_name: string | null
@@ -1278,6 +1280,8 @@ export type Database = {
           id: string
           is_trial_eligible: boolean | null
           last_seen: string | null
+          location_permission_asked: boolean | null
+          location_permission_granted: boolean | null
           medical_conditions: string[] | null
           notification_preferences: Json | null
           phone: string | null
@@ -1292,6 +1296,8 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
@@ -1302,6 +1308,8 @@ export type Database = {
           id: string
           is_trial_eligible?: boolean | null
           last_seen?: string | null
+          location_permission_asked?: boolean | null
+          location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
           notification_preferences?: Json | null
           phone?: string | null
@@ -1316,6 +1324,8 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
@@ -1326,6 +1336,8 @@ export type Database = {
           id?: string
           is_trial_eligible?: boolean | null
           last_seen?: string | null
+          location_permission_asked?: boolean | null
+          location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
           notification_preferences?: Json | null
           phone?: string | null

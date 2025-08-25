@@ -2,12 +2,9 @@ import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 import { format, parse, isAfter, isBefore, addDays, startOfDay } from 'date-fns';
 
 /**
- * Get user's timezone from profile or fallback to browser timezone
+ * Get user's timezone from browser
  */
-export const getUserTimezone = (userTimezone?: string | null): string => {
-  if (userTimezone) return userTimezone;
-  
-  // Fallback to browser's timezone
+export const getBrowserTimezone = (): string => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   } catch {
@@ -16,14 +13,14 @@ export const getUserTimezone = (userTimezone?: string | null): string => {
 };
 
 /**
- * Get current time in user's timezone
+ * Get current time in specified timezone
  */
 export const getCurrentTimeInTimezone = (timezone: string): Date => {
   return toZonedTime(new Date(), timezone);
 };
 
 /**
- * Parse time string (HH:mm) and convert to today's date in user's timezone
+ * Parse time string (HH:mm) and convert to today's date in specified timezone
  */
 export const parseTimeInTimezone = (timeString: string, timezone: string): Date => {
   const today = getCurrentTimeInTimezone(timezone);
@@ -44,7 +41,7 @@ export const parseTimeInTimezone = (timeString: string, timezone: string): Date 
  */
 export const isDoseTime = (
   doseTime: string, 
-  timezone: string, 
+  timezone: string,
   windowMinutes: number = 30
 ): { isDue: boolean; isPast: boolean; isCurrent: boolean } => {
   const now = getCurrentTimeInTimezone(timezone);
@@ -65,7 +62,7 @@ export const isDoseTime = (
  */
 export const getNextDoseTime = (
   frequency: string, 
-  timezone: string, 
+  timezone: string,
   recentlyTaken: boolean = false
 ): { isDue: boolean; nextTime: string; isOverdue: boolean } => {
   const now = getCurrentTimeInTimezone(timezone);
@@ -206,7 +203,7 @@ export const getNextDoseTime = (
 };
 
 /**
- * Format time for user's timezone
+ * Format time for specified timezone
  */
 export const formatTimeInTimezone = (date: Date, timezone: string, formatStr: string = 'HH:mm'): string => {
   return formatInTimeZone(date, timezone, formatStr);

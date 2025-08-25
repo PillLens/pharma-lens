@@ -17,7 +17,7 @@ import Reminders from "./pages/Reminders";
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
-import { performanceMonitoringService } from "@/services/performanceMonitoringService";
+import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
 import React, { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -25,6 +25,7 @@ const queryClient = new QueryClient();
 const App = () => {
   React.useEffect(() => {
     // Track app startup performance
+    const { performanceMonitoringService } = require("@/services/performanceMonitoringService");
     performanceMonitoringService.trackPageLoad('app_init');
   }, []);
 
@@ -82,6 +83,7 @@ const App = () => {
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <FirstLaunchLocationSetup />
             </BrowserRouter>
             </TooltipProvider>
           </SubscriptionProvider>
