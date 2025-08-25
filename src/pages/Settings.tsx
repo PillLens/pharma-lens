@@ -315,7 +315,7 @@ const Settings: React.FC = () => {
       if (error) {
         console.error('[TEST-CHECKOUT] Error:', error);
         toast({
-          title: "Test Checkout Failed",
+          title: t('toast.testCheckoutFailed'),
           description: JSON.stringify(error),
           variant: "destructive",
         });
@@ -325,15 +325,15 @@ const Settings: React.FC = () => {
       if (data?.url) {
         console.log('[TEST-CHECKOUT] Success! URL:', data.url);
         toast({
-          title: "Test Checkout Success",
-          description: "Checkout URL created successfully",
+          title: t('toast.testCheckoutSuccess'),
+          description: t('toast.checkoutUrlCreated'),
         });
         window.open(data.url, '_blank');
       }
     } catch (error) {
       console.error('[TEST-CHECKOUT] Catch error:', error);
       toast({
-        title: "Test Failed",
+        title: t('toast.testFailed'),
         description: String(error),
         variant: "destructive",
       });
@@ -552,8 +552,16 @@ const Settings: React.FC = () => {
                 </div>
                 {isInTrial && (
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Trial expires in</p>
-                    <p className="font-semibold text-amber-600">{trialDaysRemaining} days</p>
+                    <p className="text-sm text-muted-foreground">
+                      <TranslatedText translationKey="settings.billing.trialExpiresIn" fallback="Trial expires in" />
+                    </p>
+                    <p className="font-semibold text-amber-600">
+                      <TranslatedText 
+                        translationKey="settings.billing.daysRemaining" 
+                        fallback="{{days}} days"
+                        values={{ days: trialDaysRemaining }}
+                      />
+                    </p>
                   </div>
                 )}
               </div>
@@ -564,13 +572,17 @@ const Settings: React.FC = () => {
                   <p className="text-2xl font-bold text-primary">
                     {subscription.plan === 'free' ? '1' : '∞'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Reminders</p>
+                  <p className="text-xs text-muted-foreground">
+                    <TranslatedText translationKey="navigation.reminders" fallback="Reminders" />
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-primary">
                     {subscription.plan === 'pro_family' ? '5' : subscription.plan === 'pro_individual' ? '1' : '0'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Family Members</p>
+                  <p className="text-xs text-muted-foreground">
+                    <TranslatedText translationKey="dashboard.familyMembers" fallback="Family Members" />
+                  </p>
                 </div>
               </div>
 
@@ -598,7 +610,7 @@ const Settings: React.FC = () => {
                 size="sm"
                 className="w-full bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100"
               >
-                🧪 Test Direct Checkout (Debug)
+                <TranslatedText translationKey="settings.billing.testCheckout" fallback="🧪 Test Direct Checkout (Debug)" />
               </Button>
             </div>
 
@@ -607,11 +619,14 @@ const Settings: React.FC = () => {
               <div className="mt-6">
                 <h4 className="font-medium mb-3 flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  Billing History
+                  <TranslatedText translationKey="settings.billing.billingHistory" fallback="Billing History" />
                 </h4>
                 <div className="bg-muted/30 rounded-lg p-4 text-center">
                   <p className="text-sm text-muted-foreground">
-                    View your billing history and invoices in the customer portal
+                    <TranslatedText 
+                      translationKey="settings.billing.billingHistoryDescription" 
+                      fallback="View your billing history and invoices in the customer portal" 
+                    />
                   </p>
                 </div>
               </div>
@@ -730,18 +745,50 @@ const Settings: React.FC = () => {
                     {t('settings.account.deleteAccount')}
                   </AlertDialogTitle>
                   <AlertDialogDescription className="space-y-3">
-                    <p>{t('settings.account.deleteWarning')}</p>
+                    <p>
+                      <TranslatedText 
+                        translationKey="settings.account.deleteWarning" 
+                        fallback="This action cannot be undone. This will permanently delete your account and all your data." 
+                      />
+                    </p>
                     <div className="bg-destructive/10 p-3 rounded-lg text-sm">
-                      <p className="font-medium mb-2">{t('settings.account.whatWillBeDeleted')}</p>
+                      <p className="font-medium mb-2">
+                        <TranslatedText 
+                          translationKey="settings.account.whatWillBeDeleted" 
+                          fallback="What will be deleted:" 
+                        />
+                      </p>
                       <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                        <li>{t('settings.account.medicationsData')}</li>
-                        <li>{t('settings.account.remindersData')}</li>
-                        <li>{t('settings.account.familyGroups')}</li>
-                        <li>{t('settings.account.scanHistory')}</li>
+                        <li>
+                          <TranslatedText 
+                            translationKey="settings.account.medicationsData" 
+                            fallback="All your medications and dosage information" 
+                          />
+                        </li>
+                        <li>
+                          <TranslatedText 
+                            translationKey="settings.account.remindersData" 
+                            fallback="All medication reminders and schedules" 
+                          />
+                        </li>
+                        <li>
+                          <TranslatedText 
+                            translationKey="settings.account.familyGroups" 
+                            fallback="Family groups and caregiver connections" 
+                          />
+                        </li>
+                        <li>
+                          <TranslatedText 
+                            translationKey="settings.account.scanHistory" 
+                            fallback="Scan history and saved medications" 
+                          />
+                        </li>
                       </ul>
                     </div>
                     <div className="space-y-2">
-                      <Label>{t('settings.account.confirmDelete')}</Label>
+                      <Label>
+                        <TranslatedText translationKey="settings.account.deleteConfirmation" fallback="Type DELETE to confirm" />
+                      </Label>
                       <Input
                         value={deleteConfirmation}
                         onChange={(e) => setDeleteConfirmation(e.target.value)}
