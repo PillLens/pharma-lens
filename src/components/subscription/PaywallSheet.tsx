@@ -31,7 +31,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
       setLoading(true);
 
       console.log('[CHECKOUT] Calling supabase function...');
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await supabase.functions.invoke('test-checkout', {
         body: { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' }
       });
 
