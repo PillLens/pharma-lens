@@ -382,7 +382,7 @@ const Settings: React.FC = () => {
             </Avatar>
             <div className="flex-1 min-w-0">
               <h2 className="text-xl font-semibold text-foreground truncate">
-                {profileData.display_name || t('settings.profile.noName')}
+                {profileData.display_name || "User"}
               </h2>
               <p className="text-sm text-muted-foreground truncate">
                 {user?.email}
@@ -398,12 +398,12 @@ const Settings: React.FC = () => {
 
         {/* Account Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title={t('settings.sections.account')} />
+          <SettingsSectionHeader title={t('settings.account.title')} />
           <div className="bg-background">
             <SettingsRow
               icon={<User className="w-5 h-5 text-primary" />}
-              title={t('settings.profile.editProfile')}
-              subtitle={t('settings.profile.editProfileDescription')}
+              title="Edit Profile"
+              subtitle="Update your personal information"
               onClick={() => setShowEditProfile(true)}
             />
             <SettingsRow
@@ -415,7 +415,7 @@ const Settings: React.FC = () => {
             <SettingsRow
               icon={<Phone className="w-5 h-5 text-primary" />}
               title={t('settings.profile.phone')}
-              value={profileData.phone || t('settings.profile.notSet')}
+              value={profileData.phone || "Not set"}
               onClick={() => setShowEditProfile(true)}
             />
           </div>
@@ -423,20 +423,20 @@ const Settings: React.FC = () => {
 
         {/* Preferences Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title={t('settings.sections.preferences')} />
+          <SettingsSectionHeader title="Preferences" />
           <div className="bg-background">
             <SettingsRow
               icon={<Globe className="w-5 h-5 text-primary" />}
-              title={t('settings.preferences.language')}
+              title={t('settings.language.language')}
               value={languages.find(l => l.code === language)?.name}
               onClick={() => setShowLanguageSelect(true)}
             />
             <SettingsRow
               icon={<Bell className="w-5 h-5 text-primary" />}
-              title={t('settings.preferences.notifications')}
+              title={t('settings.notifications.title')}
               subtitle={profileData.notification_preferences.enabled 
-                ? t('settings.preferences.notificationsEnabled')
-                : t('settings.preferences.notificationsDisabled')
+                ? "Enabled"
+                : "Disabled"
               }
               rightElement={
                 <Switch
@@ -448,8 +448,8 @@ const Settings: React.FC = () => {
             />
             <SettingsRow
               icon={<MapPin className="w-5 h-5 text-primary" />}
-              title={t('settings.preferences.locationTimezone')}
-              subtitle={t('settings.preferences.locationDescription')}
+              title="Location & Timezone"
+              subtitle="Manage location and timezone settings"
               onClick={() => setShowLocationSettings(true)}
             />
           </div>
@@ -457,7 +457,7 @@ const Settings: React.FC = () => {
 
         {/* Privacy & Security Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title={t('settings.sections.security')} />
+          <SettingsSectionHeader title="Privacy & Security" />
           <div className="bg-background">
             <SettingsRow
               icon={<Download className="w-5 h-5 text-primary" />}
@@ -476,7 +476,7 @@ const Settings: React.FC = () => {
               icon={<SecurityIcon className="w-5 h-5 text-muted-foreground" />}
               title={t('settings.security.twoFactor')}
               subtitle={t('settings.security.twoFactorDescription')}
-              rightElement={<Badge variant="outline">{t('common.comingSoon')}</Badge>}
+              rightElement={<Badge variant="outline">{t('settings.security.comingSoon')}</Badge>}
               showArrow={false}
             />
           </div>
@@ -484,7 +484,7 @@ const Settings: React.FC = () => {
 
         {/* Subscription Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title={t('settings.sections.subscription')} />
+          <SettingsSectionHeader title={t('settings.billing.title')} />
           <div className="bg-background">
             <SettingsRow
               icon={<CreditCard className="w-5 h-5 text-primary" />}
@@ -499,25 +499,6 @@ const Settings: React.FC = () => {
                 </Badge>
               }
               onClick={handleManageSubscription}
-            />
-          </div>
-        </div>
-
-        {/* Support Section */}
-        <div className="mt-6">
-          <SettingsSectionHeader title={t('settings.sections.support')} />
-          <div className="bg-background">
-            <SettingsRow
-              icon={<HelpCircle className="w-5 h-5 text-primary" />}
-              title={t('settings.support.help')}
-              subtitle={t('settings.support.helpDescription')}
-              onClick={() => {}} // Placeholder
-            />
-            <SettingsRow
-              icon={<Info className="w-5 h-5 text-primary" />}
-              title={t('settings.support.about')}
-              subtitle={t('settings.support.aboutDescription')}
-              onClick={() => {}} // Placeholder
             />
           </div>
         </div>
@@ -537,7 +518,7 @@ const Settings: React.FC = () => {
                   <SettingsRow
                     icon={<Trash2 className="w-5 h-5 text-destructive" />}
                     title={t('settings.account.deleteAccount')}
-                    subtitle={t('settings.account.deleteAccountDescription')}
+                    subtitle={t('settings.account.deleteDescription')}
                     destructive={true}
                     showArrow={false}
                   />
@@ -545,14 +526,14 @@ const Settings: React.FC = () => {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t('settings.account.deleteConfirmTitle')}</AlertDialogTitle>
+                  <AlertDialogTitle>Delete Account</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t('settings.account.deleteConfirmDescription')}
+                    {t('settings.account.deleteWarning')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="my-4">
                   <Label htmlFor="delete-confirmation">
-                    {t('settings.account.deleteConfirmLabel')}
+                    {t('settings.account.deleteConfirmation')}
                   </Label>
                   <Input
                     id="delete-confirmation"
@@ -584,7 +565,7 @@ const Settings: React.FC = () => {
       <Sheet open={showEditProfile} onOpenChange={setShowEditProfile}>
         <SheetContent side="bottom" className="h-[80vh]">
           <SheetHeader>
-            <SheetTitle>{t('settings.profile.editProfile')}</SheetTitle>
+            <SheetTitle>Edit Profile</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-4">
             <div>
@@ -593,7 +574,7 @@ const Settings: React.FC = () => {
                 id="display_name"
                 value={profileData.display_name}
                 onChange={(e) => handleProfileChange('display_name', e.target.value)}
-                placeholder={t('settings.profile.displayNamePlaceholder')}
+                placeholder={t('settings.profile.enterName')}
               />
             </div>
             <div>
@@ -602,7 +583,7 @@ const Settings: React.FC = () => {
                 id="phone"
                 value={profileData.phone}
                 onChange={(e) => handleProfileChange('phone', e.target.value)}
-                placeholder={t('settings.profile.phonePlaceholder')}
+                placeholder={t('settings.profile.enterPhone')}
               />
             </div>
             <div>
@@ -611,7 +592,7 @@ const Settings: React.FC = () => {
                 id="bio"
                 value={profileData.bio}
                 onChange={(e) => handleProfileChange('bio', e.target.value)}
-                placeholder={t('settings.profile.bioPlaceholder')}
+                placeholder={t('settings.profile.enterBio')}
                 rows={3}
               />
             </div>
@@ -633,7 +614,7 @@ const Settings: React.FC = () => {
       <Sheet open={showLanguageSelect} onOpenChange={setShowLanguageSelect}>
         <SheetContent side="bottom" className="h-[60vh]">
           <SheetHeader>
-            <SheetTitle>{t('settings.preferences.selectLanguage')}</SheetTitle>
+            <SheetTitle>{t('settings.language.selectLanguage')}</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-2">
             {languages.map((lang) => (
@@ -662,7 +643,7 @@ const Settings: React.FC = () => {
       <Sheet open={showNotificationSettings} onOpenChange={setShowNotificationSettings}>
         <SheetContent side="bottom" className="h-[80vh]">
           <SheetHeader>
-            <SheetTitle>{t('settings.preferences.notifications')}</SheetTitle>
+            <SheetTitle>{t('settings.notifications.title')}</SheetTitle>
           </SheetHeader>
           <div className="mt-6">
             <NotificationSettings />
@@ -674,7 +655,7 @@ const Settings: React.FC = () => {
       <Sheet open={showLocationSettings} onOpenChange={setShowLocationSettings}>
         <SheetContent side="bottom" className="h-[80vh]">
           <SheetHeader>
-            <SheetTitle>{t('settings.preferences.locationTimezone')}</SheetTitle>
+            <SheetTitle>Location & Timezone</SheetTitle>
           </SheetHeader>
           <div className="mt-6">
             <LocationTimezoneSettings />
