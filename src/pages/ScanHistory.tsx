@@ -1,7 +1,27 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Clock, Search, Filter, Download, Trash2, Eye, RefreshCw, Archive, BookmarkPlus } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Clock, 
+  Search, 
+  Filter, 
+  Download, 
+  Trash2, 
+  Eye, 
+  RefreshCw, 
+  Archive, 
+  BookmarkPlus,
+  Calendar,
+  TrendingUp,
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+  Star,
+  Sparkles,
+  History,
+  Target
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MobileCard } from "@/components/ui/mobile/MobileCard";
+import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from "@/components/ui/mobile/MobileCard";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,9 +37,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
-import ScanHistoryCard from "@/components/mobile/ScanHistoryCard";
-import ScanHistorySkeleton from "@/components/mobile/ScanHistorySkeleton";
 import PullToRefreshWrapper from "@/components/mobile/PullToRefreshWrapper";
+import { cn } from "@/lib/utils";
 
 interface ScanSession {
   id: string;
@@ -40,6 +59,302 @@ interface ScanSession {
     form?: string;
   };
 }
+
+// Enhanced timeline scan card component
+const TimelineScanCard = ({ 
+  session, 
+  isBookmarked, 
+  onView, 
+  onBookmark, 
+  onDelete, 
+  onExport,
+  isLast = false 
+}: {
+  session: ScanSession;
+  isBookmarked: boolean;
+  onView: (session: ScanSession) => void;
+  onBookmark: (id: string) => void;
+  onDelete: (id: string) => void;
+  onExport: (session: ScanSession) => void;
+  isLast?: boolean;
+}) => {
+  const medication = session.products || session.extractions?.extracted_json;
+  const qualityScore = session.extractions?.quality_score || 0;
+  const riskFlags = session.extractions?.risk_flags || [];
+  const isUnknown = !medication?.brand_name || medication?.brand_name === "Unknown Medication";
+  const hasHighRisk = riskFlags.length > 0;
+
+  const getCardVariant = () => {
+    if (hasHighRisk) return 'border-red-400/30 bg-gradient-to-br from-red-50/50 to-red-100/30';
+    if (isUnknown) return 'border-amber-400/30 bg-gradient-to-br from-amber-50/50 to-amber-100/30';
+    if (qualityScore >= 0.8) return 'border-green-400/30 bg-gradient-to-br from-green-50/50 to-green-100/30';
+    return 'border-blue-400/30 bg-gradient-to-br from-blue-50/50 to-blue-100/30';
+  };
+
+  const getStatusIcon = () => {
+    if (hasHighRisk) return <AlertTriangle className="w-5 h-5 text-red-500" />;
+    if (isUnknown) return <Target className="w-5 h-5 text-amber-500" />;
+    return <CheckCircle className="w-5 h-5 text-green-500" />;
+  };
+
+  const getTimelineColor = () => {
+    if (hasHighRisk) return 'bg-red-500';
+    if (isUnknown) return 'bg-amber-500';
+    return 'bg-green-500';
+  };
+
+  return (
+    <div className="relative">
+      {/* Timeline connector */}
+      <div className="absolute left-6 top-12 w-0.5 h-full bg-gradient-to-b from-border via-border/50 to-transparent" 
+           style={{ display: isLast ? 'none' : 'block' }} />
+      
+      {/* Timeline dot */}
+      <div className="absolute left-4 top-4 z-10">
+        <div className={cn(
+          "w-5 h-5 rounded-full border-2 border-background shadow-md animate-pulse",
+          getTimelineColor()
+        )} />
+      </div>
+
+      {/* Card content */}
+      <div className="ml-12 mb-6">
+        <MobileCard 
+          className={cn(
+            "shadow-soft hover:shadow-elevated transition-all duration-300 hover:scale-[1.01] border-0",
+            getCardVariant()
+          )}
+          interactive
+          onClick={() => onView(session)}
+        >
+          <MobileCardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 min-w-0">
+                {/* Status row */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon()}
+                    <Badge 
+                      variant="outline"
+                      className={cn(
+                        "text-xs font-medium border px-2 py-1",
+                        hasHighRisk && "border-red-400/50 text-red-700 bg-red-50/50",
+                        isUnknown && "border-amber-400/50 text-amber-700 bg-amber-50/50",
+                        !hasHighRisk && !isUnknown && "border-green-400/50 text-green-700 bg-green-50/50"
+                      )}
+                    >
+                      {hasHighRisk ? 'High Risk' : isUnknown ? 'Unknown' : 'Identified'}
+                    </Badge>
+                  </div>
+                  
+                  {session.barcode_value && (
+                    <Badge variant="outline" className="text-xs bg-blue-50/50 text-blue-700 border-blue-400/50">
+                      Barcode
+                    </Badge>
+                  )}
+                  
+                  {isBookmarked && (
+                    <Badge variant="outline" className="text-xs bg-purple-50/50 text-purple-700 border-purple-400/50">
+                      <Star className="w-3 h-3 mr-1" />
+                      Saved
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Medication info */}
+                <MobileCardTitle className="text-lg font-bold mb-2 line-clamp-2">
+                  {medication?.brand_name || "Unknown Medication"}
+                </MobileCardTitle>
+                
+                {medication?.generic_name && (
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-1">
+                    {medication.generic_name}
+                    {medication.strength && ` • ${medication.strength}`}
+                    {medication.form && ` • ${medication.form}`}
+                  </p>
+                )}
+
+                {/* Time info */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  <span>{format(new Date(session.created_at), 'MMM d, yyyy • h:mm a')}</span>
+                </div>
+              </div>
+
+              {/* Quality and actions */}
+              <div className="flex flex-col items-end gap-2 ml-4">
+                {qualityScore > 0 && (
+                  <Badge 
+                    variant="outline" 
+                    className={cn(
+                      "text-xs",
+                      qualityScore >= 0.8 && "bg-green-50/50 text-green-700 border-green-400/50",
+                      qualityScore >= 0.6 && qualityScore < 0.8 && "bg-amber-50/50 text-amber-700 border-amber-400/50",
+                      qualityScore < 0.6 && "bg-red-50/50 text-red-700 border-red-400/50"
+                    )}
+                  >
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    {Math.round(qualityScore * 100)}%
+                  </Badge>
+                )}
+                
+                {riskFlags.length > 0 && (
+                  <Badge className="text-xs bg-red-500 text-white animate-pulse">
+                    <Shield className="w-3 h-3 mr-1" />
+                    {riskFlags.length} Alert{riskFlags.length > 1 ? 's' : ''}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </MobileCardHeader>
+
+          <MobileCardContent>
+            {/* Risk alerts */}
+            {riskFlags.length > 0 && (
+              <div className="mb-4 p-3 bg-red-50/80 border border-red-200/50 rounded-xl">
+                <h4 className="text-sm font-semibold text-red-800 mb-2 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Safety Alerts
+                </h4>
+                <div className="space-y-1">
+                  {riskFlags.slice(0, 2).map((flag, index) => (
+                    <div key={index} className="flex items-start gap-2 text-sm text-red-700">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0" />
+                      <span className="flex-1">{flag}</span>
+                    </div>
+                  ))}
+                  {riskFlags.length > 2 && (
+                    <p className="text-xs text-red-600 mt-2 pl-3">
+                      +{riskFlags.length - 2} more alert{riskFlags.length - 2 > 1 ? 's' : ''}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Unknown medication help */}
+            {isUnknown && (
+              <div className="mb-4 p-3 bg-amber-50/80 border border-amber-200/50 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <Target className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-amber-800 mb-1">
+                      Medication Not Identified
+                    </h4>
+                    <p className="text-xs text-amber-700">
+                      Try scanning with better lighting or add details manually.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex justify-between items-center pt-2">
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onView(session);
+                  }}
+                  className="text-xs h-8 px-3"
+                >
+                  <Eye className="w-3 h-3 mr-1" />
+                  View
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onExport(session);
+                  }}
+                  className="text-xs h-8 px-3"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  Export
+                </Button>
+              </div>
+              
+              <div className="flex gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onBookmark(session.id);
+                  }}
+                  className={cn(
+                    "w-8 h-8 p-0",
+                    isBookmarked && "text-purple-600"
+                  )}
+                >
+                  <Star className={cn("w-4 h-4", isBookmarked && "fill-current")} />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(session.id);
+                  }}
+                  className="w-8 h-8 p-0 text-red-500 hover:text-red-600"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </MobileCardContent>
+        </MobileCard>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced skeleton for timeline
+const TimelineLoadingSkeleton = ({ count = 6 }: { count?: number }) => (
+  <div className="space-y-6">
+    {Array.from({ length: count }).map((_, index) => (
+      <div key={index} className="relative">
+        <div className="absolute left-4 top-4 w-5 h-5 bg-muted rounded-full animate-pulse" />
+        <div className="ml-12">
+          <MobileCard className="animate-pulse">
+            <MobileCardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-5 h-5 bg-muted rounded" />
+                    <div className="w-16 h-5 bg-muted rounded-full" />
+                  </div>
+                  <div className="w-3/4 h-6 bg-muted rounded mb-2" />
+                  <div className="w-1/2 h-4 bg-muted rounded mb-3" />
+                  <div className="w-24 h-3 bg-muted rounded" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="w-12 h-5 bg-muted rounded-full" />
+                </div>
+              </div>
+            </MobileCardHeader>
+            <MobileCardContent>
+              <div className="flex justify-between">
+                <div className="flex gap-2">
+                  <div className="w-16 h-8 bg-muted rounded" />
+                  <div className="w-16 h-8 bg-muted rounded" />
+                </div>
+                <div className="flex gap-1">
+                  <div className="w-8 h-8 bg-muted rounded" />
+                  <div className="w-8 h-8 bg-muted rounded" />
+                </div>
+              </div>
+            </MobileCardContent>
+          </MobileCard>
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 export const ScanHistory = () => {
   const [sessions, setSessions] = useState<ScanSession[]>([]);
@@ -87,7 +402,6 @@ export const ScanHistory = () => {
 
       setSessions(data || []);
       
-      // Simulate haptic feedback on successful refresh
       if (showRefreshing && navigator.vibrate) {
         navigator.vibrate(50);
       }
@@ -146,7 +460,6 @@ export const ScanHistory = () => {
         description: "Scan has been permanently deleted.",
       });
       
-      // Haptic feedback for delete
       if (navigator.vibrate) {
         navigator.vibrate([50, 50]);
       }
@@ -158,46 +471,6 @@ export const ScanHistory = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleArchive = (sessionId: string) => {
-    // For now, just bookmark the item as "archived"
-    handleBookmark(sessionId);
-    toast({
-      title: "Archived",
-      description: "Scan moved to your archived items.",
-    });
-  };
-
-  useEffect(() => {
-    fetchScanHistory();
-  }, [user]);
-
-  const filteredSessions = sessions.filter((session) => {
-    const matchesSearch = searchTerm === "" || 
-      session.products?.brand_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.extractions?.extracted_json?.brand_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.barcode_value?.includes(searchTerm);
-
-    if (filterBy === "all") return matchesSearch;
-    if (filterBy === "with_barcode") return matchesSearch && session.barcode_value;
-    if (filterBy === "high_risk") return matchesSearch && session.extractions?.risk_flags?.length > 0;
-    if (filterBy === "recent") return matchesSearch && new Date(session.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    if (filterBy === "saved") return matchesSearch && bookmarkedSessions.has(session.id);
-    if (filterBy === "unknown") return matchesSearch && (!session.products?.brand_name || session.products?.brand_name === "Unknown Medication");
-    
-    return matchesSearch;
-  });
-
-  const handleViewSession = (session: ScanSession) => {
-    // Navigate to detailed view or show modal
-    console.log('View session:', session);
-  };
-
-  const getQualityBadge = (score: number) => {
-    if (score >= 0.8) return { variant: "default" as const, label: "High Quality", className: "bg-success text-success-foreground" };
-    if (score >= 0.6) return { variant: "secondary" as const, label: "Medium Quality", className: "bg-warning text-warning-foreground" };
-    return { variant: "destructive" as const, label: "Low Quality" };
   };
 
   const exportSession = (session: ScanSession) => {
@@ -225,93 +498,103 @@ export const ScanHistory = () => {
     });
   };
 
-  if (loading) {
-    const loadingContent = (
-      <div className="min-h-screen bg-gradient-surface">
-        {!isMobile && (
-          <header className="px-4 py-6 bg-background border-b border-border">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center gap-3 mb-4">
-                <Button variant="ghost" size="icon" disabled>
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div>
-                  <div className="w-32 h-6 bg-muted rounded animate-pulse mb-2"></div>
-                  <div className="w-48 h-4 bg-muted rounded animate-pulse"></div>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex-1 h-10 bg-muted rounded animate-pulse"></div>
-                <div className="w-48 h-10 bg-muted rounded animate-pulse"></div>
-              </div>
-            </div>
-          </header>
-        )}
-        
-        {isMobile && (
-          <div className="px-4 py-4 bg-background border-b border-border">
-            <div className="w-16 h-5 bg-muted rounded animate-pulse mb-4"></div>
-            <div className="space-y-3">
-              <div className="h-10 bg-muted rounded animate-pulse"></div>
-              <div className="h-10 bg-muted rounded animate-pulse"></div>
-            </div>
-          </div>
-        )}
-        
-        <main className={`px-4 py-8 ${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
-          <ScanHistorySkeleton count={8} />
-        </main>
-      </div>
-    );
+  const handleViewSession = (session: ScanSession) => {
+    console.log('View session:', session);
+  };
 
-    if (isMobile) {
-      return (
-        <ProfessionalMobileLayout title="Scan History" showHeader={false}>
-          {loadingContent}
-        </ProfessionalMobileLayout>
-      );
-    }
+  useEffect(() => {
+    fetchScanHistory();
+  }, [user]);
+
+  const filteredSessions = sessions.filter((session) => {
+    const matchesSearch = searchTerm === "" || 
+      session.products?.brand_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.extractions?.extracted_json?.brand_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.barcode_value?.includes(searchTerm);
+
+    if (filterBy === "all") return matchesSearch;
+    if (filterBy === "with_barcode") return matchesSearch && session.barcode_value;
+    if (filterBy === "high_risk") return matchesSearch && session.extractions?.risk_flags?.length > 0;
+    if (filterBy === "recent") return matchesSearch && new Date(session.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    if (filterBy === "saved") return matchesSearch && bookmarkedSessions.has(session.id);
+    if (filterBy === "unknown") return matchesSearch && (!session.products?.brand_name || session.products?.brand_name === "Unknown Medication");
     
-    return loadingContent;
-  }
+    return matchesSearch;
+  });
+
+  // Group sessions by date for timeline display
+  const groupedSessions = filteredSessions.reduce((groups, session) => {
+    const date = format(new Date(session.created_at), 'yyyy-MM-dd');
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(session);
+    return groups;
+  }, {} as Record<string, ScanSession[]>);
+
+  const sortedDates = Object.keys(groupedSessions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
   const content = (
-    <div className="min-h-screen bg-background">
-      {/* Header - Only show on desktop */}
-      {!isMobile && (
-        <header className="px-4 py-6 bg-background border-b border-border">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Scan History</h1>
-                  <p className="text-muted-foreground">Your recent medication scans</p>
-                </div>
-              </div>
-              <Badge variant="secondary" className="text-xs">
-                {filteredSessions.length} scans
-              </Badge>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      {/* Enhanced header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+        <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-xl animate-float" />
+        
+        <div className="relative px-4 pt-6 pb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-primary/20 shadow-soft">
+              <History className="w-6 h-6 text-primary" />
             </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                Scan Timeline
+              </h1>
+              <p className="text-sm text-muted-foreground">Your medication scanning history</p>
+            </div>
+            <Badge 
+              variant="outline" 
+              className="px-3 py-1 text-xs bg-primary/10 text-primary border-primary/30"
+            >
+              {filteredSessions.length} scan{filteredSessions.length !== 1 ? 's' : ''}
+            </Badge>
+          </div>
 
-            {/* Search and Filter */}
-            <div className="flex gap-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by medication name or barcode..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 p-3 rounded-xl border border-green-500/20">
+              <div className="text-lg font-bold text-green-700">
+                {sessions.filter(s => s.products?.brand_name && s.products.brand_name !== "Unknown Medication").length}
               </div>
-              <Select value={filterBy} onValueChange={setFilterBy}>
-                <SelectTrigger className="w-48">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by" />
-                </SelectTrigger>
+              <div className="text-xs text-green-600">Identified</div>
+            </div>
+            <div className="bg-gradient-to-br from-amber-500/10 to-amber-400/5 p-3 rounded-xl border border-amber-500/20">
+              <div className="text-lg font-bold text-amber-700">
+                {sessions.filter(s => s.extractions?.risk_flags?.length > 0).length}
+              </div>
+              <div className="text-xs text-amber-600">Alerts</div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-500/10 to-purple-400/5 p-3 rounded-xl border border-purple-500/20">
+              <div className="text-lg font-bold text-purple-700">{bookmarkedSessions.size}</div>
+              <div className="text-xs text-purple-600">Saved</div>
+            </div>
+          </div>
+
+          {/* Search and filter */}
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search medications..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-background/50 backdrop-blur-sm border-border/50"
+              />
+            </div>
+            <Select value={filterBy} onValueChange={setFilterBy}>
+              <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border/50">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Filter by" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Scans</SelectItem>
                 <SelectItem value="recent">Last 7 Days</SelectItem>
@@ -320,110 +603,88 @@ export const ScanHistory = () => {
                 <SelectItem value="unknown">Unknown</SelectItem>
                 <SelectItem value="with_barcode">With Barcode</SelectItem>
               </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </header>
-      )}
-
-      {/* Mobile Search and Filter */}
-      {isMobile && (
-        <div className="px-4 py-4 bg-background border-b border-border">
-          <div className="flex items-center justify-between mb-4">
-            <Badge variant="secondary" className="text-xs">
-              {filteredSessions.length} scans
-            </Badge>
-          </div>
-          <div className="space-y-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search medications..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={filterBy} onValueChange={setFilterBy}>
-              <SelectTrigger>
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by" />
-              </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Scans</SelectItem>
-                  <SelectItem value="recent">Last 7 Days</SelectItem>
-                  <SelectItem value="saved">Saved Items</SelectItem>
-                  <SelectItem value="high_risk">High Risk</SelectItem>
-                  <SelectItem value="unknown">Unknown</SelectItem>
-                  <SelectItem value="with_barcode">With Barcode</SelectItem>
-                </SelectContent>
             </Select>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Main Content */}
-      <main className={`${!isMobile ? 'max-w-4xl mx-auto' : ''}`}>
-        <PullToRefreshWrapper
-          onRefresh={handleRefresh}
-          disabled={refreshing}
-          className="min-h-screen"
-        >
-          <div className="px-4 py-8">
-            {filteredSessions.length === 0 ? (
-              <MobileCard className="p-12 text-center">
-                <Clock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+      {/* Timeline content */}
+      <div className="relative">
+        <PullToRefreshWrapper onRefresh={handleRefresh} disabled={refreshing}>
+          <div className="px-4 py-6">
+            {loading ? (
+              <TimelineLoadingSkeleton />
+            ) : filteredSessions.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center">
+                  <History className="w-10 h-10 text-muted-foreground" />
+                </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {loading ? "Loading..." : "No Scans Found"}
+                  {searchTerm || filterBy !== "all" ? "No Matching Scans" : "No Scans Yet"}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground mb-4">
                   {searchTerm || filterBy !== "all" 
                     ? "Try adjusting your search or filter criteria."
-                    : "Start scanning medications to see your history here."
+                    : "Start scanning medications to build your timeline."
                   }
                 </p>
-                {!loading && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleRefresh}
-                    className="mt-4"
-                    disabled={refreshing}
-                  >
-                    <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </Button>
-                )}
-              </MobileCard>
+                <Button 
+                  variant="outline" 
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="gap-2"
+                >
+                  <RefreshCw className={cn("w-4 h-4", refreshing && "animate-spin")} />
+                  Refresh
+                </Button>
+              </div>
             ) : (
-              <div className="space-y-4">
-                {filteredSessions.map((session) => (
-                  <ScanHistoryCard
-                    key={session.id}
-                    session={session}
-                    onView={handleViewSession}
-                    onExport={exportSession}
-                    onBookmark={handleBookmark}
-                    onDelete={handleDelete}
-                    onArchive={handleArchive}
-                    isBookmarked={bookmarkedSessions.has(session.id)}
-                  />
+              <div className="space-y-8">
+                {sortedDates.map((date, dateIndex) => (
+                  <div key={date} className="space-y-4">
+                    {/* Date header */}
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border border-primary/30">
+                        <Calendar className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-foreground">
+                          {format(new Date(date), 'EEEE, MMMM d, yyyy')}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          {groupedSessions[date].length} scan{groupedSessions[date].length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Timeline items for this date */}
+                    <div className="space-y-0">
+                      {groupedSessions[date].map((session, sessionIndex, array) => (
+                        <TimelineScanCard
+                          key={session.id}
+                          session={session}
+                          isBookmarked={bookmarkedSessions.has(session.id)}
+                          onView={handleViewSession}
+                          onBookmark={handleBookmark}
+                          onDelete={handleDelete}
+                          onExport={exportSession}
+                          isLast={dateIndex === sortedDates.length - 1 && sessionIndex === array.length - 1}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
           </div>
         </PullToRefreshWrapper>
-      </main>
+      </div>
     </div>
   );
 
-  if (isMobile) {
-    return (
-      <ProfessionalMobileLayout title="Scan History" showHeader={false}>
-        {content}
-      </ProfessionalMobileLayout>
-    );
-  }
-
-  return content;
+  return (
+    <ProfessionalMobileLayout title="Scan History" showHeader={false}>
+      {content}
+    </ProfessionalMobileLayout>
+  );
 };
