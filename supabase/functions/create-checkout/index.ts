@@ -30,20 +30,28 @@ serve(async (req) => {
     logStep("Function started");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!stripeKey) {
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
     logStep("Stripe key verified");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      throw new Error("No authorization header provided");
+    }
     logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
     logStep("Authenticating user with token");
     
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError) {
+      throw new Error(`Authentication error: ${userError.message}`);
+    }
     const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
+    if (!user?.email) {
+      throw new Error("User not authenticated or email not available");
+    }
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Parse request body
@@ -88,15 +96,30 @@ serve(async (req) => {
       });
 
       if (prices.data.length === 0) {
-        throw new Error(`No prices found for product ${productId}`);
+        logStep("No prices found, creating new price for product", { productId });
+        
+        // Create a price for this product
+        const priceAmount = plan === 'pro_individual' 
+          ? (isYearly ? 3999 : 599)  // $39.99 yearly, $5.99 monthly
+          : (isYearly ? 6999 : 999); // $69.99 yearly, $9.99 monthly
+        
+        price = await stripe.prices.create({
+          product: productId,
+          unit_amount: priceAmount,
+          currency: 'usd',
+          recurring: {
+            interval: isYearly ? 'year' : 'month'
+          }
+        });
+        logStep("Created new price", { priceId: price.id, amount: priceAmount });
+      } else {
+        // Use the first active price for this product
+        price = prices.data[0];
+        logStep("Found existing price", { priceId: price.id, amount: price.unit_amount });
       }
-
-      // Use the first active price for this product
-      price = prices.data[0];
-      logStep("Found existing price", { priceId: price.id, amount: price.unit_amount });
     } catch (error) {
-      logStep("Error finding price", { error: error.message });
-      throw new Error(`Failed to find price for product: ${error.message}`);
+      logStep("Error finding/creating price", { error: error.message });
+      throw new Error(`Failed to find/create price for product: ${error.message}`);
     }
 
     // Check if customer exists
