@@ -781,6 +781,8 @@
     "failedToExportData": "Failed to export user data"
   },
   "toast": {
+    "welcomeBack": "Welcome back!",
+    "signedIn": "You have been signed in successfully",
     "error": "Error", 
     "success": "Success",
     "warning": "Warning",

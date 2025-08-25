@@ -303,5 +303,13 @@
   "authPage": {
     "title": "PillLens",
     "subtitle": "Sizin Şəxsi Dərman Skaneri və Xatırlatma Tətbiqi"
+  },
+  "toast": {
+    "welcomeBack": "Yenidən xoş gəlmisiniz!",
+    "signedIn": "Uğurla daxil oldunuz",
+    "error": "Xəta",
+    "success": "Uğurlu",
+    "warning": "Xəbərdarlıq",
+    "info": "Məlumat"
   }
 }

@@ -753,5 +753,13 @@
       "invalidEmail": "Geçersiz e-posta formatı",
       "weakPassword": "Şifre çok zayıf"
     }
+  },
+  "toast": {
+    "welcomeBack": "Tekrar hoş geldin!",
+    "signedIn": "Başarıyla giriş yaptınız",
+    "error": "Hata",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi"
   }
 }
