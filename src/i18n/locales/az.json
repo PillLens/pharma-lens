@@ -326,14 +326,14 @@
       }
     },
     "safety": {
-    "warnings": "Xəbərdarlıqlar",
-    "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
-    "disclaimer": "PharmaLens rəsmi dərman etiketlərindən və vərəqələrindən çıxarılan məlumatları təqdim edir. Bu tibbi məsləhət deyil.",
-    "consultDoctor": "Həkiminizlə məsləhətləşin",
-    "readLabel": "Dərman etiketini diqqətlə oxuyun",
-    "followInstructions": "Təyin edilmiş təlimatlara əməl edin",
-    "reportSideEffects": "Hər hansı yan təsiri səhiyyə xidməti təminatçınıza bildirin"
-  },
+      "warnings": "Xəbərdarlıqlar",
+      "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
+      "disclaimer": "PharmaLens rəsmi dərman etiketlərindən və vərəqələrindən çıxarılan məlumatları təqdim edir. Bu tibbi məsləhət deyil.",
+      "consultDoctor": "Həkiminizlə məsləhətləşin",
+      "readLabel": "Dərman etiketini diqqətlə oxuyun",
+      "followInstructions": "Təyin edilmiş təlimatlara əməl edin",
+      "reportSideEffects": "Hər hansı yan təsiri səhiyyə xidməti təminatçınıza bildirin"
+    },
   "family": {
     "title": "Ailə və Baxıcılar",
     "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
