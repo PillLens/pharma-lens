@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
+console.log("[CREATE-CHECKOUT] Function file loaded successfully");
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -14,49 +16,53 @@ const logStep = (step: string, details?: any) => {
 };
 
 serve(async (req) => {
+  console.log("[CREATE-CHECKOUT] Request received", req.method, req.url);
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
+    console.log("[CREATE-CHECKOUT] Handling OPTIONS request");
     return new Response(null, { headers: corsHeaders });
   }
 
   console.log('[CREATE-CHECKOUT] Starting function...');
 
-  // Use the service role key to perform secure operations
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
-  console.log('[CREATE-CHECKOUT] Supabase client initialized');
-
   try {
-    logStep("Function started");
-
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    logStep("Environment variables check", { 
-      hasStripeKey: !!stripeKey,
-      keyPrefix: stripeKey ? stripeKey.substring(0, 7) + '...' : 'undefined'
-    });
+    console.log("[CREATE-CHECKOUT] Step 1: Environment check");
     
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    
+    console.log("[CREATE-CHECKOUT] Environment variables:", {
+      hasSupabaseUrl: !!supabaseUrl,
+      hasSupabaseServiceKey: !!supabaseServiceKey,
+      hasStripeKey: !!stripeKey,
+      stripeKeyPrefix: stripeKey ? stripeKey.substring(0, 8) + '...' : 'undefined'
+    });
+
     if (!stripeKey) {
       throw new Error("STRIPE_SECRET_KEY is not set");
     }
     
     if (!stripeKey.startsWith('sk_')) {
-      throw new Error("STRIPE_SECRET_KEY appears to be invalid (should start with sk_)");
+      throw new Error(`STRIPE_SECRET_KEY appears to be invalid. Got: ${stripeKey.substring(0, 10)}...`);
     }
-    
-    logStep("Stripe key verified");
 
+    console.log("[CREATE-CHECKOUT] Step 2: Initialize Supabase client");
+    const supabaseClient = createClient(
+      supabaseUrl ?? "",
+      supabaseServiceKey ?? "",
+      { auth: { persistSession: false } }
+    );
+
+    console.log("[CREATE-CHECKOUT] Step 3: Check authorization");
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       throw new Error("No authorization header provided");
     }
-    logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
-    logStep("Authenticating user with token");
+    console.log("[CREATE-CHECKOUT] Step 4: Authenticate user");
     
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) {
@@ -66,25 +72,20 @@ serve(async (req) => {
     if (!user?.email) {
       throw new Error("User not authenticated or email not available");
     }
-    logStep("User authenticated", { userId: user.id, email: user.email });
-
-    // Parse request body
-    logStep("Parsing request body");
-    let requestBody;
-    try {
-      requestBody = await req.json();
-      logStep("Request body parsed successfully", { body: requestBody });
-    } catch (parseError) {
-      logStep("Failed to parse request body", { error: parseError.message });
-      throw new Error(`Invalid JSON in request body: ${parseError.message}`);
-    }
     
+    console.log("[CREATE-CHECKOUT] User authenticated:", user.email);
+
+    console.log("[CREATE-CHECKOUT] Step 5: Parse request body");
+    const requestBody = await req.json();
     const { plan, billing_cycle = 'monthly' } = requestBody;
+    
+    console.log("[CREATE-CHECKOUT] Request details:", { plan, billing_cycle });
+    
     if (!plan) {
       throw new Error("Missing plan in request body");
     }
-    logStep("Request parsed", { plan, billing_cycle });
 
+    console.log("[CREATE-CHECKOUT] Step 6: Initialize Stripe");
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     // Map to specific Stripe price IDs
@@ -103,30 +104,21 @@ serve(async (req) => {
     if (!priceId) {
       throw new Error(`Invalid plan or billing cycle: ${plan}, ${billing_cycle}`);
     }
-    logStep("Price ID determined", { priceId, plan, billing_cycle });
+    
+    console.log("[CREATE-CHECKOUT] Using price ID:", priceId);
 
-    // Check if customer exists
+    console.log("[CREATE-CHECKOUT] Step 7: Check for existing customer");
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      logStep("Existing customer found", { customerId });
+      console.log("[CREATE-CHECKOUT] Found existing customer:", customerId);
     } else {
-      logStep("No existing customer found");
+      console.log("[CREATE-CHECKOUT] No existing customer found");
     }
 
-    // Get user's current subscription status
-    const { data: profile } = await supabaseClient
-      .from('profiles')
-      .select('plan, is_trial_eligible')
-      .eq('id', user.id)
-      .single();
-
-    const isTrialEligible = profile?.is_trial_eligible && profile?.plan === 'free';
-    logStep("Trial eligibility checked", { isTrialEligible, currentPlan: profile?.plan });
-
-    // Create checkout session
-    const sessionConfig: any = {
+    console.log("[CREATE-CHECKOUT] Step 8: Create checkout session");
+    const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{
@@ -140,35 +132,9 @@ serve(async (req) => {
         user_id: user.id,
         plan: plan
       }
-    };
+    });
 
-    // Add trial if eligible
-    if (isTrialEligible) {
-      sessionConfig.subscription_data = {
-        trial_period_days: 14,
-        metadata: {
-          user_id: user.id,
-          plan: plan
-        }
-      };
-      logStep("Trial added to checkout session");
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionConfig);
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
-
-    // Store pending subscription info
-    if (session.id) {
-      await supabaseClient.from('subscriptions').upsert({
-        user_id: user.id,
-        stripe_sub_id: session.id, // Will be updated by webhook with actual subscription ID
-        plan: plan,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
-      logStep("Pending subscription record created");
-    }
+    console.log("[CREATE-CHECKOUT] Checkout session created:", session.id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -178,16 +144,11 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
-    logStep("ERROR in create-checkout", { 
-      message: errorMessage, 
-      stack: errorStack,
-      errorType: typeof error,
-      errorConstructor: error?.constructor?.name
-    });
     
-    console.error("Full error details:", error);
-    console.error("Error message:", errorMessage);
-    console.error("Error stack:", errorStack);
+    console.error("[CREATE-CHECKOUT] ERROR:", errorMessage);
+    console.error("[CREATE-CHECKOUT] ERROR STACK:", errorStack);
+    console.error("[CREATE-CHECKOUT] ERROR TYPE:", typeof error);
+    console.error("[CREATE-CHECKOUT] ERROR CONSTRUCTOR:", error?.constructor?.name);
     
     return new Response(JSON.stringify({ 
       error: errorMessage,
