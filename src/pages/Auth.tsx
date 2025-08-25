@@ -233,23 +233,6 @@ export default function Auth() {
                   </form>
                 </TabsContent>
               </Tabs>
-              
-              {/* Security Notice */}
-              <div className="mt-8 p-4 medical-surface rounded-2xl border border-border/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-foreground mb-1">
-                      <TranslatedText translationKey="authPage.medicalSecurity" />
-                    </h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      <TranslatedText translationKey="authPage.securityDescription" />
-                    </p>
-                  </div>
-                </div>
-              </div>
             </div>
           </MobileCard>
         </div>
