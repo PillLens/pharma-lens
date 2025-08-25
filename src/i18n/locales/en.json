@@ -444,7 +444,16 @@
       "productDescription": "Safety alerts and medication updates",
       "quietHoursDescription": "No notifications during these hours",
       "from": "From",
-      "to": "To"
+      "to": "To",
+      "masterToggle": "Push Notifications",
+      "masterDescription": "Receive notifications on this device",
+      "testNotification": "Send Test Notification",
+      "updated": "Notification preferences updated",
+      "updateError": "Failed to update notification preferences",
+      "quietHoursUpdated": "Quiet hours updated",
+      "testSent": "Test notification sent!",
+      "testFailed": "Failed to send test notification",
+      "notificationsNotReady": "Push notifications are initializing..."
     },
     "billing": {
       "title": "Billing & Plan",
