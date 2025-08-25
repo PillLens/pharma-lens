@@ -25,13 +25,13 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('notification_permission_asked')
+        .select('*')
         .eq('id', user.id)
         .single();
 
       if (error) throw error;
 
-      const hasNotAsked = !data?.notification_permission_asked;
+      const hasNotAsked = !(data as any)?.notification_permission_asked;
       setIsFirstLaunch(hasNotAsked);
       
       // Show dialog if notifications are enabled and we haven't asked before
@@ -61,7 +61,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       // Mark that we've asked for permission
       await supabase
         .from('profiles')
-        .update({ notification_permission_asked: true })
+        .update({ notification_permission_asked: true } as any)
         .eq('id', user.id);
 
       setShowDialog(false);
@@ -79,7 +79,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       // Mark that we've asked for permission (even if denied)
       await supabase
         .from('profiles')
-        .update({ notification_permission_asked: true })
+        .update({ notification_permission_asked: true } as any)
         .eq('id', user.id);
 
       // Ensure notifications are disabled

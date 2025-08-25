@@ -1283,6 +1283,7 @@ export type Database = {
           location_permission_asked: boolean | null
           location_permission_granted: boolean | null
           medical_conditions: string[] | null
+          notification_permission_asked: boolean | null
           notification_preferences: Json | null
           phone: string | null
           plan: string | null
@@ -1311,6 +1312,7 @@ export type Database = {
           location_permission_asked?: boolean | null
           location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
+          notification_permission_asked?: boolean | null
           notification_preferences?: Json | null
           phone?: string | null
           plan?: string | null
@@ -1339,6 +1341,7 @@ export type Database = {
           location_permission_asked?: boolean | null
           location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
+          notification_permission_asked?: boolean | null
           notification_preferences?: Json | null
           phone?: string | null
           plan?: string | null
