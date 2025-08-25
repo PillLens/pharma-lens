@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, History, Pill, Bell, LayoutDashboard } from 'lucide-react';
+import { Home, Pill, Bell, LayoutDashboard } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
 import { TranslatedText } from '@/components/TranslatedText';
 
-// Main navigation items (4 most important)
+// Main navigation items (3 core items)
 const mainNavigationItems = [
   {
     icon: Home,
     labelKey: 'navigation.home',
     href: '/',
-    category: 'core'
-  },
-  {
-    icon: History,
-    labelKey: 'navigation.history',
-    href: '/history',
     category: 'core'
   },
   {
