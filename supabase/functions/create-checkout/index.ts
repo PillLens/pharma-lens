@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log("=== CREATE-CHECKOUT DIAGNOSTIC START ===");
+  console.log("=== SIMPLE TEST START ===");
   
   if (req.method === "OPTIONS") {
     console.log("Handling OPTIONS request");
@@ -14,80 +14,48 @@ serve(async (req) => {
   }
 
   try {
-    // Test environment variables
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    console.log("Step 1: Basic function execution");
+
+    // Test 1: Environment variables
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    
-    console.log("Environment check:", {
-      hasSupabaseUrl: !!supabaseUrl,
-      hasServiceKey: !!supabaseServiceKey,
+    console.log("Step 2: Environment check", {
       hasStripeKey: !!stripeKey,
       stripeKeyLength: stripeKey?.length || 0,
-      stripeKeyPrefix: stripeKey?.substring(0, 7) || "none"
+      stripeKeyPrefix: stripeKey?.substring(0, 8) || "none"
     });
 
     if (!stripeKey) {
-      console.log("ERROR: STRIPE_SECRET_KEY is missing");
-      return new Response(JSON.stringify({ error: "STRIPE_SECRET_KEY is not set" }), {
+      console.log("FAILED: No Stripe key found");
+      return new Response(JSON.stringify({ 
+        error: "STRIPE_SECRET_KEY not found",
+        hasKey: false 
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
       });
     }
 
-    // Test Stripe import
-    console.log("Testing Stripe import...");
-    const Stripe = (await import("https://esm.sh/stripe@14.21.0")).default;
-    console.log("Stripe imported successfully");
+    console.log("Step 3: Stripe key found, returning success");
 
-    // Test basic Stripe initialization
-    console.log("Initializing Stripe...");
-    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-    console.log("Stripe initialized successfully");
-
-    // Test auth header
-    const authHeader = req.headers.get("Authorization");
-    console.log("Auth header present:", !!authHeader);
-
-    // Test body parsing
-    let body;
-    try {
-      body = await req.json();
-      console.log("Body parsed successfully:", body);
-    } catch (e) {
-      console.log("Body parse failed:", e.message);
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      });
-    }
-
-    console.log("All diagnostic checks passed!");
-    
     return new Response(JSON.stringify({ 
       success: true,
-      message: "Diagnostic successful - Stripe key is working",
-      environment: {
-        hasSupabaseUrl: !!supabaseUrl,
-        hasServiceKey: !!supabaseServiceKey,
-        hasStripeKey: !!stripeKey,
-        stripeKeyPrefix: stripeKey?.substring(0, 7) || "none"
-      },
-      receivedBody: body
+      message: "Basic test passed - Stripe key found",
+      keyPrefix: stripeKey.substring(0, 8),
+      keyLength: stripeKey.length
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
 
   } catch (error) {
-    console.error("Diagnostic error:", error);
+    console.error("CAUGHT ERROR:", error);
     console.error("Error message:", error.message);
     console.error("Error stack:", error.stack);
     
     return new Response(JSON.stringify({ 
-      error: error.message,
-      type: "diagnostic_error",
-      stack: error.stack
+      error: "Function crashed: " + error.message,
+      stack: error.stack,
+      type: "caught_error"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
