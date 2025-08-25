@@ -46,15 +46,15 @@ serve(async (req) => {
 
     console.log("[CREATE-CHECKOUT] Processing checkout for:", { plan, billing_cycle, email: user.email });
 
-    // Price IDs mapping (you'll need to replace these with your actual Stripe price IDs)
+    // Price IDs mapping - your actual Stripe price IDs
     const priceIds = {
       pro_individual: {
-        monthly: "price_1234_individual_monthly", // Replace with actual price ID
-        yearly: "price_1234_individual_yearly"    // Replace with actual price ID
+        monthly: "price_1Rzw9FK6MpH3rgygAuEJal37", // $5.99 USD
+        yearly: "price_1Rzw9UK6MpH3rgygirn3a1cd"   // $39.99 USD
       },
       pro_family: {
-        monthly: "price_1234_family_monthly",     // Replace with actual price ID
-        yearly: "price_1234_family_yearly"       // Replace with actual price ID
+        monthly: "price_1Rzw9iK6MpH3rgygNBVM2lDk", // $9.99 USD
+        yearly: "price_1Rzw9xK6MpH3rgygAjYI0B1Y"   // $69.99 USD
       }
     };
 
