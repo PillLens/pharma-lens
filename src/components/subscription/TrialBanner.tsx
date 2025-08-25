@@ -99,6 +99,7 @@ export function TrialBanner() {
                     <TranslatedText 
                       translationKey="dashboard.daysRemaining" 
                       fallback={`${trialDaysRemaining}d left`}
+                      values={{ days: trialDaysRemaining }}
                     />
                   </span>
                 </div>
