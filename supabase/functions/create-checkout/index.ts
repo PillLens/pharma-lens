@@ -19,12 +19,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  console.log('[CREATE-CHECKOUT] Starting function...');
+
   // Use the service role key to perform secure operations
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
   );
+
+  console.log('[CREATE-CHECKOUT] Supabase client initialized');
 
   try {
     logStep("Function started");

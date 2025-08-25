@@ -302,6 +302,44 @@ const Settings: React.FC = () => {
     }
   };
 
+  // Test checkout function for debugging
+  const testCheckout = async () => {
+    try {
+      console.log('[TEST-CHECKOUT] Starting test checkout...');
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { plan: 'pro_individual', billing_cycle: 'monthly' }
+      });
+      
+      console.log('[TEST-CHECKOUT] Response:', { data, error });
+      
+      if (error) {
+        console.error('[TEST-CHECKOUT] Error:', error);
+        toast({
+          title: "Test Checkout Failed",
+          description: JSON.stringify(error),
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (data?.url) {
+        console.log('[TEST-CHECKOUT] Success! URL:', data.url);
+        toast({
+          title: "Test Checkout Success",
+          description: "Checkout URL created successfully",
+        });
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('[TEST-CHECKOUT] Catch error:', error);
+      toast({
+        title: "Test Failed",
+        description: String(error),
+        variant: "destructive",
+      });
+    }
+  };
+
   const getSubscriptionStatusColor = () => {
     if (isInTrial) return 'from-amber-500 to-orange-500';
     if (subscription.plan !== 'free') return 'from-primary to-primary-glow';
@@ -540,7 +578,7 @@ const Settings: React.FC = () => {
               <Button 
                 onClick={handleManageSubscription}
                 disabled={loading}
-                className="w-full"
+                className="w-full mb-2"
                 variant={subscription.plan === 'free' ? 'default' : 'outline'}
               >
                 {loading ? (
@@ -551,6 +589,16 @@ const Settings: React.FC = () => {
                   <ExternalLink className="w-4 h-4 mr-2" />
                 )}
                 {subscription.plan === 'free' ? t('settings.billing.upgrade') : t('settings.billing.manageBilling')}
+              </Button>
+
+              {/* Temporary Test Button for Debugging */}
+              <Button 
+                onClick={testCheckout}
+                variant="outline"
+                size="sm"
+                className="w-full bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100"
+              >
+                🧪 Test Direct Checkout (Debug)
               </Button>
             </div>
 

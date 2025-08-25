@@ -27,20 +27,31 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
   const handleUpgrade = async (plan: 'pro_individual' | 'pro_family') => {
     try {
+      console.log('[CHECKOUT] Starting upgrade process', { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' });
       setLoading(true);
 
+      console.log('[CHECKOUT] Calling supabase function...');
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' }
       });
 
-      if (error) throw error;
+      console.log('[CHECKOUT] Function response:', { data, error });
+
+      if (error) {
+        console.error('[CHECKOUT] Supabase function error:', error);
+        throw error;
+      }
 
       if (data?.url) {
+        console.log('[CHECKOUT] Got checkout URL:', data.url);
         window.open(data.url, '_blank');
         onClose();
+      } else {
+        console.error('[CHECKOUT] No URL in response:', data);
+        throw new Error('No checkout URL received');
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      console.error('[CHECKOUT] Full error details:', error);
       toast({
         title: "Error",
         description: "Failed to start checkout. Please try again.",
