@@ -150,6 +150,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
 export function useSubscription() {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
+    console.error('useSubscription called outside SubscriptionProvider. Stack trace:', new Error().stack);
     throw new Error('useSubscription must be used within a SubscriptionProvider');
   }
   return context;
