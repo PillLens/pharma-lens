@@ -118,31 +118,33 @@ serve(async (req) => {
 
       const content = localizedContent[language as keyof typeof localizedContent] || localizedContent.en;
 
-      // Send OneSignal notification
+      // Send OneSignal notification using real API
+      const oneSignalPayload = {
+        app_id: Deno.env.get('ONESIGNAL_APP_ID'),
+        include_player_ids: [deviceToken.onesignal_player_id],
+        headings: {
+          [language]: content.title,
+          en: content.title
+        },
+        contents: {
+          [language]: content.body,
+          en: content.body
+        },
+        data: {
+          type: 'missed_digest',
+          date: today,
+          missedCount: missedCount,
+          deepLink: 'app://reports/daily'
+        }
+      };
+
       const oneSignalResponse = await fetch('https://onesignal.com/api/v1/notifications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Basic ${Deno.env.get('ONESIGNAL_REST_API_KEY')}`,
         },
-        body: JSON.stringify({
-          app_id: Deno.env.get('ONESIGNAL_APP_ID'),
-          include_player_ids: [deviceToken.onesignal_player_id],
-          headings: {
-            [language]: content.title,
-            en: content.title
-          },
-          contents: {
-            [language]: content.body,
-            en: content.body
-          },
-          data: {
-            type: 'missed_digest',
-            date: today,
-            missedCount: missedCount,
-            deepLink: 'app://reports/daily'
-          }
-        })
+        body: JSON.stringify(oneSignalPayload)
       });
 
       const oneSignalResult = await oneSignalResponse.json();
