@@ -42,19 +42,20 @@ const RemindersEmptyState: React.FC<RemindersEmptyStateProps> = ({ onAddReminder
             </p>
           </div>
 
-          {/* CTA Button */}
-          <div className="mt-8">
-            <Button 
-              onClick={onAddReminder}
-              size="lg"
-              className="rounded-xl shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {t('reminders.empty.createButton')}
-            </Button>
-          </div>
         </CardContent>
       </Card>
+      
+      {/* CTA Button - Outside Card */}
+      <div className="mt-6 px-4">
+        <Button 
+          onClick={onAddReminder}
+          size="lg"
+          className="w-full rounded-xl shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          {t('reminders.empty.createButton')}
+        </Button>
+      </div>
     </div>
   );
 };
