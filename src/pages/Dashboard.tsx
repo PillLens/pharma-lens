@@ -332,7 +332,7 @@ const Dashboard: React.FC = () => {
           <div className="px-6 space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Calendar className="w-5 h-5 text-primary" />
-              Quick Actions
+              <TranslatedText translationKey="dashboard.quickActions" fallback="Quick Actions" />
             </h3>
             
             <div className="grid gap-4">

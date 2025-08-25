@@ -108,7 +108,8 @@
     "recentScans": "Son Skanlar",
     "viewAll": "Hamısını Gör",
     "noScans": "Son skanlar yoxdur",
-    "noScansDescription": "İlk dərmanınızı skanlamaqla başlayın"
+    "noScansDescription": "İlk dərmanınızı skanlamaqla başlayın",
+    "quickActions": "Tez Əməliyyatlar"
   },
   "descriptions": {
     "scanMedications": "Dərmanları skan et",
