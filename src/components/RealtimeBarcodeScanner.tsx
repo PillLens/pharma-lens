@@ -3,6 +3,8 @@ import { Camera, X, Zap, ZapOff, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { barcodeService } from '@/services/barcodeService';
 import { capacitorService } from '@/services/capacitorService';
+import { useTranslation } from '@/hooks/useTranslation';
+import { TranslatedText } from '@/components/TranslatedText';
 import { toast } from 'sonner';
 
 interface RealtimeBarcodeScannerProps {
@@ -16,6 +18,7 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
   onClose,
   isActive
 }) => {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>();
@@ -54,7 +57,7 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
         if (!hasPermissions) {
           const granted = await capacitorService.requestPermissions();
           if (!granted) {
-            toast.error('Camera permission required for scanning');
+            toast.error(t('errors.cameraPermissionRequired'));
             return;
           }
         }
@@ -74,7 +77,7 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
       
     } catch (error) {
       console.error('Error initializing camera:', error);
-      toast.error('Failed to access camera');
+      toast.error(t('errors.cameraAccess'));
     }
   }, [isActive, getCameraConstraints]);
 
@@ -169,11 +172,11 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
         });
         setFlashEnabled(!flashEnabled);
       } else {
-        toast.info('Flash not supported on this device');
+        toast.info(t('scanner.flashNotSupported'));
       }
     } catch (error) {
       console.error('Error toggling flash:', error);
-      toast.error('Failed to toggle flash');
+      toast.error(t('errors.flashToggleFailed'));
     }
   }, [flashEnabled]);
 
@@ -225,11 +228,13 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
         <div className="flex items-center gap-3">
           <Camera className="w-6 h-6" />
           <div>
-            <h2 className="text-lg font-semibold">Barcode Scanner</h2>
+            <h2 className="text-lg font-semibold">
+              <TranslatedText translationKey="scanner.barcodeScanner" />
+            </h2>
             <p className="text-sm text-gray-300">
-              {scanningState === 'scanning' && 'Scanning for barcodes...'}
-              {scanningState === 'detected' && 'Barcode detected!'}
-              {scanningState === 'idle' && 'Initializing camera...'}
+              {scanningState === 'scanning' && <TranslatedText translationKey="scanner.scanningBarcodes" />}
+              {scanningState === 'detected' && <TranslatedText translationKey="scanner.barcodeDetected" />}
+              {scanningState === 'idle' && <TranslatedText translationKey="scanner.initializingCamera" />}
             </p>
           </div>
         </div>
@@ -319,9 +324,9 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
             
             {/* Instructions */}
             <p className="text-white text-center mt-4 text-sm">
-              {scanningState === 'scanning' && 'Position barcode within the frame'}
-              {scanningState === 'detected' && detectedBarcode && `Found: ${detectedBarcode}`}
-              {scanningState === 'idle' && 'Initializing camera...'}
+              {scanningState === 'scanning' && <TranslatedText translationKey="scanner.positionBarcode" />}
+              {scanningState === 'detected' && detectedBarcode && `${t('scanner.found')}: ${detectedBarcode}`}
+              {scanningState === 'idle' && <TranslatedText translationKey="scanner.initializingCamera" />}
             </p>
           </div>
         </div>
@@ -344,7 +349,7 @@ export const RealtimeBarcodeScanner: React.FC<RealtimeBarcodeScannerProps> = ({
             variant="outline"
             className="bg-white/10 border-white/20 text-white hover:bg-white/20"
           >
-            Cancel Scanning
+            <TranslatedText translationKey="scanner.cancelScanning" />
           </Button>
         </div>
       </div>

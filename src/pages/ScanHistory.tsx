@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
+import { TranslatedText } from "@/components/TranslatedText";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
@@ -140,34 +142,36 @@ const TimelineScanCard = ({
                     {getStatusIcon()}
                     <Badge 
                       variant="outline"
-                      className={cn(
+                       className={cn(
                         "text-xs font-medium border px-2 py-1",
                         hasHighRisk && "border-red-400/50 text-red-700 bg-red-50/50",
                         isUnknown && "border-amber-400/50 text-amber-700 bg-amber-50/50",
                         !hasHighRisk && !isUnknown && "border-green-400/50 text-green-700 bg-green-50/50"
                       )}
                     >
-                      {hasHighRisk ? 'High Risk' : isUnknown ? 'Unknown' : 'Identified'}
+                      {hasHighRisk ? <TranslatedText translationKey="history.highRisk" /> : 
+                       isUnknown ? <TranslatedText translationKey="history.unknown" /> : 
+                       <TranslatedText translationKey="history.identified" />}
                     </Badge>
                   </div>
                   
                   {session.barcode_value && (
                     <Badge variant="outline" className="text-xs bg-blue-50/50 text-blue-700 border-blue-400/50">
-                      Barcode
+                      <TranslatedText translationKey="history.barcode" />
                     </Badge>
                   )}
                   
                   {isBookmarked && (
                     <Badge variant="outline" className="text-xs bg-purple-50/50 text-purple-700 border-purple-400/50">
                       <Star className="w-3 h-3 mr-1" />
-                      Saved
+                      <TranslatedText translationKey="history.saved" />
                     </Badge>
                   )}
                 </div>
 
                 {/* Medication info */}
                 <MobileCardTitle className="text-lg font-bold mb-2 line-clamp-2">
-                  {medication?.brand_name || "Unknown Medication"}
+                  {medication?.brand_name || <TranslatedText translationKey="medications.unknownMedication" />}
                 </MobileCardTitle>
                 
                 {medication?.generic_name && (
@@ -205,7 +209,7 @@ const TimelineScanCard = ({
                 {riskFlags.length > 0 && (
                   <Badge className="text-xs bg-red-500 text-white animate-pulse">
                     <Shield className="w-3 h-3 mr-1" />
-                    {riskFlags.length} Alert{riskFlags.length > 1 ? 's' : ''}
+                    {riskFlags.length} <TranslatedText translationKey={riskFlags.length > 1 ? "history.alerts" : "history.alert"} />
                   </Badge>
                 )}
               </div>
@@ -218,7 +222,7 @@ const TimelineScanCard = ({
               <div className="mb-4 p-3 bg-red-50/80 border border-red-200/50 rounded-xl">
                 <h4 className="text-sm font-semibold text-red-800 mb-2 flex items-center gap-2">
                   <Shield className="w-4 h-4" />
-                  Safety Alerts
+                  <TranslatedText translationKey="safety.alerts" />
                 </h4>
                 <div className="space-y-1">
                   {riskFlags.slice(0, 2).map((flag, index) => (
@@ -229,7 +233,7 @@ const TimelineScanCard = ({
                   ))}
                   {riskFlags.length > 2 && (
                     <p className="text-xs text-red-600 mt-2 pl-3">
-                      +{riskFlags.length - 2} more alert{riskFlags.length - 2 > 1 ? 's' : ''}
+                      +{riskFlags.length - 2} <TranslatedText translationKey={riskFlags.length - 2 > 1 ? "history.moreAlerts" : "history.moreAlert"} />
                     </p>
                   )}
                 </div>
@@ -243,10 +247,10 @@ const TimelineScanCard = ({
                   <Target className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <h4 className="text-sm font-semibold text-amber-800 mb-1">
-                      Medication Not Identified
+                      <TranslatedText translationKey="history.medicationNotIdentified" />
                     </h4>
                     <p className="text-xs text-amber-700">
-                      Try scanning with better lighting or add details manually.
+                      <TranslatedText translationKey="history.improveScanning" />
                     </p>
                   </div>
                 </div>
@@ -266,7 +270,7 @@ const TimelineScanCard = ({
                   className="text-xs h-8 px-3"
                 >
                   <Eye className="w-3 h-3 mr-1" />
-                  View
+                  <TranslatedText translationKey="common.view" />
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -278,7 +282,7 @@ const TimelineScanCard = ({
                   className="text-xs h-8 px-3"
                 >
                   <Download className="w-3 h-3 mr-1" />
-                  Export
+                  <TranslatedText translationKey="history.export" />
                 </Button>
               </div>
               
@@ -376,6 +380,7 @@ export const ScanHistory = () => {
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   const fetchScanHistory = async (showRefreshing = false) => {
@@ -419,8 +424,8 @@ export const ScanHistory = () => {
     } catch (error) {
       console.error('Error fetching scan history:', error);
       toast({
-        title: "Loading Error",
-        description: "Failed to load scan history. Please try again.",
+        title: t('toast.loadingError'),
+        description: t('history.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -438,14 +443,14 @@ export const ScanHistory = () => {
     if (newBookmarked.has(sessionId)) {
       newBookmarked.delete(sessionId);
       toast({
-        title: "Removed from Saved",
-        description: "Scan removed from your saved items.",
+        title: t('toast.removedFromSaved'),
+        description: t('history.removedFromSaved'),
       });
     } else {
       newBookmarked.add(sessionId);
       toast({
-        title: "Saved Successfully",
-        description: "Scan added to your saved items.",
+        title: t('toast.savedSuccessfully'),
+        description: t('history.addedToSaved'),
       });
     }
     setBookmarkedSessions(newBookmarked);
@@ -479,8 +484,8 @@ export const ScanHistory = () => {
       setBookmarkedSessions(newBookmarked);
       
       toast({
-        title: "Deleted Successfully",
-        description: "Scan has been permanently deleted.",
+        title: t('toast.deletedSuccessfully'),
+        description: t('history.deletedPermanently'),
       });
       
       if (navigator.vibrate) {
@@ -489,8 +494,8 @@ export const ScanHistory = () => {
     } catch (error) {
       console.error('Error deleting session:', error);
       toast({
-        title: "Delete Failed",
-        description: "Could not delete scan. Please try again.",
+        title: t('toast.deleteFailed'),
+        description: t('history.deleteError'),
         variant: "destructive",
       });
     } finally {

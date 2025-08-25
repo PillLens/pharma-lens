@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, Lock, Eye, AlertTriangle, CheckCircle, Download } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/useTranslation';
+import { TranslatedText } from '@/components/TranslatedText';
 import { MobileSecurityDashboard } from '@/components/mobile/MobileSecurityDashboard';
 import { securityAuditService, SecurityMetrics, AuditLogEntry } from '@/services/securityAuditService';
 import { hipaaComplianceService, HIPAAComplianceData } from '@/services/hipaaComplianceService';
@@ -14,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export function SecurityDashboard() {
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   // All hooks must be called at the top level - BEFORE any conditional returns
   const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics | null>(null);
@@ -67,8 +70,8 @@ export function SecurityDashboard() {
     } catch (error) {
       console.error('Failed to load security data:', error);
       toast({
-        title: "Error",
-        description: "Failed to load security dashboard data",
+        title: t('toast.error'),
+        description: t('security.loadError'),
         variant: "destructive"
       });
     } finally {
@@ -90,14 +93,14 @@ export function SecurityDashboard() {
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Success",
-        description: "User data exported successfully",
+        title: t('toast.success'),
+        description: t('security.dataExported'),
       });
     } catch (error) {
       console.error('Failed to export user data:', error);
       toast({
-        title: "Error",
-        description: "Failed to export user data",
+        title: t('toast.error'),
+        description: t('security.exportError'),
         variant: "destructive"
       });
     }
@@ -117,14 +120,14 @@ export function SecurityDashboard() {
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Success",
-        description: "HIPAA compliance report generated",
+        title: t('toast.success'),
+        description: t('security.reportGenerated'),
       });
     } catch (error) {
       console.error('Failed to generate compliance report:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate compliance report",
+        title: t('toast.error'),
+        description: t('security.reportError'),
         variant: "destructive"
       });
     }
@@ -144,20 +147,24 @@ export function SecurityDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Security Dashboard</h1>
-          <p className="text-muted-foreground">Monitor security, compliance, and audit logs</p>
+          <h1 className="text-3xl font-bold">
+            <TranslatedText translationKey="security.dashboard" />
+          </h1>
+          <p className="text-muted-foreground">
+            <TranslatedText translationKey="security.description" />
+          </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={exportUserData} variant="outline" size="sm">
             <Download className="w-4 h-4 mr-2" />
-            Export Data
+            <TranslatedText translationKey="security.exportData" />
           </Button>
           <Button onClick={generateComplianceReport} variant="outline" size="sm">
             <Download className="w-4 h-4 mr-2" />
-            HIPAA Report
+            <TranslatedText translationKey="security.hipaaReport" />
           </Button>
         </div>
       </div>
@@ -166,7 +173,9 @@ export function SecurityDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Security Score</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              <TranslatedText translationKey="security.securityScore" />
+            </CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -174,15 +183,17 @@ export function SecurityDashboard() {
               {complianceData?.complianceScore || 0}%
             </div>
             <p className="text-xs text-muted-foreground">
-              {complianceData?.complianceScore >= 95 ? 'Excellent' : 
-               complianceData?.complianceScore >= 80 ? 'Good' : 'Needs Attention'}
+              {complianceData?.complianceScore >= 95 ? t('security.excellent') : 
+               complianceData?.complianceScore >= 80 ? t('security.good') : t('security.needsAttention')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Data Encryption</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              <TranslatedText translationKey="security.dataEncryption" />
+            </CardTitle>
             <Lock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -193,7 +204,7 @@ export function SecurityDashboard() {
                 <AlertTriangle className="h-5 w-5 text-red-500" />
               )}
               <span className="text-sm font-medium">
-                {complianceData?.dataEncrypted ? 'Enabled' : 'Disabled'}
+                {complianceData?.dataEncrypted ? t('security.enabled') : t('security.disabled')}
               </span>
             </div>
           </CardContent>
@@ -201,7 +212,9 @@ export function SecurityDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Audit Logging</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              <TranslatedText translationKey="security.auditLogging" />
+            </CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -212,7 +225,7 @@ export function SecurityDashboard() {
                 <AlertTriangle className="h-5 w-5 text-red-500" />
               )}
               <span className="text-sm font-medium">
-                {complianceData?.accessLogged ? 'Active' : 'Inactive'}
+                {complianceData?.accessLogged ? t('security.active') : t('security.inactive')}
               </span>
             </div>
           </CardContent>
@@ -220,14 +233,18 @@ export function SecurityDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Security Incidents</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              <TranslatedText translationKey="security.securityIncidents" />
+            </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-500">
               {securityMetrics?.securityIncidents || 0}
             </div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
+            <p className="text-xs text-muted-foreground">
+              <TranslatedText translationKey="security.last30Days" />
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -237,42 +254,53 @@ export function SecurityDashboard() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Your HIPAA compliance score is below the recommended threshold. 
-            Please review the compliance report for recommendations.
+            <TranslatedText translationKey="security.complianceAlert" />
           </AlertDescription>
         </Alert>
       )}
 
       <Tabs defaultValue="metrics" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="metrics">Security Metrics</TabsTrigger>
-          <TabsTrigger value="compliance">HIPAA Compliance</TabsTrigger>
-          <TabsTrigger value="audit">Audit Logs</TabsTrigger>
-          <TabsTrigger value="ratelimits">Rate Limits</TabsTrigger>
+          <TabsTrigger value="metrics">
+            <TranslatedText translationKey="security.securityMetrics" />
+          </TabsTrigger>
+          <TabsTrigger value="compliance">
+            <TranslatedText translationKey="security.hipaaCompliance" />
+          </TabsTrigger>
+          <TabsTrigger value="audit">
+            <TranslatedText translationKey="security.auditLogs" />
+          </TabsTrigger>
+          <TabsTrigger value="ratelimits">
+            <TranslatedText translationKey="security.rateLimits" />
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="metrics" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
-                <CardTitle>Activity Summary</CardTitle>
-                <CardDescription>Security events from the last 30 days</CardDescription>
+                <CardTitle>
+                  <TranslatedText translationKey="security.activitySummary" />
+                </CardTitle>
+                <CardDescription>
+                  <TranslatedText translationKey="security.securityEvents30Days" />
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span>Total Events</span>
+                  <span><TranslatedText translationKey="security.totalEvents" /></span>
                   <span className="font-semibold">{securityMetrics?.totalEvents || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Failed Attempts</span>
+                  <span><TranslatedText translationKey="security.failedAttempts" /></span>
                   <span className="font-semibold text-red-500">{securityMetrics?.failedAttempts || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Sensitive Data Access</span>
+                  <span><TranslatedText translationKey="security.sensitiveDataAccess" /></span>
                   <span className="font-semibold text-amber-500">{securityMetrics?.sensitiveDataAccess || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Unique Users</span>
+                  <span><TranslatedText translationKey="security.uniqueUsers" /></span>
                   <span className="font-semibold">{securityMetrics?.uniqueUsers || 0}</span>
                 </div>
               </CardContent>
@@ -280,8 +308,12 @@ export function SecurityDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Top Actions</CardTitle>
-                <CardDescription>Most frequent security events</CardDescription>
+                <CardTitle>
+                  <TranslatedText translationKey="security.topActions" />
+                </CardTitle>
+                <CardDescription>
+                  <TranslatedText translationKey="security.frequentEvents" />
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -300,8 +332,12 @@ export function SecurityDashboard() {
         <TabsContent value="compliance" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>HIPAA Compliance Status</CardTitle>
-              <CardDescription>Current compliance with healthcare regulations</CardDescription>
+              <CardTitle>
+                <TranslatedText translationKey="security.hipaaComplianceStatus" />
+              </CardTitle>
+              <CardDescription>
+                <TranslatedText translationKey="security.complianceRegulations" />
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -312,7 +348,7 @@ export function SecurityDashboard() {
                     ) : (
                       <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
-                    <span>Data Encryption</span>
+                    <span><TranslatedText translationKey="security.dataEncryption" /></span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {complianceData?.accessLogged ? (
@@ -320,7 +356,7 @@ export function SecurityDashboard() {
                     ) : (
                       <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
-                    <span>Access Logging</span>
+                    <span><TranslatedText translationKey="security.accessLogging" /></span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {complianceData?.userConsent ? (
@@ -328,18 +364,22 @@ export function SecurityDashboard() {
                     ) : (
                       <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
-                    <span>User Consent</span>
+                    <span><TranslatedText translationKey="security.userConsent" /></span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div>
-                    <span className="text-sm text-muted-foreground">Data Retention Policy</span>
+                    <span className="text-sm text-muted-foreground">
+                      <TranslatedText translationKey="security.dataRetentionPolicy" />
+                    </span>
                     <p className="text-sm">{complianceData?.dataRetentionPolicy}</p>
                   </div>
                   <div>
-                    <span className="text-sm text-muted-foreground">Last Audit</span>
+                    <span className="text-sm text-muted-foreground">
+                      <TranslatedText translationKey="security.lastAudit" />
+                    </span>
                     <p className="text-sm">{complianceData?.lastAuditDate !== 'Never' ? 
-                      new Date(complianceData?.lastAuditDate || '').toLocaleDateString() : 'Never'}</p>
+                      new Date(complianceData?.lastAuditDate || '').toLocaleDateString() : t('security.never')}</p>
                   </div>
                 </div>
               </div>
@@ -350,8 +390,12 @@ export function SecurityDashboard() {
         <TabsContent value="audit" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Audit Logs</CardTitle>
-              <CardDescription>Security events and data access logs</CardDescription>
+              <CardTitle>
+                <TranslatedText translationKey="security.recentAuditLogs" />
+              </CardTitle>
+              <CardDescription>
+                <TranslatedText translationKey="security.securityEventsDataAccess" />
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -373,7 +417,9 @@ export function SecurityDashboard() {
                         {new Date(log.timestamp).toLocaleString()}
                       </p>
                       {log.sensitiveDataAccessed && (
-                        <Badge variant="outline" className="text-xs">PHI Access</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          <TranslatedText translationKey="security.phiAccess" />
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -386,8 +432,12 @@ export function SecurityDashboard() {
         <TabsContent value="ratelimits" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Rate Limit Status</CardTitle>
-              <CardDescription>Current API rate limiting status</CardDescription>
+              <CardTitle>
+                <TranslatedText translationKey="security.rateLimitStatus" />
+              </CardTitle>
+              <CardDescription>
+                <TranslatedText translationKey="security.apiRateLimiting" />
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -396,15 +446,15 @@ export function SecurityDashboard() {
                     <div>
                       <p className="text-sm font-medium">{endpoint}</p>
                       <p className="text-xs text-muted-foreground">
-                        {status.remaining} requests remaining
+                        {status.remaining} <TranslatedText translationKey="security.requestsRemaining" />
                       </p>
                     </div>
                     <div className="text-right">
                       <Badge variant={status.isBlocked ? "destructive" : "outline"}>
-                        {status.isBlocked ? 'Blocked' : 'Active'}
+                        {status.isBlocked ? t('security.blocked') : t('security.active')}
                       </Badge>
                       <p className="text-xs text-muted-foreground">
-                        Resets: {status.resetTime.toLocaleTimeString()}
+                        <TranslatedText translationKey="security.resets" />: {status.resetTime.toLocaleTimeString()}
                       </p>
                     </div>
                   </div>

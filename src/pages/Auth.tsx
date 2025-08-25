@@ -3,6 +3,8 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/hooks/useTranslation';
+import { TranslatedText } from '@/components/TranslatedText';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { MobileCard } from '@/components/ui/mobile/MobileCard';
 import { MobileLoadingState } from '@/components/ui/mobile/MobileLoadingState';
@@ -16,6 +18,7 @@ export default function Auth() {
   const { signUp, signIn, user, loading } = useAuth();
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +42,8 @@ export default function Auth() {
       setError(error.message);
     } else {
       toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
+        title: t('toast.accountCreated'),
+        description: t('toast.checkEmail'),
       });
     }
     
@@ -58,8 +61,8 @@ export default function Auth() {
       setError(error.message);
     } else {
       toast({
-        title: "Welcome back!",
-        description: "You have been signed in successfully.",
+        title: t('toast.welcomeBack'),
+        description: t('toast.signedIn'),
       });
     }
     
@@ -67,7 +70,7 @@ export default function Auth() {
   };
 
   if (loading) {
-    return <MobileLoadingState message="Initializing PharmaLens..." type="medical" />;
+    return <MobileLoadingState message={t('common.initializing')} type="medical" />;
   }
 
   if (isMobile) {
@@ -84,8 +87,12 @@ export default function Auth() {
             <div className="w-20 h-20 mx-auto mb-6 medical-surface rounded-3xl flex items-center justify-center shadow-medical">
               <Stethoscope className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">PharmaLens</h1>
-            <p className="text-muted-foreground">Your trusted medication companion</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              <TranslatedText translationKey="app.title" />
+            </h1>
+            <p className="text-muted-foreground">
+              <TranslatedText translationKey="authPage.subtitle" />
+            </p>
           </div>
         </div>
 
@@ -95,18 +102,24 @@ export default function Auth() {
             <div className="p-6">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 medical-surface p-1 rounded-2xl">
-                  <TabsTrigger value="signin" className="rounded-xl">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup" className="rounded-xl">Sign Up</TabsTrigger>
+                  <TabsTrigger value="signin" className="rounded-xl">
+                    <TranslatedText translationKey="auth.signIn" />
+                  </TabsTrigger>
+                  <TabsTrigger value="signup" className="rounded-xl">
+                    <TranslatedText translationKey="auth.signUp" />
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="signin" className="mt-6">
                   <form onSubmit={handleSignIn} className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        <TranslatedText translationKey="authPage.emailAddress" />
+                      </Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="doctor@example.com"
+                        placeholder={t('authPage.emailPlaceholder')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="h-12 text-base medical-input"
@@ -114,12 +127,14 @@ export default function Auth() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                      <Label htmlFor="password" className="text-sm font-medium">
+                        <TranslatedText translationKey="auth.password" />
+                      </Label>
                       <div className="relative">
                         <Input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="Enter secure password"
+                          placeholder={t('authPage.passwordPlaceholder')}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="h-12 text-base pr-12 medical-input"
@@ -151,7 +166,7 @@ export default function Auth() {
                       disabled={isLoading}
                       loading={isLoading}
                     >
-                      {isLoading ? 'Signing In...' : 'Sign In Securely'}
+                      {isLoading ? <TranslatedText translationKey="authPage.signingIn" /> : <TranslatedText translationKey="authPage.signInSecurely" />}
                     </MobileButton>
                   </form>
                 </TabsContent>
@@ -159,11 +174,13 @@ export default function Auth() {
                 <TabsContent value="signup" className="mt-6">
                   <form onSubmit={handleSignUp} className="space-y-5">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-sm font-medium">Email Address</Label>
+                      <Label htmlFor="signup-email" className="text-sm font-medium">
+                        <TranslatedText translationKey="authPage.emailAddress" />
+                      </Label>
                       <Input
                         id="signup-email"
                         type="email"
-                        placeholder="doctor@example.com"
+                        placeholder={t('authPage.emailPlaceholder')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="h-12 text-base medical-input"
@@ -171,12 +188,14 @@ export default function Auth() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-sm font-medium">Create Password</Label>
+                      <Label htmlFor="signup-password" className="text-sm font-medium">
+                        <TranslatedText translationKey="authPage.createPassword" />
+                      </Label>
                       <div className="relative">
                         <Input
                           id="signup-password"
                           type={showPassword ? "text" : "password"}
-                          placeholder="Minimum 6 characters"
+                          placeholder={t('authPage.minCharacters')}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="h-12 text-base pr-12 medical-input"
@@ -209,7 +228,7 @@ export default function Auth() {
                       disabled={isLoading}
                       loading={isLoading}
                     >
-                      {isLoading ? 'Creating Account...' : 'Create Secure Account'}
+                      {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createSecureAccount" />}
                     </MobileButton>
                   </form>
                 </TabsContent>
@@ -222,9 +241,11 @@ export default function Auth() {
                     <Shield className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-foreground mb-1">Medical-Grade Security</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-1">
+                      <TranslatedText translationKey="authPage.medicalSecurity" />
+                    </h4>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Your medication data is protected with enterprise-level encryption and never shared with third parties.
+                      <TranslatedText translationKey="authPage.securityDescription" />
                     </p>
                   </div>
                 </div>
@@ -241,42 +262,54 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light to-accent p-4">
       <MobileCard className="w-full max-w-md shadow-elevated">
         <div className="p-6">
-          <div className="text-center mb-6">
+            <div className="text-center mb-6">
             <div className="flex items-center justify-center mb-4">
               <Stethoscope className="h-8 w-8 text-primary mr-2" />
-              <h1 className="text-2xl font-bold text-primary">PharmaLens</h1>
+              <h1 className="text-2xl font-bold text-primary">
+                <TranslatedText translationKey="app.title" />
+              </h1>
             </div>
-            <h2 className="text-xl font-semibold">Welcome</h2>
+            <h2 className="text-xl font-semibold">
+              <TranslatedText translationKey="authPage.welcome" />
+            </h2>
             <p className="text-muted-foreground mt-2">
-              Sign in to access your medication information securely
+              <TranslatedText translationKey="authPage.signInDescription" />
             </p>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin">
+                <TranslatedText translationKey="auth.signIn" />
+              </TabsTrigger>
+              <TabsTrigger value="signup">
+                <TranslatedText translationKey="auth.signUp" />
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="desktop-email">Email</Label>
+                  <Label htmlFor="desktop-email">
+                    <TranslatedText translationKey="auth.email" />
+                  </Label>
                   <Input
                     id="desktop-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t('authPage.enterEmail')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="desktop-password">Password</Label>
+                  <Label htmlFor="desktop-password">
+                    <TranslatedText translationKey="auth.password" />
+                  </Label>
                   <Input
                     id="desktop-password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('authPage.enterPassword')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -288,7 +321,7 @@ export default function Auth() {
                   </Alert>
                 )}
                 <MobileButton type="submit" className="w-full" disabled={isLoading} loading={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                  {isLoading ? <TranslatedText translationKey="authPage.signingIn" /> : <TranslatedText translationKey="auth.signIn" />}
                 </MobileButton>
               </form>
             </TabsContent>
@@ -296,22 +329,26 @@ export default function Auth() {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="desktop-signup-email">Email</Label>
+                  <Label htmlFor="desktop-signup-email">
+                    <TranslatedText translationKey="auth.email" />
+                  </Label>
                   <Input
                     id="desktop-signup-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t('authPage.enterEmail')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="desktop-signup-password">Password</Label>
+                  <Label htmlFor="desktop-signup-password">
+                    <TranslatedText translationKey="auth.password" />
+                  </Label>
                   <Input
                     id="desktop-signup-password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder={t('authPage.createPasswordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -324,7 +361,7 @@ export default function Auth() {
                   </Alert>
                 )}
                 <MobileButton type="submit" className="w-full" disabled={isLoading} loading={isLoading}>
-                  {isLoading ? 'Creating account...' : 'Create Account'}
+                  {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createAccount" />}
                 </MobileButton>
               </form>
             </TabsContent>
@@ -333,7 +370,7 @@ export default function Auth() {
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <div className="flex items-center text-sm text-muted-foreground">
               <Shield className="h-4 w-4 mr-2" />
-              Your medical data is encrypted and secure
+              <TranslatedText translationKey="authPage.dataSecure" />
             </div>
           </div>
         </div>
