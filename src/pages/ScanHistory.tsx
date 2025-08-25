@@ -18,7 +18,8 @@ import {
   Star,
   Sparkles,
   History,
-  Target
+  Target,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from "@/components/ui/mobile/MobileCard";
@@ -31,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -498,8 +500,12 @@ export const ScanHistory = () => {
     });
   };
 
+  const [selectedSession, setSelectedSession] = useState<ScanSession | null>(null);
+  const [showSessionDialog, setShowSessionDialog] = useState(false);
+
   const handleViewSession = (session: ScanSession) => {
-    console.log('View session:', session);
+    setSelectedSession(session);
+    setShowSessionDialog(true);
   };
 
   useEffect(() => {
@@ -685,6 +691,129 @@ export const ScanHistory = () => {
   return (
     <ProfessionalMobileLayout title="Scan History" showHeader={false}>
       {content}
+      
+      {/* Session Details Dialog */}
+      <Dialog open={showSessionDialog} onOpenChange={setShowSessionDialog}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="w-5 h-5" />
+              Scan Details
+            </DialogTitle>
+            <DialogDescription>
+              Detailed information about this medication scan
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedSession && (
+            <div className="space-y-4">
+              {/* Medication Info */}
+              <div className="bg-muted/30 rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-2">
+                  {selectedSession.products?.brand_name || selectedSession.extractions?.extracted_json?.brand_name || "Unknown Medication"}
+                </h3>
+                {(selectedSession.products?.generic_name || selectedSession.extractions?.extracted_json?.generic_name) && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Generic: {selectedSession.products?.generic_name || selectedSession.extractions?.extracted_json?.generic_name}
+                  </p>
+                )}
+                {(selectedSession.products?.strength || selectedSession.extractions?.extracted_json?.strength) && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Strength: {selectedSession.products?.strength || selectedSession.extractions?.extracted_json?.strength}
+                  </p>
+                )}
+                {(selectedSession.products?.form || selectedSession.extractions?.extracted_json?.form) && (
+                  <p className="text-sm text-muted-foreground">
+                    Form: {selectedSession.products?.form || selectedSession.extractions?.extracted_json?.form}
+                  </p>
+                )}
+              </div>
+
+              {/* Scan Info */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Scan Date:</span>
+                  <span className="text-sm text-muted-foreground">
+                    {format(new Date(selectedSession.created_at), 'MMM d, yyyy • h:mm a')}
+                  </span>
+                </div>
+                
+                {selectedSession.barcode_value && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Barcode:</span>
+                    <Badge variant="outline" className="text-xs">
+                      {selectedSession.barcode_value}
+                    </Badge>
+                  </div>
+                )}
+                
+                {selectedSession.extractions?.quality_score && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Quality Score:</span>
+                    <Badge 
+                      variant="outline" 
+                      className={cn(
+                        selectedSession.extractions.quality_score >= 0.8 && "bg-green-50 text-green-700 border-green-300",
+                        selectedSession.extractions.quality_score >= 0.6 && selectedSession.extractions.quality_score < 0.8 && "bg-amber-50 text-amber-700 border-amber-300",
+                        selectedSession.extractions.quality_score < 0.6 && "bg-red-50 text-red-700 border-red-300"
+                      )}
+                    >
+                      {Math.round(selectedSession.extractions.quality_score * 100)}%
+                    </Badge>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Language:</span>
+                  <span className="text-sm text-muted-foreground uppercase">
+                    {selectedSession.language}
+                  </span>
+                </div>
+              </div>
+
+              {/* Risk Flags */}
+              {selectedSession.extractions?.risk_flags && selectedSession.extractions.risk_flags.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    Safety Alerts
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedSession.extractions.risk_flags.map((flag, index) => (
+                      <div key={index} className="flex items-start gap-2 text-sm text-red-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0" />
+                        <span>{flag}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportSession(selectedSession)}
+                  className="flex-1"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBookmark(selectedSession.id)}
+                  className="flex-1"
+                >
+                  <Star className={cn("w-4 h-4 mr-2", bookmarkedSessions.has(selectedSession.id) && "fill-current text-purple-600")} />
+                  {bookmarkedSessions.has(selectedSession.id) ? 'Saved' : 'Save'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </ProfessionalMobileLayout>
   );
 };
