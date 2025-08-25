@@ -1,5 +1,8 @@
 project_id = "bquxkkaipevuakmqqilk"
 
+[functions.create-checkout]
+verify_jwt = true
+
 [functions.extract-medication]
 verify_jwt = true
 
