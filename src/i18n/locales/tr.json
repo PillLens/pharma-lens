@@ -46,91 +46,7 @@
     "profile": "Profil",
     "settings": "Ayarlar",
     "family": "Aile",
-    "reminders": {
-      "title": "Hatırlatıcılar",
-      "loading": "Hatırlatıcılar yükleniyor...",
-      "empty": {
-        "title": "Henüz Hatırlatıcı Yok",
-        "subtitle": "İlk ilaç hatırlatıcınızı oluşturun",
-        "description": "İlaç programınızda kalın",
-        "createButton": "Hatırlatıcı Oluştur"
-      },
-      "summary": {
-        "active": "Aktif Hatırlatıcılar",
-        "medications": "İlaçlar",
-        "todayDoses": "Bugünkü Dozlar",
-        "dayStreak": "Gün Serisi",
-        "adherenceOverview": "Uyum Genel Bakış",
-        "medicationCompliance": "İlaç uyumunuz",
-        "great": "Harika!",
-        "needsAttention": "Dikkat gerekiyor",
-        "thisWeek": "Bu Hafta",
-        "taken": "Alındı",
-        "missed": "Kaçırıldı",
-        "streak": "Seri",
-        "days": "gün",
-        "weeklyTrend": "Haftalık Trend",
-        "adherenceRateWeek": "Geçen hafta uyum oranı"
-      },
-      "timeline": {
-        "todaysSchedule": "Bugünün Programı",
-        "upcomingMedicationTimes": "Yaklaşan ilaç saatleri",
-        "noRemindersToday": "Bugün hatırlatıcı yok",
-        "upcoming": "yaklaşan",
-        "current": "şu anki",
-        "taken": "alındı",
-        "missed": "kaçırıldı",
-        "overdue": "gecikmiş"
-      },
-      "status": {
-        "active": "Aktif",
-        "paused": "Duraklatıldı"
-      },
-      "actions": {
-        "edit": "Düzenle",
-        "pause": "Duraklat",
-        "activate": "Etkinleştir",
-        "delete": "Sil"
-      },
-      "details": {
-        "schedule": "Program",
-        "frequency": "Sıklık",
-        "nextDose": "Sonraki Doz",
-        "notes": "Notlar",
-        "editButton": "Hatırlatıcıyı Düzenle"
-      },
-      "form": {
-        "title": "Hatırlatıcı Ekle",
-        "medication": "İlaç",
-        "medicationPlaceholder": "İlaç seçin",
-        "dosage": "Doz",
-        "dosagePlaceholder": "Doz girin",
-        "frequency": "Sıklık",
-        "times": "Saatler",
-        "startDate": "Başlangıç Tarihi",
-        "endDate": "Bitiş Tarihi (İsteğe bağlı)",
-        "notes": "Notlar",
-        "notesPlaceholder": "Ek notlar...",
-        "cancel": "İptal",
-        "save": "Hatırlatıcıyı Kaydet"
-      },
-      "frequency": {
-        "once": "Günde bir kez",
-        "twice": "Günde iki kez",
-        "custom": "Özel"
-      },
-      "validation": {
-        "medicationRequired": "İlaç gereklidir",
-        "dosageRequired": "Doz gereklidir",
-        "timesRequired": "En az bir saat gereklidir",
-        "startDateRequired": "Başlangıç tarihi gereklidir"
-      },
-      "messages": {
-        "reminderAdded": "Hatırlatıcı başarıyla eklendi",
-        "reminderDeleted": "Hatırlatıcı başarıyla silindi",
-        "reminderUpdated": "Hatırlatıcı başarıyla güncellendi"
-      }
-    },
+    "reminders": "Hatırlatıcılar",
     "security": "Güvenlik",
     "auth": "Kimlik Doğrulama",
     "more": "Daha Fazla",
@@ -355,7 +271,20 @@
     "summary": {
       "active": "Aktif Hatırlatıcılar",
       "medications": "Kapsanan İlaçlar",
-      "today": "Bugünkü Dozlar"
+      "today": "Bugünkü Dozlar",
+      "todayDoses": "Bugünkü Dozlar",
+      "dayStreak": "Gün Serisi",
+      "adherenceOverview": "Uyum Genel Bakış",
+      "medicationCompliance": "İlaç uyumunuz",
+      "great": "Harika!",
+      "needsAttention": "Dikkat gerekiyor",
+      "thisWeek": "Bu Hafta",
+      "taken": "Alındı",
+      "missed": "Kaçırıldı",
+      "streak": "Seri",
+      "days": "gün",
+      "weeklyTrend": "Haftalık Trend",
+      "adherenceRateWeek": "Geçen hafta uyum oranı"
     },
     "status": {
       "active": "Aktif",

@@ -46,91 +46,7 @@
     "profile": "Профиль",
     "settings": "Настройки",
     "family": "Семья",
-    "reminders": {
-      "title": "Напоминания",
-      "loading": "Загрузка напоминаний...",
-      "empty": {
-        "title": "Пока Нет Напоминаний",
-        "subtitle": "Создайте ваше первое напоминание о лекарстве",
-        "description": "Следите за расписанием приема лекарств",
-        "createButton": "Создать Напоминание"
-      },
-      "summary": {
-        "active": "Активные Напоминания",
-        "medications": "Лекарства",
-        "todayDoses": "Сегодняшние Дозы",
-        "dayStreak": "Дневная Серия",
-        "adherenceOverview": "Обзор Соблюдения",
-        "medicationCompliance": "Ваше соблюдение приема лекарств",
-        "great": "Отлично!",
-        "needsAttention": "Требует внимания",
-        "thisWeek": "Эта Неделя",
-        "taken": "Принято",
-        "missed": "Пропущено",
-        "streak": "Серия",
-        "days": "дней",
-        "weeklyTrend": "Недельная Тенденция",
-        "adherenceRateWeek": "Уровень соблюдения за прошлую неделю"
-      },
-      "timeline": {
-        "todaysSchedule": "Расписание на Сегодня",
-        "upcomingMedicationTimes": "Предстоящие время приема лекарств",
-        "noRemindersToday": "Нет напоминаний на сегодня",
-        "upcoming": "предстоящий",
-        "current": "текущий",
-        "taken": "принято",
-        "missed": "пропущено",
-        "overdue": "просрочено"
-      },
-      "status": {
-        "active": "Активно",
-        "paused": "Приостановлено"
-      },
-      "actions": {
-        "edit": "Редактировать",
-        "pause": "Приостановить",
-        "activate": "Активировать",
-        "delete": "Удалить"
-      },
-      "details": {
-        "schedule": "Расписание",
-        "frequency": "Частота",
-        "nextDose": "Следующая Доза",
-        "notes": "Заметки",
-        "editButton": "Редактировать Напоминание"
-      },
-      "form": {
-        "title": "Добавить Напоминание",
-        "medication": "Лекарство",
-        "medicationPlaceholder": "Выберите лекарство",
-        "dosage": "Дозировка",
-        "dosagePlaceholder": "Введите дозировку",
-        "frequency": "Частота",
-        "times": "Время",
-        "startDate": "Дата Начала",
-        "endDate": "Дата Окончания (Опционально)",
-        "notes": "Заметки",
-        "notesPlaceholder": "Дополнительные заметки...",
-        "cancel": "Отмена",
-        "save": "Сохранить Напоминание"
-      },
-      "frequency": {
-        "once": "Один раз в день",
-        "twice": "Два раза в день",
-        "custom": "Пользовательский"
-      },
-      "validation": {
-        "medicationRequired": "Лекарство обязательно",
-        "dosageRequired": "Дозировка обязательна",
-        "timesRequired": "Требуется хотя бы одно время",
-        "startDateRequired": "Дата начала обязательна"
-      },
-      "messages": {
-        "reminderAdded": "Напоминание успешно добавлено",
-        "reminderDeleted": "Напоминание успешно удалено",
-        "reminderUpdated": "Напоминание успешно обновлено"
-      }
-    },
+    "reminders": "Напоминания",
     "security": "Безопасность",
     "auth": "Авторизация",
     "more": "Еще",
@@ -355,7 +271,20 @@
     "summary": {
       "active": "Активные напоминания",
       "medications": "Покрываемые лекарства",
-      "today": "Сегодняшние дозы"
+      "today": "Сегодняшние дозы",
+      "todayDoses": "Сегодняшние Дозы",
+      "dayStreak": "Дневная Серия",
+      "adherenceOverview": "Обзор Соблюдения",
+      "medicationCompliance": "Ваше соблюдение приема лекарств",
+      "great": "Отлично!",
+      "needsAttention": "Требует внимания",
+      "thisWeek": "Эта Неделя",
+      "taken": "Принято",
+      "missed": "Пропущено",
+      "streak": "Серия",
+      "days": "дней",
+      "weeklyTrend": "Недельная Тенденция",
+      "adherenceRateWeek": "Уровень соблюдения за прошлую неделю"
     },
     "status": {
       "active": "Активно",
