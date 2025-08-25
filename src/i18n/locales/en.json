@@ -30,7 +30,12 @@
     "daysLeft": "d left",
     "searchPlaceholder": "Search...",
     "filterBy": "Filter by",
-    "change": "Change"
+    "change": "Change",
+    "dismiss": "Dismiss",
+    "later": "Later",
+    "fillRequiredFields": "Please fill in all required fields",
+    "areYouSure": "Are you sure?",
+    "actionCannotBeUndone": "This action cannot be undone"
   },
   "navigation": {
     "home": "Home",
@@ -105,7 +110,8 @@
     "recentScans": "Recent Scans",
     "viewAll": "View All",
     "noScans": "No recent scans",
-    "noScansDescription": "Start by scanning your first medication"
+    "noScansDescription": "Start by scanning your first medication",
+    "daysRemaining": "{{days}}d left"
   },
   "descriptions": {
     "scanMedications": "Scan medications",
@@ -567,7 +573,10 @@
     "createFamilyGroups": "Create & manage family groups",
     "upTo5Members": "Up to 5 family members",
     "caregiverLogging": "Caregiver logging",
-    "testimonialPlaceholder": "Join thousands of users managing their health with confidence"
+    "testimonialPlaceholder": "Join thousands of users managing their health with confidence",
+    "trial": "Trial",
+    "trialActive": "Enjoying premium features? Upgrade to continue.",
+    "trialEndingSoon": "Trial expires soon! Upgrade to keep premium features."
   },
   "history": {
     "title": "Scan History",
@@ -688,7 +697,7 @@
     "failedToExportData": "Failed to export user data"
   },
   "toast": {
-    "error": "Error",
+    "error": "Error", 
     "success": "Success",
     "warning": "Warning",
     "info": "Info",
@@ -717,6 +726,51 @@
     "failedToShareMedication": "Failed to share medication",
     "failedToUpdatePermissions": "Failed to update permissions",
     "failedToStopSharing": "Failed to stop sharing",
-    "failedToRespondInvitation": "Failed to respond to invitation"
+    "failedToRespondInvitation": "Failed to respond to invitation",
+    "callFeature": "Call Feature",
+    "callingMember": "Calling member...",
+    "messageFeature": "Message Feature",
+    "openingMessages": "Opening messages...",
+    "shareFeature": "Share Feature",
+    "sharingInformation": "Sharing information...",
+    "removeMember": "Remove Member",
+    "memberRemovalComingSoon": "Member removal coming soon...",
+    "deleteGroup": "Delete Group",
+    "groupDeletionComingSoon": "Group deletion coming soon...",
+    "editGroup": "Edit Group",
+    "groupEditingComingSoon": "Group editing coming soon...",
+    "emergencyCall": "Emergency Call",
+    "initiatingEmergencyContact": "Initiating emergency contact...",
+    "quickAction": "Quick Action",
+    "featureComingSoon": "{{action}} feature coming soon...",
+    "callMember": "Call Member",
+    "initiatingCall": "Initiating call...",
+    "messageMember": "Message Member",
+    "videoCall": "Video Call",
+    "startingVideoCall": "Starting video call...",
+    "exportReport": "Export Report",
+    "preparingFamilyHealthReport": "Preparing family health report...",
+    "contactProvider": "Contact Provider",
+    "contactingHealthcareProvider": "Contacting healthcare provider...",
+    "addEvent": "Add Event",
+    "addingNewCareEvent": "Adding new care event...",
+    "scheduleReminder": "Schedule Reminder",
+    "settingUpReminder": "Setting up reminder...",
+    "importContacts": "Import Contacts",
+    "importingContacts": "Importing contacts...",
+    "demo": "Demo",
+    "startingDemoVideo": "Starting demo video...",
+    "filter": "Filter",
+    "filteringBy": "Filtering by {{type}}",
+    "doseTaken": "Dose Marked as Taken",
+    "greatJobStayingOnTrack": "Great job staying on track! 🎉",
+    "reminderSnoozed": "Reminder Snoozed",
+    "remindAgainIn15": "We'll remind you again in 15 minutes",
+    "medicationMarkedTaken": "{{medication}} at {{time}} marked as taken",
+    "notificationsNotAvailable": "Notifications not available on this device",
+    "testCheckoutFailed": "Test Checkout Failed",
+    "testCheckoutSuccess": "Test Checkout Success",
+    "checkoutUrlCreated": "Checkout URL created successfully",
+    "testFailed": "Test Failed"
   }
 }

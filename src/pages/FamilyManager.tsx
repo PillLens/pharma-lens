@@ -155,16 +155,28 @@ const FamilyManager: React.FC = () => {
     // Handle member actions
     switch (action) {
       case 'call':
-        toast({ title: 'Call feature', description: 'Calling member...' });
-        break;
-      case 'message':
-        toast({ title: 'Message feature', description: 'Opening messages...' });
-        break;
-      case 'share':
-        toast({ title: 'Share feature', description: 'Sharing information...' });
-        break;
-      case 'remove':
-        toast({ title: 'Remove member', description: 'Member removal coming soon...' });
+      toast({
+        title: t('toast.callFeature'),
+        description: t('toast.callingMember'),
+      });
+      break;
+    case 'message':
+      toast({
+        title: t('toast.messageFeature'),
+        description: t('toast.openingMessages'),
+      });
+      break;
+    case 'share':
+      toast({
+        title: t('toast.shareFeature'),
+        description: t('toast.sharingInformation'),
+      });
+      break;
+    case 'remove':
+      toast({
+        title: t('toast.removeMember'),
+        description: t('toast.memberRemovalComingSoon'),
+      });
         break;
     }
   };
@@ -181,57 +193,96 @@ const FamilyManager: React.FC = () => {
 
   const handleDeleteGroup = (group: FamilyGroup) => {
     // Handle group deletion
-    toast({ title: 'Delete group', description: 'Group deletion coming soon...' });
+    toast({ 
+      title: t('toast.deleteGroup'), 
+      description: t('toast.groupDeletionComingSoon') 
+    });
   };
 
   const handleEditGroup = (group: FamilyGroup) => {
     // Handle group editing
-    toast({ title: 'Edit group', description: 'Group editing coming soon...' });
+    toast({ 
+      title: t('toast.editGroup'), 
+      description: t('toast.groupEditingComingSoon') 
+    });
   };
 
   // Enhanced handlers for new features
   const handleEmergencyCall = () => {
-    toast({ title: 'Emergency Call', description: 'Initiating emergency contact...' });
+    toast({ 
+      title: t('toast.emergencyCall'), 
+      description: t('toast.initiatingEmergencyContact') 
+    });
   };
 
   const handleQuickAction = (action: string) => {
-    toast({ title: 'Quick Action', description: `${action} feature coming soon...` });
+    toast({ 
+      title: t('toast.quickAction'), 
+      description: t('toast.featureComingSoon', { action }) 
+    });
   };
 
   const handleCall = (memberId: string) => {
-    toast({ title: 'Call Member', description: 'Initiating call...' });
+    toast({ 
+      title: t('toast.callMember'), 
+      description: t('toast.initiatingCall') 
+    });
   };
 
   const handleMessage = (memberId: string) => {
-    toast({ title: 'Message Member', description: 'Opening messages...' });
+    toast({ 
+      title: t('toast.messageMember'), 
+      description: t('toast.openingMessages') 
+    });
   };
 
   const handleVideoCall = (memberId: string) => {
-    toast({ title: 'Video Call', description: 'Starting video call...' });
+    toast({ 
+      title: t('toast.videoCall'), 
+      description: t('toast.startingVideoCall') 
+    });
   };
 
   const handleExportReport = () => {
-    toast({ title: 'Export Report', description: 'Preparing family health report...' });
+    toast({ 
+      title: t('toast.exportReport'), 
+      description: t('toast.preparingFamilyHealthReport') 
+    });
   };
 
   const handleContactProvider = () => {
-    toast({ title: 'Contact Provider', description: 'Contacting healthcare provider...' });
+    toast({ 
+      title: t('toast.contactProvider'), 
+      description: t('toast.contactingHealthcareProvider') 
+    });
   };
 
   const handleAddEvent = () => {
-    toast({ title: 'Add Event', description: 'Adding new care event...' });
+    toast({ 
+      title: t('toast.addEvent'), 
+      description: t('toast.addingNewCareEvent') 
+    });
   };
 
   const handleScheduleReminder = () => {
-    toast({ title: 'Schedule Reminder', description: 'Setting up reminder...' });
+    toast({ 
+      title: t('toast.scheduleReminder'), 
+      description: t('toast.settingUpReminder') 
+    });
   };
 
   const handleImportContacts = () => {
-    toast({ title: 'Import Contacts', description: 'Importing contacts...' });
+    toast({ 
+      title: t('toast.importContacts'), 
+      description: t('toast.importingContacts') 
+    });
   };
 
   const handleWatchDemo = () => {
-    toast({ title: 'Demo', description: 'Starting demo video...' });
+    toast({ 
+      title: t('toast.demo'), 
+      description: t('toast.startingDemoVideo') 
+    });
   };
 
   return (

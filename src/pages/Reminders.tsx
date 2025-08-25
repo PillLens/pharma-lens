@@ -166,8 +166,8 @@ const Reminders: React.FC = () => {
 
   const handleSummaryCardTap = (type: 'active' | 'medications' | 'today') => {
     toast({
-      title: 'Filter',
-      description: `Filtering by ${type}`
+      title: t('toast.filter'),
+      description: t('toast.filteringBy', { type })
     });
   };
 
@@ -265,14 +265,14 @@ const Reminders: React.FC = () => {
                 userTimezone={effectiveTimezone}
                 onMarkTaken={(entryId) => {
                   toast({
-                    title: 'Dose Marked as Taken',
-                    description: 'Great job staying on track! 🎉'
+                    title: t('toast.doseTaken'),
+                    description: t('toast.greatJobStayingOnTrack')
                   });
                 }}
                 onSnooze={(entryId) => {
                   toast({
-                    title: 'Reminder Snoozed',
-                    description: "We'll remind you again in 15 minutes"
+                    title: t('toast.reminderSnoozed'),
+                    description: t('toast.remindAgainIn15')
                   });
                 }}
               />
@@ -312,8 +312,11 @@ const Reminders: React.FC = () => {
                     onToggleStatus={() => handleToggleReminder(reminder.id)}
                     onMarkTaken={(time) => {
                       toast({
-                        title: 'Dose Marked as Taken',
-                        description: `${reminder.medication?.medication_name} at ${time} marked as taken`
+                        title: t('toast.doseTaken'),
+                        description: t('toast.medicationMarkedTaken', { 
+                          medication: reminder.medication?.medication_name, 
+                          time 
+                        })
                       });
                     }}
                   />

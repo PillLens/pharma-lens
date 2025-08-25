@@ -10,12 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
+import { TranslatedText } from '@/components/TranslatedText';
+import { useTranslation } from '@/hooks/useTranslation';
 import { notificationService, MedicationReminder, NotificationSettings } from '@/services/notificationService';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 
 export const MedicationReminders: React.FC = () => {
   const { medications } = useMedicationHistory();
+  const { t } = useTranslation();
   const [reminders, setReminders] = useState<MedicationReminder[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -51,7 +54,10 @@ export const MedicationReminders: React.FC = () => {
   const initializeNotifications = async () => {
     const initialized = await notificationService.initialize();
     if (!initialized) {
-      toast.warning('Notifications not available on this device');
+      toast({
+        title: t('common.error'),
+        description: t('toast.notificationsNotAvailable')
+      });
     }
   };
 
@@ -83,7 +89,10 @@ export const MedicationReminders: React.FC = () => {
 
   const handleCreateReminder = async () => {
     if (!selectedMedicationId || !reminderTime || selectedDays.length === 0) {
-      toast.error('Please fill in all required fields');
+      toast({
+        title: t('common.error'),
+        description: t('common.fillRequiredFields')
+      });
       return;
     }
 
@@ -128,7 +137,8 @@ export const MedicationReminders: React.FC = () => {
   };
 
   const handleDeleteReminder = async (reminderId: string) => {
-    if (confirm('Are you sure you want to delete this reminder?')) {
+    const confirmed = window.confirm(t('common.areYouSure'));
+    if (confirmed) {
       await notificationService.deleteReminder(reminderId);
       await loadReminders();
     }
@@ -143,7 +153,7 @@ export const MedicationReminders: React.FC = () => {
   };
 
   const formatDays = (days: number[]) => {
-    if (days.length === 7) return 'Every day';
+    if (days.length === 7) return t('medications.frequency.onceDaily');
     if (days.length === 5 && days.every(d => d >= 1 && d <= 5)) return 'Weekdays';
     if (days.length === 2 && days.includes(6) && days.includes(7)) return 'Weekends';
     
@@ -172,19 +182,23 @@ export const MedicationReminders: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Bell className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold">Medication Reminders</h2>
+          <h2 className="text-2xl font-bold">
+            <TranslatedText translationKey="reminders.title" fallback="Medication Reminders" />
+          </h2>
         </div>
         
         <Dialog open={createReminderDialog} onOpenChange={setCreateReminderDialog}>
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
-              Add Reminder
+              <TranslatedText translationKey="reminders.actions.addReminder" fallback="Add Reminder" />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Create Medication Reminder</DialogTitle>
+              <DialogTitle>
+                <TranslatedText translationKey="reminders.form.title" fallback="Create Medication Reminder" />
+              </DialogTitle>
             </DialogHeader>
             <ReminderForm
               medications={medications}
@@ -217,7 +231,9 @@ export const MedicationReminders: React.FC = () => {
       }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Reminder</DialogTitle>
+            <DialogTitle>
+              <TranslatedText translationKey="reminders.form.editTitle" fallback="Edit Reminder" />
+            </DialogTitle>
           </DialogHeader>
           {editingReminder && (
             <div className="mb-4 p-3 bg-muted rounded-lg">
@@ -260,13 +276,18 @@ export const MedicationReminders: React.FC = () => {
           <Card>
             <CardContent className="p-8 text-center">
               <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Reminders Set</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                <TranslatedText translationKey="reminders.empty.title" fallback="No Reminders Set" />
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Set up medication reminders to help you stay on track with your medication schedule.
+                <TranslatedText 
+                  translationKey="reminders.empty.description" 
+                  fallback="Set up medication reminders to help you stay on track with your medication schedule." 
+                />
               </p>
               <Button onClick={() => setCreateReminderDialog(true)} className="gap-2">
                 <Plus className="w-4 h-4" />
-                Add Your First Reminder
+                <TranslatedText translationKey="reminders.empty.createButton" fallback="Add Your First Reminder" />
               </Button>
             </CardContent>
           </Card>
@@ -279,7 +300,10 @@ export const MedicationReminders: React.FC = () => {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-semibold text-lg">{reminder.medicationName}</h3>
                       <Badge variant={reminder.isActive ? 'default' : 'secondary'}>
-                        {reminder.isActive ? 'Active' : 'Inactive'}
+                        <TranslatedText 
+                          translationKey={reminder.isActive ? 'reminders.status.active' : 'reminders.status.inactive'} 
+                          fallback={reminder.isActive ? 'Active' : 'Inactive'} 
+                        />
                       </Badge>
                     </div>
                     
@@ -360,14 +384,19 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
   onCancel,
   daysOfWeek,
   isEditing
-}) => (
+}) => {
+  const { t } = useTranslation();
+  
+  return (
   <div className="space-y-4">
     {!isEditing && (
       <div>
-        <Label htmlFor="medication">Medication</Label>
+        <Label htmlFor="medication">
+          <TranslatedText translationKey="reminders.form.medication" fallback="Medication" />
+        </Label>
         <Select value={selectedMedicationId} onValueChange={setSelectedMedicationId}>
           <SelectTrigger>
-            <SelectValue placeholder="Select a medication" />
+            <SelectValue placeholder={t('reminders.form.medicationPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {medications.filter(med => med.is_active).map((medication) => (
@@ -381,7 +410,9 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
     )}
     
     <div>
-      <Label htmlFor="time">Reminder Time</Label>
+      <Label htmlFor="time">
+        <TranslatedText translationKey="reminders.form.times" fallback="Reminder Time" />
+      </Label>
       <Input
         id="time"
         type="time"
@@ -391,7 +422,9 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
     </div>
     
     <div>
-      <Label>Days of Week</Label>
+      <Label>
+        <TranslatedText translationKey="common.daysOfWeek" fallback="Days of Week" />
+      </Label>
       <div className="grid grid-cols-7 gap-2 mt-2">
         {daysOfWeek.map((day) => (
           <div key={day.value} className="text-center">
@@ -409,10 +442,14 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
     </div>
     
     <div className="space-y-3">
-      <Label>Notification Settings</Label>
+      <Label>
+        <TranslatedText translationKey="settings.notifications.title" fallback="Notification Settings" />
+      </Label>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="sound">Sound</Label>
+          <Label htmlFor="sound">
+            <TranslatedText translationKey="common.sound" fallback="Sound" />
+          </Label>
           <Switch
             id="sound"
             checked={notificationSettings.sound}
@@ -422,7 +459,9 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label htmlFor="vibration">Vibration</Label>
+          <Label htmlFor="vibration">
+            <TranslatedText translationKey="common.vibration" fallback="Vibration" />
+          </Label>
           <Switch
             id="vibration"
             checked={notificationSettings.vibration}
@@ -432,7 +471,9 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
           />
         </div>
         <div className="flex items-center justify-between">
-          <Label htmlFor="led">LED Light</Label>
+          <Label htmlFor="led">
+            <TranslatedText translationKey="common.ledLight" fallback="LED Light" />
+          </Label>
           <Switch
             id="led"
             checked={notificationSettings.led}
@@ -446,11 +487,15 @@ const ReminderForm: React.FC<ReminderFormProps> = ({
     
     <div className="flex justify-end gap-2">
       <Button variant="outline" onClick={onCancel}>
-        Cancel
+        <TranslatedText translationKey="common.cancel" fallback="Cancel" />
       </Button>
       <Button onClick={onSubmit}>
-        {isEditing ? 'Update' : 'Create'} Reminder
+        <TranslatedText 
+          translationKey={isEditing ? "common.update" : "common.add"} 
+          fallback={isEditing ? 'Update' : 'Create'} 
+        /> <TranslatedText translationKey="reminders.title" fallback="Reminder" />
       </Button>
     </div>
   </div>
-);
+  );
+};
