@@ -6,6 +6,7 @@ export interface Environment {
   apiEndpoint: string;
   enableLogging: boolean;
   enableAnalytics: boolean;
+  oneSignalAppId: string;
 }
 
 class EnvironmentService {
@@ -28,7 +29,8 @@ class EnvironmentService {
       appVersion: '1.0.0', // Will be replaced by build process
       apiEndpoint: 'https://bquxkkaipevuakmqqilk.supabase.co',
       enableLogging: !isProduction,
-      enableAnalytics: true
+      enableAnalytics: true,
+      oneSignalAppId: 'YOUR_ONESIGNAL_APP_ID' // Will be replaced by user
     };
   }
 

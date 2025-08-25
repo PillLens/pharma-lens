@@ -229,7 +229,10 @@ export type Database = {
           created_at: string | null
           id: string
           is_active: boolean | null
+          language: string | null
+          onesignal_player_id: string | null
           platform: string
+          timezone: string | null
           token: string
           updated_at: string | null
           user_id: string | null
@@ -239,7 +242,10 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          language?: string | null
+          onesignal_player_id?: string | null
           platform: string
+          timezone?: string | null
           token: string
           updated_at?: string | null
           user_id?: string | null
@@ -249,7 +255,10 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          language?: string | null
+          onesignal_player_id?: string | null
           platform?: string
+          timezone?: string | null
           token?: string
           updated_at?: string | null
           user_id?: string | null
@@ -935,6 +944,72 @@ export type Database = {
           },
         ]
       }
+      missed_dose_tracking: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          is_processed: boolean | null
+          medication_id: string
+          scheduled_time: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          is_processed?: boolean | null
+          medication_id: string
+          scheduled_time: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          is_processed?: boolean | null
+          medication_id?: string
+          scheduled_time?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_delivery_logs: {
+        Row: {
+          created_at: string | null
+          delivery_method: string
+          error_message: string | null
+          id: string
+          notification_data: Json | null
+          notification_type: string
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_method: string
+          error_message?: string | null
+          id?: string
+          notification_data?: Json | null
+          notification_type: string
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delivery_method?: string
+          error_message?: string | null
+          id?: string
+          notification_data?: Json | null
+          notification_type?: string
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           created_at: string
@@ -1075,6 +1150,39 @@ export type Database = {
           id?: string
           name?: string
           verified?: boolean | null
+        }
+        Relationships: []
+      }
+      poke_rate_limits: {
+        Row: {
+          created_at: string | null
+          family_group_id: string
+          id: string
+          poke_count: number | null
+          recipient_id: string
+          sender_id: string
+          updated_at: string | null
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          family_group_id: string
+          id?: string
+          poke_count?: number | null
+          recipient_id: string
+          sender_id: string
+          updated_at?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          family_group_id?: string
+          id?: string
+          poke_count?: number | null
+          recipient_id?: string
+          sender_id?: string
+          updated_at?: string | null
+          window_start?: string | null
         }
         Relationships: []
       }

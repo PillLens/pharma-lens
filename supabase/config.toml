@@ -11,3 +11,12 @@ verify_jwt = true
 
 [functions.secure-image-upload]
 verify_jwt = true
+
+[functions.send-caregiver-poke]
+verify_jwt = false
+
+[functions.missed-dose-digest]
+verify_jwt = false
+
+[functions.family-group-events]
+verify_jwt = false
