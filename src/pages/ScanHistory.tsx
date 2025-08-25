@@ -70,7 +70,8 @@ const TimelineScanCard = ({
   onBookmark, 
   onDelete, 
   onExport,
-  isLast = false 
+  isLast = false,
+  deletingSessionId 
 }: {
   session: ScanSession;
   isBookmarked: boolean;
@@ -79,6 +80,7 @@ const TimelineScanCard = ({
   onDelete: (id: string) => void;
   onExport: (session: ScanSession) => void;
   isLast?: boolean;
+  deletingSessionId?: string | null;
 }) => {
   const medication = session.products || session.extractions?.extracted_json;
   const qualityScore = session.extractions?.quality_score || 0;
@@ -303,8 +305,13 @@ const TimelineScanCard = ({
                     onDelete(session.id);
                   }}
                   className="w-8 h-8 p-0 text-red-500 hover:text-red-600"
+                  disabled={deletingSessionId === session.id}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  {deletingSessionId === session.id ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -365,6 +372,8 @@ export const ScanHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [bookmarkedSessions, setBookmarkedSessions] = useState<Set<string>>(new Set());
+  const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -442,19 +451,31 @@ export const ScanHistory = () => {
     setBookmarkedSessions(newBookmarked);
   };
 
-  const handleDelete = async (sessionId: string) => {
+  const handleDeleteConfirm = (sessionId: string) => {
+    setSessionToDelete(sessionId);
+  };
+
+  const handleDelete = async () => {
+    if (!sessionToDelete || !user) return;
+    
     try {
+      setDeletingSessionId(sessionToDelete);
+      
       const { error } = await supabase
         .from('sessions')
         .delete()
-        .eq('id', sessionId)
-        .eq('user_id', user?.id);
+        .eq('id', sessionToDelete)
+        .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database deletion error:', error);
+        throw new Error('Failed to delete from database');
+      }
 
-      setSessions(sessions.filter(s => s.id !== sessionId));
+      // Only update UI state after successful database deletion
+      setSessions(prevSessions => prevSessions.filter(s => s.id !== sessionToDelete));
       const newBookmarked = new Set(bookmarkedSessions);
-      newBookmarked.delete(sessionId);
+      newBookmarked.delete(sessionToDelete);
       setBookmarkedSessions(newBookmarked);
       
       toast({
@@ -472,7 +493,14 @@ export const ScanHistory = () => {
         description: "Could not delete scan. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setDeletingSessionId(null);
+      setSessionToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setSessionToDelete(null);
   };
 
   const exportSession = (session: ScanSession) => {
@@ -672,9 +700,10 @@ export const ScanHistory = () => {
                           isBookmarked={bookmarkedSessions.has(session.id)}
                           onView={handleViewSession}
                           onBookmark={handleBookmark}
-                          onDelete={handleDelete}
+                          onDelete={handleDeleteConfirm}
                           onExport={exportSession}
                           isLast={dateIndex === sortedDates.length - 1 && sessionIndex === array.length - 1}
+                          deletingSessionId={deletingSessionId}
                         />
                       ))}
                     </div>
@@ -812,6 +841,50 @@ export const ScanHistory = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!sessionToDelete} onOpenChange={handleCancelDelete}>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="w-5 h-5" />
+              Delete Scan?
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to permanently delete this scan? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex gap-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={handleCancelDelete}
+              disabled={!!deletingSessionId}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={!!deletingSessionId}
+              className="flex-1"
+            >
+              {deletingSessionId ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </>
+              )}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </ProfessionalMobileLayout>
