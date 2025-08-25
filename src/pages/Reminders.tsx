@@ -16,7 +16,8 @@ import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayo
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { getCurrentTimeInTimezone, parseTimeInTimezone, getUserTimezone, isDoseTime } from '@/utils/timezoneUtils';
+import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 
 const Reminders: React.FC = () => {
@@ -185,8 +186,7 @@ const Reminders: React.FC = () => {
     rate: day.adherence
   }));
 
-  // Get user's actual timezone
-  const effectiveTimezone = getUserTimezone(userTimezone);
+  const { timezone } = useUserTimezone();
 
   // Create timeline entries from real reminder data with timezone-aware status
   const timelineEntries = reminders
@@ -196,7 +196,7 @@ const Reminders: React.FC = () => {
       time: r.reminder_time,
       medication: r.medication?.medication_name || 'Unknown',
       dosage: r.medication?.dosage || '',
-      status: getCurrentTimeStatus(r.reminder_time, effectiveTimezone),
+      status: getCurrentTimeStatus(r.reminder_time, timezone),
       color: 'primary' as const
     }))
     .sort((a, b) => a.time.localeCompare(b.time));
@@ -228,7 +228,7 @@ const Reminders: React.FC = () => {
     <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
       {/* Timezone Display */}
       <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20">
-        Timezone: {effectiveTimezone} | Current time: {getCurrentTimeInTimezone(effectiveTimezone).toLocaleTimeString()}
+        Timezone: {timezone} | Current time: {getCurrentTimeInTimezone(timezone).toLocaleTimeString()}
       </div>
 
       {/* Main Content */}
@@ -260,7 +260,7 @@ const Reminders: React.FC = () => {
             <div className="px-4">
               <InteractiveTimelineCard
                 entries={timelineEntries}
-                userTimezone={effectiveTimezone}
+                userTimezone={timezone}
                 onMarkTaken={(entryId) => {
                   toast({
                     title: t('toast.doseTaken'),

@@ -11,7 +11,8 @@ import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
+import { getNextDoseTime } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
 
 interface EnhancedMedicationCardProps {
   medication: UserMedication;
@@ -34,32 +35,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 }) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { timezone } = useUserTimezone();
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
   const [manuallyMarkedTaken, setManuallyMarkedTaken] = useState(false);
-  const [userProfile, setUserProfile] = useState<{ timezone?: string | null }>({});
-
-  // Get user's timezone and profile info
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('timezone')
-          .eq('id', user.id)
-          .single();
-        
-        if (error) throw error;
-        setUserProfile(data || {});
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
-    };
-    
-    fetchUserProfile();
-  }, [user]);
 
   // Check if medication was taken recently
   useEffect(() => {
@@ -183,7 +162,6 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const effectiveness = generateStableValue(medication.id + 'effectiveness', 80, 95);
   
   // Calculate if medication is currently due using proper timezone
-  const timezone = getUserTimezone(userProfile.timezone);
   const doseStatus = getNextDoseTime(medication.frequency, timezone, recentlyTaken);
   const isDueNow = doseStatus.isDue;
   const nextDoseStatus = doseStatus.nextTime;

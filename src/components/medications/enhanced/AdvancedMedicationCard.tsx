@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { format } from 'date-fns';
-import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
+import { getNextDoseTime } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
 
 interface AdvancedMedicationCardProps {
   medication: UserMedication;
@@ -25,6 +26,8 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
   onMarkTaken,
   className
 }) => {
+  const { timezone } = useUserTimezone();
+  
   // Generate stable data based on medication ID to prevent constant changes
   const generateStableValue = (seed: string, min: number, max: number) => {
     let hash = 0;
@@ -41,7 +44,6 @@ const AdvancedMedicationCard: React.FC<AdvancedMedicationCardProps> = ({
   const inventoryDays = generateStableValue(medication.id + 'inventory', 5, 30);
   
   // Use timezone-aware dose status calculation
-  const timezone = getUserTimezone(); // Could be enhanced to get from user profile
   const doseStatus = getNextDoseTime(medication.frequency, timezone);
   const nextDoseStatus = doseStatus.nextTime;
   const isDueNow = doseStatus.isDue;

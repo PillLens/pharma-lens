@@ -4,7 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { getCurrentTimeInTimezone, getUserTimezone } from '@/utils/timezoneUtils';
+import { getCurrentTimeInTimezone } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface TimelineEntry {
@@ -30,7 +31,8 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
   onSnooze
 }) => {
   const { t } = useTranslation();
-  const effectiveTimezone = getUserTimezone(userTimezone);
+  const { timezone: currentUserTimezone } = useUserTimezone();
+  const effectiveTimezone = userTimezone || currentUserTimezone;
   const [currentTime, setCurrentTime] = useState(() => getCurrentTimeInTimezone(effectiveTimezone));
 
   useEffect(() => {

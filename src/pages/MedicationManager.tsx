@@ -21,7 +21,8 @@ import MedicationExplanationCard from '@/components/medications/MedicationExplan
 import { UserMedication } from '@/hooks/useMedicationHistory';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { getNextDoseTime, getUserTimezone } from '@/utils/timezoneUtils';
+import { getNextDoseTime } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useReminders } from '@/hooks/useReminders';
 
 const MedicationManager: React.FC = () => {
@@ -30,6 +31,7 @@ const MedicationManager: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { checkFeatureAccess } = useSubscription();
+  const { timezone } = useUserTimezone();
   const { 
     medications, 
     loading, 
@@ -48,29 +50,6 @@ const MedicationManager: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all' | 'insights'>('today');
   const [filter, setFilter] = useState<'all' | 'active' | 'due' | 'expired'>('all');
-  const [userProfile, setUserProfile] = useState<{ timezone?: string | null }>({});
-
-  // Get user profile for timezone
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('timezone')
-          .eq('id', user.id)
-          .single();
-        
-        if (error) throw error;
-        setUserProfile(data || {});
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
-    };
-    
-    fetchUserProfile();
-  }, [user]);
 
   // Enhanced medication management logic
   const activeMedications = medications.filter(m => m.is_active);
@@ -78,8 +57,6 @@ const MedicationManager: React.FC = () => {
   
   // Get medications that are actually due right now (not overdue or upcoming)
   const getDueMedications = () => {
-    const timezone = getUserTimezone(userProfile.timezone);
-    
     return activeMedications.filter(med => {
       const doseStatus = getNextDoseTime(med.frequency, timezone);
       return doseStatus.isDue; // Only medications that are actually due now
@@ -88,8 +65,6 @@ const MedicationManager: React.FC = () => {
 
   // Get overdue medications  
   const getOverdueMedications = () => {
-    const timezone = getUserTimezone(userProfile.timezone);
-    
     return activeMedications.filter(med => {
       const doseStatus = getNextDoseTime(med.frequency, timezone);
       return doseStatus.isOverdue; // Only medications that are overdue
@@ -564,7 +539,6 @@ const MedicationManager: React.FC = () => {
                     <h3 className="text-lg font-semibold text-foreground">Upcoming Today</h3>
                     <div className="space-y-3">
                       {activeMedications.filter(m => !medicationsNeedingAttention.includes(m)).slice(0, 3).map((medication) => {
-                        const timezone = getUserTimezone(userProfile.timezone);
                         const doseStatus = getNextDoseTime(medication.frequency, timezone);
                         
                         return (
