@@ -153,20 +153,21 @@
        "description": "Müalicənizi izləmək üçün ilk dərmanınızı əlavə etməklə başlayın.",
        "cta": "Dərman Əlavə Et"
      },
-     "details": {
-       "title": "Dərman Detalları",
-       "dosageSchedule": "Dozaj və Cədvəl",
-       "refillNotes": "Yenidən Doldurma və Qeydlər",
+      "details": {
+        "title": "Dərman Detalları",
+        "dosageSchedule": "Dozaj və Cədvəl",
+        "refillNotes": "Yenidən Doldurma və Qeydlər"
+      }
+    },
+    "reminders": {
+      "title": "Xatırlatmalar",
+      "loading": "Xatırlatmalar yüklənir...",
+      "empty": {
+        "title": "Hələ Xatırlatma Yoxdur",
+        "subtitle": "İlk dərman xatırlatmanızı yaradın",
+        "description": "Dərman cədvəlinizə uyğun qalın",
+        "createButton": "Xatırlatma Yaradın"
       },
-      "reminders": {
-        "title": "Xatırlatmalar",
-        "loading": "Xatırlatmalar yüklənir...",
-        "empty": {
-          "title": "Hələ Xatırlatma Yoxdur",
-          "subtitle": "İlk dərman xatırlatmanızı yaradın",
-          "description": "Dərman cədvəlinizə uyğun qalın",
-          "createButton": "Xatırlatma Yaradın"
-        },
       "summary": {
         "active": "Aktiv Xatırlatmalar",
         "medications": "Dərmanlar",
