@@ -10,8 +10,8 @@ const QuickActionCards: React.FC = () => {
   const quickActions = [
     {
       icon: Pill,
-      title: 'My Medications',
-      description: 'View and manage your medications',
+      titleKey: 'dashboard.mymedicationsTitle',
+      descriptionKey: 'dashboard.mymedicationsDescription',
       route: '/medications',
       gradient: 'from-success/10 to-success/5',
       iconBg: 'bg-success/20',
@@ -20,8 +20,8 @@ const QuickActionCards: React.FC = () => {
     },
     {
       icon: Bell,
-      title: 'Reminders Today',
-      description: 'Next reminder in 2 hours',
+      titleKey: 'dashboard.reminderstodayTitle',
+      descriptionKey: 'dashboard.reminderstodayDescription',
       route: '/reminders',
       gradient: 'from-warning/10 to-warning/5',
       iconBg: 'bg-warning/20',
@@ -30,8 +30,8 @@ const QuickActionCards: React.FC = () => {
     },
     {
       icon: Users,
-      title: 'Family Group',
-      description: '4 members connected',
+      titleKey: 'dashboard.familygroupTitle',
+      descriptionKey: 'dashboard.familygroupDescription',
       route: '/family',
       gradient: 'from-info/10 to-info/5',
       iconBg: 'bg-info/20',
@@ -40,8 +40,8 @@ const QuickActionCards: React.FC = () => {
     },
     {
       icon: Shield,
-      title: 'Health Dashboard',
-      description: 'View compliance & insights',
+      titleKey: 'dashboard.healthdashboardTitle',
+      descriptionKey: 'dashboard.healthdashboardDescription',
       route: '/security',
       gradient: 'from-primary/10 to-primary/5',
       iconBg: 'bg-primary/20',
@@ -76,7 +76,7 @@ const QuickActionCards: React.FC = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <MobileCardTitle className="text-base group-hover:text-primary transition-colors">
-                        <TranslatedText translationKey={`dashboard.${action.title.toLowerCase().replace(/\s+/g, '')}`} fallback={action.title} />
+                        <TranslatedText translationKey={action.titleKey} />
                       </MobileCardTitle>
                       {action.count && (
                         <span className="text-xs bg-foreground/10 text-foreground px-2 py-1 rounded-full font-medium">
@@ -90,10 +90,7 @@ const QuickActionCards: React.FC = () => {
                       )}
                     </div>
                     <MobileCardDescription className="text-sm mt-1">
-                      <TranslatedText 
-                        translationKey={`dashboard.${action.title.toLowerCase().replace(/\s+/g, '')}Description`} 
-                        fallback={action.description} 
-                      />
+                      <TranslatedText translationKey={action.descriptionKey} />
                     </MobileCardDescription>
                   </div>
                 </div>

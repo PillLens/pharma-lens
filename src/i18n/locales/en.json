@@ -90,7 +90,17 @@
     "quickStats": "Quick Stats",
     "medications": "Medications",
     "reminders": "Reminders",
-    "todaysOverview": "Today's Overview"
+    "todaysOverview": "Today's Overview",
+    "quickActions": "Quick Actions",
+    "addMedication": "Add New Medication",
+    "mymedicationsDescription": "View and manage your medications",
+    "reminderstodayDescription": "Next reminder in 2 hours",
+    "familygroupDescription": "4 members connected",
+    "healthdashboardDescription": "View compliance & insights",
+    "mymedicationsTitle": "My Medications",
+    "reminderstodayTitle": "Reminders Today",
+    "familygroupTitle": "Family Group",
+    "healthdashboardTitle": "Health Dashboard"
   },
   "descriptions": {
     "scanMedications": "Scan medications",
