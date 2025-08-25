@@ -97,9 +97,19 @@ class EntitlementsService {
         is_trial_eligible: profile.is_trial_eligible || false
       };
 
-      // Determine if user is in trial
-      if (profile.trial_expires_at && new Date(profile.trial_expires_at) > new Date()) {
-        userSubscription.status = 'trialing';
+      // Determine if user is in trial - only based on database dates
+      if (profile.trial_expires_at && profile.trial_started_at) {
+        const now = new Date();
+        const trialEnd = new Date(profile.trial_expires_at);
+        const trialStart = new Date(profile.trial_started_at);
+        
+        // Validate trial dates
+        if (trialStart <= now && trialEnd > now) {
+          userSubscription.status = 'trialing';
+          console.log('User is in active trial period:', userId);
+        } else if (trialEnd <= now) {
+          console.log('User trial has expired:', userId);
+        }
       }
 
       // Cache the result
@@ -121,18 +131,44 @@ class EntitlementsService {
   }
 
   async getRemainingTrialDays(userId: string): Promise<number> {
-    const subscription = await this.getUserSubscription(userId);
-    
-    if (!subscription.trial_expires_at) {
+    try {
+      console.log('Calculating trial days for user:', userId);
+      
+      // Get trial dates directly from database to ensure accuracy
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('trial_expires_at, trial_started_at, created_at')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching trial data:', error);
+        return 0;
+      }
+
+      if (!profile.trial_expires_at) {
+        console.log('No trial expiration date found for user');
+        return 0;
+      }
+
+      const trialEnd = new Date(profile.trial_expires_at);
+      const now = new Date();
+      
+      // Validate trial end date is in the future
+      if (trialEnd <= now) {
+        console.log('Trial has expired for user:', userId);
+        return 0;
+      }
+
+      const diffTime = trialEnd.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      console.log('Trial days remaining:', diffDays);
+      return Math.max(0, diffDays);
+    } catch (error) {
+      console.error('Error calculating trial days:', error);
       return 0;
     }
-
-    const trialEnd = new Date(subscription.trial_expires_at);
-    const now = new Date();
-    const diffTime = trialEnd.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return Math.max(0, diffDays);
   }
 
   async isInTrial(userId: string): Promise<boolean> {
@@ -141,8 +177,31 @@ class EntitlementsService {
   }
 
   async canStartTrial(userId: string): Promise<boolean> {
-    const subscription = await this.getUserSubscription(userId);
-    return subscription.is_trial_eligible && subscription.plan === 'free' && subscription.status !== 'trialing';
+    try {
+      console.log('Checking trial eligibility for user:', userId);
+      
+      // Get current profile data directly from database
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('is_trial_eligible, plan, trial_expires_at, trial_started_at')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error checking trial eligibility:', error);
+        return false;
+      }
+
+      const canStart = profile.is_trial_eligible && 
+                      profile.plan === 'free' && 
+                      (!profile.trial_started_at || !profile.trial_expires_at);
+      
+      console.log('Trial eligibility result:', canStart);
+      return canStart;
+    } catch (error) {
+      console.error('Error in canStartTrial:', error);
+      return false;
+    }
   }
 
   clearCache(userId?: string): void {
@@ -168,15 +227,14 @@ class EntitlementsService {
   }
 
   private getDefaultSubscription(): UserSubscription {
-    // All new users get 14-day trial starting immediately
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 14);
+    // Return safe defaults without artificial trial dates
+    // All trial logic should use database-stored registration dates only
+    console.warn('Using default subscription - this should only happen for unauthenticated users');
     
     return {
       plan: 'free',
-      status: 'trialing',
-      trial_expires_at: trialEnd.toISOString(),
-      is_trial_eligible: true
+      status: 'active', // Default to active, not trialing
+      is_trial_eligible: false // Conservative default
     };
   }
 
