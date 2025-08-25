@@ -75,183 +75,186 @@ export default function Auth() {
 
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-gradient-medical relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-medical relative">
         {/* Background Elements */}
-        <div className="absolute inset-0 medical-gradient opacity-30" />
-        <div className="absolute top-0 right-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-medical-pulse" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-medical-pulse" style={{ animationDelay: '1s' }} />
+        <div className="fixed inset-0 medical-gradient opacity-30" />
+        <div className="fixed top-0 right-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-medical-pulse" />
+        <div className="fixed bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-medical-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* Header */}
-        <div className="relative z-10 pt-safe-area-top px-6">
-          <div className="text-center py-12">
-            <div className="w-20 h-20 mx-auto mb-6 medical-surface rounded-3xl flex items-center justify-center shadow-medical">
-              <Stethoscope className="w-10 h-10 text-primary" />
+        {/* Scrollable Content */}
+        <div className="relative z-10 min-h-screen overflow-y-auto">
+          {/* Header */}
+          <div className="pt-safe-area-top px-6">
+            <div className="text-center py-12">
+              <div className="w-20 h-20 mx-auto mb-6 medical-surface rounded-3xl flex items-center justify-center shadow-medical">
+                <Stethoscope className="w-10 h-10 text-primary" />
+              </div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                <TranslatedText translationKey="app.title" />
+              </h1>
+              <p className="text-muted-foreground">
+                <TranslatedText translationKey="authPage.subtitle" />
+              </p>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              <TranslatedText translationKey="app.title" />
-            </h1>
-            <p className="text-muted-foreground">
-              <TranslatedText translationKey="authPage.subtitle" />
-            </p>
           </div>
-        </div>
 
-        {/* Main Content */}
-        <div className="relative z-10 px-6 pb-safe-area-bottom">
-          <MobileCard variant="medical" className="backdrop-blur-md border-border/20">
-            <div className="p-6">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 medical-surface p-1 rounded-2xl">
-                  <TabsTrigger value="signin" className="rounded-xl">
-                    <TranslatedText translationKey="auth.signIn" />
-                  </TabsTrigger>
-                  <TabsTrigger value="signup" className="rounded-xl">
-                    <TranslatedText translationKey="auth.signUp" />
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="signin" className="mt-6">
-                  <form onSubmit={handleSignIn} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium">
-                        <TranslatedText translationKey="authPage.emailAddress" />
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder={t('authPage.emailPlaceholder')}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 text-base medical-input"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium">
-                        <TranslatedText translationKey="auth.password" />
-                      </Label>
-                      <div className="relative">
+          {/* Main Content */}
+          <div className="px-6 pb-safe-area-bottom">
+            <MobileCard variant="medical" className="backdrop-blur-md border-border/20">
+              <div className="p-6">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 medical-surface p-1 rounded-2xl">
+                    <TabsTrigger value="signin" className="rounded-xl">
+                      <TranslatedText translationKey="auth.signIn" />
+                    </TabsTrigger>
+                    <TabsTrigger value="signup" className="rounded-xl">
+                      <TranslatedText translationKey="auth.signUp" />
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="signin" className="mt-6">
+                    <form onSubmit={handleSignIn} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-medium">
+                          <TranslatedText translationKey="authPage.emailAddress" />
+                        </Label>
                         <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder={t('authPage.passwordPlaceholder')}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 text-base pr-12 medical-input"
+                          id="email"
+                          type="email"
+                          placeholder={t('authPage.emailPlaceholder')}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="h-12 text-base medical-input"
                           required
                         />
-                        <MobileButton
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </MobileButton>
                       </div>
-                    </div>
-                    
-                    {error && (
-                      <Alert variant="destructive" className="rounded-xl">
-                        <AlertDescription className="text-sm">{error}</AlertDescription>
-                      </Alert>
-                    )}
-                    
-                    <MobileButton
-                      type="submit"
-                      variant="medical"
-                      size="lg"
-                      className="w-full h-12 text-base font-semibold"
-                      disabled={isLoading}
-                      loading={isLoading}
-                    >
-                      {isLoading ? <TranslatedText translationKey="authPage.signingIn" /> : <TranslatedText translationKey="authPage.signInSecurely" />}
-                    </MobileButton>
-                  </form>
-                </TabsContent>
-                
-                <TabsContent value="signup" className="mt-6">
-                  <form onSubmit={handleSignUp} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-sm font-medium">
-                        <TranslatedText translationKey="authPage.emailAddress" />
-                      </Label>
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        placeholder={t('authPage.emailPlaceholder')}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 text-base medical-input"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-sm font-medium">
-                        <TranslatedText translationKey="authPage.createPassword" />
-                      </Label>
-                      <div className="relative">
+                      <div className="space-y-2">
+                        <Label htmlFor="password" className="text-sm font-medium">
+                          <TranslatedText translationKey="auth.password" />
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t('authPage.passwordPlaceholder')}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="h-12 text-base pr-12 medical-input"
+                            required
+                          />
+                          <MobileButton
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </MobileButton>
+                        </div>
+                      </div>
+                      
+                      {error && (
+                        <Alert variant="destructive" className="rounded-xl">
+                          <AlertDescription className="text-sm">{error}</AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      <MobileButton
+                        type="submit"
+                        variant="medical"
+                        size="lg"
+                        className="w-full h-12 text-base font-semibold"
+                        disabled={isLoading}
+                        loading={isLoading}
+                      >
+                        {isLoading ? <TranslatedText translationKey="authPage.signingIn" /> : <TranslatedText translationKey="authPage.signInSecurely" />}
+                      </MobileButton>
+                    </form>
+                  </TabsContent>
+                  
+                  <TabsContent value="signup" className="mt-6">
+                    <form onSubmit={handleSignUp} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email" className="text-sm font-medium">
+                          <TranslatedText translationKey="authPage.emailAddress" />
+                        </Label>
                         <Input
-                          id="signup-password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder={t('authPage.createPasswordPlaceholder')}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 text-base pr-12 medical-input"
+                          id="signup-email"
+                          type="email"
+                          placeholder={t('authPage.emailPlaceholder')}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="h-12 text-base medical-input"
                           required
-                          minLength={6}
                         />
-                        <MobileButton
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </MobileButton>
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password" className="text-sm font-medium">
+                          <TranslatedText translationKey="authPage.createPassword" />
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="signup-password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t('authPage.createPasswordPlaceholder')}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="h-12 text-base pr-12 medical-input"
+                            required
+                            minLength={6}
+                          />
+                          <MobileButton
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </MobileButton>
+                        </div>
+                      </div>
+                      
+                      {error && (
+                        <Alert variant="destructive" className="rounded-xl">
+                          <AlertDescription className="text-sm">{error}</AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      <MobileButton
+                        type="submit"
+                        variant="medical"
+                        size="lg"
+                        className="w-full h-12 text-base font-semibold"
+                        disabled={isLoading}
+                        loading={isLoading}
+                      >
+                        {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createSecureAccount" />}
+                      </MobileButton>
+                    </form>
+                  </TabsContent>
+                </Tabs>
+                
+                {/* Security Notice */}
+                <div className="mt-8 p-4 medical-surface rounded-2xl border border-border/20">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Shield className="h-4 w-4 text-primary" />
                     </div>
-                    
-                    {error && (
-                      <Alert variant="destructive" className="rounded-xl">
-                        <AlertDescription className="text-sm">{error}</AlertDescription>
-                      </Alert>
-                    )}
-                    
-                    <MobileButton
-                      type="submit"
-                      variant="medical"
-                      size="lg"
-                      className="w-full h-12 text-base font-semibold"
-                      disabled={isLoading}
-                      loading={isLoading}
-                    >
-                      {isLoading ? <TranslatedText translationKey="authPage.creatingAccount" /> : <TranslatedText translationKey="authPage.createSecureAccount" />}
-                    </MobileButton>
-                  </form>
-                </TabsContent>
-              </Tabs>
-              
-              {/* Security Notice */}
-              <div className="mt-8 p-4 medical-surface rounded-2xl border border-border/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-foreground mb-1">
-                      <TranslatedText translationKey="authPage.medicalGradeSecurity" />
-                    </h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      <TranslatedText translationKey="authPage.securityNotice" />
-                    </p>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-foreground mb-1">
+                        <TranslatedText translationKey="authPage.medicalGradeSecurity" />
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        <TranslatedText translationKey="authPage.securityNotice" />
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </MobileCard>
+            </MobileCard>
+          </div>
         </div>
       </div>
     );
