@@ -185,13 +185,13 @@ class EntitlementsService {
     return {
       pro_individual: {
         name: 'Pro Individual',
-        monthly: { price: 5.99, stripe_price_id: 'price_pro_individual_monthly' },
-        yearly: { price: 39.99, stripe_price_id: 'price_pro_individual_yearly' }
+        monthly: { price: 5.99, stripe_product_id: 'prod_SvnkjphfFmzJCU' },
+        yearly: { price: 39.99, stripe_product_id: 'prod_Svnk7nMQJbI9y9' }
       },
       pro_family: {
         name: 'Pro Family',
-        monthly: { price: 9.99, stripe_price_id: 'price_pro_family_monthly' },
-        yearly: { price: 69.99, stripe_price_id: 'price_pro_family_yearly' }
+        monthly: { price: 9.99, stripe_product_id: 'prod_SvnlNRrwSnGq8t' },
+        yearly: { price: 69.99, stripe_product_id: 'prod_SvnlpLbYnb6cSc' }
       }
     };
   }

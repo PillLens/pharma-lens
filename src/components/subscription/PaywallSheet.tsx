@@ -162,7 +162,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      ${isYearly ? pricing.pro_individual.yearly.price : pricing.pro_individual.monthly.price}
+                      ${isYearly ? '39.99' : '5.99'}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       <TranslatedText 
@@ -234,7 +234,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">
-                      ${isYearly ? pricing.pro_family.yearly.price : pricing.pro_family.monthly.price}
+                      ${isYearly ? '69.99' : '9.99'}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       <TranslatedText 

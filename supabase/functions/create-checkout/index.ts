@@ -55,87 +55,48 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Define plan pricing configuration
-    const planConfig: { [key: string]: { name: string; monthlyAmount: number; description: string } } = {
+    // Define plan to product ID mapping  
+    const planToProductMapping: { [key: string]: { monthly: string; yearly: string } } = {
       'pro_individual': {
-        name: 'Pro Individual',
-        monthlyAmount: 999, // $9.99 per month
-        description: 'Individual plan with advanced features'
+        monthly: 'prod_SvnkjphfFmzJCU', // $5.99
+        yearly: 'prod_Svnk7nMQJbI9y9'  // $39.99
       },
       'pro_family': {
-        name: 'Pro Family',
-        monthlyAmount: 1999, // $19.99 per month
-        description: 'Family plan with shared features for up to 5 members'
+        monthly: 'prod_SvnlNRrwSnGq8t', // $9.99
+        yearly: 'prod_SvnlpLbYnb6cSc'  // $69.99
       }
     };
 
-    const config = planConfig[plan];
-    if (!config) {
+    const productMapping = planToProductMapping[plan];
+    if (!productMapping) {
       throw new Error(`Invalid plan: ${plan}`);
     }
 
-    // Calculate amount based on billing cycle
+    // Get the correct product ID based on billing cycle
     const isYearly = billing_cycle === 'yearly';
-    const amount = isYearly 
-      ? Math.round(config.monthlyAmount * 12 * 0.7) // 30% discount for yearly
-      : config.monthlyAmount;
-    const interval = isYearly ? 'year' : 'month';
+    const productId = isYearly ? productMapping.yearly : productMapping.monthly;
+    
+    logStep("Using existing product", { productId, billing_cycle, plan });
 
-    logStep("Pricing calculated", { amount, interval, isYearly });
-
-    // Create or get existing product and price for this plan
+    // Find the price for this product
     let price;
     try {
-      // First try to find existing product
-      const products = await stripe.products.list({ 
-        active: true,
-        limit: 100
-      });
-      
-      let product = products.data.find(p => p.name === config.name);
-      
-      if (!product) {
-        // Create new product if not found
-        product = await stripe.products.create({
-          name: config.name,
-          description: config.description,
-          type: 'service'
-        });
-        logStep("Created new product", { productId: product.id, name: config.name });
-      } else {
-        logStep("Found existing product", { productId: product.id, name: config.name });
-      }
-
-      // Look for existing price for this product
       const prices = await stripe.prices.list({
-        product: product.id,
+        product: productId,
         active: true,
         type: 'recurring'
       });
 
-      const existingPrice = prices.data.find(p => 
-        p.unit_amount === amount && 
-        p.recurring?.interval === interval
-      );
-
-      if (existingPrice) {
-        price = existingPrice;
-        logStep("Found existing price", { priceId: price.id, amount });
-      } else {
-        // Create new price
-        price = await stripe.prices.create({
-          product: product.id,
-          unit_amount: amount,
-          currency: 'usd',
-          recurring: {
-            interval: interval as 'month' | 'year'
-          }
-        });
-        logStep("Created new price", { priceId: price.id, amount });
+      if (prices.data.length === 0) {
+        throw new Error(`No prices found for product ${productId}`);
       }
+
+      // Use the first active price for this product
+      price = prices.data[0];
+      logStep("Found existing price", { priceId: price.id, amount: price.unit_amount });
     } catch (error) {
-      logStep("Error creating/finding product/price", { error: error.message });
-      throw new Error(`Failed to create pricing: ${error.message}`);
+      logStep("Error finding price", { error: error.message });
+      throw new Error(`Failed to find price for product: ${error.message}`);
     }
 
     // Check if customer exists
