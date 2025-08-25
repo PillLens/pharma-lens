@@ -226,12 +226,10 @@ const Reminders: React.FC = () => {
 
   return (
     <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
-      {/* Timezone Debug Info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="px-4 py-2 bg-muted/50 text-xs text-muted-foreground">
-          Timezone: {effectiveTimezone} | Current time: {getCurrentTimeInTimezone(effectiveTimezone).toLocaleTimeString()}
-        </div>
-      )}
+      {/* Timezone Display */}
+      <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20">
+        Timezone: {effectiveTimezone} | Current time: {getCurrentTimeInTimezone(effectiveTimezone).toLocaleTimeString()}
+      </div>
 
       {/* Main Content */}
       {loading || timezoneFetching ? (

@@ -46,36 +46,28 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
       title: t('reminders.summary.active'),
       value: activeReminders,
       icon: Bell,
-      color: 'from-blue-500 to-blue-600',
-      change: '+2',
-      trend: 'up' as const
+      color: 'from-blue-500 to-blue-600'
     },
     {
       id: 'medications',
       title: t('reminders.summary.medications'),
       value: medicationsCovered,
       icon: Pill,
-      color: 'from-green-500 to-green-600',
-      change: '±0',
-      trend: 'stable' as const
+      color: 'from-green-500 to-green-600'
     },
     {
       id: 'today',
       title: t('reminders.summary.todayDoses'),
       value: todaysDoses,
       icon: Calendar,
-      color: 'from-amber-500 to-amber-600',
-      change: '+1',
-      trend: 'up' as const
+      color: 'from-amber-500 to-amber-600'
     },
     {
       id: 'streak',
       title: t('reminders.summary.dayStreak'),
       value: streak,
       icon: Award,
-      color: 'from-purple-500 to-purple-600',
-      change: '+1',
-      trend: 'up' as const
+      color: 'from-purple-500 to-purple-600'
     }
   ];
 
@@ -103,10 +95,6 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
                 <div className="flex items-start justify-between mb-3">
                   <div className={`w-10 h-10 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-lg`}>
                     <IconComponent className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {getTrendIcon(stat.trend)}
-                    <span className="text-xs text-muted-foreground">{stat.change}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
