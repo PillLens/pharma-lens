@@ -238,8 +238,8 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-lg font-bold text-foreground mb-1">Today's Schedule</h3>
-                <p className="text-sm text-muted-foreground">Upcoming medication times</p>
+                <h3 className="text-lg font-bold text-foreground mb-1">{t('reminders.timeline.todaysSchedule')}</h3>
+                <p className="text-sm text-muted-foreground">{t('reminders.timeline.upcomingMedicationTimes')}</p>
               </div>
               <Clock className="w-5 h-5 text-primary" />
             </div>
@@ -279,10 +279,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
                           } 
                           className="text-xs capitalize"
                         >
-                          {item.status === 'taken' ? 'Taken' : 
-                           item.status === 'current' ? 'Now' : 
-                           item.status === 'missed' || item.status === 'overdue' ? 'Missed' :
-                           'Upcoming'}
+                          {t(`reminders.timeline.${item.status}`)}
                         </Badge>
                       </div>
                     </div>
@@ -291,7 +288,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
               ) : (
                 <div className="text-center py-4 text-muted-foreground">
                   <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No reminders scheduled for today</p>
+                  <p className="text-sm">{t('reminders.timeline.noRemindersToday')}</p>
                 </div>
               )}
             </div>

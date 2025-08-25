@@ -92,7 +92,7 @@ const MobileTabNavigation: React.FC = () => {
             >
               <LayoutDashboard className={cn("w-5 h-5 mb-1", location.pathname === '/dashboard' && "text-white")} />
               <span className={cn("text-xs font-medium", location.pathname === '/dashboard' && "text-white")}>
-                Dashboard
+                <TranslatedText translationKey="navigation.dashboard" />
               </span>
               {location.pathname === '/dashboard' && (
                 <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>

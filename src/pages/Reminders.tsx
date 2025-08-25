@@ -287,7 +287,7 @@ const Reminders: React.FC = () => {
               <div className="space-y-3">
                 <h2 className="font-medium text-foreground flex items-center gap-2 mb-4">
                   <Bell className="w-4 h-4" />
-                  Your Reminders ({reminders.length})
+                  {t('reminders.timeline.yourReminders')} ({reminders.length})
                 </h2>
                 {reminders.map(reminder => (
                   <EnhancedReminderCard

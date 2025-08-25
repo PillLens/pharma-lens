@@ -27,7 +27,7 @@
   },
   "navigation": {
     "home": "Ana Sayfa",
-    "dashboard": "Pano",
+    "dashboard": "Panel",
     "medications": "İlaçlar",
     "scanner": "Tarayıcı",
     "history": "Geçmiş",
@@ -314,6 +314,23 @@
       "pause": "Duraklat",
       "activate": "Etkinleştir",
       "addReminder": "Hatırlatıcı Ekle"
+    },
+    "timeline": {
+      "todaysSchedule": "Bugünün Programı",
+      "todaysTimeline": "Bugünün Zaman Çizelgesi",
+      "upcomingMedicationTimes": "Yaklaşan ilaç zamanları",
+      "dosesCompleted": "doz tamamlandı",
+      "progress": "İlerleme",
+      "taken": "Alındı",
+      "upcoming": "Yaklaşan",
+      "missed": "Kaçırıldı",
+      "current": "Şimdi",
+      "overdue": "Gecikmiş",
+      "markTaken": "Alındı Olarak İşaretle",
+      "snooze": "Ertele",
+      "yourReminders": "Hatırlatıcılarınız",
+      "noRemindersToday": "Bugün için hatırlatıcı programlanmamış",
+      "of": "/"
     }
   },
   "family": {

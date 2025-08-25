@@ -415,6 +415,23 @@
       "pause": "Pause",
       "activate": "Activate",
       "addReminder": "Add Reminder"
+    },
+    "timeline": {
+      "todaysSchedule": "Today's Schedule",
+      "todaysTimeline": "Today's Timeline",
+      "upcomingMedicationTimes": "Upcoming medication times",
+      "dosesCompleted": "doses completed",
+      "progress": "Progress",
+      "taken": "Taken",
+      "upcoming": "Upcoming",
+      "missed": "Missed",
+      "current": "Now",
+      "overdue": "Overdue",
+      "markTaken": "Mark Taken",
+      "snooze": "Snooze",
+      "yourReminders": "Your Reminders",
+      "noRemindersToday": "No reminders scheduled for today",
+      "of": "of"
     }
   },
   "settings": {

@@ -27,7 +27,7 @@
   },
   "navigation": {
     "home": "Главная",
-    "dashboard": "Панель управления",
+    "dashboard": "Панель",
     "medications": "Лекарства",
     "scanner": "Сканер",
     "history": "История",
@@ -314,6 +314,23 @@
       "pause": "Приостановить",
       "activate": "Активировать",
       "addReminder": "Добавить Напоминание"
+    },
+    "timeline": {
+      "todaysSchedule": "Расписание на Сегодня",  
+      "todaysTimeline": "Временная Линия на Сегодня",
+      "upcomingMedicationTimes": "Предстоящее время приема лекарств",
+      "dosesCompleted": "доз завершено",
+      "progress": "Прогресс",
+      "taken": "Принято",
+      "upcoming": "Предстоящее",
+      "missed": "Пропущено",
+      "current": "Сейчас",
+      "overdue": "Просрочено",
+      "markTaken": "Отметить как Принятое",
+      "snooze": "Отложить",
+      "yourReminders": "Ваши Напоминания",
+      "noRemindersToday": "На сегодня напоминаний не запланировано",
+      "of": "из"
     }
   },
   "family": {

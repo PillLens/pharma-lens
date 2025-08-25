@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { getCurrentTimeInTimezone, getUserTimezone } from '@/utils/timezoneUtils';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface TimelineEntry {
   id: string;
@@ -28,6 +29,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
   onMarkTaken,
   onSnooze
 }) => {
+  const { t } = useTranslation();
   const effectiveTimezone = getUserTimezone(userTimezone);
   const [currentTime, setCurrentTime] = useState(() => getCurrentTimeInTimezone(effectiveTimezone));
 
@@ -74,14 +76,14 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-bold text-foreground mb-1">Today's Timeline</h3>
+            <h3 className="text-lg font-bold text-foreground mb-1">{t('reminders.timeline.todaysTimeline')}</h3>
             <p className="text-sm text-muted-foreground">
-              {completedCount} of {entries.length} doses completed
+              {completedCount} {t('reminders.timeline.of')} {entries.length} {t('reminders.timeline.dosesCompleted')}
             </p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-primary">{Math.round(completionRate)}%</div>
-            <div className="text-xs text-muted-foreground">Progress</div>
+            <div className="text-xs text-muted-foreground">{t('reminders.timeline.progress')}</div>
           </div>
         </div>
 
@@ -111,7 +113,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
                     variant={entry.status === 'taken' ? "default" : (entry.status === 'missed' || entry.status === 'overdue') ? "destructive" : "outline"}
                     className="text-xs capitalize"
                   >
-                    {entry.status}
+                    {t(`reminders.timeline.${entry.status}`)}
                   </Badge>
                 </div>
                 <div className="text-sm text-foreground mb-1">{entry.medication}</div>
@@ -129,14 +131,14 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
                         className="text-xs px-3 h-8"
                         onClick={() => onSnooze?.(entry.id)}
                       >
-                        Snooze
+                        {t('reminders.timeline.snooze')}
                       </Button>
                       <Button
                         size="sm"
                         className="text-xs px-3 h-8"
                         onClick={() => onMarkTaken?.(entry.id)}
                       >
-                        Mark Taken
+                        {t('reminders.timeline.markTaken')}
                       </Button>
                     </>
                   )}
@@ -153,15 +155,15 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
         <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-border/20">
           <div className="text-center">
             <div className="text-lg font-bold text-success">{entries.filter(e => e.status === 'taken').length}</div>
-            <div className="text-xs text-muted-foreground">Taken</div>
+            <div className="text-xs text-muted-foreground">{t('reminders.timeline.taken')}</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-primary">{entries.filter(e => e.status === 'upcoming').length}</div>
-            <div className="text-xs text-muted-foreground">Upcoming</div>
+            <div className="text-xs text-muted-foreground">{t('reminders.timeline.upcoming')}</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-destructive">{entries.filter(e => e.status === 'missed' || e.status === 'overdue').length}</div>
-            <div className="text-xs text-muted-foreground">Missed</div>
+            <div className="text-xs text-muted-foreground">{t('reminders.timeline.missed')}</div>
           </div>
         </div>
       </CardContent>
