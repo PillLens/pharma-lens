@@ -4,41 +4,46 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { getCurrentTimeInTimezone, getUserTimezone } from '@/utils/timezoneUtils';
 
 interface TimelineEntry {
   id: string;
   time: string;
   medication: string;
   dosage: string;
-  status: 'upcoming' | 'current' | 'taken' | 'missed';
+  status: 'upcoming' | 'current' | 'taken' | 'missed' | 'overdue';
   color: string;
 }
 
 interface InteractiveTimelineCardProps {
   entries: TimelineEntry[];
+  userTimezone?: string;
   onMarkTaken?: (entryId: string) => void;
   onSnooze?: (entryId: string) => void;
 }
 
 const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
   entries,
+  userTimezone,
   onMarkTaken,
   onSnooze
 }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const effectiveTimezone = getUserTimezone(userTimezone);
+  const [currentTime, setCurrentTime] = useState(() => getCurrentTimeInTimezone(effectiveTimezone));
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
+      setCurrentTime(getCurrentTimeInTimezone(effectiveTimezone));
     }, 60000);
     return () => clearInterval(timer);
-  }, []);
+  }, [effectiveTimezone]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'taken':
         return <CheckCircle2 className="w-5 h-5 text-success" />;
       case 'missed':
+      case 'overdue':
         return <AlertCircle className="w-5 h-5 text-destructive" />;
       case 'current':
         return <Bell className="w-5 h-5 text-primary animate-pulse" />;
@@ -52,6 +57,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
       case 'taken':
         return 'bg-success/10 border-success/20';
       case 'missed':
+      case 'overdue':
         return 'bg-destructive/10 border-destructive/20';
       case 'current':
         return 'bg-primary/10 border-primary/20 ring-2 ring-primary/30';
@@ -102,7 +108,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-semibold text-foreground">{entry.time}</div>
                   <Badge 
-                    variant={entry.status === 'taken' ? "default" : entry.status === 'missed' ? "destructive" : "outline"}
+                    variant={entry.status === 'taken' ? "default" : (entry.status === 'missed' || entry.status === 'overdue') ? "destructive" : "outline"}
                     className="text-xs capitalize"
                   >
                     {entry.status}
@@ -154,7 +160,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
             <div className="text-xs text-muted-foreground">Upcoming</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-destructive">{entries.filter(e => e.status === 'missed').length}</div>
+            <div className="text-lg font-bold text-destructive">{entries.filter(e => e.status === 'missed' || e.status === 'overdue').length}</div>
             <div className="text-xs text-muted-foreground">Missed</div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
@@ -13,6 +13,9 @@ import AddReminderSheet from '@/components/reminders/AddReminderSheet';
 import RemindersFloatingActionButton from '@/components/reminders/RemindersFloatingActionButton';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { getCurrentTimeInTimezone, parseTimeInTimezone, getUserTimezone, isDoseTime } from '@/utils/timezoneUtils';
 
 // Mock medications for the add reminder sheet - replace with real data
 const mockMedications = [
@@ -24,6 +27,7 @@ const mockMedications = [
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const { 
     reminders, 
     loading, 
@@ -38,6 +42,35 @@ const Reminders: React.FC = () => {
   const [showAddReminder, setShowAddReminder] = useState(false);
   const [showReminderDetails, setShowReminderDetails] = useState(false);
   const [isAddingReminder, setIsAddingReminder] = useState(false);
+  const [userTimezone, setUserTimezone] = useState<string | null>(null);
+  const [timezoneFetching, setTimezoneFetching] = useState(true);
+
+  // Fetch user's timezone from profile
+  useEffect(() => {
+    const fetchUserTimezone = async () => {
+      if (!user) return;
+      
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('timezone')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user timezone:', error);
+        } else {
+          setUserTimezone(profile?.timezone || null);
+        }
+      } catch (error) {
+        console.error('Error fetching timezone:', error);
+      } finally {
+        setTimezoneFetching(false);
+      }
+    };
+
+    fetchUserTimezone();
+  }, [user]);
 
   // Handle reminder actions
   const handleToggleReminder = async (id: string) => {
@@ -122,7 +155,10 @@ const Reminders: React.FC = () => {
     { day: 'Sun', rate: 93 }
   ];
 
-  // Create timeline entries from real reminder data
+  // Get user's actual timezone
+  const effectiveTimezone = getUserTimezone(userTimezone);
+
+  // Create timeline entries from real reminder data with timezone-aware status
   const timelineEntries = reminders
     .filter(r => r.is_active)
     .map(r => ({
@@ -130,23 +166,45 @@ const Reminders: React.FC = () => {
       time: r.reminder_time,
       medication: r.medication?.medication_name || 'Unknown',
       dosage: r.medication?.dosage || '',
-      status: getCurrentTimeStatus(r.reminder_time),
+      status: getCurrentTimeStatus(r.reminder_time, effectiveTimezone),
       color: 'primary' as const
     }))
     .sort((a, b) => a.time.localeCompare(b.time));
 
-  function getCurrentTimeStatus(time: string): 'upcoming' | 'current' | 'taken' | 'missed' {
-    const currentTime = new Date().toTimeString().slice(0, 5);
-    const timeDiff = new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTime}:00`).getTime();
-    if (Math.abs(timeDiff) < 30 * 60 * 1000) return 'current'; // Within 30 minutes
-    if (timeDiff < 0) return Math.random() > 0.3 ? 'taken' : 'missed'; // Past time
-    return 'upcoming'; // Future time
+  function getCurrentTimeStatus(reminderTime: string, timezone: string): 'upcoming' | 'current' | 'taken' | 'missed' | 'overdue' {
+    try {
+      // Use timezone-aware time checking
+      const doseCheck = isDoseTime(reminderTime, timezone, 30); // 30 minute window
+      
+      // Debug logging
+      console.log(`Checking dose time for ${reminderTime} in timezone ${timezone}:`, doseCheck);
+      
+      if (doseCheck.isCurrent) {
+        return 'current';
+      } else if (doseCheck.isPast) {
+        // For now, randomly assign taken/missed for demo
+        // In production, this should check the adherence log
+        return Math.random() > 0.3 ? 'taken' : 'missed';
+      } else {
+        return 'upcoming';
+      }
+    } catch (error) {
+      console.error('Error checking dose time:', error);
+      return 'upcoming'; // Fallback to upcoming
+    }
   }
 
   return (
     <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
+      {/* Timezone Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="px-4 py-2 bg-muted/50 text-xs text-muted-foreground">
+          Timezone: {effectiveTimezone} | Current time: {getCurrentTimeInTimezone(effectiveTimezone).toLocaleTimeString()}
+        </div>
+      )}
+
       {/* Main Content */}
-      {loading ? (
+      {loading || timezoneFetching ? (
         <LoadingSkeleton />
       ) : (
         <div className="space-y-6">
@@ -169,6 +227,7 @@ const Reminders: React.FC = () => {
             <div className="px-4">
               <InteractiveTimelineCard
                 entries={timelineEntries}
+                userTimezone={effectiveTimezone}
                 onMarkTaken={(entryId) => {
                   toast({
                     title: 'Dose Marked as Taken',
