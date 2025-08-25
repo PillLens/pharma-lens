@@ -299,5 +299,9 @@
       "invalidEmail": "Yanlış e-poçt formatı",
       "weakPassword": "Şifrə çox zəifdir"
     }
+  },
+  "authPage": {
+    "title": "PillLens",
+    "subtitle": "Sizin Şəxsi Dərman Skaneri və Xatırlatma Tətbiqi"
   }
 }
