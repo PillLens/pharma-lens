@@ -65,43 +65,25 @@
     "password": "Şifrə"
   },
   "hero": {
-    "badge": "Məxfilik Birinci • Təhlükəsizlik Odaqlı",
-    "title1": "Şəkil çək. Skan et. Anla.",
+    "badge": "Məxfilik Birinci • Təhlükəsizlik Yönümlü",
+    "title1": "Çək. Skan et. Başa düş.",
     "title2": "Dərmanınızı",
-    "description": "Dərman qutularının və ya vərəqələrinin şəkillərini çəkərək dərhal, dəlil əsaslı dərman məlumatları əldə edin."
-  },
-  "features": {
-    "safetyFirst": "Təhlükəsizlik Birinci",
-    "safetyDescription": "Rəsmi mənbə yoxlaması ilə tibbi səviyyədə dəqiqlik",
-    "multiLanguage": "Çox Dilli",
-    "languageDescription": "AZ, EN, RU, TR dillərində dəstək",
-    "instantResults": "Ani Nəticələr",
-    "resultsDescription": "Ani dərman məlumatları üçün cihazda OCR",
-    "evidenceBased": "Dəlil Əsaslı",
-    "evidenceDescription": "Yalnız rəsmi etiket məlumatları, yaradılmış məzmun yox"
+    "description": "Dərman qutularının və ya təlimatların şəkillərini çəkərək ani, dəlil əsaslı dərman məlumatı əldə edin."
   },
   "dashboard": {
-    "title": "İdarə Paneli",
-    "goodMorning": "Sabahınız xeyir",
-    "goodAfternoon": "Günortanız xeyir",
-    "goodEvening": "Axşamınız xeyir",
-    "welcome": "Xoş gəlmisiniz",
-    "proFamily": "Pro Ailə",
-    "activeMedications": "Aktiv Dərmanlar",
-    "activeReminders": "Aktiv Xatırlatmalar",
-    "adherenceRate": "Uyğunluq Dərəcəsi",
-    "familyMembers": "Ailə Üzvləri",
-    "quickStats": "Sürətli Statistika",
-    "medications": "Dərman",
-    "reminders": "Xatırlatma",
-    "todaysOverview": "Bugünkü İcmal",
-    "quickActions": "Sürətli Əməliyyatlar",
-    "addMedication": "Yeni Dərman Əlavə Et",
-    "mymedicationsDescription": "Dərmanlarınızı görün və idarə edin",
-    "reminderstodayDescription": "Növbəti xatırlatma 2 saatdan sonra",
-    "familygroupDescription": "4 üzv bağlıdır",
-    "healthdashboardDescription": "Uyğunluq və anlayışları görün",
+    "welcomeMessage": "Xoş gəldiniz",
     "mymedicationsTitle": "Mənim Dərmanlarım",
+    "mymedicationsDescription": "Təyin edilmiş dərmanlarınızı idarə edin",
+    "scanmedicationTitle": "Dərmanları Skan Et",
+    "scanmedicationDescription": "Yeni dərmanları müəyyən etmək üçün skan edin",
+    "viewhistoryTitle": "Tarixçəni Gör",
+    "viewhistoryDescription": "Keçmiş dərman skanlarını nəzərdən keçirin",
+    "familycaregiversTitle": "Ailə və Baxıcılar",
+    "familycaregiversDescription": "Baxıcılarla qayğı koordinasiyası",
+    "medicationremindersTitle": "Dərman Xatırlatmaları",
+    "medicationremindersDescription": "Dozları vaxtında almaq üçün xatırlatmalar təyin edin",
+    "securitydashboardTitle": "Təhlükəsizlik Paneli",
+    "securitydashboardDescription": "Məlumat təhlükəsizliyi və məxfilik nəzarəti",
     "reminderstodayTitle": "Bugünkü Xatırlatmalar",
     "familygroupTitle": "Ailə Qrupu",
     "healthdashboardTitle": "Sağlamlıq İdarə Paneli",
@@ -121,210 +103,112 @@
     "medicationReminders": "Dərman xatırlatmaları",
     "securityDashboard": "Təhlükəsizlik paneli"
   },
-  "scanner": {
-    "scanMedication": "Dərmanı Skan Et",
-    "medicationFound": "Dərman Tapıldı",
-    "scanning": "Skan edilir...",
-    "takingPhoto": "Şəkil çəkilir...",
-    "processingImage": "Şəkil işlənir...",
-    "extractingInfo": "Məlumat çıxarılır...",
-    "medicationNotFound": "Dərman tapılmadı",
-    "scanAgain": "Yenidən skan et",
-    "continue": "Davam et",
-    "cameraAccess": "Kamera girişi tələb olunur",
-    "cameraPermission": "Dərmanları skan etmək üçün kamera girişinə icazə verin",
-    "holdSteady": "Cihazı sabit saxlayın",
-    "alignMedication": "Dərmanı çərçivədə düzgün yerləşdirin",
-    "goodLighting": "Yaxşı işıqlandırma təmin edin",
-    "scanInstructions": "Dərman etiketini çərçivədə aydın şəkildə yerləşdirin"
-  },
   "medications": {
-     "title": "Dərman",
-     "subtitle": "Nə götürdüyünüzü və nə vaxt götürdüyünüzü izləyin",
-     "add": "Dərman Əlavə Et",
-     "addFirst": "İlk Dərmanınızı Əlavə Edin",
-     "medication": "dərman",
-     "medications": "dərman",
-     "active": "aktiv",
-     "refreshed": "Dərmanlar yeniləndi",
-     "refreshError": "Dərmanları yeniləmək uğursuz oldu",
-     "empty": {
-       "title": "Hələ dərman yoxdur",
-       "description": "Müalicənizi izləmək üçün ilk dərmanınızı əlavə etməklə başlayın.",
-       "cta": "Dərman Əlavə Et"
-     },
-      "details": {
-        "title": "Dərman Detalları",
-        "dosageSchedule": "Dozaj və Cədvəl",
-        "refillNotes": "Yenidən Doldurma və Qeydlər"
-      }
+    "title": "Dərman",
+    "subtitle": "Nə götürdüyünüzü və nə vaxt götürdüyünüzü izləyin",
+    "add": "Dərman Əlavə Et",
+    "addFirst": "İlk Dərmanınızı Əlavə Edin",
+    "medication": "dərman",
+    "medications": "dərman",
+    "active": "aktiv",
+    "refreshed": "Dərmanlar yeniləndi",
+    "refreshError": "Dərmanları yeniləmək uğursuz oldu",
+    "empty": {
+      "title": "Hələ dərman yoxdur",
+      "description": "Müalicənizi izləmək üçün ilk dərmanınızı əlavə etməklə başlayın.",
+      "cta": "Dərman Əlavə Et"
     },
-    "reminders": {
-      "title": "Xatırlatmalar",
-      "loading": "Xatırlatmalar yüklənir...",
-      "empty": {
-        "title": "Hələ Xatırlatma Yoxdur",
-        "subtitle": "İlk dərman xatırlatmanızı yaradın",
-        "description": "Dərman cədvəlinizə uyğun qalın",
-        "createButton": "Xatırlatma Yaradın"
-      },
-      "summary": {
-        "active": "Aktiv Xatırlatmalar",
-        "medications": "Dərmanlar",
-        "todayDoses": "Bugünkü Dozalar",
-        "dayStreak": "Gün Ardıcıllığı",
-        "adherenceOverview": "Uyğunluq İcmalı",
-        "medicationCompliance": "Dərman uyğunluğunuz",
-        "great": "Əla!",
-        "needsAttention": "Diqqət tələb edir",
-        "thisWeek": "Bu Həftə",
-        "taken": "Alınıb",
-        "missed": "Qaçırılıb",
-        "streak": "Ardıcıllıq",
-        "days": "gün",
-        "weeklyTrend": "Həftəlik Trend",
-        "adherenceRateWeek": "Keçən həftə uyğunluq dərəcəsi"
-      },
-      "timeline": {
-        "todaysSchedule": "Bugünkü Cədvəl",
-        "upcomingMedicationTimes": "Gələn dərman vaxtları",
-        "noRemindersToday": "Bu gün xatırlatma yoxdur",
-        "upcoming": "gələn",
-        "current": "cari",
-        "taken": "alınıb",
-        "missed": "qaçırılıb",
-        "overdue": "gecikmiş"
-      },
-      "status": {
-        "active": "Aktiv",
-        "paused": "Dayandırılıb"
-      },
-      "actions": {
-        "edit": "Redaktə et",
-        "pause": "Dayandır",
-        "activate": "Aktivləşdir",
-        "delete": "Sil"
-      },
-      "details": {
-        "schedule": "Cədvəl",
-        "frequency": "Tezlik",
-        "nextDose": "Növbəti Doza",
-        "notes": "Qeydlər",
-        "editButton": "Xatırlatmanı Redaktə Et"
-      },
-      "form": {
-        "title": "Xatırlatma Əlavə Et",
-        "medication": "Dərman",
-        "medicationPlaceholder": "Dərman seçin",
-        "dosage": "Doza",
-        "dosagePlaceholder": "Doza daxil edin",
-        "frequency": "Tezlik",
-        "times": "Vaxtlar",
-        "startDate": "Başlama Tarixi",
-        "endDate": "Bitiş Tarixi (İstəyə görə)",
-        "notes": "Qeydlər",
-        "notesPlaceholder": "Əlavə qeydlər...",
-        "cancel": "Ləğv et",
-        "save": "Xatırlatmanı Saxla"
-      },
-      "frequency": {
-        "once": "Gündə bir dəfə",
-        "twice": "Gündə iki dəfə",
-        "custom": "Xüsusi"
-      },
-      "validation": {
-        "medicationRequired": "Dərman tələb olunur",
-        "dosageRequired": "Doza tələb olunur",
-        "timesRequired": "Ən azı bir vaxt tələb olunur",
-        "startDateRequired": "Başlama tarixi tələb olunur"
-      },
-      "messages": {
-        "reminderAdded": "Xatırlatma uğurla əlavə edildi",
-        "reminderDeleted": "Xatırlatma uğurla silindi", 
-        "reminderUpdated": "Xatırlatma uğurla yeniləndi"
-      }
+    "details": {
+      "title": "Dərman Detalları",
+      "dosageSchedule": "Dozaj və Cədvəl",
+      "refillNotes": "Yenidən Doldurma və Qeydlər"
+    }
+  },
+  "reminders": {
+    "title": "Xatırlatmalar",
+    "loading": "Xatırlatmalar yüklənir...",
+    "empty": {
+      "title": "Hələ Xatırlatma Yoxdur",
+      "subtitle": "İlk dərman xatırlatmanızı yaradın",
+      "description": "Dərman cədvəlinizə uyğun qalın",
+      "createButton": "Xatırlatma Yaradın"
+    },
+    "summary": {
+      "active": "Aktiv Xatırlatmalar",
+      "medications": "Dərmanlar",
+      "todayDoses": "Bugünkü Dozalar",
+      "dayStreak": "Gün Ardıcıllığı",
+      "adherenceOverview": "Uyğunluq İcmalı",
+      "medicationCompliance": "Dərman uyğunluğunuz",
+      "great": "Əla!",
+      "needsAttention": "Diqqət tələb edir",
+      "thisWeek": "Bu Həftə",
+      "taken": "Alınıb",
+      "missed": "Qaçırılıb",
+      "streak": "Ardıcıllıq",
+      "days": "gün",
+      "weeklyTrend": "Həftəlik Trend",
+      "adherenceRateWeek": "Keçən həftə uyğunluq dərəcəsi"
+    },
+    "timeline": {
+      "todaysSchedule": "Bugünkü Cədvəl",
+      "upcomingMedicationTimes": "Gələn dərman vaxtları",
+      "noRemindersToday": "Bu gün xatırlatma yoxdur",
+      "upcoming": "gələn",
+      "current": "cari",
+      "taken": "alınıb",
+      "missed": "qaçırılıb",
+      "overdue": "gecikmiş"
+    },
+    "status": {
+      "active": "Aktiv",
+      "paused": "Dayandırılıb"
+    },
+    "actions": {
+      "edit": "Redaktə Et",
+      "pause": "Dayandır",
+      "activate": "Aktivləşdir",
+      "delete": "Sil"
+    },
+    "details": {
+      "schedule": "Cədvəl",
+      "frequency": "Tezlik",
+      "nextDose": "Növbəti Doz",
+      "notes": "Qeydlər",
+      "editButton": "Xatırlatmanı Redaktə Et"
     },
     "form": {
-       "basics": "Əsaslar",
-       "dosageFrequency": "Dozaj və Tezlik",
-       "datesStatus": "Tarix və Status"
-     },
-     "status": {
-       "active": "Aktiv",
-       "inactive": "Qeyri-aktiv",
-       "paused": "Dayandırılmış",
-       "completed": "Tamamlanmış",
-       "expiring": "Tezliklə Bitir",
-       "expired": "Bitmiş"
-     },
-     "frequency": {
-       "onceDaily": "Gündə bir dəfə",
-       "twiceDaily": "Gündə iki dəfə", 
-       "threeTimes": "Gündə üç dəfə",
-       "fourTimes": "Gündə dörd dəfə",
-       "every6h": "Hər 6 saatda",
-       "every8h": "Hər 8 saatda",
-       "every12h": "Hər 12 saatda",
-       "asNeeded": "Ehtiyac duyulduqca",
-       "custom": "Xüsusi"
-     },
-     "brandName": "Brend Adı",
-     "genericName": "Ümumi Ad",
-     "strength": "Güc",
-     "form": "Forma",
-     "manufacturer": "İstehsalçı",
-     "dosage": "Dozaj",
-     "frequency": "Tezlik",
-     "timing": "Vaxt",
-     "duration": "Müddət",
-     "startDate": "Başlama Tarixi",
-     "endDate": "Bitiş Tarixi",
-     "prescriber": "Təyin Edən Həkim",
-     "notes": "Qeydlər",
-    "addToMyMedications": "Dərmanlarıma Əlavə Et",
-    "createSchedule": "Dərman Cədvəli Yarat",
-    "saveMedication": "Dərmanı Saxla",
-    "medicationAdded": "Dərman uğurla əlavə edildi",
-    "whatItsFor": "Nə Üçün İstifadə Olunur",
-    "howToUse": "Necə İstifadə Etmək",
-    "storage": "Saxlama Təlimatları",
-    "specialInstructions": "Xüsusi Təlimatlar",
-    "selectFrequency": "Tezlik seçin",
-    "onceDaily": "Gündə bir dəfə",
-    "twiceDaily": "Gündə iki dəfə",
-    "threeTimes": "Gündə üç dəfə",
-    "fourTimes": "Gündə dörd dəfə",
-    "asNeeded": "Ehtiyac duyulduqca",
-    "withFood": "Yemeklə birlikdə",
-    "beforeFood": "Yeməkdən əvvəl",
-    "afterFood": "Yeməkdən sonra",
-    "indications": "Göstərişlər",
-    "contraindications": "Əks Göstərişlər",
-    "sideEffects": "Yan Təsirlər",
-    "activeIngredients": "Aktiv Maddələr",
-    "drugInteractions": "Dərman Qarşılıqlı Təsirləri",
-    "pregnancySafety": "Hamiləlik Təhlükəsizliyi",
-    "ageRestrictions": "Yaş Məhdudiyyətləri",
-    "expiryDate": "Son İstifadə Tarixi",
-    "barcode": "Barkod",
-    "tablet": "Tabletka",
-    "capsule": "Kapsul",
-    "syrup": "Şərbət",
-    "injection": "İnyeksiya",
-    "cream": "Krem",
-    "ointment": "Məlhəm",
-    "drops": "Damcı",
-    "spray": "Sprey",
-      "patch": "Yama",
-      "gel": "Gel",
-      "validation": {
-        "nameRequired": "Dərman adı tələb olunur",
-        "startDateRequired": "Başlama tarixi tələb olunur",
-        "endDateAfterStart": "Bitiş tarixi başlama tarixindən sonra olmalıdır",
-        "frequencyRequired": "Tezlik tələb olunur",
-        "timesRequired": "Ən azı bir xatırlatma vaxtı tələb olunur"
-      }
+      "title": "Xatırlatma Əlavə Et",
+      "medication": "Dərman",
+      "medicationPlaceholder": "Dərman seçin",
+      "dosage": "Doz",
+      "dosagePlaceholder": "Doz daxil edin",
+      "frequency": "Tezlik",
+      "times": "Vaxtlar",
+      "startDate": "Başlama Tarixi",
+      "endDate": "Bitiş Tarixi (İxtiyari)",
+      "notes": "Qeydlər",
+      "notesPlaceholder": "Əlavə qeydlər...",
+      "cancel": "Ləğv Et",
+      "save": "Xatırlatmanı Saxla"
     },
+    "frequency": {
+      "once": "Gündə bir dəfə",
+      "twice": "Gündə iki dəfə",
+      "custom": "Xüsusi"
+    },
+    "validation": {
+      "medicationRequired": "Dərman tələb olunur",
+      "dosageRequired": "Doz tələb olunur",
+      "timesRequired": "Ən azı bir vaxt tələb olunur",
+      "startDateRequired": "Başlama tarixi tələb olunur"
+    },
+    "messages": {
+      "reminderAdded": "Xatırlatma uğurla əlavə edildi",
+      "reminderDeleted": "Xatırlatma uğurla silindi",
+      "reminderUpdated": "Xatırlatma uğurla yeniləndi"
+    }
+  },
   "safety": {
     "warnings": "Xəbərdarlıqlar",
     "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
@@ -342,341 +226,24 @@
       "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
       "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
       "createButton": "Ailə Qrupu Yarat"
-    },
-    "group": {
-      "create": "Qrup Yarat",
-      "name": "Qrup Adı",
-      "members": "üzv",
-      "member": "üzv",
-      "noMembers": "Hələ üzv yoxdur",
-      "viewDetails": "Təfərrüatları Göstər",
-      "edit": "Qrupu Redaktə Et",
-      "delete": "Qrupu Sil",
-      "settings": "Qrup Tənzimləmələri"
-    },
-    "member": {
-      "invite": "Üzv Dəvət Et",
-      "name": "Ad Soyad",
-      "email": "E-poçt Ünvanı",
-      "phone": "Telefon Nömrəsi",
-      "role": "Rol",
-      "permissions": "İcazələr",
-      "status": "Status",
-      "remove": "Üzvü Çıxart",
-      "resend": "Dəvəti Yenidən Göndər",
-      "call": "Zəng Et",
-      "message": "Mesaj",
-      "share": "Paylaş"
-    },
-    "roles": {
-      "patient": "Xəstə",
-      "caregiver": "Baxıcı",
-      "family": "Ailə Üzvü",
-      "emergency": "Təcili Əlaqə"
-    },
-    "status": {
-      "active": "Aktiv",
-      "pending": "Gözləyir",
-      "invited": "Dəvət Edilib",
-      "offline": "Offlayn",
-      "declined": "Rədd Edilib"
-    },
-    "permissions": {
-      "view": "Dərmanları Gör",
-      "edit": "Dərmanları Redaktə Et",
-      "notifications": "Bildirişlər Al",
-      "emergencyAccess": "Təcili Giriş"
-    },
-    "invitations": {
-      "pending": "Gözləyən Dəvətlər",
-      "accept": "Qəbul Et",
-      "decline": "Rədd Et",
-      "from": "göndərən",
-      "invitedYou": "sizi dəvət etdi",
-      "noInvitations": "Gözləyən dəvət yoxdur"
-    },
-    "actions": {
-      "createGroup": "Qrup Yarat",
-      "inviteMember": "Üzv Dəvət Et",
-      "saveGroup": "Qrupu Saxla",
-      "sendInvite": "Dəvət Göndər",
-      "cancel": "Ləğv Et",
-      "done": "Hazır"
-    },
-    "messages": {
-      "groupCreated": "Ailə qrupu uğurla yaradıldı",
-      "memberInvited": "Üzv uğurla dəvət edildi",
-      "invitationSent": "Dəvət göndərildi",
-      "groupDeleted": "Qrup silindi",
-      "memberRemoved": "Üzv çıxarıldı",
-      "invitationAccepted": "Dəvət qəbul edildi",
-      "invitationDeclined": "Dəvət rədd edildi"
-    },
-    "validation": {
-      "groupNameRequired": "Qrup adı tələb olunur",
-      "memberNameRequired": "Üzv adı tələb olunur",
-      "emailRequired": "E-poçt ünvanı tələb olunur",
-      "invalidEmail": "Etibarsız e-poçt ünvanı",
-      "roleRequired": "Zəhmət olmasa rol seçin"
     }
   },
   "settings": {
+    "title": "Tənzimləmələr",
+    "profile": {
+      "title": "Profil",
+      "name": "Ad",
+      "email": "E-poçt",
+      "phone": "Telefon"
+    },
     "notifications": {
       "title": "Bildirişlər",
-      "pushNotifications": "Push Bildirişləri",
-      "pushDescription": "Bu cihazda bildirişlər alın",
-      "medicationReminders": "Dərman Xatırlatmaları",
-      "missedDose": "Qaçırılmış Doza Xəbərdarlıqları",
-      "familyUpdates": "Ailə Yenilikləri",
-      "productAlerts": "Məhsul Xəbərdarlıqları",
-      "quietHours": "Sakit Saatlar",
-      "quietStart": "Başlama Vaxtı",
-      "quietEnd": "Bitmə Vaxtı",
-      "testNotification": "Test Bildirişi Göndər",
-      "masterToggle": "Bildirişləri Aktiv Et",
-      "masterDescription": "Bu tətbiq üçün bildirişləri aç",
-      "reminders": "Dərman Xatırlatmaları",
-      "remindersDescription": "Dərman içmə vaxtı gəldikdə xatırladılın",
-      "missedDoseDescription": "Qaçırılmış dərmanların gündəlik xülasəsi",
-      "family": "Ailə Bildirişləri",
-      "familyDescription": "Ailə qayğı qrupunuzdan yeniliklər",
-      "product": "Məhsul Xəbərdarlıqları",
-      "productDescription": "Təhlükəsizlik xəbərdarlıqları və dərman yenilikləri",
-      "quietHoursDescription": "Bu saatlarda bildiriş yoxdur",
-      "from": "Başlanğıc",
-      "to": "Son"
+      "enabled": "Aktivdir",
+      "disabled": "Qeyri-aktivdir"
     }
-  },
-  "subscription": {
-    "title": "Planınızı Seçin",
-    "description": "Ehtiyaclarınıza uygun mükəmməl planı seçin",
-    "freePlan": "Pulsuz Plan",
-    "proIndividual": "Pro Fərdi",
-    "proFamily": "Pro Ailə",
-    "proIndividualDescription": "Şəxsi dərman idarəetməsi üçün mükəmməl",
-    "proFamilyDescription": "Tam ailə sağlamlığı idarəetməsi",
-    "monthly": "Aylıq",
-    "yearly": "İllik",
-    "perMonth": "/ay",
-    "perYear": "/il",
-    "save30percent": "30% qənaət",
-    "unlockPremium": "Premium Xüsusiyyətləri Açın",
-    "14dayTrial": "14 Günlük Pulsuz Sınaq",
-    "trialDescription": "Bütün Pro Ailə xüsusiyyətlərini 14 gün pulsuz sınayın. İstənilən vaxt ləğv edin.",
-    "startFreeTrial": "Pulsuz Sınaq Başladın",
-    "upgrade": "Yüksəldin",
-    "mostPopular": "Ən Məşhur",
-    "unlimitedMedications": "Limitsiz dərmanlar",
-    "advancedReports": "Təkmil hesabatlar və ixraclar",
-    "hipaaReports": "HIPAA uyğunluq hesabatları",
-    "maxDevices": "3-ə qədər cihaz",
-    "everythingInPro": "Pro Fərdidə hər şey",
-    "createFamilyGroups": "Ailə qrupları yaradın və idarə edin",
-    "upTo5Members": "5-ə qədər ailə üzvü",
-    "caregiverLogging": "Baxıcı qeydiyyatı",
-    "testimonialPlaceholder": "Sağlamlıqlarını təhlükəsiz idarə edən minlərlə istifadəçiyə qatılın",
-    "trial": "Sınaq",
-    "trialActive": "Premium xüsusiyyətlərdən həzz alırsınız? Davam etmək üçün yüksəldin.",
-    "trialEndingSoon": "Sınaq müddəti tezliklə bitir! Premium xüsusiyyətləri saxlamaq üçün yüksəldin.",
-    "free": "Pulsuz",
-    "pro": "Pro",
-    "premium": "Premium",
-    "monthly": "Aylıq",
-    "yearly": "İllik",
-    "features": {
-      "basic_scanning": "Əsas skanlaşdırma",
-      "medication_reminders": "Dərman xatırlatmaları",
-      "basic_safety": "Əsas təhlükəsizlik",
-      "unlimited_scanning": "Limitsiz skanlaşdırma",
-      "family_sharing": "Ailə paylaşımı",
-      "advanced_safety": "Təkmil təhlükəsizlik",
-      "priority_support": "Prioritet dəstək",
-      "ai_insights": "AI qənaətləri",
-      "export_reports": "Hesabat ixracı"
-    },
-    "cta": {
-      "upgrade": "Yüksəlt",
-      "manage": "İdarə et",
-      "cancel": "Ləğv et"
-    },
-    "enhanced": {
-      "title": "Planınızı yüksəldin",
-      "subtitle": "Daha çox funksiya və imkanlar əldə edin",
-      "currentPlan": "Cari plan",
-      "mostPopular": "Ən populyar",
-      "bestValue": "Ən yaxşı dəyər",
-      "perMonth": "aylıq",
-      "perYear": "illik",
-      "save": "qənaət",
-      "startTrial": "Sınağa başla",
-      "continueCurrent": "Cari planla davam et",
-      "features": {
-        "unlimitedScans": "Limitsiz skanlaşdırma",
-        "prioritySupport": "Prioritet dəstək",
-        "advancedAnalytics": "Təkmil analitika",
-        "familySharing": "Ailə paylaşımı",
-        "exportReports": "Hesabat ixracı",
-        "offlineMode": "Offline rejim",
-        "customReminders": "Xüsusi xatırlatmalar",
-        "aiInsights": "AI qənaətləri"
-      }
-    }
-  },
-  "history": {
-    "title": "Skan tarixçəsi",
-    "subtitle": "Keçmiş skanlaşdırılan dərmanların tarixçəsi",
-    "filters": {
-      "all": "Hamısı",
-      "success": "Uğurlu",
-      "failed": "Uğursuz",
-      "pending": "Gözləyir"
-    },
-    "actions": {
-      "view": "Bax",
-      "delete": "Sil",
-      "share": "Paylaş",
-      "export": "İxrac et"
-    },
-    "status": {
-      "success": "Uğurlu",
-      "failed": "Uğursuz",
-      "pending": "Gözləyir",
-      "processing": "İşlənir"
-    },
-    "empty": {
-      "title": "Skan tarixçəsi yoxdur",
-      "description": "İlk dərmanınızı skanlaşdırmağa başlayın",
-      "action": "Skanlaşdırmağa başla"
-    },
-    "scanCard": {
-      "scannedAt": "Skanlaşdırma vaxtı",
-      "result": "Nəticə",
-      "confidence": "Etibar",
-      "processing": "İşlənir...",
-      "failed": "Uğursuz oldu",
-      "tryAgain": "Yenidən cəhd et"
-    }
-  },
-  "authPage": {
-    "welcome": "PharmaLens-ə xoş gəlmisiniz",
-    "subtitle": "Dərman təhlükəsizliyinizi idarə edin",
-    "signIn": {
-      "title": "Hesabınıza daxil olun",
-      "subtitle": "Dərman profilinitə daxil olun",
-      "email": "E-poçt ünvanı",
-      "password": "Şifrə",
-      "forgotPassword": "Şifrəni unutmusan?",
-      "signIn": "Daxil ol",
-      "noAccount": "Hesabınız yoxdur?",
-      "signUp": "Qeydiyyatdan keç"
-    },
-    "signUp": {
-      "title": "Hesab yarat",
-      "subtitle": "Təhlükəsiz dərman idarəetməsinə başlayın",
-      "email": "E-poçt ünvanı",
-      "password": "Şifrə",
-      "confirmPassword": "Şifrəni təsdiqlə",
-      "signUp": "Qeydiyyatdan keç",
-      "hasAccount": "Artıq hesabınız var?",
-      "signIn": "Daxil ol"
-    },
-    "validation": {
-      "emailRequired": "E-poçt ünvanı tələb olunur",
-      "emailInvalid": "Etibarlı e-poçt ünvanı daxil edin",
-      "passwordRequired": "Şifrə tələb olunur",
-      "passwordTooShort": "Şifrə ən azı 8 simvol olmalıdır",
-      "passwordsDoNotMatch": "Şifrələr uyğun gəlmir"
-    },
-    "security": {
-      "title": "Məlumatlarınız təhlükəsizdir",
-      "encryption": "256-bit şifrələmə",
-      "privacy": "HIPAA uyğunluğu",
-      "backup": "Avtomatik ehtiyat nüsxə"
-    }
-  },
-  "security": {
-    "title": "Təhlükəsizlik Paneli",
-    "subtitle": "Hesab təhlükəsizliyinizi izləyin",
-    "metrics": {
-      "loginAttempts": "Giriş cəhdləri",
-      "dataBreaches": "Məlumat pozuntuları",
-      "securityScore": "Təhlükəsizlik balı",
-      "lastScan": "Son skan"
-    },
-    "status": {
-      "secure": "Təhlükəsiz",
-      "warning": "Xəbərdarlıq",
-      "critical": "Kritik",
-      "unknown": "Naməlum"
-    },
-    "actions": {
-      "changePassword": "Şifrəni dəyiş",
-      "enable2FA": "2FA-nı aktivləşdir",
-      "viewLogs": "Logları bax",
-      "downloadReport": "Hesabat yüklə"
-    },
-    "help": {
-      "securityScore": "Təhlükəsizlik balınız cari təhlükəsizlik parametrlərinizə əsasən hesablanır",
-      "loginAttempts": "Son 24 saatdakı giriş cəhdlərinizin sayı",
-      "dataBreaches": "Hesabınızla əlaqəli məlum məlumat pozuntularının sayı"
-    }
-  },
-  "toast": {
-    "success": {
-      "medicationAdded": "Dərman uğurla əlavə edildi",
-      "medicationUpdated": "Dərman uğurla yeniləndi",
-      "medicationDeleted": "Dərman uğurla silindi",
-      "reminderAdded": "Xatırlatma uğurla əlavə edildi",
-      "reminderUpdated": "Xatırlatma uğurla yeniləndi",
-      "reminderDeleted": "Xatırlatma uğurla silindi",
-      "familyGroupCreated": "Ailə qrupu uğurla yaradıldı",
-      "memberInvited": "Üzv uğurla dəvət edildi",
-      "settingsSaved": "Parametrlər uğurla saxlanıldı",
-      "profileUpdated": "Profil uğurla yeniləndi",
-      "dataExported": "Məlumatlar uğurla ixrac edildi",
-      "scanCompleted": "Skanlaşdırma tamamlandı",
-      "doseTaken": "Doza qəbul edildi",
-      "passwordChanged": "Şifrə uğurla dəyişdirildi"
-    },
-    "error": {
-      "networkError": "Şəbəkə xətası. Yenidən cəhd edin",
-      "unauthorized": "Daxil olmaq tələb olunur",
-      "forbidden": "Bu əməliyyata icazəniz yoxdur",
-      "notFound": "Resurs tapılmadı",
-      "serverError": "Server xətası. Daha sonra cəhd edin",
-      "scanFailed": "Skanlaşdırma uğursuz oldu",
-      "medicationNotFound": "Dərman tapılmadı",
-      "invalidData": "Etibarsız məlumat",
-      "uploadFailed": "Yükləmə uğursuz oldu",
-      "deleteConfirmation": "Bu əməliyyatı ləğv etmək mümkün deyil"
-    },
-    "warning": {
-      "unsavedChanges": "Saxlanılmamış dəyişikliklər var",
-      "lowStorage": "Saxlama yeri az qalıb",
-      "expiredMedication": "Bəzi dərmanların müddəti bitib",
-      "missedDoses": "Qaçırılmış dozalar var",
-      "duplicateEntry": "Dublikat giriş aşkarlandı"
-    },
-    "info": {
-      "updateAvailable": "Yeniləmə mövcuddur",
-      "syncInProgress": "Sinxronizasiya davam edir",
-      "maintenanceMode": "Texniki baxım rejimi",
-      "trialExpiring": "Sınaq müddəti bitir",
-      "newFeature": "Yeni funksiya mövcuddur"
-    }
-  },
-  "notFound": {
-    "title": "Səhifə tapılmadı",
-    "subtitle": "Axtardığınız səhifə mövcud deyil",
-    "description": "Bu linkə keçid səhvi ola bilər və ya səhifə köçürülmüş ola bilər",
-    "action": "Ana səhifəyə qayıt"
   },
   "errors": {
-    "camera": {
-      "permissionDenied": "Kamera icazəsi rədd edildi",
-      "notAvailable": "Kamera mövcud deyil",
-      "initializationFailed": "Kamera başlatıla bilmədi"
-    },
+    "general": "Xəta baş verdi",
     "network": {
       "offline": "İnternet bağlantısı yoxdur",
       "timeout": "İstək vaxtı bitdi",
