@@ -100,7 +100,11 @@
     "mymedicationsTitle": "My Medications",
     "reminderstodayTitle": "Reminders Today",
     "familygroupTitle": "Family Group",
-    "healthdashboardTitle": "Health Dashboard"
+    "healthdashboardTitle": "Health Dashboard",
+    "recentScans": "Recent Scans",
+    "viewAll": "View All",
+    "noScans": "No recent scans",
+    "noScansDescription": "Start by scanning your first medication"
   },
   "descriptions": {
     "scanMedications": "Scan medications",
