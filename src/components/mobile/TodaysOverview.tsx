@@ -8,6 +8,33 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 const TodaysOverview: React.FC = () => {
   const { dashboardStats, loading } = useDashboardData();
 
+  // Calculate time until next reminder
+  const getTimeUntilReminder = (reminderTime?: string): string => {
+    if (!reminderTime) return '';
+    
+    const [hours, minutes] = reminderTime.split(':').map(Number);
+    const now = new Date();
+    const reminderDate = new Date();
+    reminderDate.setHours(hours, minutes, 0, 0);
+    
+    // If the reminder time has passed for today, it's for tomorrow
+    if (reminderDate <= now) {
+      reminderDate.setDate(reminderDate.getDate() + 1);
+    }
+    
+    const diffMs = reminderDate.getTime() - now.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (diffHours === 0) {
+      return `${diffMinutes}m`;
+    } else if (diffHours < 24) {
+      return `${diffHours}h ${diffMinutes}m`;
+    } else {
+      return 'tomorrow';
+    }
+  };
+
   if (loading) {
     return (
       <div className="px-4 mb-6">
@@ -105,13 +132,13 @@ const TodaysOverview: React.FC = () => {
                   <div className="text-sm font-medium text-foreground">
                     <TranslatedText translationKey="dashboard.nextReminder" fallback="Next reminder" />
                   </div>
-              <div className="text-xs text-muted-foreground">
-                {todayData.nextReminder?.medication} at {todayData.nextReminder?.time}
-              </div>
+                  <div className="text-xs text-muted-foreground">
+                    {todayData.nextReminder?.medication} at {todayData.nextReminder?.time}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-warning">
                   <Clock className="w-3 h-3" />
-                  <span>2h 15m</span>
+                  <span>{getTimeUntilReminder(todayData.nextReminder?.time)}</span>
                 </div>
               </div>
             )}
