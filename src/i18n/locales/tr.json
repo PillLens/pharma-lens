@@ -110,7 +110,8 @@
     "noScans": "Son tarama yok",
     "noScansDescription": "İlk ilacınızı tarayarak başlayın",
     "quickActions": "Hızlı İşlemler",
-    "todaysFocus": "Bugünkü Odak"
+    "todaysFocus": "Bugünkü Odak",
+    "daysRemaining": "{{days}} gün kaldı"
   },
   "descriptions": {
     "scanMedications": "İlaçları tara",
@@ -488,6 +489,9 @@
     "upTo5Members": "5'e kadar aile üyesi",
     "caregiverLogging": "Bakıcı günlüğü",
     "testimonialPlaceholder": "Sağlıklarını güvenle yöneten binlerce kullanıcıya katılın",
+    "trial": "Deneme",
+    "trialActive": "Premium özelliklerden mi memnunsunuz? Devam etmek için yükseltin.",
+    "trialEndingSoon": "Deneme süresi yakında bitiyor! Premium özellikleri korumak için yükseltin.",
     "free": "Ücretsiz",
     "pro": "Pro",
     "premium": "Premium",

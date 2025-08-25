@@ -110,7 +110,8 @@
     "noScans": "Son skanlar yoxdur",
     "noScansDescription": "İlk dərmanınızı skanlamaqla başlayın",
     "quickActions": "Tez Əməliyyatlar",
-    "todaysFocus": "Bugünkü Diqqət"
+    "todaysFocus": "Bugünkü Diqqət",
+    "daysRemaining": "{{days}} gün qalıb"
   },
   "descriptions": {
     "scanMedications": "Dərmanları skan et",
@@ -488,6 +489,9 @@
     "upTo5Members": "5-ə qədər ailə üzvü",
     "caregiverLogging": "Baxıcı qeydiyyatı",
     "testimonialPlaceholder": "Sağlamlıqlarını təhlükəsiz idarə edən minlərlə istifadəçiyə qatılın",
+    "trial": "Sınaq",
+    "trialActive": "Premium xüsusiyyətlərdən həzz alırsınız? Davam etmək üçün yüksəldin.",
+    "trialEndingSoon": "Sınaq müddəti tezliklə bitir! Premium xüsusiyyətləri saxlamaq üçün yüksəldin.",
     "free": "Pulsuz",
     "pro": "Pro",
     "premium": "Premium",
