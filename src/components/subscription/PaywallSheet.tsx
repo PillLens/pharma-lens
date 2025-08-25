@@ -37,6 +37,8 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
       return;
     }
 
+    console.log('[CHECKOUT] Button clicked for plan:', plan);
+
     try {
       console.log('[CHECKOUT] Starting upgrade process', { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' });
       setLoading(true);
