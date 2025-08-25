@@ -465,7 +465,8 @@
       "changePassword": "Change Password",
       "changePasswordDescription": "Update your account password",
       "twoFactor": "Two-Factor Authentication",
-      "twoFactorDescription": "Add an extra layer of security to your account"
+      "twoFactorDescription": "Add an extra layer of security to your account",
+      "comingSoon": "Coming Soon"
     },
     "account": {
       "title": "Account Management",
