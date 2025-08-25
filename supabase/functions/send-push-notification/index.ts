@@ -28,6 +28,18 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Get OneSignal credentials from environment
+    const oneSignalAppId = Deno.env.get('ONESIGNAL_APP_ID');
+    const oneSignalRestKey = Deno.env.get('ONESIGNAL_REST_API_KEY');
+
+    if (!oneSignalAppId || !oneSignalRestKey) {
+      console.error('OneSignal credentials not configured');
+      return new Response(
+        JSON.stringify({ error: 'OneSignal not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Log the notification attempt
     const { data: logData, error: logError } = await supabase
       .from('push_notifications')
@@ -36,6 +48,7 @@ serve(async (req) => {
         title,
         body,
         data,
+        device_token: deviceToken,
         status: 'pending',
         created_at: new Date().toISOString()
       })
@@ -46,39 +59,90 @@ serve(async (req) => {
       console.error('Error logging notification:', logError);
     }
 
-    // In a real implementation, you would integrate with FCM/APNs here
-    // For now, we'll simulate the notification sending
-    console.log('Sending notification:', { userId, title, body, data, deviceToken });
+    try {
+      // Send notification via OneSignal API
+      const oneSignalPayload = {
+        app_id: oneSignalAppId,
+        include_player_ids: deviceToken ? [deviceToken] : undefined,
+        include_external_user_ids: deviceToken ? undefined : [userId],
+        headings: { en: title },
+        contents: { en: body },
+        data: data || {}
+      };
 
-    // Simulate notification delivery
-    const success = Math.random() > 0.1; // 90% success rate for simulation
-    
-    if (success && logData) {
-      // Update notification status to delivered
-      await supabase
-        .from('push_notifications')
-        .update({
-          status: 'delivered',
-          delivered_at: new Date().toISOString()
-        })
-        .eq('id', logData.id);
+      console.log('Sending OneSignal notification:', { 
+        userId, 
+        title, 
+        body, 
+        data, 
+        deviceToken,
+        oneSignalPayload 
+      });
 
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: 'Notification sent successfully',
-          notificationId: logData.id
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    } else {
+      const oneSignalResponse = await fetch('https://onesignal.com/api/v1/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${oneSignalRestKey}`,
+        },
+        body: JSON.stringify(oneSignalPayload)
+      });
+
+      const oneSignalResult = await oneSignalResponse.json();
+      console.log('OneSignal response:', oneSignalResult);
+
+      if (oneSignalResponse.ok && logData) {
+        // Update notification status to delivered
+        await supabase
+          .from('push_notifications')
+          .update({
+            status: 'delivered',
+            delivered_at: new Date().toISOString()
+          })
+          .eq('id', logData.id);
+
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            message: 'Notification sent successfully',
+            notificationId: logData.id,
+            oneSignalId: oneSignalResult.id,
+            recipients: oneSignalResult.recipients
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } else {
+        // Update notification status to failed
+        if (logData) {
+          await supabase
+            .from('push_notifications')
+            .update({
+              status: 'failed',
+              error_message: oneSignalResult.errors?.[0]?.message || 'OneSignal delivery failed'
+            })
+            .eq('id', logData.id);
+        }
+
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Failed to deliver notification',
+            details: oneSignalResult.errors || oneSignalResult,
+            notificationId: logData?.id
+          }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } catch (fetchError) {
+      console.error('OneSignal API error:', fetchError);
+      
       // Update notification status to failed
       if (logData) {
         await supabase
           .from('push_notifications')
           .update({
             status: 'failed',
-            error_message: 'Simulated delivery failure'
+            error_message: `OneSignal API error: ${fetchError.message}`
           })
           .eq('id', logData.id);
       }
@@ -86,7 +150,8 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Failed to deliver notification',
+          error: 'OneSignal API error',
+          details: fetchError.message,
           notificationId: logData?.id
         }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { oneSignalService } from '@/services/oneSignalService';
+import { environmentService } from '@/services/environmentService';
 
 interface AuthContextType {
   user: User | null;
@@ -25,6 +27,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle OneSignal user registration/cleanup
+        if (environmentService.isFeatureEnabled('push-notifications')) {
+          setTimeout(() => {
+            if (session?.user && oneSignalService.isServiceInitialized()) {
+              // Register user with OneSignal after login
+              oneSignalService.registerUser(session.user.id).catch(error => {
+                console.error('Failed to register user with OneSignal:', error);
+              });
+            } else if (!session?.user) {
+              // Cleanup OneSignal on logout
+              oneSignalService.cleanup().catch(error => {
+                console.error('Failed to cleanup OneSignal:', error);
+              });
+            }
+          }, 0);
+        }
       }
     );
 
@@ -33,6 +52,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Register existing user with OneSignal if service is ready
+      if (session?.user && environmentService.isFeatureEnabled('push-notifications')) {
+        setTimeout(() => {
+          if (oneSignalService.isServiceInitialized()) {
+            oneSignalService.registerUser(session.user.id).catch(error => {
+              console.error('Failed to register existing user with OneSignal:', error);
+            });
+          }
+        }, 1000); // Give OneSignal time to initialize
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -60,6 +90,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    // Cleanup OneSignal before signing out
+    if (environmentService.isFeatureEnabled('push-notifications')) {
+      try {
+        await oneSignalService.cleanup();
+      } catch (error) {
+        console.error('Failed to cleanup OneSignal on logout:', error);
+      }
+    }
+    
     await supabase.auth.signOut();
   };
 

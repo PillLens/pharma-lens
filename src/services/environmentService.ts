@@ -30,7 +30,7 @@ class EnvironmentService {
       apiEndpoint: 'https://bquxkkaipevuakmqqilk.supabase.co',
       enableLogging: !isProduction,
       enableAnalytics: true,
-      oneSignalAppId: 'YOUR_ONESIGNAL_APP_ID' // Will be replaced by user
+      oneSignalAppId: '89e82f95-b0f1-4651-9f83-0b5cf5ed4297' // Production OneSignal App ID
     };
   }
 
@@ -44,7 +44,7 @@ class EnvironmentService {
       'drug-interactions': true,
       'family-sharing': true,
       'offline-mode': true,
-      'push-notifications': this.environment.isProduction,
+      'push-notifications': true, // Enable for development testing
       'debug-tools': this.environment.isDevelopment
     };
 
