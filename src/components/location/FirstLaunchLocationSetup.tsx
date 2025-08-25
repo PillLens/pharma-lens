@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LocationPermissionDialog } from './LocationPermissionDialog';
+import { FirstLaunchNotificationSetup } from '../notifications/FirstLaunchNotificationSetup';
 import { useLocationTimezone } from '@/hooks/useLocationTimezone';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -29,11 +30,14 @@ export const FirstLaunchLocationSetup: React.FC = () => {
   }
 
   return (
-    <LocationPermissionDialog
-      isOpen={showDialog}
-      onAllow={handleAllow}
-      onDeny={handleDeny}
-      loading={false}
-    />
+    <>
+      <LocationPermissionDialog
+        isOpen={showDialog}
+        onAllow={handleAllow}
+        onDeny={handleDeny}
+        loading={false}
+      />
+      <FirstLaunchNotificationSetup />
+    </>
   );
 };

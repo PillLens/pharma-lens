@@ -206,17 +206,28 @@ export class OneSignalService {
     }
   }
 
-  async optIn(): Promise<void> {
-    if (!this.isInitialized || !window.OneSignal) return;
+  async optIn(): Promise<boolean> {
+    if (!this.isInitialized || !window.OneSignal) return false;
     
     try {
       const OneSignal = window.OneSignal;
-      OneSignal.push(() => {
-        OneSignal.showNativePrompt();
-        OneSignal.setSubscription(true);
+      return new Promise<boolean>((resolve) => {
+        OneSignal.push(() => {
+          OneSignal.showNativePrompt().then((result: any) => {
+            if (result) {
+              OneSignal.setSubscription(true);
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          }).catch(() => {
+            resolve(false);
+          });
+        });
       });
     } catch (error) {
       console.error('Failed to opt in to notifications:', error);
+      return false;
     }
   }
 
