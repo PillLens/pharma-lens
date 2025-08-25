@@ -13,7 +13,8 @@ import {
   Calendar,
   Bell,
   Shield,
-  Plus
+  Plus,
+  Crown
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -117,34 +118,84 @@ const Dashboard: React.FC = () => {
           {/* Enhanced Header with Glassmorphism */}
           <div className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
-            <div className="relative px-6 pt-8 pb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <GreetingIcon className="w-5 h-5 text-primary animate-pulse" />
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                      {getGreeting()}
-                    </h1>
+            <div className="relative px-4 pt-6 pb-8">
+              {/* Floating decorative elements */}
+              <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-xl animate-float" />
+              <div className="absolute top-8 left-8 w-12 h-12 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }} />
+              
+              {/* Main header content */}
+              <div className="relative z-10">
+                {/* Top row with greeting and plan */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-primary/20 shadow-soft">
+                          <GreetingIcon className="w-5 h-5 text-primary animate-pulse" />
+                        </div>
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent animate-pulse" />
+                      </div>
+                      <div className="flex-1">
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+                          {getGreeting()}
+                        </h1>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          <p className="text-sm text-muted-foreground font-medium">
+                            {user?.email?.split('@')[0] || 'User'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-lg text-muted-foreground font-medium">
-                    {user?.email?.split('@')[0] || 'User'}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <Badge 
-                    variant={getPlanBadgeVariant()} 
-                    className={cn(
-                      "px-3 py-1 text-xs font-semibold shadow-md",
-                      isInTrial && "animate-medical-pulse"
-                    )}
-                  >
-                    {getPlanDisplayName()}
-                  </Badge>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Heart className="w-3 h-3 text-red-500 animate-heartbeat" />
-                    <span>Health tracking active</span>
+                  
+                  {/* Plan badge with enhanced styling */}
+                  <div className="flex flex-col items-end gap-2 ml-4">
+                    <Badge 
+                      variant={getPlanBadgeVariant()} 
+                      className={cn(
+                        "px-4 py-2 text-xs font-bold shadow-lg border-0 backdrop-blur-sm",
+                        isInTrial 
+                          ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 animate-glow-pulse" 
+                          : subscription.plan === 'free'
+                          ? "bg-gradient-to-r from-muted/50 to-muted/30 text-muted-foreground"
+                          : "bg-gradient-to-r from-primary/20 to-primary/10 text-primary"
+                      )}
+                    >
+                      <Crown className="w-3 h-3 mr-1" />
+                      {getPlanDisplayName()}
+                    </Badge>
                   </div>
                 </div>
+
+                {/* Status indicators row */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    {/* Health status */}
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full border border-green-500/20 shadow-soft">
+                      <Heart className="w-3 h-3 text-red-500 animate-heartbeat" />
+                      <span className="text-xs font-medium text-green-700">Health Active</span>
+                    </div>
+                    
+                    {/* Sync status */}
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full border border-blue-500/20 shadow-soft">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                      <span className="text-xs font-medium text-blue-700">Synced</span>
+                    </div>
+                  </div>
+
+                  {/* Today's date with subtle styling */}
+                  <div className="text-xs text-muted-foreground font-medium bg-muted/30 px-3 py-1 rounded-full border border-border/50">
+                    {new Date().toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
+                  </div>
+                </div>
+
+                {/* Subtle separator line */}
+                <div className="mt-6 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
               </div>
             </div>
           </div>
