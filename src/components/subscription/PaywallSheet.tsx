@@ -236,13 +236,13 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-500" />
                     <span className="text-sm">
-                      <TranslatedText translationKey="subscription.familyReadAccess" fallback="Family read access" />
+                      <TranslatedText translationKey="subscription.hipaaReports" fallback="HIPAA compliance reports" />
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-500" />
                     <span className="text-sm">
-                      <TranslatedText translationKey="subscription.hipaaReports" fallback="HIPAA compliance reports" />
+                      <TranslatedText translationKey="subscription.maxDevices" fallback="Up to 3 devices" />
                     </span>
                   </div>
                 </div>

@@ -362,5 +362,34 @@
       "from": "Başlangıç",
       "to": "Bitiş"
     }
+  },
+  "subscription": {
+    "title": "Planınızı Seçin",
+    "description": "İhtiyaçlarınıza uygun mükemmel planı seçin",
+    "freePlan": "Ücretsiz Plan",
+    "proIndividual": "Pro Bireysel",
+    "proFamily": "Pro Aile",
+    "proIndividualDescription": "Kişisel ilaç yönetimi için mükemmel",
+    "proFamilyDescription": "Tam aile sağlığı yönetimi",
+    "monthly": "Aylık",
+    "yearly": "Yıllık",
+    "perMonth": "/ay",
+    "perYear": "/yıl",
+    "save30percent": "%30 tasarruf",
+    "unlockPremium": "Premium Özelliklerini Aç",
+    "14dayTrial": "14 Günlük Ücretsiz Deneme",
+    "trialDescription": "Tüm Pro Aile özelliklerini 14 gün ücretsiz deneyin. İstediğiniz zaman iptal edin.",
+    "startFreeTrial": "Ücretsiz Deneme Başlat",
+    "upgrade": "Yükselt",
+    "mostPopular": "En Popüler",
+    "unlimitedMedications": "Sınırsız ilaçlar",
+    "advancedReports": "Gelişmiş raporlar ve dışa aktarımlar",
+    "hipaaReports": "HIPAA uyumluluk raporları",
+    "maxDevices": "3'e kadar cihaz",
+    "everythingInPro": "Pro Bireysel'de her şey",
+    "createFamilyGroups": "Aile grupları oluşturun ve yönetin",
+    "upTo5Members": "5'e kadar aile üyesi",
+    "caregiverLogging": "Bakıcı günlüğü",
+    "testimonialPlaceholder": "Sağlıklarını güvenle yöneten binlerce kullanıcıya katılın"
   }
 }

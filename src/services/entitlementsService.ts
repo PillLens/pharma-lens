@@ -156,14 +156,14 @@ class EntitlementsService {
   }
 
   private getDefaultEntitlements(): UserEntitlements {
-    // All users get full trial access for 14 days
+    // Free users get basic features only - trial users get entitlements via database function
     return {
-      can_create_family_group: true,
-      can_export_reports: true,
-      reminders_limit: -1, // Unlimited during trial
-      hipaa_report_access: true,
-      max_devices: 3,
-      max_family_members: 5
+      can_create_family_group: false,
+      can_export_reports: false,
+      reminders_limit: 1,
+      hipaa_report_access: false,
+      max_devices: 1,
+      max_family_members: 0
     };
   }
 

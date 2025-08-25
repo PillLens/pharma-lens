@@ -362,5 +362,34 @@
       "from": "Başlanğıc",
       "to": "Son"
     }
+  },
+  "subscription": {
+    "title": "Planınızı Seçin",
+    "description": "Ehtiyaclarınıza uygun mükəmməl planı seçin",
+    "freePlan": "Pulsuz Plan",
+    "proIndividual": "Pro Fərdi",
+    "proFamily": "Pro Ailə",
+    "proIndividualDescription": "Şəxsi dərman idarəetməsi üçün mükəmməl",
+    "proFamilyDescription": "Tam ailə sağlamlığı idarəetməsi",
+    "monthly": "Aylıq",
+    "yearly": "İllik",
+    "perMonth": "/ay",
+    "perYear": "/il",
+    "save30percent": "30% qənaət",
+    "unlockPremium": "Premium Xüsusiyyətləri Açın",
+    "14dayTrial": "14 Günlük Pulsuz Sınaq",
+    "trialDescription": "Bütün Pro Ailə xüsusiyyətlərini 14 gün pulsuz sınayın. İstənilən vaxt ləğv edin.",
+    "startFreeTrial": "Pulsuz Sınaq Başladın",
+    "upgrade": "Yüksəldin",
+    "mostPopular": "Ən Məşhur",
+    "unlimitedMedications": "Limitsiz dərmanlar",
+    "advancedReports": "Təkmil hesabatlar və ixraclar",
+    "hipaaReports": "HIPAA uyğunluq hesabatları",
+    "maxDevices": "3-ə qədər cihaz",
+    "everythingInPro": "Pro Fərdidə hər şey",
+    "createFamilyGroups": "Ailə qrupları yaradın və idarə edin",
+    "upTo5Members": "5-ə qədər ailə üzvü",
+    "caregiverLogging": "Baxıcı qeydiyyatı",
+    "testimonialPlaceholder": "Sağlamlıqlarını etimatla idarə edən minlərlə istifadəçiyə qoşulun"
   }
 }

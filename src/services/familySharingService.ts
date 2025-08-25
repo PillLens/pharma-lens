@@ -312,6 +312,37 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // Check family member limit before proceeding
+      const { data: entitlementsData, error: entitlementsError } = await supabase
+        .rpc('get_user_entitlements', { user_uuid: user.id });
+
+      if (entitlementsError) {
+        console.error('Error checking entitlements:', entitlementsError);
+        toast.error('Failed to verify plan limits');
+        return false;
+      }
+
+      const entitlements = entitlementsData as any || {};
+      const maxFamilyMembers = (entitlements.max_family_members as number) || 0;
+
+      // Get current family member count for this group
+      const { data: currentMembers, error: membersError } = await supabase
+        .from('family_members')
+        .select('id')
+        .eq('family_group_id', groupId)
+        .eq('invitation_status', 'accepted');
+
+      if (membersError) {
+        console.error('Error counting family members:', membersError);
+      }
+
+      const currentCount = currentMembers?.length || 0;
+
+      if (maxFamilyMembers > 0 && currentCount >= maxFamilyMembers) {
+        toast.error(`You've reached your plan's limit of ${maxFamilyMembers} family members. Upgrade to Pro Family for more members.`);
+        return false;
+      }
+
       // Find user by email
       const invitedUser = await this.findUserByEmail(userEmail);
       if (!invitedUser) {
