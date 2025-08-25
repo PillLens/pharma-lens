@@ -323,9 +323,9 @@
        "endDateAfterStart": "Bitiş tarixi başlama tarixindən sonra olmalıdır",
        "frequencyRequired": "Tezlik tələb olunur",
        "timesRequired": "Ən azı bir xatırlatma vaxtı tələb olunur"
-     }
-  },
-  "safety": {
+      }
+    },
+    "safety": {
     "warnings": "Xəbərdarlıqlar",
     "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
     "disclaimer": "PharmaLens rəsmi dərman etiketlərindən və vərəqələrindən çıxarılan məlumatları təqdim edir. Bu tibbi məsləhət deyil.",
@@ -333,104 +333,6 @@
     "readLabel": "Dərman etiketini diqqətlə oxuyun",
     "followInstructions": "Təyin edilmiş təlimatlara əməl edin",
     "reportSideEffects": "Hər hansı yan təsiri səhiyyə xidməti təminatçınıza bildirin"
-  },
-  "reminders": {
-    "title": "Xatırlatmalar",
-    "subtitle": "Ağıllı bildirişlərlə heç bir dozunu qaçırma", 
-    "createReminder": "Xatırlatma Yarat",
-    "reminderTimes": "Xatırlatma Vaxtları",
-    "addTime": "Vaxt Əlavə Et",
-    "setReminder": "Xatırlatma Təyin Et",
-    "reminderSet": "Xatırlatma uğurla təyin edildi",
-    "morningDose": "Səhər dozası",
-    "afternoonDose": "Günorta dozası",
-    "eveningDose": "Axşam dozası",
-    "nightDose": "Gecə dozası",
-    "empty": {
-      "title": "Heç Xatırlatma Təyin Edilməyib",
-      "subtitle": "Ağıllı bildirişlərlə yolunuzda qalın",
-      "description": "Dərman cədvəlinizi saxlamağa kömək etmək üçün dərman xatırlatmaları qurun.",
-      "createButton": "İlk Xatırlatmanızı Əlavə Edin"
-    },
-    "summary": {
-      "active": "Aktiv Xatırlatmalar",
-      "medications": "Əhatə edilən Dərmanlar",
-      "today": "Bugünkü Dozalar"
-    },
-    "status": {
-      "active": "Aktiv",
-      "paused": "Dayandırılmış",
-      "inactive": "Qeyri-aktiv"
-    },
-    "frequency": {
-      "once": "Gündə bir dəfə",
-      "twice": "Gündə iki dəfə",
-      "custom": "Xüsusi",
-      "everyHour": "Hər {{hours}} saatda",
-      "asNeeded": "Lazım olduqda"
-    },
-    "details": {
-      "title": "Xatırlatma Təfərrüatları",
-      "schedule": "Cədvəl",
-      "frequency": "Tezlik",
-      "nextDose": "Növbəti doza",
-      "notes": "Qeydlər",
-      "editButton": "Xatırlatmanı Redaktə Et"
-    },
-    "form": {
-      "title": "Xatırlatma Əlavə Et",
-      "editTitle": "Xatırlatmanı Redaktə Et", 
-      "medication": "Dərman",
-      "medicationPlaceholder": "Dərman seçin",
-      "dosage": "Doza",
-      "dosagePlaceholder": "məs., 1 tablet",
-      "frequency": "Tezlik",
-      "times": "Vaxtlar",
-      "startDate": "Başlama Tarixi",
-      "endDate": "Bitmə Tarixi",
-      "notes": "Qeydlər",
-      "notesPlaceholder": "İsteğe bağlı qeydlər...",
-      "save": "Xatırlatmanı Saxla",
-      "cancel": "Ləğv Et",
-      "update": "Xatırlatmanı Yenilə"
-    },
-    "validation": {
-      "medicationRequired": "Zəhmət olmasa dərman seçin",
-      "dosageRequired": "Zəhmət olmasa doza daxil edin",
-      "timesRequired": "Zəhmət olmasa ən azı bir vaxt əlavə edin",
-      "startDateRequired": "Zəhmət olmasa başlama tarixi seçin"
-    },
-    "messages": {
-      "reminderAdded": "Xatırlatma Əlavə Edildi",
-      "reminderUpdated": "Xatırlatma Yeniləndi",
-      "reminderDeleted": "Xatırlatma Silindi",
-      "reminderPaused": "Xatırlatma Dayandırıldı",
-      "reminderActivated": "Xatırlatma Aktivləşdirildi"
-    },
-    "actions": {
-      "edit": "Redaktə Et",
-      "delete": "Sil",
-      "pause": "Dayandır",
-      "activate": "Aktivləşdir",
-      "addReminder": "Xatırlatma Əlavə Et"
-    },
-    "timeline": {
-      "todaysSchedule": "Bugünkü Cədvəl",
-      "todaysTimeline": "Bugünkü Zaman Xətti",
-      "upcomingMedicationTimes": "Gələcək dərman vaxtları",
-      "dosesCompleted": "doza tamamlandı",
-      "progress": "İrəliləyiş",
-      "taken": "Alındı",
-      "upcoming": "Gələcək",
-      "missed": "Qaçırıldı",
-      "current": "İndi",
-      "overdue": "Gecikmiş",
-      "markTaken": "Alındı kimi işarələ",
-      "snooze": "Təxirə Sal",
-      "yourReminders": "Xatırlatmalarınız",
-      "noRemindersToday": "Bu gün üçün xatırlatma planlaşdırılmayıb",
-      "of": "dən"
-    }
   },
   "family": {
     "title": "Ailə və Baxıcılar",
