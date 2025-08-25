@@ -27,6 +27,7 @@
   },
   "navigation": {
     "home": "Əsas",
+    "dashboard": "İdarə Paneli",
     "medications": "Dərman",
     "scanner": "Skaner", 
     "history": "Tarixçə",

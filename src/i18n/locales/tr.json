@@ -27,6 +27,7 @@
   },
   "navigation": {
     "home": "Ana Sayfa",
+    "dashboard": "Pano",
     "medications": "İlaçlar",
     "scanner": "Tarayıcı",
     "history": "Geçmiş",

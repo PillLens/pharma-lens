@@ -34,7 +34,8 @@
   },
   "navigation": {
     "home": "Home",
-    "medications": "Medications", 
+    "dashboard": "Dashboard",
+    "medications": "Medications",
     "scanner": "Scanner",
     "history": "History",
     "profile": "Profile",

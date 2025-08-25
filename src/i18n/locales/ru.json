@@ -27,6 +27,7 @@
   },
   "navigation": {
     "home": "Главная",
+    "dashboard": "Панель управления",
     "medications": "Лекарства",
     "scanner": "Сканер",
     "history": "История",
