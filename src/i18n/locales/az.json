@@ -1,3 +1,4 @@
+
 {
   "app": {
     "title": "PharmaLens"
@@ -87,7 +88,9 @@
     "reminderstodayDescription": "Dərman xatırlatmalarınızı idarə edin",
     "familygroupDescription": "Ailə üzvləri ilə əlaqə qurun",
     "healthdashboardDescription": "Uyğunluq və anlayışları görün",
-    "mymedicationsTitle": "Mənim Dərmanlarım",
+    "healthdashboardTitle": "Sağlamlıq Paneli",
+    "reminderstodayTitle": "Bugünkü Xatırlatmalar",
+    "familygroupTitle": "Ailə Qrupu",
     "recentScans": "Son Skanlar",
     "todayProgress": "Bugünkü irəliləyiş",
     "dayStreak": "gün ardıcıllığı",
@@ -100,19 +103,12 @@
     "medications": "Dərmanlar",
     "reminders": "Xatırlatmalar",
     "addMedication": "Yeni Dərman Əlavə Et",
-    "recentScans": "Son Skanlar",
     "viewAll": "Hamısını Gör",
     "noScans": "Son skanlar yoxdur",
     "noScansDescription": "İlk dərmanınızı skanlamaqla başlayın",
     "quickActions": "Tez Əməliyyatlar",
     "todaysFocus": "Bugünkü Diqqət",
     "daysRemaining": "{{days}} gün qalıb"
-  },
-    "healthdashboardDescription": "Uyğunluq və anlayışları görün",
-    "healthdashboardTitle": "Sağlamlıq Paneli",
-    "mymedicationsTitle": "Mənim Dərmanlarım",
-    "reminderstodayTitle": "Bugünkü Xatırlatmalar",
-    "familygroupTitle": "Ailə Qrupu"
   },
   "descriptions": {
     "scanMedications": "Dərmanları skan et",
