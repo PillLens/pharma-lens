@@ -1631,6 +1631,15 @@ export type Database = {
         Args: { user_email: string }
         Returns: string
       }
+      get_family_member_profile: {
+        Args: { member_user_id: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          id: string
+          last_seen: string
+        }[]
+      }
       get_family_member_status: {
         Args: { group_uuid: string; member_uuid: string }
         Returns: Json
