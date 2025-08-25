@@ -77,18 +77,30 @@ export const useDashboardData = () => {
       // Fetch reminders
       const { data: reminders, error: remindersError } = await supabase
         .from('medication_reminders')
-        .select('*')
+        .select(`
+          *,
+          user_medications (
+            medication_name,
+            dosage,
+            frequency
+          )
+        `)
         .eq('user_id', user.id);
 
       if (remindersError) throw remindersError;
 
-      // Fetch adherence data
+      // Fetch adherence data for today
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+
       const { data: adherenceData, error: adherenceError } = await supabase
         .from('medication_adherence_log')
         .select('*')
         .eq('user_id', user.id)
-        .gte('scheduled_time', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
-        .lte('scheduled_time', new Date(new Date().setHours(23, 59, 59, 999)).toISOString());
+        .gte('scheduled_time', todayStart.toISOString())
+        .lte('scheduled_time', todayEnd.toISOString());
 
       if (adherenceError) throw adherenceError;
 
@@ -108,19 +120,83 @@ export const useDashboardData = () => {
       // Calculate stats
       const activeMedications = medications.filter(m => m.is_active);
       const activeReminders = reminders?.filter(r => r.is_active) || [];
-      const todaysDoses = activeReminders.reduce((total, r) => total + r.days_of_week.length, 0);
       
-      // Calculate adherence rate
+      // Get today's scheduled reminders based on active reminders and current day
+      const currentDayOfWeek = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
+      const todaysReminders = activeReminders.filter(reminder => 
+        reminder.days_of_week.includes(currentDayOfWeek === 0 ? 7 : currentDayOfWeek) // Convert Sunday (0) to 7
+      );
+      
+      // Calculate today's actual dose count
+      const todaysDoses = todaysReminders.length;
+      
+      // Calculate adherence rate based on actual today's data
       const takenToday = adherenceData?.filter(a => a.status === 'taken').length || 0;
-      const totalToday = adherenceData?.length || 1;
-      const adherenceRate = Math.round((takenToday / totalToday) * 100);
+      const totalToday = Math.max(todaysDoses, adherenceData?.length || 0);
+      const missedToday = adherenceData?.filter(a => a.status === 'missed').length || 0;
+      const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 0;
 
-      // Get next reminder
+      // Calculate streak from adherence log
+      const calculateStreak = async () => {
+        try {
+          const { data: recentAdherence, error } = await supabase
+            .from('medication_adherence_log')
+            .select('*')
+            .eq('user_id', user.id)
+            .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
+            .order('scheduled_time', { ascending: false });
+
+          if (error) throw error;
+
+          let streak = 0;
+          const dailyTaken = new Map();
+          
+          // Group by date and check if all doses were taken each day
+          recentAdherence?.forEach(log => {
+            const date = new Date(log.scheduled_time).toDateString();
+            if (!dailyTaken.has(date)) {
+              dailyTaken.set(date, { taken: 0, total: 0 });
+            }
+            dailyTaken.get(date).total++;
+            if (log.status === 'taken') {
+              dailyTaken.get(date).taken++;
+            }
+          });
+
+          // Calculate consecutive days with 100% adherence
+          const sortedDates = Array.from(dailyTaken.keys()).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+          
+          for (const date of sortedDates) {
+            const dayData = dailyTaken.get(date);
+            if (dayData.taken >= dayData.total && dayData.total > 0) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+          
+          return streak;
+        } catch (error) {
+          console.error('Error calculating streak:', error);
+          return 0;
+        }
+      };
+
+      const streak = await calculateStreak();
+
+      // Get next reminder for today
       const now = new Date();
       const currentTime = now.getHours() * 60 + now.getMinutes();
       let nextReminder;
       
-      for (const reminder of activeReminders) {
+      // Sort today's reminders by time
+      const todaysRemindersSorted = [...todaysReminders].sort((a, b) => {
+        const [aHours, aMinutes] = a.reminder_time.split(':').map(Number);
+        const [bHours, bMinutes] = b.reminder_time.split(':').map(Number);
+        return (aHours * 60 + aMinutes) - (bHours * 60 + bMinutes);
+      });
+      
+      for (const reminder of todaysRemindersSorted) {
         const reminderTime = reminder.reminder_time;
         const [hours, minutes] = reminderTime.split(':').map(Number);
         const reminderMinutes = hours * 60 + minutes;
@@ -153,11 +229,11 @@ export const useDashboardData = () => {
           nextReminder
         },
         adherence: {
-          rate: adherenceRate || 0,
-          streak: 0, // This would need streak calculation logic
+          rate: adherenceRate,
+          streak: streak,
           completedToday: takenToday,
-          totalToday,
-          missedToday: totalToday - takenToday
+          totalToday: totalToday,
+          missedToday: Math.max(0, totalToday - takenToday)
         },
         family: {
           groups: new Set(familyGroups?.map(fg => fg.family_group_id)).size || 0,
