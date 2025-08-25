@@ -59,8 +59,20 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
       if (data?.url) {
         console.log('[CHECKOUT] Got checkout URL:', data.url);
-        // Redirect to Stripe checkout in the same tab for better user experience
-        window.location.href = data.url;
+        console.log('[CHECKOUT] Attempting to open checkout...');
+        
+        // Open Stripe checkout in a new tab (more reliable and standard for payments)
+        const newWindow = window.open(data.url, '_blank');
+        
+        if (!newWindow) {
+          console.error('[CHECKOUT] Popup blocked, trying redirect...');
+          // Fallback to same-tab redirect if popup was blocked
+          window.location.href = data.url;
+        } else {
+          console.log('[CHECKOUT] Checkout opened in new tab');
+          // Close the paywall sheet since checkout opened successfully
+          onClose();
+        }
       } else {
         console.error('[CHECKOUT] No URL in response:', data);
         throw new Error('No checkout URL received');
