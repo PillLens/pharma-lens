@@ -14,6 +14,11 @@ interface EnhancedSummaryDashboardProps {
   streak: number;
   missedDoses: number;
   weeklyAdherence: Array<{ day: string; rate: number }>;
+  todaySchedule?: Array<{
+    time: string;
+    medication: string;
+    status: 'upcoming' | 'current' | 'taken' | 'missed' | 'overdue';
+  }>;
   onCardTap?: (type: string) => void;
 }
 
@@ -25,6 +30,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
   streak,
   missedDoses,
   weeklyAdherence,
+  todaySchedule = [],
   onCardTap
 }) => {
   const { t } = useTranslation();
@@ -239,28 +245,55 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
             </div>
             
             <div className="space-y-3">
-              {['08:00', '14:00', '20:00'].map((time, index) => {
-                const currentTime = new Date().toTimeString().slice(0, 5);
-                const isPast = time < currentTime;
-                const isCurrent = Math.abs(new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTime}:00`).getTime()) < 30 * 60 * 1000;
-                
-                return (
-                  <div key={time} className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${isPast ? 'bg-success' : isCurrent ? 'bg-primary animate-pulse' : 'bg-muted'}`} />
-                    <div className="flex-1 flex items-center justify-between">
-                      <span className={`font-medium ${isPast ? 'text-success' : isCurrent ? 'text-primary' : 'text-foreground'}`}>
-                        {time}
-                      </span>
-                      <Badge 
-                        variant={isPast ? "default" : "outline"} 
-                        className="text-xs"
-                      >
-                        {isPast ? 'Taken' : isCurrent ? 'Now' : 'Upcoming'}
-                      </Badge>
+              {todaySchedule.length > 0 ? (
+                todaySchedule.map((item, index) => {
+                  const currentTime = new Date().toTimeString().slice(0, 5);
+                  const isPast = item.status === 'taken';
+                  const isCurrent = item.status === 'current';
+                  
+                  return (
+                    <div key={`${item.time}-${index}`} className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        isPast ? 'bg-success' : 
+                        isCurrent ? 'bg-primary animate-pulse' : 
+                        item.status === 'missed' || item.status === 'overdue' ? 'bg-destructive' :
+                        'bg-muted'
+                      }`} />
+                      <div className="flex-1 flex items-center justify-between">
+                        <div>
+                          <span className={`font-medium ${
+                            isPast ? 'text-success' : 
+                            isCurrent ? 'text-primary' : 
+                            item.status === 'missed' || item.status === 'overdue' ? 'text-destructive' :
+                            'text-foreground'
+                          }`}>
+                            {item.time}
+                          </span>
+                          <div className="text-xs text-muted-foreground">{item.medication}</div>
+                        </div>
+                        <Badge 
+                          variant={
+                            isPast ? "default" : 
+                            item.status === 'missed' || item.status === 'overdue' ? "destructive" :
+                            "outline"
+                          } 
+                          className="text-xs capitalize"
+                        >
+                          {item.status === 'taken' ? 'Taken' : 
+                           item.status === 'current' ? 'Now' : 
+                           item.status === 'missed' || item.status === 'overdue' ? 'Missed' :
+                           'Upcoming'}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No reminders scheduled for today</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

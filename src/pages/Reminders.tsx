@@ -240,16 +240,21 @@ const Reminders: React.FC = () => {
         <div className="space-y-6">
           {/* Enhanced Summary Dashboard */}
           <div className="pt-4">
-            <EnhancedSummaryDashboard
-              activeReminders={activeReminders}
-              medicationsCovered={medicationsCovered}
-              todaysDoses={todaysDoses}
-              adherenceRate={overallAdherenceRate}
-              streak={longestStreak}
-              missedDoses={missedDoses}
-              weeklyAdherence={weeklyAdherence}
-              onCardTap={handleSummaryCardTap}
-            />
+          <EnhancedSummaryDashboard
+            activeReminders={activeReminders}
+            medicationsCovered={medicationsCovered}
+            todaysDoses={todaysDoses}
+            adherenceRate={overallAdherenceRate}
+            streak={longestStreak}
+            missedDoses={missedDoses}
+            weeklyAdherence={weeklyAdherence}
+            todaySchedule={timelineEntries.map(entry => ({
+              time: entry.time,
+              medication: entry.medication,
+              status: entry.status
+            }))}
+            onCardTap={handleSummaryCardTap}
+          />
           </div>
 
           {/* Interactive Timeline */}
