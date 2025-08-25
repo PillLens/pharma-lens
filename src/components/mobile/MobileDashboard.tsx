@@ -86,7 +86,12 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language
       <QuickActionCards />
 
       {/* Recent Scans */}
-      <RecentScansCarousel />
+      <div className="mb-8">
+        <RecentScansCarousel />
+      </div>
+
+      {/* Extra bottom spacing for navigation */}
+      <div className="h-8" />
 
       {/* Enhanced FAB */}
       <EnhancedFAB 
