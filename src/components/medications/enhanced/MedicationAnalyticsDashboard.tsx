@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { TrendingUp, TrendingDown, AlertTriangle, Award, Calendar, Clock, Target, Zap, Shield, Heart } from 'lucide-react';
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MedicationAnalyticsDashboardProps {
   medications: any[];
@@ -16,70 +18,51 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
   medications,
   className
 }) => {
+  const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter'>('week');
+  const [loading, setLoading] = useState(true);
+  const [analyticsData, setAnalyticsData] = useState({
+    adherenceData: [] as any[],
+    effectivenessData: [] as any[],
+    adherenceByCategory: [] as any[],
+    timePreferences: [] as any[],
+    insights: [] as any[],
+    overallStats: { averageAdherence: 0, currentStreak: 0 }
+  });
 
-  // Mock analytics data
-  const adherenceData = [
-    { name: 'Mon', adherence: 95, missed: 1, taken: 19 },
-    { name: 'Tue', adherence: 88, missed: 2, taken: 18 },
-    { name: 'Wed', adherence: 92, missed: 1, taken: 19 },
-    { name: 'Thu', adherence: 85, missed: 3, taken: 17 },
-    { name: 'Fri', adherence: 98, missed: 0, taken: 20 },
-    { name: 'Sat', adherence: 90, missed: 2, taken: 18 },
-    { name: 'Sun', adherence: 87, missed: 2, taken: 18 }
-  ];
+  // Load real analytics data
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      try {
+        const [adherenceData, effectivenessData, categoryData, timePrefs, insights, stats] = await Promise.all([
+          medicationAnalyticsService.getWeeklyAdherence(user.id),
+          medicationAnalyticsService.getMedicationEffectiveness(user.id),
+          medicationAnalyticsService.getAdherenceByCategory(user.id),
+          medicationAnalyticsService.getTimePreferences(user.id),
+          medicationAnalyticsService.getMedicationInsights(user.id),
+          medicationAnalyticsService.getOverallStats(user.id)
+        ]);
 
-  const effectivenessData = [
-    { medication: 'Lisinopril', effectiveness: 95, sideEffects: 10 },
-    { medication: 'Metformin', effectiveness: 88, sideEffects: 25 },
-    { medication: 'Atorvastatin', effectiveness: 92, sideEffects: 15 },
-    { medication: 'Omeprazole', effectiveness: 85, sideEffects: 20 }
-  ];
+        setAnalyticsData({
+          adherenceData,
+          effectivenessData,
+          adherenceByCategory: categoryData,
+          timePreferences: timePrefs,
+          insights,
+          overallStats: stats
+        });
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const adherenceByCategory = [
-    { name: 'Heart', value: 95, color: '#ef4444', count: 3 },
-    { name: 'Diabetes', value: 88, color: '#3b82f6', count: 2 },
-    { name: 'Cholesterol', value: 92, color: '#8b5cf6', count: 1 },
-    { name: 'Digestive', value: 85, color: '#f59e0b', count: 2 }
-  ];
-
-  const timePreferences = [
-    { time: '6:00 AM', medications: 4, adherence: 95 },
-    { time: '12:00 PM', medications: 3, adherence: 88 },
-    { time: '6:00 PM', medications: 5, adherence: 92 },
-    { time: '9:00 PM', medications: 2, adherence: 90 }
-  ];
-
-  const insights = [
-    {
-      type: 'positive',
-      icon: <Award className="w-5 h-5 text-green-600" />,
-      title: 'Great Consistency!',
-      description: 'You\'ve maintained 90%+ adherence for 2 weeks straight.',
-      action: 'Keep it up!'
-    },
-    {
-      type: 'warning',
-      icon: <AlertTriangle className="w-5 h-5 text-amber-600" />,
-      title: 'Evening Doses',
-      description: 'You tend to miss evening medications more often.',
-      action: 'Set a reminder for 8 PM'
-    },
-    {
-      type: 'info',
-      icon: <Heart className="w-5 h-5 text-blue-600" />,
-      title: 'Effectiveness Tracking',
-      description: 'Your blood pressure medications show excellent results.',
-      action: 'Share with doctor'
-    },
-    {
-      type: 'urgent',
-      icon: <Shield className="w-5 h-5 text-red-600" />,
-      title: 'Drug Interaction Alert',
-      description: 'Potential interaction detected between Warfarin and Aspirin.',
-      action: 'Consult pharmacist'
-    }
-  ];
+    loadAnalytics();
+  }, [user, selectedPeriod]);
 
   const getInsightStyle = (type: string) => {
     switch (type) {
@@ -93,6 +76,21 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
         return 'border-red-200 bg-red-50';
       default:
         return 'border-border bg-background';
+    }
+  };
+
+  const getInsightIcon = (type: string) => {
+    switch (type) {
+      case 'positive':
+        return <Award className="w-5 h-5 text-green-600" />;
+      case 'warning':
+        return <AlertTriangle className="w-5 h-5 text-amber-600" />;
+      case 'info':
+        return <Heart className="w-5 h-5 text-blue-600" />;
+      case 'urgent':
+        return <Shield className="w-5 h-5 text-red-600" />;
+      default:
+        return <Award className="w-5 h-5 text-green-600" />;
     }
   };
 
@@ -135,6 +133,14 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
         </div>
       </div>
 
+      {loading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-32 bg-muted animate-pulse rounded" />
+          ))}
+        </div>
+      ) : (
+
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -153,9 +159,9 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
                   <Target className="w-8 h-8 text-primary" />
                   <TrendingUp className="w-4 h-4 text-green-500" />
                 </div>
-                <div className="text-2xl font-bold text-primary mb-1">91.5%</div>
+                <div className="text-2xl font-bold text-primary mb-1">{analyticsData.overallStats.averageAdherence.toFixed(1)}%</div>
                 <div className="text-sm text-muted-foreground">Average Adherence</div>
-                <Progress value={91.5} className="h-1 mt-2" />
+                <Progress value={analyticsData.overallStats.averageAdherence} className="h-1 mt-2" />
               </MobileCardContent>
             </MobileCard>
 
@@ -165,10 +171,10 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
                   <Zap className="w-8 h-8 text-amber-500" />
                   <Badge variant="outline" className="text-xs">14 days</Badge>
                 </div>
-                <div className="text-2xl font-bold text-primary mb-1">14</div>
+                <div className="text-2xl font-bold text-primary mb-1">{analyticsData.overallStats.currentStreak}</div>
                 <div className="text-sm text-muted-foreground">Current Streak</div>
                 <div className="flex gap-1 mt-2">
-                  {Array.from({ length: 7 }).map((_, i) => (
+                  {Array.from({ length: Math.min(7, analyticsData.overallStats.currentStreak) }).map((_, i) => (
                     <div key={i} className="h-1 flex-1 bg-amber-200 rounded" />
                   ))}
                 </div>
@@ -184,7 +190,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
             <MobileCardContent className="p-4 pt-0">
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={adherenceData}>
+                  <LineChart data={analyticsData.adherenceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
                     <XAxis 
                       dataKey="name" 
@@ -226,7 +232,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={adherenceByCategory}
+                        data={analyticsData.adherenceByCategory}
                         cx="50%"
                         cy="50%"
                         innerRadius={25}
@@ -234,7 +240,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
                         paddingAngle={5}
                         dataKey="value"
                       >
-                        {adherenceByCategory.map((entry, index) => (
+                        {analyticsData.adherenceByCategory.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -252,7 +258,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
               </MobileCardHeader>
               <MobileCardContent className="p-4 pt-0">
                 <div className="space-y-3">
-                  {timePreferences.map((time, index) => (
+                  {analyticsData.timePreferences.map((time, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-muted-foreground" />
@@ -282,7 +288,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
             <MobileCardContent className="p-4 pt-0">
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={adherenceData}>
+                  <BarChart data={analyticsData.adherenceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
                     <XAxis 
                       dataKey="name" 
@@ -314,7 +320,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
             </MobileCardHeader>
             <MobileCardContent className="p-4 pt-0">
               <div className="space-y-4">
-                {effectivenessData.map((med, index) => (
+                {analyticsData.effectivenessData.map((med, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{med.medication}</span>
@@ -344,14 +350,13 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
           </MobileCard>
         </TabsContent>
 
-        {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-4">
           <div className="space-y-3">
-            {insights.map((insight, index) => (
+            {analyticsData.insights.map((insight, index) => (
               <MobileCard key={index} className={`border ${getInsightStyle(insight.type)}`}>
                 <MobileCardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5">{insight.icon}</div>
+                    <div className="mt-0.5">{getInsightIcon(insight.type)}</div>
                     <div className="flex-1">
                       <div className="font-medium text-sm mb-1">{insight.title}</div>
                       <div className="text-sm text-muted-foreground mb-2">{insight.description}</div>
@@ -366,6 +371,7 @@ const MedicationAnalyticsDashboard: React.FC<MedicationAnalyticsDashboardProps> 
           </div>
         </TabsContent>
       </Tabs>
+      )}
     </div>
   );
 };

@@ -16,9 +16,7 @@ import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, getUserTimezone, isDoseTime } from '@/utils/timezoneUtils';
-
-// This will be populated with real user medications
-const [userMedications, setUserMedications] = useState<any[]>([]);
+import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
@@ -39,6 +37,13 @@ const Reminders: React.FC = () => {
   const [isAddingReminder, setIsAddingReminder] = useState(false);
   const [userTimezone, setUserTimezone] = useState<string | null>(null);
   const [timezoneFetching, setTimezoneFetching] = useState(true);
+  const [userMedications, setUserMedications] = useState<any[]>([]);
+  const [realAdherenceData, setRealAdherenceData] = useState({
+    adherenceRate: 0,
+    streak: 0,
+    missedDoses: 0,
+    weeklyAdherence: [] as any[]
+  });
 
   // Fetch user's timezone from profile
   useEffect(() => {
@@ -65,6 +70,40 @@ const Reminders: React.FC = () => {
     };
 
     fetchUserTimezone();
+  }, [user]);
+
+  // Fetch user medications and real adherence data
+  useEffect(() => {
+    const fetchRealData = async () => {
+      if (!user) return;
+      
+      try {
+        // Fetch user medications
+        const { data: medications, error: medError } = await supabase
+          .from('user_medications')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true);
+
+        if (medError) throw medError;
+        setUserMedications(medications || []);
+
+        // Fetch real adherence statistics
+        const stats = await medicationAnalyticsService.getOverallStats(user.id);
+        const weeklyData = await medicationAnalyticsService.getWeeklyAdherence(user.id);
+        
+        setRealAdherenceData({
+          adherenceRate: stats.averageAdherence,
+          streak: stats.currentStreak,
+          missedDoses: stats.totalDoses - stats.takenDoses,
+          weeklyAdherence: weeklyData
+        });
+      } catch (error) {
+        console.error('Error fetching real medication data:', error);
+      }
+    };
+
+    fetchRealData();
   }, [user]);
 
   // Handle reminder actions
@@ -136,19 +175,14 @@ const Reminders: React.FC = () => {
   const medicationsCovered = new Set(reminders.map(r => r.medication?.medication_name).filter(Boolean)).size;
   const todaysDoses = reminders.filter(r => r.is_active).length; // Simplified calculation
 
-  // Mock data for advanced stats (replace with real calculations)
-  const overallAdherenceRate = 85;
-  const longestStreak = 7;
-  const missedDoses = 2;
-  const weeklyAdherence = [
-    { day: 'Mon', rate: 95 },
-    { day: 'Tue', rate: 88 },
-    { day: 'Wed', rate: 92 },
-    { day: 'Thu', rate: 85 },
-    { day: 'Fri', rate: 96 },
-    { day: 'Sat', rate: 89 },
-    { day: 'Sun', rate: 93 }
-  ];
+  // Use real adherence data
+  const overallAdherenceRate = realAdherenceData.adherenceRate;
+  const longestStreak = realAdherenceData.streak;
+  const missedDoses = realAdherenceData.missedDoses;
+  const weeklyAdherence = realAdherenceData.weeklyAdherence.map(day => ({
+    day: day.name,
+    rate: day.adherence
+  }));
 
   // Get user's actual timezone
   const effectiveTimezone = getUserTimezone(userTimezone);
@@ -177,9 +211,9 @@ const Reminders: React.FC = () => {
       if (doseCheck.isCurrent) {
         return 'current';
       } else if (doseCheck.isPast) {
-        // For now, randomly assign taken/missed for demo
-        // In production, this should check the adherence log
-        return Math.random() > 0.3 ? 'taken' : 'missed';
+        // Check actual adherence log for this reminder time
+        // For now, return upcoming as fallback - this should query the adherence log
+        return 'upcoming';
       } else {
         return 'upcoming';
       }
@@ -261,9 +295,9 @@ const Reminders: React.FC = () => {
                       status: reminder.is_active ? 'active' : 'paused',
                       nextDose: '', // Calculate based on reminder_time and days_of_week
                       notes: '',
-                      adherenceRate: 85, // Calculate from adherence log
-                      streak: 7, // Calculate from adherence log
-                      lastTaken: '', // Get from adherence log
+                       adherenceRate: overallAdherenceRate, // Use real adherence rate
+                       streak: longestStreak, // Use real streak
+                       lastTaken: '', // Could be calculated from adherence log
                       dosesToday: [] // Calculate from reminder_time and days_of_week
                     }}
                     onTap={() => handleReminderTap(reminder)}
