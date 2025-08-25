@@ -19,7 +19,12 @@ import {
   Crown,
   ExternalLink,
   Eye,
-  Check
+  Check,
+  Send,
+  Pill,
+  Users,
+  Package,
+  Moon
 } from 'lucide-react';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -470,33 +475,39 @@ const Settings: React.FC = () => {
         <Card className="rounded-2xl shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
                 <Bell className="w-5 h-5 text-white" />
               </div>
               <TranslatedText translationKey="settings.notifications.title" fallback="Notifications" />
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 p-4">
+          <CardContent className="space-y-6 p-6">
             {/* Master Toggle */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{t('settings.notifications.masterToggle')}</p>
-                <p className="text-sm text-muted-foreground">{t('settings.notifications.masterDescription')}</p>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                  <Bell className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="font-medium text-blue-900">{t('settings.notifications.pushNotifications')}</p>
+                  <p className="text-sm text-blue-600">{t('settings.notifications.pushDescription')}</p>
+                </div>
               </div>
-                  <Switch
-                    checked={profileData.notification_preferences?.enabled || false}
-                    onCheckedChange={(checked) => handleNotificationChange('enabled', checked)}
-                  />
+              <Switch
+                checked={profileData.notification_preferences?.enabled || false}
+                onCheckedChange={(checked) => handleNotificationChange('enabled', checked)}
+              />
             </div>
 
-            <Separator />
-
-            {/* Individual toggles */}
-            <div className="space-y-4 opacity-50" style={{ opacity: profileData.notification_preferences?.enabled ? 1 : 0.5 }}>
+            {/* Category Toggles */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{t('settings.notifications.reminders')}</p>
-                  <p className="text-sm text-muted-foreground">{t('settings.notifications.remindersDescription')}</p>
+                <div className="flex items-center gap-3">
+                  <Pill className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">{t('settings.notifications.medicationReminders')}</p>
+                    <p className="text-sm text-muted-foreground">Local notifications for exact dose times</p>
+                  </div>
                 </div>
                 <Switch
                   checked={profileData.notification_preferences?.reminders || false}
@@ -506,9 +517,12 @@ const Settings: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{t('settings.notifications.missedDose')}</p>
-                  <p className="text-sm text-muted-foreground">{t('settings.notifications.missedDoseDescription')}</p>
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">{t('settings.notifications.missedDose')}</p>
+                    <p className="text-sm text-muted-foreground">Daily summary of missed medications</p>
+                  </div>
                 </div>
                 <Switch
                   checked={profileData.notification_preferences?.missedDose || false}
@@ -518,9 +532,12 @@ const Settings: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{t('settings.notifications.family')}</p>
-                  <p className="text-sm text-muted-foreground">{t('settings.notifications.familyDescription')}</p>
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">{t('settings.notifications.familyUpdates')}</p>
+                    <p className="text-sm text-muted-foreground">Family group and caregiver notifications</p>
+                  </div>
                 </div>
                 <Switch
                   checked={profileData.notification_preferences?.family || false}
@@ -530,9 +547,12 @@ const Settings: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{t('settings.notifications.product')}</p>
-                  <p className="text-sm text-muted-foreground">{t('settings.notifications.productDescription')}</p>
+                <div className="flex items-center gap-3">
+                  <Package className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">{t('settings.notifications.productAlerts')}</p>
+                    <p className="text-sm text-muted-foreground">Safety alerts and product updates</p>
+                  </div>
                 </div>
                 <Switch
                   checked={profileData.notification_preferences?.product || false}
@@ -540,47 +560,62 @@ const Settings: React.FC = () => {
                   disabled={!profileData.notification_preferences?.enabled}
                 />
               </div>
+            </div>
 
-              <Separator />
-
-              {/* Quiet Hours */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{t('settings.notifications.quietHours')}</p>
-                    <p className="text-sm text-muted-foreground">{t('settings.notifications.quietHoursDescription')}</p>
-                  </div>
-                  <Switch
-                    checked={profileData.notification_preferences?.quietHours?.enabled || false}
-                    onCheckedChange={(checked) => handleNotificationChange('quietHours', { ...profileData.notification_preferences?.quietHours, enabled: checked })}
+            {/* Quiet Hours */}
+            <div className="p-4 rounded-xl bg-muted/50 border">
+              <div className="flex items-center gap-3 mb-3">
+                <Moon className="w-5 h-5 text-muted-foreground" />
+                <p className="font-medium">{t('settings.notifications.quietHours')}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="quiet-start" className="text-sm">{t('settings.notifications.quietStart')}</Label>
+                  <Input
+                    id="quiet-start"
+                    type="time"
+                    value={profileData.notification_preferences?.quietHours?.start || '22:00'}
+                    onChange={(e) => handleQuietHoursChange('start', e.target.value)}
                     disabled={!profileData.notification_preferences?.enabled}
                   />
                 </div>
-
-                {profileData.notification_preferences?.quietHours?.enabled && (
-                  <div className="flex gap-4 pl-4">
-                    <div className="flex-1">
-                      <Label className="text-xs">{t('settings.notifications.from')}</Label>
-                      <Input
-                        type="time"
-                        value={profileData.notification_preferences?.quietHours?.start || '22:00'}
-                        onChange={(e) => handleQuietHoursChange('start', e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Label className="text-xs">{t('settings.notifications.to')}</Label>
-                      <Input
-                        type="time"
-                        value={profileData.notification_preferences?.quietHours?.end || '07:00'}
-                        onChange={(e) => handleQuietHoursChange('end', e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                )}
+                <div>
+                  <Label htmlFor="quiet-end" className="text-sm">{t('settings.notifications.quietEnd')}</Label>
+                  <Input
+                    id="quiet-end"
+                    type="time"
+                    value={profileData.notification_preferences?.quietHours?.end || '07:00'}
+                    onChange={(e) => handleQuietHoursChange('end', e.target.value)}
+                    disabled={!profileData.notification_preferences?.enabled}
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Test Notification Button */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full"
+              onClick={async () => {
+                try {
+                  const { oneSignalService } = await import('@/services/oneSignalService');
+                  const success = await oneSignalService.sendTestNotification();
+                  if (success) {
+                    toast({ title: 'Success', description: 'Test notification sent!' });
+                  } else {
+                    toast({ title: 'Error', description: 'Failed to send test notification', variant: 'destructive' });
+                  }
+                } catch (error) {
+                  console.error('Test notification error:', error);
+                  toast({ title: 'Error', description: 'Test notification failed', variant: 'destructive' });
+                }
+              }}
+              disabled={!profileData.notification_preferences?.enabled}
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {t('settings.notifications.testNotification')}
+            </Button>
           </CardContent>
         </Card>
 
