@@ -29,7 +29,8 @@
     "update": "Update",
     "daysLeft": "d left",
     "searchPlaceholder": "Search...",
-    "filterBy": "Filter by"
+    "filterBy": "Filter by",
+    "change": "Change"
   },
   "navigation": {
     "home": "Home",
@@ -399,6 +400,84 @@
       "pause": "Pause",
       "activate": "Activate",
       "addReminder": "Add Reminder"
+    }
+  },
+  "settings": {
+    "profile": {
+      "title": "Profile",
+      "tapToChange": "Tap to change profile picture",
+      "displayName": "Display Name",
+      "enterName": "Enter your name",
+      "phone": "Phone",
+      "enterPhone": "Enter your phone number",
+      "bio": "Bio",
+      "enterBio": "Tell us about yourself",
+      "saved": "Profile Saved",
+      "savedDescription": "Your profile has been updated successfully",
+      "saveError": "Failed to save profile"
+    },
+    "language": {
+      "title": "Language & Region",
+      "language": "Language",
+      "selectLanguage": "Select Language"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "masterToggle": "Enable Notifications",
+      "masterDescription": "Receive all app notifications",
+      "reminders": "Medication Reminders",
+      "remindersDescription": "Get notified when it's time to take medication",
+      "missedDose": "Missed Dose Alerts",
+      "missedDoseDescription": "Alert when you miss a scheduled dose",
+      "family": "Family Updates",
+      "familyDescription": "Notifications from family members and caregivers",
+      "product": "Product Updates",
+      "productDescription": "Updates about new features and improvements",
+      "quietHours": "Quiet Hours",
+      "quietHoursDescription": "Disable notifications during these hours",
+      "from": "From",
+      "to": "To"
+    },
+    "billing": {
+      "title": "Billing & Plan",
+      "currentPlan": "Current Plan",
+      "trialActive": "Trial Active",
+      "daysLeft": "{{days}} days left",
+      "freePlan": "Free Plan",
+      "proIndividual": "Pro Individual",
+      "proFamily": "Pro Family",
+      "manageBilling": "Manage Billing",
+      "upgrade": "Upgrade Plan",
+      "manageError": "Failed to open billing portal"
+    },
+    "privacy": {
+      "title": "Privacy & Data",
+      "exportData": "Export My Data",
+      "exportDescription": "Download all your data in a portable format",
+      "clearCache": "Clear Cache",
+      "clearCacheDescription": "Clear locally stored app data",
+      "exportStarted": "Data Export Started",
+      "exportError": "Failed to export data",
+      "cacheCleared": "Cache cleared successfully"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change Password",
+      "changePasswordDescription": "Update your account password",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDescription": "Add an extra layer of security to your account"
+    },
+    "account": {
+      "title": "Account Management",
+      "signOut": "Sign Out",
+      "signOutDescription": "End your current session",
+      "deleteAccount": "Delete Account",
+      "deleteDescription": "Permanently delete your account and all data",
+      "deleteConfirmation": "Type DELETE to confirm",
+      "deleteConfirmationError": "Please type DELETE to confirm account deletion",
+      "deleted": "Account Deleted",
+      "deletedDescription": "Your account has been successfully deleted",
+      "deleteError": "Failed to delete account"
     }
   },
   "errors": {
