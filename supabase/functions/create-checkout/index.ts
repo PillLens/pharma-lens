@@ -67,64 +67,23 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Define plan to product ID mapping  
-    const planToProductMapping: { [key: string]: { monthly: string; yearly: string } } = {
+    // Map to specific Stripe price IDs
+    const priceMapping = {
       'pro_individual': {
-        monthly: 'prod_SvnkjphfFmzJCU', // $5.99
-        yearly: 'prod_Svnk7nMQJbI9y9'  // $39.99
+        'monthly': 'price_1Rzw9FK6MpH3rgygAuEJal37', // $5.99
+        'yearly': 'price_1Rzw9UK6MpH3rgygirn3a1cd'   // $39.99
       },
       'pro_family': {
-        monthly: 'prod_SvnlNRrwSnGq8t', // $9.99
-        yearly: 'prod_SvnlpLbYnb6cSc'  // $69.99
+        'monthly': 'price_1Rzw9iK6MpH3rgygNBVM2lDk', // $9.99
+        'yearly': 'price_1Rzw9xK6MpH3rgygAjYI0B1Y'   // $69.99
       }
     };
 
-    const productMapping = planToProductMapping[plan];
-    if (!productMapping) {
-      throw new Error(`Invalid plan: ${plan}`);
+    const priceId = priceMapping[plan as keyof typeof priceMapping]?.[billing_cycle as keyof typeof priceMapping['pro_individual']];
+    if (!priceId) {
+      throw new Error(`Invalid plan or billing cycle: ${plan}, ${billing_cycle}`);
     }
-
-    // Get the correct product ID based on billing cycle
-    const isYearly = billing_cycle === 'yearly';
-    const productId = isYearly ? productMapping.yearly : productMapping.monthly;
-    
-    logStep("Using existing product", { productId, billing_cycle, plan });
-
-    // Find the price for this product
-    let price;
-    try {
-      const prices = await stripe.prices.list({
-        product: productId,
-        active: true,
-        type: 'recurring'
-      });
-
-      if (prices.data.length === 0) {
-        logStep("No prices found, creating new price for product", { productId });
-        
-        // Create a price for this product
-        const priceAmount = plan === 'pro_individual' 
-          ? (isYearly ? 3999 : 599)  // $39.99 yearly, $5.99 monthly
-          : (isYearly ? 6999 : 999); // $69.99 yearly, $9.99 monthly
-        
-        price = await stripe.prices.create({
-          product: productId,
-          unit_amount: priceAmount,
-          currency: 'usd',
-          recurring: {
-            interval: isYearly ? 'year' : 'month'
-          }
-        });
-        logStep("Created new price", { priceId: price.id, amount: priceAmount });
-      } else {
-        // Use the first active price for this product
-        price = prices.data[0];
-        logStep("Found existing price", { priceId: price.id, amount: price.unit_amount });
-      }
-    } catch (error) {
-      logStep("Error finding/creating price", { error: error.message });
-      throw new Error(`Failed to find/create price for product: ${error.message}`);
-    }
+    logStep("Price ID determined", { priceId, plan, billing_cycle });
 
     // Check if customer exists
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
@@ -151,7 +110,7 @@ serve(async (req) => {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{
-        price: price.id,
+        price: priceId,
         quantity: 1,
       }],
       mode: "subscription",
