@@ -166,7 +166,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
           </SheetHeader>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-6">
             {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="font-medium text-foreground">Basic Information</h3>

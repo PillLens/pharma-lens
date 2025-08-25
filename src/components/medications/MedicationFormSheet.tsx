@@ -510,6 +510,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
       onClose={onClose}
       height="full"
       title={medication ? `${t('common.edit')} ${t('medications.title')}` : t('medications.add')}
+      className="scrollbar-hide"
     >
       <div className="flex flex-col h-full">
         {/* Step Indicator */}
@@ -541,7 +542,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto scrollbar-hide p-6">
           {renderStepContent()}
         </div>
 

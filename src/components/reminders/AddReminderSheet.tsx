@@ -116,7 +116,7 @@ const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto">
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto scrollbar-hide">
         <SheetHeader className="text-left pb-6">
           <SheetTitle className="text-lg font-semibold flex items-center gap-2">
             <Plus className="w-5 h-5" />

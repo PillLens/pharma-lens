@@ -133,7 +133,7 @@ const PullToRefreshWrapper: React.FC<PullToRefreshWrapperProps> = ({
   return (
     <div
       ref={containerRef}
-      className={cn('relative overflow-y-auto overscroll-contain', className)}
+      className={cn('relative overflow-y-auto overscroll-contain scrollbar-hide', className)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

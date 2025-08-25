@@ -37,7 +37,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
 
       {/* Optimized Scrollable Content Area */}
       <main className={cn(
-        "flex-1 overflow-y-auto overscroll-contain",
+        "flex-1 overflow-y-auto overscroll-contain scrollbar-hide",
         "scroll-smooth webkit-overflow-scrolling-touch",
         className
       )}>

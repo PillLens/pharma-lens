@@ -104,7 +104,7 @@ const GroupDetailsSheet: React.FC<GroupDetailsSheetProps> = ({
           </SheetHeader>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
             {/* Invite Member Button */}
             <div className="px-6 pb-4">
               <Button 

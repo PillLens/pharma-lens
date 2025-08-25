@@ -93,7 +93,7 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
           </SheetHeader>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-6">
             {/* Group Name Input */}
             <div className="space-y-2">
               <Label htmlFor="groupName">{t('family.group.name')}</Label>
