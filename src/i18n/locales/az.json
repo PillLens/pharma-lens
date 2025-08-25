@@ -108,6 +108,12 @@
     "todaysFocus": "Bugünkü Diqqət",
     "daysRemaining": "{{days}} gün qalıb"
   },
+    "healthdashboardDescription": "Uyğunluq və anlayışları görün",
+    "healthdashboardTitle": "Sağlamlıq Paneli",
+    "mymedicationsTitle": "Mənim Dərmanlarım",
+    "reminderstodayTitle": "Bugünkü Xatırlatmalar",
+    "familygroupTitle": "Ailə Qrupu"
+  },
   "descriptions": {
     "scanMedications": "Dərmanları skan et",
     "viewHistory": "Skan tarixçəsini gör",
