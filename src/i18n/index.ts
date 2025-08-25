@@ -21,7 +21,6 @@ i18n
   .init({
     resources,
     fallbackLng: 'EN',
-    lng: 'EN', // Default to English
     debug: process.env.NODE_ENV === 'development',
     
     interpolation: {
@@ -31,6 +30,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'selectedLanguage',
     },
     
     react: {

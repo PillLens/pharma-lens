@@ -236,6 +236,8 @@
     "reportSideEffects": "Herhangi bir yan etkiyi sağlık hizmetleri sağlayıcınıza bildirin"
   },
   "reminders": {
+    "title": "Hatırlatıcılar",
+    "subtitle": "Akıllı bildirimlerle hiç bir dozu kaçırma",
     "createReminder": "Hatırlatıcı Oluştur",
     "reminderTimes": "Hatırlatıcı Zamanları",
     "addTime": "Zaman Ekle",
@@ -245,10 +247,73 @@
     "afternoonDose": "Öğleden sonra dozu",
     "eveningDose": "Akşam dozu",
     "nightDose": "Gece dozu",
+    "empty": {
+      "title": "Hatırlatıcı Ayarlanmamış",
+      "subtitle": "Akıllı bildirimlerle takipte kalın",
+      "description": "İlaç programınızı sürdürmenize yardımcı olmak için ilaç hatırlatıcıları kurun.",
+      "createButton": "İlk Hatırlatıcınızı Ekleyin"
+    },
     "summary": {
       "active": "Aktif Hatırlatıcılar",
       "medications": "Kapsanan İlaçlar",
       "today": "Bugünkü Dozlar"
+    },
+    "status": {
+      "active": "Aktif",
+      "paused": "Duraklatıldı",
+      "inactive": "İnaktif"
+    },
+    "frequency": {
+      "once": "Günde bir kez",
+      "twice": "Günde iki kez",
+      "custom": "Özel",
+      "everyHour": "Her {{hours}} saatte",
+      "asNeeded": "Gerektiğinde"
+    },
+    "details": {
+      "title": "Hatırlatıcı Detayları",
+      "schedule": "Program",
+      "frequency": "Sıklık",
+      "nextDose": "Sonraki doz",
+      "notes": "Notlar",
+      "editButton": "Hatırlatıcıyı Düzenle"
+    },
+    "form": {
+      "title": "Hatırlatıcı Ekle",
+      "editTitle": "Hatırlatıcıyı Düzenle",
+      "medication": "İlaç",
+      "medicationPlaceholder": "İlaç seçin",
+      "dosage": "Doz",
+      "dosagePlaceholder": "örn., 1 tablet",
+      "frequency": "Sıklık",
+      "times": "Zamanlar",
+      "startDate": "Başlangıç Tarihi",
+      "endDate": "Bitiş Tarihi",
+      "notes": "Notlar",
+      "notesPlaceholder": "İsteğe bağlı notlar...",
+      "save": "Hatırlatıcıyı Kaydet",
+      "cancel": "İptal",
+      "update": "Hatırlatıcıyı Güncelle"
+    },
+    "validation": {
+      "medicationRequired": "Lütfen bir ilaç seçin",
+      "dosageRequired": "Lütfen doz girin",
+      "timesRequired": "Lütfen en az bir zaman ekleyin",
+      "startDateRequired": "Lütfen başlangıç tarihi seçin"
+    },
+    "messages": {
+      "reminderAdded": "Hatırlatıcı Eklendi",
+      "reminderUpdated": "Hatırlatıcı Güncellendi",
+      "reminderDeleted": "Hatırlatıcı Silindi",
+      "reminderPaused": "Hatırlatıcı Duraklatıldı",
+      "reminderActivated": "Hatırlatıcı Etkinleştirildi"
+    },
+    "actions": {
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "pause": "Duraklat",
+      "activate": "Etkinleştir",
+      "addReminder": "Hatırlatıcı Ekle"
     }
   },
   "family": {

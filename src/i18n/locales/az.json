@@ -236,6 +236,8 @@
     "reportSideEffects": "Hər hansı yan təsiri səhiyyə xidməti təminatçınıza bildirin"
   },
   "reminders": {
+    "title": "Xatırlatmalar",
+    "subtitle": "Ağıllı bildirişlərlə heç bir dozunu qaçırma", 
     "createReminder": "Xatırlatma Yarat",
     "reminderTimes": "Xatırlatma Vaxtları",
     "addTime": "Vaxt Əlavə Et",
@@ -245,10 +247,73 @@
     "afternoonDose": "Günorta dozası",
     "eveningDose": "Axşam dozası",
     "nightDose": "Gecə dozası",
+    "empty": {
+      "title": "Heç Xatırlatma Təyin Edilməyib",
+      "subtitle": "Ağıllı bildirişlərlə yolunuzda qalın",
+      "description": "Dərman cədvəlinizi saxlamağa kömək etmək üçün dərman xatırlatmaları qurun.",
+      "createButton": "İlk Xatırlatmanızı Əlavə Edin"
+    },
     "summary": {
-      "active": "Aktiv Xatırlatma",
-      "medications": "Əhatə edilən Dərman",
+      "active": "Aktiv Xatırlatmalar",
+      "medications": "Əhatə edilən Dərmanlar",
       "today": "Bugünkü Dozalar"
+    },
+    "status": {
+      "active": "Aktiv",
+      "paused": "Dayandırılmış",
+      "inactive": "Qeyri-aktiv"
+    },
+    "frequency": {
+      "once": "Gündə bir dəfə",
+      "twice": "Gündə iki dəfə",
+      "custom": "Xüsusi",
+      "everyHour": "Hər {{hours}} saatda",
+      "asNeeded": "Lazım olduqda"
+    },
+    "details": {
+      "title": "Xatırlatma Təfərrüatları",
+      "schedule": "Cədvəl",
+      "frequency": "Tezlik",
+      "nextDose": "Növbəti doza",
+      "notes": "Qeydlər",
+      "editButton": "Xatırlatmanı Redaktə Et"
+    },
+    "form": {
+      "title": "Xatırlatma Əlavə Et",
+      "editTitle": "Xatırlatmanı Redaktə Et", 
+      "medication": "Dərman",
+      "medicationPlaceholder": "Dərman seçin",
+      "dosage": "Doza",
+      "dosagePlaceholder": "məs., 1 tablet",
+      "frequency": "Tezlik",
+      "times": "Vaxtlar",
+      "startDate": "Başlama Tarixi",
+      "endDate": "Bitmə Tarixi",
+      "notes": "Qeydlər",
+      "notesPlaceholder": "İsteğe bağlı qeydlər...",
+      "save": "Xatırlatmanı Saxla",
+      "cancel": "Ləğv Et",
+      "update": "Xatırlatmanı Yenilə"
+    },
+    "validation": {
+      "medicationRequired": "Zəhmət olmasa dərman seçin",
+      "dosageRequired": "Zəhmət olmasa doza daxil edin",
+      "timesRequired": "Zəhmət olmasa ən azı bir vaxt əlavə edin",
+      "startDateRequired": "Zəhmət olmasa başlama tarixi seçin"
+    },
+    "messages": {
+      "reminderAdded": "Xatırlatma Əlavə Edildi",
+      "reminderUpdated": "Xatırlatma Yeniləndi",
+      "reminderDeleted": "Xatırlatma Silindi",
+      "reminderPaused": "Xatırlatma Dayandırıldı",
+      "reminderActivated": "Xatırlatma Aktivləşdirildi"
+    },
+    "actions": {
+      "edit": "Redaktə Et",
+      "delete": "Sil",
+      "pause": "Dayandır",
+      "activate": "Aktivləşdir",
+      "addReminder": "Xatırlatma Əlavə Et"
     }
   },
   "family": {
