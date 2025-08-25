@@ -21,7 +21,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'EN',
-    lng: 'AZ', // Default to Azerbaijani
+    lng: 'EN', // Default to English
     debug: process.env.NODE_ENV === 'development',
     
     interpolation: {

@@ -14,11 +14,12 @@ import {
   Bell,
   Shield,
   Plus,
-  Crown
+  Crown,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
-import { LanguageSelector } from '@/components/LanguageSelector';
+
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -156,8 +157,7 @@ const Dashboard: React.FC = () => {
                   {/* Plan badge with enhanced styling */}
                   <div className="flex flex-col items-end gap-2 ml-4">
                     <div className="flex items-center gap-2">
-                      <LanguageSelector />
-                      <Badge 
+                      <Badge
                         variant={getPlanBadgeVariant()} 
                         className={cn(
                           "px-4 py-2 text-xs font-bold shadow-lg border-0 backdrop-blur-sm",
@@ -376,18 +376,24 @@ const Dashboard: React.FC = () => {
                 </MobileCardContent>
               </MobileCard>
 
-              {/* Security Status */}
-              <MobileCard className="border border-green-500/20 bg-gradient-to-r from-green-500/5 to-green-500/10">
+              {/* Settings Card */}
+              <MobileCard 
+                interactive 
+                onClick={() => navigate('/settings')}  
+                className="group hover:scale-[1.01] transition-all duration-300 border border-slate-500/20 bg-gradient-to-r from-slate-500/5 to-slate-500/10"
+              >
                 <MobileCardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-500/10 rounded-xl">
-                      <Shield className="w-6 h-6 text-green-500" />
+                    <div className="p-3 bg-slate-500/10 rounded-xl group-hover:bg-slate-500/20 transition-colors">
+                      <SettingsIcon className="w-6 h-6 text-slate-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">Security Status</h4>
-                      <p className="text-sm text-muted-foreground">All data encrypted & secure</p>
+                      <h4 className="font-semibold text-foreground mb-1">Settings</h4>
+                      <p className="text-sm text-muted-foreground">Manage your account and preferences</p>
                     </div>
-                    <Badge variant="default" className="bg-green-500 text-white">Active</Badge>
+                    <div className="text-slate-500 group-hover:translate-x-1 transition-transform">
+                      →
+                    </div>
                   </div>
                 </MobileCardContent>
               </MobileCard>
