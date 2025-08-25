@@ -1,18 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { User, Globe, Shield, CreditCard } from 'lucide-react';
+import { 
+  User, 
+  Globe, 
+  Shield, 
+  CreditCard, 
+  Phone, 
+  Bell, 
+  MapPin, 
+  Download, 
+  Trash2, 
+  LogOut,
+  Settings as SettingsIcon,
+  Shield as SecurityIcon,
+  HelpCircle,
+  Info
+} from 'lucide-react';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TranslatedText } from '@/components/TranslatedText';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { SettingsProfile } from '@/components/settings/SettingsProfile';
 import { SettingsPreferences } from '@/components/settings/SettingsPreferences';
 import { SettingsSecurity } from '@/components/settings/SettingsSecurity';
 import { SettingsAccount } from '@/components/settings/SettingsAccount';
+import { SettingsRow } from '@/components/settings/SettingsRow';
+import { SettingsSectionHeader } from '@/components/settings/SettingsSectionHeader';
+import { LocationTimezoneSettings } from '@/components/settings/LocationTimezoneSettings';
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface NotificationPreferences {
   enabled: boolean;
@@ -64,6 +92,10 @@ const Settings: React.FC = () => {
   });
   const [hasChanges, setHasChanges] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showLanguageSelect, setShowLanguageSelect] = useState(false);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [showLocationSettings, setShowLocationSettings] = useState(false);
 
   const languages = [
     { code: 'EN', name: 'English', flag: '🇺🇸' },
@@ -338,68 +370,317 @@ const Settings: React.FC = () => {
       showHeader={true}
       className="bg-background"
     >
-      <div className="px-4 pt-4 pb-24">
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6 h-12">
-            <TabsTrigger value="profile" className="flex-col h-full py-2">
-              <User className="w-4 h-4 mb-1" />
-              <span className="text-xs">Profile</span>
-            </TabsTrigger>
-            <TabsTrigger value="preferences" className="flex-col h-full py-2">
-              <Globe className="w-4 h-4 mb-1" />
-              <span className="text-xs">Preferences</span>
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex-col h-full py-2">
-              <Shield className="w-4 h-4 mb-1" />
-              <span className="text-xs">Security</span>
-            </TabsTrigger>
-            <TabsTrigger value="account" className="flex-col h-full py-2">
-              <CreditCard className="w-4 h-4 mb-1" />
-              <span className="text-xs">Account</span>
-            </TabsTrigger>
-          </TabsList>
+      <div className="pb-24">
+        {/* Profile Header */}
+        <div className="px-4 py-6 bg-background border-b border-border/50">
+          <div className="flex items-center space-x-4">
+            <Avatar className="w-16 h-16">
+              <AvatarImage src={profileData.avatar_url} />
+              <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
+                {profileData.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-semibold text-foreground truncate">
+                {profileData.display_name || t('settings.profile.noName')}
+              </h2>
+              <p className="text-sm text-muted-foreground truncate">
+                {user?.email}
+              </p>
+              {profileData.bio && (
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  {profileData.bio}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
 
-          <TabsContent value="profile" className="mt-0">
-            <SettingsProfile
-              user={user}
-              profileData={profileData}
-              hasChanges={hasChanges}
-              loading={loading}
-              onProfileChange={handleProfileChange}
-              onSaveProfile={saveProfile}
+        {/* Account Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.sections.account')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<User className="w-5 h-5 text-primary" />}
+              title={t('settings.profile.editProfile')}
+              subtitle={t('settings.profile.editProfileDescription')}
+              onClick={() => setShowEditProfile(true)}
             />
-          </TabsContent>
+            <SettingsRow
+              icon={<SettingsIcon className="w-5 h-5 text-primary" />}
+              title={t('settings.security.changePassword')}
+              subtitle={t('settings.security.changePasswordDescription')}
+              onClick={() => {}} // Placeholder
+            />
+            <SettingsRow
+              icon={<Phone className="w-5 h-5 text-primary" />}
+              title={t('settings.profile.phone')}
+              value={profileData.phone || t('settings.profile.notSet')}
+              onClick={() => setShowEditProfile(true)}
+            />
+          </div>
+        </div>
 
-          <TabsContent value="preferences" className="mt-0">
-            <SettingsPreferences
-              language={language}
-              onLanguageChange={handleLanguageChange}
+        {/* Preferences Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.sections.preferences')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<Globe className="w-5 h-5 text-primary" />}
+              title={t('settings.preferences.language')}
+              value={languages.find(l => l.code === language)?.name}
+              onClick={() => setShowLanguageSelect(true)}
             />
-          </TabsContent>
+            <SettingsRow
+              icon={<Bell className="w-5 h-5 text-primary" />}
+              title={t('settings.preferences.notifications')}
+              subtitle={profileData.notification_preferences.enabled 
+                ? t('settings.preferences.notificationsEnabled')
+                : t('settings.preferences.notificationsDisabled')
+              }
+              rightElement={
+                <Switch
+                  checked={profileData.notification_preferences.enabled}
+                  onCheckedChange={(enabled) => handleNotificationChange('enabled', enabled)}
+                />
+              }
+              onClick={() => setShowNotificationSettings(true)}
+            />
+            <SettingsRow
+              icon={<MapPin className="w-5 h-5 text-primary" />}
+              title={t('settings.preferences.locationTimezone')}
+              subtitle={t('settings.preferences.locationDescription')}
+              onClick={() => setShowLocationSettings(true)}
+            />
+          </div>
+        </div>
 
-          <TabsContent value="security" className="mt-0">
-            <SettingsSecurity
-              loading={loading}
-              onExportData={handleExportData}
+        {/* Privacy & Security Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.sections.security')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<Download className="w-5 h-5 text-primary" />}
+              title={t('settings.privacy.exportData')}
+              subtitle={t('settings.privacy.exportDescription')}
+              onClick={handleExportData}
+              showArrow={!loading}
             />
-          </TabsContent>
+            <SettingsRow
+              icon={<Trash2 className="w-5 h-5 text-primary" />}
+              title={t('settings.privacy.clearCache')}
+              subtitle={t('settings.privacy.clearCacheDescription')}
+              onClick={() => {}} // Placeholder
+            />
+            <SettingsRow
+              icon={<SecurityIcon className="w-5 h-5 text-muted-foreground" />}
+              title={t('settings.security.twoFactor')}
+              subtitle={t('settings.security.twoFactorDescription')}
+              rightElement={<Badge variant="outline">{t('common.comingSoon')}</Badge>}
+              showArrow={false}
+            />
+          </div>
+        </div>
 
-          <TabsContent value="account" className="mt-0">
-            <SettingsAccount
-              subscription={subscription}
-              isInTrial={isInTrial}
-              trialDaysRemaining={trialDaysRemaining}
-              loading={loading}
-              deleteConfirmation={deleteConfirmation}
-              onSetDeleteConfirmation={setDeleteConfirmation}
-              onManageSubscription={handleManageSubscription}
-              onTestCheckout={testCheckout}
-              onSignOut={signOut}
-              onDeleteAccount={handleDeleteAccount}
+        {/* Subscription Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.sections.subscription')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<CreditCard className="w-5 h-5 text-primary" />}
+              title={t('settings.billing.currentPlan')}
+              subtitle={getSubscriptionLabel()}
+              rightElement={
+                <Badge className={cn(
+                  "text-xs font-medium bg-gradient-to-r text-white",
+                  getSubscriptionStatusColor()
+                )}>
+                  {isInTrial ? `${trialDaysRemaining}d left` : subscription.plan}
+                </Badge>
+              }
+              onClick={handleManageSubscription}
             />
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
+
+        {/* Support Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.sections.support')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<HelpCircle className="w-5 h-5 text-primary" />}
+              title={t('settings.support.help')}
+              subtitle={t('settings.support.helpDescription')}
+              onClick={() => {}} // Placeholder
+            />
+            <SettingsRow
+              icon={<Info className="w-5 h-5 text-primary" />}
+              title={t('settings.support.about')}
+              subtitle={t('settings.support.aboutDescription')}
+              onClick={() => {}} // Placeholder
+            />
+          </div>
+        </div>
+
+        {/* Account Actions Section */}
+        <div className="mt-6 mb-6">
+          <div className="bg-background">
+            <SettingsRow
+              icon={<LogOut className="w-5 h-5 text-muted-foreground" />}
+              title={t('settings.account.signOut')}
+              onClick={signOut}
+              showArrow={false}
+            />
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <div>
+                  <SettingsRow
+                    icon={<Trash2 className="w-5 h-5 text-destructive" />}
+                    title={t('settings.account.deleteAccount')}
+                    subtitle={t('settings.account.deleteAccountDescription')}
+                    destructive={true}
+                    showArrow={false}
+                  />
+                </div>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('settings.account.deleteConfirmTitle')}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('settings.account.deleteConfirmDescription')}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="my-4">
+                  <Label htmlFor="delete-confirmation">
+                    {t('settings.account.deleteConfirmLabel')}
+                  </Label>
+                  <Input
+                    id="delete-confirmation"
+                    value={deleteConfirmation}
+                    onChange={(e) => setDeleteConfirmation(e.target.value)}
+                    placeholder="DELETE"
+                    className="mt-2"
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmation('')}>
+                    {t('common.cancel')}
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={deleteConfirmation !== 'DELETE' || loading}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {loading ? t('common.loading') : t('settings.account.deleteAccount')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </div>
+
+      {/* Edit Profile Sheet */}
+      <Sheet open={showEditProfile} onOpenChange={setShowEditProfile}>
+        <SheetContent side="bottom" className="h-[80vh]">
+          <SheetHeader>
+            <SheetTitle>{t('settings.profile.editProfile')}</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 space-y-4">
+            <div>
+              <Label htmlFor="display_name">{t('settings.profile.displayName')}</Label>
+              <Input
+                id="display_name"
+                value={profileData.display_name}
+                onChange={(e) => handleProfileChange('display_name', e.target.value)}
+                placeholder={t('settings.profile.displayNamePlaceholder')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="phone">{t('settings.profile.phone')}</Label>
+              <Input
+                id="phone"
+                value={profileData.phone}
+                onChange={(e) => handleProfileChange('phone', e.target.value)}
+                placeholder={t('settings.profile.phonePlaceholder')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="bio">{t('settings.profile.bio')}</Label>
+              <Textarea
+                id="bio"
+                value={profileData.bio}
+                onChange={(e) => handleProfileChange('bio', e.target.value)}
+                placeholder={t('settings.profile.bioPlaceholder')}
+                rows={3}
+              />
+            </div>
+            <Button 
+              onClick={() => {
+                saveProfile();
+                setShowEditProfile(false);
+              }}
+              disabled={!hasChanges || loading}
+              className="w-full"
+            >
+              {loading ? t('common.loading') : t('common.save')}
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Language Selection Sheet */}
+      <Sheet open={showLanguageSelect} onOpenChange={setShowLanguageSelect}>
+        <SheetContent side="bottom" className="h-[60vh]">
+          <SheetHeader>
+            <SheetTitle>{t('settings.preferences.selectLanguage')}</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 space-y-2">
+            {languages.map((lang) => (
+              <div
+                key={lang.code}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => {
+                  handleLanguageChange(lang.code);
+                  setShowLanguageSelect(false);
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-2xl">{lang.flag}</span>
+                  <span className="font-medium">{lang.name}</span>
+                </div>
+                {language === lang.code && (
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                )}
+              </div>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Notification Settings Sheet */}
+      <Sheet open={showNotificationSettings} onOpenChange={setShowNotificationSettings}>
+        <SheetContent side="bottom" className="h-[80vh]">
+          <SheetHeader>
+            <SheetTitle>{t('settings.preferences.notifications')}</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <NotificationSettings />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Location Settings Sheet */}
+      <Sheet open={showLocationSettings} onOpenChange={setShowLocationSettings}>
+        <SheetContent side="bottom" className="h-[80vh]">
+          <SheetHeader>
+            <SheetTitle>{t('settings.preferences.locationTimezone')}</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <LocationTimezoneSettings />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <PaywallSheet 
         isOpen={showPaywall}
