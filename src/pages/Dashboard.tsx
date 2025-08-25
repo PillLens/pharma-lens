@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
+import { useToast } from '@/hooks/use-toast';
 
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
@@ -37,6 +38,36 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { subscription, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
   const { dashboardStats, loading } = useDashboardData();
+  const { toast } = useToast();
+
+  // Handle checkout success/cancel
+  useEffect(() => {
+    const checkCheckoutSuccess = () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("checkout") === "success") {
+        console.log("[CHECKOUT-SUCCESS] Payment completed successfully");
+        toast({
+          title: "Payment Successful!",
+          description: "Your subscription has been activated.",
+        });
+        // Strip query param from URL
+        window.history.replaceState({}, "", "/dashboard");
+        // Refresh subscription data
+        refreshEntitlements();
+      } else if (params.get("checkout") === "cancel") {
+        console.log("[CHECKOUT-CANCEL] Payment was cancelled");
+        toast({
+          title: "Payment Cancelled",
+          description: "Your subscription was not activated.",
+          variant: "destructive"
+        });
+        // Strip query param from URL
+        window.history.replaceState({}, "", "/dashboard");
+      }
+    };
+
+    checkCheckoutSuccess();
+  }, [toast, refreshEntitlements]);
 
   const handleRefresh = async () => {
     await refreshEntitlements();

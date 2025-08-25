@@ -7,18 +7,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Helper logging function for enhanced debugging
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
-};
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
+  apiVersion: "2023-10-16",
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Use the service role key to bypass RLS for administrative updates
+  // Use the service role key to get user data
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -26,103 +24,79 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
-
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) {
-      logStep("ERROR: STRIPE_SECRET_KEY not found");
-      throw new Error("STRIPE_SECRET_KEY is not set");
-    }
-    logStep("Stripe key verified", { keyLength: stripeKey.length, keyPrefix: stripeKey.substring(0, 7) });
+    console.log("[CREATE-CHECKOUT] Function started");
+    console.log("[CREATE-CHECKOUT] hasStripeKey:", !!Deno.env.get("STRIPE_SECRET_KEY"));
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
-    logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Parse request body
-    let body;
-    try {
-      body = await req.json();
-      logStep("Request body parsed", body);
-    } catch (e) {
-      throw new Error(`Invalid JSON body: ${e.message}`);
-    }
-
+    const body = await req.json();
     const { plan, billing_cycle } = body;
+
     if (!plan || !billing_cycle) {
       throw new Error("Missing required parameters: plan and billing_cycle");
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-    
-    // Check if customer exists
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
-    } else {
-      logStep("No existing customer found, will create during checkout");
-    }
+    console.log("[CREATE-CHECKOUT] Processing checkout for:", { plan, billing_cycle, email: user.email });
 
-    // Define pricing
-    const pricing = {
+    // Price IDs mapping (you'll need to replace these with your actual Stripe price IDs)
+    const priceIds = {
       pro_individual: {
-        monthly: { amount: 999, interval: 'month' },
-        yearly: { amount: 9999, interval: 'year' },
+        monthly: "price_1234_individual_monthly", // Replace with actual price ID
+        yearly: "price_1234_individual_yearly"    // Replace with actual price ID
       },
       pro_family: {
-        monthly: { amount: 1999, interval: 'month' },
-        yearly: { amount: 19999, interval: 'year' },
+        monthly: "price_1234_family_monthly",     // Replace with actual price ID
+        yearly: "price_1234_family_yearly"       // Replace with actual price ID
       }
     };
 
-    const priceInfo = pricing[plan as keyof typeof pricing]?.[billing_cycle as keyof typeof pricing.pro_individual];
-    if (!priceInfo) {
+    const priceId = priceIds[plan as keyof typeof priceIds]?.[billing_cycle as keyof typeof priceIds.pro_individual];
+    if (!priceId) {
       throw new Error(`Invalid plan or billing cycle: ${plan}, ${billing_cycle}`);
     }
 
-    logStep("Creating checkout session", { plan, billing_cycle, amount: priceInfo.amount });
+    // Create or reuse customer
+    const customers = await stripe.customers.search({
+      query: `email:'${user.email}'`,
+      limit: 1
+    });
+    
+    let customerId;
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      console.log("[CREATE-CHECKOUT] Found existing customer:", customerId);
+    } else {
+      const customer = await stripe.customers.create({ email: user.email });
+      customerId = customer.id;
+      console.log("[CREATE-CHECKOUT] Created new customer:", customerId);
+    }
 
-    // Create checkout session
-    const origin = req.headers.get("origin") || "https://a2b03c66-e69a-49a4-9574-1cb9e4a8bd22.sandbox.lovable.dev";
+    // Create Checkout Session
+    const siteUrl = Deno.env.get("SITE_URL") || req.headers.get("origin") || "https://a2b03c66-e69a-49a4-9574-1cb9e4a8bd22.sandbox.lovable.dev";
+    
     const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: plan === 'pro_individual' ? 'Pro Individual' : 'Pro Family',
-              description: `${plan === 'pro_individual' ? 'Individual' : 'Family'} subscription plan`
-            },
-            unit_amount: priceInfo.amount,
-            recurring: {
-              interval: priceInfo.interval as 'month' | 'year',
-            },
-          },
-          quantity: 1,
-        },
-      ],
       mode: "subscription",
-      success_url: `${origin}/dashboard?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/dashboard?checkout=cancelled`,
-      metadata: {
-        user_id: user.id,
+      customer: customerId,
+      line_items: [{ price: priceId, quantity: 1 }],
+      allow_promotion_codes: true,
+      success_url: `${siteUrl}/dashboard?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/dashboard?checkout=cancel`,
+      metadata: { 
+        userId: user.id,
         plan: plan,
-        billing_cycle: billing_cycle,
+        billing_cycle: billing_cycle
       },
     });
 
-    logStep("Checkout session created successfully", { sessionId: session.id, url: session.url });
+    console.log("[CREATE-CHECKOUT] Checkout session created:", session.id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -131,8 +105,8 @@ serve(async (req) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in create-checkout", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    console.error("[CREATE-CHECKOUT] ERROR:", errorMessage);
+    return new Response(JSON.stringify({ error: "checkout_failed", message: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
