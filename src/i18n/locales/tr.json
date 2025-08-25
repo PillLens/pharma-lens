@@ -473,6 +473,218 @@
     "createFamilyGroups": "Aile grupları oluşturun ve yönetin",
     "upTo5Members": "5'e kadar aile üyesi",
     "caregiverLogging": "Bakıcı günlüğü",
-    "testimonialPlaceholder": "Sağlıklarını güvenle yöneten binlerce kullanıcıya katılın"
+    "testimonialPlaceholder": "Sağlıklarını güvenle yöneten binlerce kullanıcıya katılın",
+    "free": "Ücretsiz",
+    "pro": "Pro",
+    "premium": "Premium",
+    "monthly": "Aylık",
+    "yearly": "Yıllık",
+    "features": {
+      "basic_scanning": "Temel tarama",
+      "medication_reminders": "İlaç hatırlatıcıları",
+      "basic_safety": "Temel güvenlik",
+      "unlimited_scanning": "Sınırsız tarama",
+      "family_sharing": "Aile paylaşımı",
+      "advanced_safety": "Gelişmiş güvenlik",
+      "priority_support": "Öncelik desteği",
+      "ai_insights": "AI öngörüleri",
+      "export_reports": "Rapor dışa aktarma"
+    },
+    "cta": {
+      "upgrade": "Yükselt",
+      "manage": "Yönet",
+      "cancel": "İptal"
+    },
+    "enhanced": {
+      "title": "Planınızı yükseltin",
+      "subtitle": "Daha fazla özellik ve imkan elde edin",
+      "currentPlan": "Mevcut plan",
+      "mostPopular": "En popüler",
+      "bestValue": "En iyi değer",
+      "perMonth": "aylık",
+      "perYear": "yıllık",
+      "save": "tasarruf",
+      "startTrial": "Deneme başlat",
+      "continueCurrent": "Mevcut planla devam et",
+      "features": {
+        "unlimitedScans": "Sınırsız tarama",
+        "prioritySupport": "Öncelik desteği",
+        "advancedAnalytics": "Gelişmiş analitik",
+        "familySharing": "Aile paylaşımı",
+        "exportReports": "Rapor dışa aktarma",
+        "offlineMode": "Çevrimdışı mod",
+        "customReminders": "Özel hatırlatıcılar",
+        "aiInsights": "AI öngörüleri"
+      }
+    }
+  },
+  "history": {
+    "title": "Tarama geçmişi",
+    "subtitle": "Geçmiş taranan ilaçların geçmişi",
+    "filters": {
+      "all": "Tümü",
+      "success": "Başarılı",
+      "failed": "Başarısız",
+      "pending": "Bekliyor"
+    },
+    "actions": {
+      "view": "Görüntüle",
+      "delete": "Sil",
+      "share": "Paylaş",
+      "export": "Dışa aktar"
+    },
+    "status": {
+      "success": "Başarılı",
+      "failed": "Başarısız",
+      "pending": "Bekliyor",
+      "processing": "İşleniyor"
+    },
+    "empty": {
+      "title": "Tarama geçmişi yok",
+      "description": "İlk ilacınızı taramaya başlayın",
+      "action": "Taramaya başla"
+    },
+    "scanCard": {
+      "scannedAt": "Taranma zamanı",
+      "result": "Sonuç",
+      "confidence": "Güven",
+      "processing": "İşleniyor...",
+      "failed": "Başarısız oldu",
+      "tryAgain": "Tekrar dene"
+    }
+  },
+  "authPage": {
+    "welcome": "PharmaLens'e hoş geldiniz",
+    "subtitle": "İlaç güvenliğinizi yönetin",
+    "signIn": {
+      "title": "Hesabınıza giriş yapın",
+      "subtitle": "İlaç profilinize erişin",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "signIn": "Giriş yap",
+      "noAccount": "Hesabınız yok mu?",
+      "signUp": "Kayıt ol"
+    },
+    "signUp": {
+      "title": "Hesap oluştur",
+      "subtitle": "Güvenli ilaç yönetimine başlayın",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "confirmPassword": "Şifreyi onayla",
+      "signUp": "Kayıt ol",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "signIn": "Giriş yap"
+    },
+    "validation": {
+      "emailRequired": "E-posta adresi gereklidir",
+      "emailInvalid": "Geçerli bir e-posta adresi girin",
+      "passwordRequired": "Şifre gereklidir",
+      "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
+      "passwordsDoNotMatch": "Şifreler eşleşmiyor"
+    },
+    "security": {
+      "title": "Verileriniz güvende",
+      "encryption": "256-bit şifreleme",
+      "privacy": "HIPAA uyumluluğu",
+      "backup": "Otomatik yedekleme"
+    }
+  },
+  "security": {
+    "title": "Güvenlik Paneli",
+    "subtitle": "Hesap güvenliğinizi izleyin",
+    "metrics": {
+      "loginAttempts": "Giriş denemeleri",
+      "dataBreaches": "Veri ihlalleri",
+      "securityScore": "Güvenlik puanı",
+      "lastScan": "Son tarama"
+    },
+    "status": {
+      "secure": "Güvenli",
+      "warning": "Uyarı",
+      "critical": "Kritik",
+      "unknown": "Bilinmiyor"
+    },
+    "actions": {
+      "changePassword": "Şifre değiştir",
+      "enable2FA": "2FA'yı etkinleştir",
+      "viewLogs": "Logları görüntüle",
+      "downloadReport": "Rapor indir"
+    },
+    "help": {
+      "securityScore": "Güvenlik puanınız mevcut güvenlik ayarlarınıza göre hesaplanır",
+      "loginAttempts": "Son 24 saatteki giriş denemelerinizin sayısı",
+      "dataBreaches": "Hesabınızla ilişkili bilinen veri ihlallerinin sayısı"
+    }
+  },
+  "toast": {
+    "success": {
+      "medicationAdded": "İlaç başarıyla eklendi",
+      "medicationUpdated": "İlaç başarıyla güncellendi",
+      "medicationDeleted": "İlaç başarıyla silindi",
+      "reminderAdded": "Hatırlatıcı başarıyla eklendi",
+      "reminderUpdated": "Hatırlatıcı başarıyla güncellendi",
+      "reminderDeleted": "Hatırlatıcı başarıyla silindi",
+      "familyGroupCreated": "Aile grubu başarıyla oluşturuldu",
+      "memberInvited": "Üye başarıyla davet edildi",
+      "settingsSaved": "Ayarlar başarıyla kaydedildi",
+      "profileUpdated": "Profil başarıyla güncellendi",
+      "dataExported": "Veriler başarıyla dışa aktarıldı",
+      "scanCompleted": "Tarama tamamlandı",
+      "doseTaken": "Doz alındı",
+      "passwordChanged": "Şifre başarıyla değiştirildi"
+    },
+    "error": {
+      "networkError": "Ağ hatası. Lütfen tekrar deneyin",
+      "unauthorized": "Giriş gerekli",
+      "forbidden": "Bu işlem için yetkiniz yok",
+      "notFound": "Kaynak bulunamadı",
+      "serverError": "Sunucu hatası. Lütfen daha sonra deneyin",
+      "scanFailed": "Tarama başarısız oldu",
+      "medicationNotFound": "İlaç bulunamadı",
+      "invalidData": "Geçersiz veri",
+      "uploadFailed": "Yükleme başarısız oldu",
+      "deleteConfirmation": "Bu işlem geri alınamaz"
+    },
+    "warning": {
+      "unsavedChanges": "Kaydedilmemiş değişiklikler var",
+      "lowStorage": "Depolama alanı az",
+      "expiredMedication": "Bazı ilaçların süresi dolmuş",
+      "missedDoses": "Kaçırılan dozlar var",
+      "duplicateEntry": "Mükerrer kayıt tespit edildi"
+    },
+    "info": {
+      "updateAvailable": "Güncelleme mevcut",
+      "syncInProgress": "Senkronizasyon devam ediyor",
+      "maintenanceMode": "Bakım modu",
+      "trialExpiring": "Deneme süresi bitiyor",
+      "newFeature": "Yeni özellik mevcut"
+    }
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "subtitle": "Aradığınız sayfa mevcut değil",
+    "description": "Bu bağlantı hatalı olabilir veya sayfa taşınmış olabilir",
+    "action": "Ana sayfaya dön"
+  },
+  "errors": {
+    "camera": {
+      "permissionDenied": "Kamera izni reddedildi",
+      "notAvailable": "Kamera mevcut değil",
+      "initializationFailed": "Kamera başlatılamadı"
+    },
+    "network": {
+      "offline": "İnternet bağlantısı yok",
+      "timeout": "İstek zaman aşımına uğradı",
+      "connectionFailed": "Bağlantı başarısız oldu"
+    },
+    "validation": {
+      "required": "Bu alan gereklidir",
+      "invalidFormat": "Geçersiz format",
+      "tooShort": "Çok kısa",
+      "tooLong": "Çok uzun",
+      "invalidEmail": "Geçersiz e-posta formatı",
+      "weakPassword": "Şifre çok zayıf"
+    }
   }
 }

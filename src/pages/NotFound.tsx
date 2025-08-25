@@ -1,5 +1,7 @@
-import { useLocation, Link } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { TranslatedText } from "@/components/TranslatedText";
 
 const NotFound = () => {
   const location = useLocation();
@@ -15,9 +17,17 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4 text-foreground">404</h1>
-        <p className="text-xl text-muted-foreground mb-4">Oops! Page not found</p>
+        <TranslatedText 
+          translationKey="notFound.title" 
+          fallback="Oops! Page not found" 
+          className="text-xl text-muted-foreground mb-4" 
+          as="p" 
+        />
         <Link to="/" className="text-primary hover:text-primary/80 underline transition-colors">
-          Return to Home
+          <TranslatedText 
+            translationKey="notFound.action" 
+            fallback="Return to Home" 
+          />
         </Link>
       </div>
     </div>

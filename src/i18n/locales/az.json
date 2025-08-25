@@ -473,6 +473,218 @@
     "createFamilyGroups": "Ailə qrupları yaradın və idarə edin",
     "upTo5Members": "5-ə qədər ailə üzvü",
     "caregiverLogging": "Baxıcı qeydiyyatı",
-    "testimonialPlaceholder": "Sağlamlıqlarını etimatla idarə edən minlərlə istifadəçiyə qoşulun"
+    "testimonialPlaceholder": "Sağlamlıqlarını təhlükəsiz idarə edən minlərlə istifadəçiyə qatılın",
+    "free": "Pulsuz",
+    "pro": "Pro",
+    "premium": "Premium",
+    "monthly": "Aylıq",
+    "yearly": "İllik",
+    "features": {
+      "basic_scanning": "Əsas skanlaşdırma",
+      "medication_reminders": "Dərman xatırlatmaları",
+      "basic_safety": "Əsas təhlükəsizlik",
+      "unlimited_scanning": "Limitsiz skanlaşdırma",
+      "family_sharing": "Ailə paylaşımı",
+      "advanced_safety": "Təkmil təhlükəsizlik",
+      "priority_support": "Prioritet dəstək",
+      "ai_insights": "AI qənaətləri",
+      "export_reports": "Hesabat ixracı"
+    },
+    "cta": {
+      "upgrade": "Yüksəlt",
+      "manage": "İdarə et",
+      "cancel": "Ləğv et"
+    },
+    "enhanced": {
+      "title": "Planınızı yüksəldin",
+      "subtitle": "Daha çox funksiya və imkanlar əldə edin",
+      "currentPlan": "Cari plan",
+      "mostPopular": "Ən populyar",
+      "bestValue": "Ən yaxşı dəyər",
+      "perMonth": "aylıq",
+      "perYear": "illik",
+      "save": "qənaət",
+      "startTrial": "Sınağa başla",
+      "continueCurrent": "Cari planla davam et",
+      "features": {
+        "unlimitedScans": "Limitsiz skanlaşdırma",
+        "prioritySupport": "Prioritet dəstək",
+        "advancedAnalytics": "Təkmil analitika",
+        "familySharing": "Ailə paylaşımı",
+        "exportReports": "Hesabat ixracı",
+        "offlineMode": "Offline rejim",
+        "customReminders": "Xüsusi xatırlatmalar",
+        "aiInsights": "AI qənaətləri"
+      }
+    }
+  },
+  "history": {
+    "title": "Skan tarixçəsi",
+    "subtitle": "Keçmiş skanlaşdırılan dərmanların tarixçəsi",
+    "filters": {
+      "all": "Hamısı",
+      "success": "Uğurlu",
+      "failed": "Uğursuz",
+      "pending": "Gözləyir"
+    },
+    "actions": {
+      "view": "Bax",
+      "delete": "Sil",
+      "share": "Paylaş",
+      "export": "İxrac et"
+    },
+    "status": {
+      "success": "Uğurlu",
+      "failed": "Uğursuz",
+      "pending": "Gözləyir",
+      "processing": "İşlənir"
+    },
+    "empty": {
+      "title": "Skan tarixçəsi yoxdur",
+      "description": "İlk dərmanınızı skanlaşdırmağa başlayın",
+      "action": "Skanlaşdırmağa başla"
+    },
+    "scanCard": {
+      "scannedAt": "Skanlaşdırma vaxtı",
+      "result": "Nəticə",
+      "confidence": "Etibar",
+      "processing": "İşlənir...",
+      "failed": "Uğursuz oldu",
+      "tryAgain": "Yenidən cəhd et"
+    }
+  },
+  "authPage": {
+    "welcome": "PharmaLens-ə xoş gəlmisiniz",
+    "subtitle": "Dərman təhlükəsizliyinizi idarə edin",
+    "signIn": {
+      "title": "Hesabınıza daxil olun",
+      "subtitle": "Dərman profilinitə daxil olun",
+      "email": "E-poçt ünvanı",
+      "password": "Şifrə",
+      "forgotPassword": "Şifrəni unutmusan?",
+      "signIn": "Daxil ol",
+      "noAccount": "Hesabınız yoxdur?",
+      "signUp": "Qeydiyyatdan keç"
+    },
+    "signUp": {
+      "title": "Hesab yarat",
+      "subtitle": "Təhlükəsiz dərman idarəetməsinə başlayın",
+      "email": "E-poçt ünvanı",
+      "password": "Şifrə",
+      "confirmPassword": "Şifrəni təsdiqlə",
+      "signUp": "Qeydiyyatdan keç",
+      "hasAccount": "Artıq hesabınız var?",
+      "signIn": "Daxil ol"
+    },
+    "validation": {
+      "emailRequired": "E-poçt ünvanı tələb olunur",
+      "emailInvalid": "Etibarlı e-poçt ünvanı daxil edin",
+      "passwordRequired": "Şifrə tələb olunur",
+      "passwordTooShort": "Şifrə ən azı 8 simvol olmalıdır",
+      "passwordsDoNotMatch": "Şifrələr uyğun gəlmir"
+    },
+    "security": {
+      "title": "Məlumatlarınız təhlükəsizdir",
+      "encryption": "256-bit şifrələmə",
+      "privacy": "HIPAA uyğunluğu",
+      "backup": "Avtomatik ehtiyat nüsxə"
+    }
+  },
+  "security": {
+    "title": "Təhlükəsizlik Paneli",
+    "subtitle": "Hesab təhlükəsizliyinizi izləyin",
+    "metrics": {
+      "loginAttempts": "Giriş cəhdləri",
+      "dataBreaches": "Məlumat pozuntuları",
+      "securityScore": "Təhlükəsizlik balı",
+      "lastScan": "Son skan"
+    },
+    "status": {
+      "secure": "Təhlükəsiz",
+      "warning": "Xəbərdarlıq",
+      "critical": "Kritik",
+      "unknown": "Naməlum"
+    },
+    "actions": {
+      "changePassword": "Şifrəni dəyiş",
+      "enable2FA": "2FA-nı aktivləşdir",
+      "viewLogs": "Logları bax",
+      "downloadReport": "Hesabat yüklə"
+    },
+    "help": {
+      "securityScore": "Təhlükəsizlik balınız cari təhlükəsizlik parametrlərinizə əsasən hesablanır",
+      "loginAttempts": "Son 24 saatdakı giriş cəhdlərinizin sayı",
+      "dataBreaches": "Hesabınızla əlaqəli məlum məlumat pozuntularının sayı"
+    }
+  },
+  "toast": {
+    "success": {
+      "medicationAdded": "Dərman uğurla əlavə edildi",
+      "medicationUpdated": "Dərman uğurla yeniləndi",
+      "medicationDeleted": "Dərman uğurla silindi",
+      "reminderAdded": "Xatırlatma uğurla əlavə edildi",
+      "reminderUpdated": "Xatırlatma uğurla yeniləndi",
+      "reminderDeleted": "Xatırlatma uğurla silindi",
+      "familyGroupCreated": "Ailə qrupu uğurla yaradıldı",
+      "memberInvited": "Üzv uğurla dəvət edildi",
+      "settingsSaved": "Parametrlər uğurla saxlanıldı",
+      "profileUpdated": "Profil uğurla yeniləndi",
+      "dataExported": "Məlumatlar uğurla ixrac edildi",
+      "scanCompleted": "Skanlaşdırma tamamlandı",
+      "doseTaken": "Doza qəbul edildi",
+      "passwordChanged": "Şifrə uğurla dəyişdirildi"
+    },
+    "error": {
+      "networkError": "Şəbəkə xətası. Yenidən cəhd edin",
+      "unauthorized": "Daxil olmaq tələb olunur",
+      "forbidden": "Bu əməliyyata icazəniz yoxdur",
+      "notFound": "Resurs tapılmadı",
+      "serverError": "Server xətası. Daha sonra cəhd edin",
+      "scanFailed": "Skanlaşdırma uğursuz oldu",
+      "medicationNotFound": "Dərman tapılmadı",
+      "invalidData": "Etibarsız məlumat",
+      "uploadFailed": "Yükləmə uğursuz oldu",
+      "deleteConfirmation": "Bu əməliyyatı ləğv etmək mümkün deyil"
+    },
+    "warning": {
+      "unsavedChanges": "Saxlanılmamış dəyişikliklər var",
+      "lowStorage": "Saxlama yeri az qalıb",
+      "expiredMedication": "Bəzi dərmanların müddəti bitib",
+      "missedDoses": "Qaçırılmış dozalar var",
+      "duplicateEntry": "Dublikat giriş aşkarlandı"
+    },
+    "info": {
+      "updateAvailable": "Yeniləmə mövcuddur",
+      "syncInProgress": "Sinxronizasiya davam edir",
+      "maintenanceMode": "Texniki baxım rejimi",
+      "trialExpiring": "Sınaq müddəti bitir",
+      "newFeature": "Yeni funksiya mövcuddur"
+    }
+  },
+  "notFound": {
+    "title": "Səhifə tapılmadı",
+    "subtitle": "Axtardığınız səhifə mövcud deyil",
+    "description": "Bu linkə keçid səhvi ola bilər və ya səhifə köçürülmüş ola bilər",
+    "action": "Ana səhifəyə qayıt"
+  },
+  "errors": {
+    "camera": {
+      "permissionDenied": "Kamera icazəsi rədd edildi",
+      "notAvailable": "Kamera mövcud deyil",
+      "initializationFailed": "Kamera başlatıla bilmədi"
+    },
+    "network": {
+      "offline": "İnternet bağlantısı yoxdur",
+      "timeout": "İstək vaxtı bitdi",
+      "connectionFailed": "Bağlantı uğursuz oldu"
+    },
+    "validation": {
+      "required": "Bu sahə tələb olunur",
+      "invalidFormat": "Yanlış format",
+      "tooShort": "Çox qısa",
+      "tooLong": "Çox uzun",
+      "invalidEmail": "Yanlış e-poçt formatı",
+      "weakPassword": "Şifrə çox zəifdir"
+    }
   }
 }
