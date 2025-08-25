@@ -48,7 +48,7 @@ const EnhancedMobileNavigation = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="md:hidden p-2 touch-target glass hover:shadow-glow transition-all duration-300"
+          className="md:hidden p-2 touch-target glass hover-glow-desktop transition-all duration-300"
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6 text-primary" />
@@ -71,7 +71,7 @@ const EnhancedMobileNavigation = () => {
               </div>
             </div>
             <DrawerClose asChild>
-              <Button variant="ghost" size="sm" className="p-2 touch-target hover:bg-destructive/10 hover:text-destructive transition-all duration-300">
+              <Button variant="ghost" size="sm" className="p-2 touch-target hover-bg-desktop hover:text-destructive transition-all duration-300 active:bg-destructive/5">
                 <X className="h-5 w-5" />
               </Button>
             </DrawerClose>
@@ -93,7 +93,7 @@ const EnhancedMobileNavigation = () => {
                     className={`group flex items-center justify-between p-4 rounded-2xl transition-all duration-300 touch-target ${
                       isActive
                         ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-medical'
-                        : 'glass hover:shadow-card hover:scale-[1.02] text-foreground'
+                        : 'glass hover-bg-desktop hover-shadow-desktop text-foreground active:bg-accent/50'
                     }`}
                     onClick={() => setIsOpen(false)}
                   >
@@ -130,7 +130,7 @@ const EnhancedMobileNavigation = () => {
           <div className="mt-8 pt-6 border-t border-border/20 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
             <Button
               variant="ghost"
-              className="w-full justify-start gap-4 text-destructive hover:text-destructive hover:bg-destructive/10 p-4 rounded-2xl touch-target transition-all duration-300 hover:scale-[1.02]"
+              className="w-full justify-start gap-4 text-destructive hover:text-destructive hover-bg-desktop p-4 rounded-2xl touch-target transition-all duration-300 active:bg-destructive/5"
               onClick={handleSignOut}
             >
               <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">

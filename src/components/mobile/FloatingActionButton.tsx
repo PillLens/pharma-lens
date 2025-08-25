@@ -71,7 +71,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
           size="icon"
           className={cn(
             "w-16 h-16 rounded-full shadow-floating transition-all duration-300",
-            "medical-button hover:scale-110 active:scale-95",
+        "medical-button hover-scale-desktop active:scale-95",
             isExpanded 
               ? "bg-destructive text-destructive-foreground shadow-destructive/20" 
               : "animate-medical-pulse",
@@ -100,7 +100,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       size="icon"
       className={cn(
         "fixed bottom-28 right-4 z-50 w-16 h-16 rounded-full shadow-floating",
-        "medical-button hover:scale-110 active:scale-95",
+        "medical-button hover-scale-desktop active:scale-95",
         "transition-all duration-300 group",
         className
       )}

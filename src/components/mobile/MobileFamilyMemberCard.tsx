@@ -99,7 +99,7 @@ export const MobileFamilyMemberCard: React.FC<MobileFamilyMemberCardProps> = ({
       quickActions={quickActions}
       enableHaptics={true}
       pressScale={true}
-      className="border-border/50 shadow-soft hover:shadow-card transition-all duration-300"
+      className="border-border/50 shadow-soft hover-shadow-desktop transition-all duration-300"
     >
       <MobileCardContent className="p-4">
         <div className="flex items-start gap-3">

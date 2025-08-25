@@ -379,4 +379,31 @@
   .scrollbar-hide::-webkit-scrollbar-thumb {
     background: transparent;
   }
+
+  /* Mobile-safe hover effects - only apply on devices with true hover capability */
+  @media (hover: hover) and (pointer: fine) {
+    .hover-scale-desktop:hover {
+      transform: scale(1.02);
+    }
+    
+    .hover-shadow-desktop:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .hover-glow-desktop:hover {
+      box-shadow: 0 0 20px -2px hsl(var(--primary) / 0.4), 0 10px 25px -5px hsl(var(--primary) / 0.3);
+    }
+    
+    .hover-bg-desktop:hover {
+      background-color: hsl(var(--accent));
+    }
+    
+    .hover-opacity-desktop:hover {
+      opacity: 0.8;
+    }
+    
+    .hover-border-desktop:hover {
+      border-color: hsl(var(--primary));
+    }
+  }
 }

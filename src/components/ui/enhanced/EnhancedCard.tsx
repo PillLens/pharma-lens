@@ -19,8 +19,8 @@ const EnhancedCard = React.forwardRef<
     floating: "glass-card shadow-floating"
   };
   
-  const hoverClasses = hover ? "hover:shadow-elevated hover:scale-[1.02] hover:-translate-y-1" : "";
-  const mobileClasses = isMobile ? "mx-2" : "";
+  const hoverClasses = hover && !isMobile ? "hover-shadow-desktop hover-scale-desktop" : "";
+  const mobileClasses = isMobile ? "mx-2 active:scale-[0.98]" : "";
 
   return (
     <div
