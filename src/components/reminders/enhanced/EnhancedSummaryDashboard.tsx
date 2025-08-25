@@ -43,7 +43,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
   const quickStats = [
     {
       id: 'active',
-      title: 'Active Reminders',
+      title: t('reminders.summary.active'),
       value: activeReminders,
       icon: Bell,
       color: 'from-blue-500 to-blue-600',
@@ -52,7 +52,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
     },
     {
       id: 'medications',
-      title: 'Medications',
+      title: t('reminders.summary.medications'),
       value: medicationsCovered,
       icon: Pill,
       color: 'from-green-500 to-green-600',
@@ -61,7 +61,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
     },
     {
       id: 'today',
-      title: "Today's Doses",
+      title: t('reminders.summary.todayDoses'),
       value: todaysDoses,
       icon: Calendar,
       color: 'from-amber-500 to-amber-600',
@@ -70,7 +70,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
     },
     {
       id: 'streak',
-      title: 'Day Streak',
+      title: t('reminders.summary.dayStreak'),
       value: streak,
       icon: Award,
       color: 'from-purple-500 to-purple-600',
@@ -127,14 +127,14 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-lg font-bold text-foreground mb-1">Adherence Overview</h3>
-                <p className="text-sm text-muted-foreground">Your medication compliance</p>
+                <h3 className="text-lg font-bold text-foreground mb-1">{t('reminders.summary.adherenceOverview')}</h3>
+                <p className="text-sm text-muted-foreground">{t('reminders.summary.medicationCompliance')}</p>
               </div>
               <Badge 
                 variant={adherenceRate >= 80 ? "default" : "destructive"} 
                 className="px-3 py-1 rounded-full font-semibold"
               >
-                {adherenceRate >= 80 ? 'Great!' : 'Needs attention'}
+                {adherenceRate >= 80 ? t('reminders.summary.great') : t('reminders.summary.needsAttention')}
               </Badge>
             </div>
             
@@ -166,34 +166,34 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">This Week</div>
+                <div className="text-xs text-muted-foreground text-center">{t('reminders.summary.thisWeek')}</div>
               </div>
               
               {/* Stats */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-success" />
-                    <span className="text-sm text-muted-foreground">Taken</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-4 h-4 text-success" />
+                      <span className="text-sm text-muted-foreground">{t('reminders.summary.taken')}</span>
+                    </div>
+                    <span className="font-semibold text-foreground">{Math.round(todaysDoses * adherenceRate / 100)}/{todaysDoses}</span>
                   </div>
-                  <span className="font-semibold text-foreground">{Math.round(todaysDoses * adherenceRate / 100)}/{todaysDoses}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-warning" />
-                    <span className="text-sm text-muted-foreground">Missed</span>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-warning" />
+                      <span className="text-sm text-muted-foreground">{t('reminders.summary.missed')}</span>
+                    </div>
+                    <span className="font-semibold text-warning">{missedDoses}</span>
                   </div>
-                  <span className="font-semibold text-warning">{missedDoses}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-purple-500" />
-                    <span className="text-sm text-muted-foreground">Streak</span>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-4 h-4 text-purple-500" />
+                      <span className="text-sm text-muted-foreground">{t('reminders.summary.streak')}</span>
+                    </div>
+                    <span className="font-semibold text-foreground">{streak} {t('reminders.summary.days')}</span>
                   </div>
-                  <span className="font-semibold text-foreground">{streak} days</span>
-                </div>
               </div>
             </div>
           </CardContent>
@@ -205,8 +205,8 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
         <Card className="rounded-3xl border-0 bg-gradient-to-br from-card to-info/5 shadow-sm">
           <CardContent className="p-6">
             <div className="mb-4">
-              <h3 className="text-lg font-bold text-foreground mb-1">Weekly Trend</h3>
-              <p className="text-sm text-muted-foreground">Adherence rate over the past week</p>
+              <h3 className="text-lg font-bold text-foreground mb-1">{t('reminders.summary.weeklyTrend')}</h3>
+              <p className="text-sm text-muted-foreground">{t('reminders.summary.adherenceRateWeek')}</p>
             </div>
             
             <div className="h-32">

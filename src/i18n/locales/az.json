@@ -157,7 +157,91 @@
        "title": "Dərman Detalları",
        "dosageSchedule": "Dozaj və Cədvəl",
        "refillNotes": "Yenidən Doldurma və Qeydlər",
-       "reminders": "Xatırlatmalar",
+    "reminders": {
+      "title": "Xatırlatmalar",
+      "loading": "Xatırlatmalar yüklənir...",
+      "empty": {
+        "title": "Hələ Xatırlatma Yoxdur",
+        "subtitle": "İlk dərman xatırlatmanızı yaradın",
+        "description": "Dərman cədvəlinizə uyğun qalın",
+        "createButton": "Xatırlatma Yaradın"
+      },
+      "summary": {
+        "active": "Aktiv Xatırlatmalar",
+        "medications": "Dərmanlar",
+        "todayDoses": "Bugünkü Dozalar",
+        "dayStreak": "Gün Ardıcıllığı",
+        "adherenceOverview": "Uyğunluq İcmalı",
+        "medicationCompliance": "Dərman uyğunluğunuz",
+        "great": "Əla!",
+        "needsAttention": "Diqqət tələb edir",
+        "thisWeek": "Bu Həftə",
+        "taken": "Alınıb",
+        "missed": "Qaçırılıb",
+        "streak": "Ardıcıllıq",
+        "days": "gün",
+        "weeklyTrend": "Həftəlik Trend",
+        "adherenceRateWeek": "Keçən həftə uyğunluq dərəcəsi"
+      },
+      "timeline": {
+        "todaysSchedule": "Bugünkü Cədvəl",
+        "upcomingMedicationTimes": "Gələn dərman vaxtları",
+        "noRemindersToday": "Bu gün xatırlatma yoxdur",
+        "upcoming": "gələn",
+        "current": "cari",
+        "taken": "alınıb",
+        "missed": "qaçırılıb",
+        "overdue": "gecikmiş"
+      },
+      "status": {
+        "active": "Aktiv",
+        "paused": "Dayandırılıb"
+      },
+      "actions": {
+        "edit": "Redaktə et",
+        "pause": "Dayandır",
+        "activate": "Aktivləşdir",
+        "delete": "Sil"
+      },
+      "details": {
+        "schedule": "Cədvəl",
+        "frequency": "Tezlik",
+        "nextDose": "Növbəti Doza",
+        "notes": "Qeydlər",
+        "editButton": "Xatırlatmanı Redaktə Et"
+      },
+      "form": {
+        "title": "Xatırlatma Əlavə Et",
+        "medication": "Dərman",
+        "medicationPlaceholder": "Dərman seçin",
+        "dosage": "Doza",
+        "dosagePlaceholder": "Doza daxil edin",
+        "frequency": "Tezlik",
+        "times": "Vaxtlar",
+        "startDate": "Başlama Tarixi",
+        "endDate": "Bitiş Tarixi (İstəyə görə)",
+        "notes": "Qeydlər",
+        "notesPlaceholder": "Əlavə qeydlər...",
+        "cancel": "Ləğv et",
+        "save": "Xatırlatmanı Saxla"
+      },
+      "frequency": {
+        "once": "Gündə bir dəfə",
+        "twice": "Gündə iki dəfə",
+        "custom": "Xüsusi"
+      },
+      "validation": {
+        "medicationRequired": "Dərman tələb olunur",
+        "dosageRequired": "Doza tələb olunur",
+        "timesRequired": "Ən azı bir vaxt tələb olunur",
+        "startDateRequired": "Başlama tarixi tələb olunur"
+      },
+      "messages": {
+        "reminderAdded": "Xatırlatma uğurla əlavə edildi",
+        "reminderDeleted": "Xatırlatma uğurla silindi", 
+        "reminderUpdated": "Xatırlatma uğurla yeniləndi"
+      }
+    },
        "history": "Tarixçə"
      },
      "form": {

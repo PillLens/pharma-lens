@@ -50,7 +50,91 @@
     "profile": "Profile",
     "settings": "Settings",
     "family": "Family",
-    "reminders": "Reminders",
+    "reminders": {
+      "title": "Reminders",
+      "loading": "Loading reminders...",
+      "empty": {
+        "title": "No Reminders Yet",
+        "subtitle": "Create your first medication reminder",
+        "description": "Stay on track with your medication schedule",
+        "createButton": "Create Reminder"
+      },
+      "summary": {
+        "active": "Active Reminders",
+        "medications": "Medications",
+        "todayDoses": "Today's Doses",
+        "dayStreak": "Day Streak",
+        "adherenceOverview": "Adherence Overview",
+        "medicationCompliance": "Your medication compliance",
+        "great": "Great!",
+        "needsAttention": "Needs attention",
+        "thisWeek": "This Week",
+        "taken": "Taken",
+        "missed": "Missed",
+        "streak": "Streak",
+        "days": "days",
+        "weeklyTrend": "Weekly Trend",
+        "adherenceRateWeek": "Adherence rate over the past week"
+      },
+      "timeline": {
+        "todaysSchedule": "Today's Schedule",
+        "upcomingMedicationTimes": "Upcoming medication times",
+        "noRemindersToday": "No reminders for today",
+        "upcoming": "upcoming",
+        "current": "current", 
+        "taken": "taken",
+        "missed": "missed",
+        "overdue": "overdue"
+      },
+      "status": {
+        "active": "Active",
+        "paused": "Paused"
+      },
+      "actions": {
+        "edit": "Edit",
+        "pause": "Pause",
+        "activate": "Activate", 
+        "delete": "Delete"
+      },
+      "details": {
+        "schedule": "Schedule",
+        "frequency": "Frequency",
+        "nextDose": "Next Dose",
+        "notes": "Notes",
+        "editButton": "Edit Reminder"
+      },
+      "form": {
+        "title": "Add Reminder",
+        "medication": "Medication",
+        "medicationPlaceholder": "Select medication",
+        "dosage": "Dosage",
+        "dosagePlaceholder": "Enter dosage",
+        "frequency": "Frequency",
+        "times": "Times",
+        "startDate": "Start Date",
+        "endDate": "End Date (Optional)",
+        "notes": "Notes",
+        "notesPlaceholder": "Additional notes...",
+        "cancel": "Cancel",
+        "save": "Save Reminder"
+      },
+      "frequency": {
+        "once": "Once daily",
+        "twice": "Twice daily", 
+        "custom": "Custom"
+      },
+      "validation": {
+        "medicationRequired": "Medication is required",
+        "dosageRequired": "Dosage is required",
+        "timesRequired": "At least one time is required",
+        "startDateRequired": "Start date is required"
+      },
+      "messages": {
+        "reminderAdded": "Reminder added successfully",
+        "reminderDeleted": "Reminder deleted successfully",
+        "reminderUpdated": "Reminder updated successfully"
+      }
+    },
     "security": "Security",
     "auth": "Auth",
     "more": "More",
