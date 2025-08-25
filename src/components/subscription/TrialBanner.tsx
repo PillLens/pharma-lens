@@ -65,27 +65,27 @@ export function TrialBanner() {
           </div>
         )}
 
-        <CardContent className="p-5 relative z-10">
-          <div className="flex items-start gap-4">
+        <CardContent className="p-3 relative z-10">
+          <div className="flex items-start gap-3">
             {/* Enhanced icon container */}
             <div className={cn(
-              "flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg relative overflow-hidden",
+              "flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-md relative overflow-hidden",
               urgencyStyles.iconBg
             )}>
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-              <Crown className="w-6 h-6 text-white drop-shadow-sm relative z-10" />
+              <Crown className="w-5 h-5 text-white drop-shadow-sm relative z-10" />
               {trialDaysRemaining <= 3 && (
-                <div className="absolute inset-0 bg-white/20 animate-pulse rounded-2xl" />
+                <div className="absolute inset-0 bg-white/20 animate-pulse rounded-xl" />
               )}
             </div>
             
             <div className="flex-1 min-w-0">
               {/* Enhanced header with better spacing */}
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-2 mb-2">
                 <Badge 
                   variant="outline" 
                   className={cn(
-                    "text-xs font-semibold border px-3 py-1 shadow-sm",
+                    "text-xs font-medium border px-2 py-0.5 shadow-sm",
                     urgencyStyles.badgeClass
                   )}
                 >
@@ -94,45 +94,45 @@ export function TrialBanner() {
                 </Badge>
                 
                 <div className="flex items-center gap-1">
-                  <Clock className={cn("w-4 h-4", urgencyStyles.textClass)} />
-                  <span className={cn("text-sm font-bold", urgencyStyles.textClass)}>
+                  <Clock className={cn("w-3 h-3", urgencyStyles.textClass)} />
+                  <span className={cn("text-xs font-bold", urgencyStyles.textClass)}>
                     <TranslatedText 
                       translationKey="dashboard.daysRemaining" 
-                      fallback={`${trialDaysRemaining} days left`}
+                      fallback={`${trialDaysRemaining}d left`}
                     />
                   </span>
                 </div>
               </div>
               
               {/* Enhanced description */}
-              <div className="mb-4">
-                <p className={cn("text-sm font-medium leading-relaxed", urgencyStyles.textClass)}>
+              <div className="mb-3">
+                <p className={cn("text-sm font-medium leading-snug", urgencyStyles.textClass)}>
                   {trialDaysRemaining <= 3 ? (
                     <TranslatedText 
                       translationKey="subscription.trialEndingSoon" 
-                      fallback="⚡ Your trial expires soon! Upgrade now to keep all premium features." 
+                      fallback="Trial expires soon! Upgrade to keep premium features." 
                     />
                   ) : (
                     <TranslatedText 
                       translationKey="subscription.trialActive" 
-                      fallback="🚀 Enjoying premium features? Upgrade to continue seamlessly after your trial." 
+                      fallback="Enjoying premium features? Upgrade to continue." 
                     />
                   )}
                 </p>
               </div>
 
               {/* Enhanced action buttons */}
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <Button 
                   size="sm" 
                   onClick={() => setShowUpgrade(true)}
                   className={cn(
-                    "bg-gradient-to-r text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] px-4 py-2",
+                    "bg-gradient-to-r text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] px-3 py-1.5 text-xs",
                     urgencyStyles.iconBg.replace('from-', 'from-').replace('to-', 'to-')
                   )}
                 >
-                  <Crown className="w-4 h-4 mr-2" />
-                  <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade Now" />
+                  <Crown className="w-3 h-3 mr-1" />
+                  <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />
                 </Button>
                 
                 {trialDaysRemaining > 3 && (
@@ -141,11 +141,11 @@ export function TrialBanner() {
                     size="sm" 
                     onClick={() => setDismissed(true)}
                     className={cn(
-                      "hover:bg-white/10 transition-all duration-200",
+                      "hover:bg-white/10 transition-all duration-200 px-2 py-1.5 text-xs",
                       urgencyStyles.textClass
                     )}
                   >
-                    <TranslatedText translationKey="common.dismiss" fallback="Maybe later" />
+                    <TranslatedText translationKey="common.dismiss" fallback="Later" />
                   </Button>
                 )}
               </div>
@@ -156,9 +156,9 @@ export function TrialBanner() {
               variant="ghost"
               size="sm"
               onClick={() => setDismissed(true)}
-              className="flex-shrink-0 w-8 h-8 p-0 hover:bg-white/10 transition-all duration-200 rounded-full"
+              className="flex-shrink-0 w-6 h-6 p-0 hover:bg-white/10 transition-all duration-200 rounded-full"
             >
-              <X className="w-4 h-4 opacity-60 hover:opacity-100 transition-opacity" />
+              <X className="w-3 h-3 opacity-60 hover:opacity-100 transition-opacity" />
             </Button>
           </div>
         </CardContent>
