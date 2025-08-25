@@ -288,8 +288,9 @@ class MedicationAnalyticsService {
     try {
       const { data: adherenceLog, error } = await supabase
         .from('medication_adherence_log')
-        .select('status')
-        .eq('user_id', userId);
+        .select('status, scheduled_time')
+        .eq('user_id', userId)
+        .order('scheduled_time', { ascending: false });
 
       if (error) throw error;
 
@@ -297,8 +298,8 @@ class MedicationAnalyticsService {
       const takenDoses = adherenceLog?.filter(log => log.status === 'taken').length || 0;
       const averageAdherence = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 0;
       
-      // Calculate streak (simplified)
-      const currentStreak = Math.floor(Math.random() * 20) + 1; // Replace with real calculation
+      // Calculate real streak based on consecutive days with all doses taken
+      const currentStreak = this.calculateStreakFromLogs(adherenceLog || []);
 
       return {
         averageAdherence,
@@ -315,6 +316,45 @@ class MedicationAnalyticsService {
         takenDoses: 0
       };
     }
+  }
+
+  // Calculate streak from adherence logs
+  private calculateStreakFromLogs(logs: any[]): number {
+    if (logs.length === 0) return 0;
+
+    // Group logs by date
+    const logsByDate: Record<string, any[]> = {};
+    logs.forEach(log => {
+      const date = new Date(log.scheduled_time).toISOString().split('T')[0];
+      if (!logsByDate[date]) {
+        logsByDate[date] = [];
+      }
+      logsByDate[date].push(log);
+    });
+
+    // Get sorted dates (most recent first)
+    const sortedDates = Object.keys(logsByDate).sort().reverse();
+    
+    let streak = 0;
+    
+    // Check each day backwards from most recent
+    for (const date of sortedDates) {
+      const dayLogs = logsByDate[date];
+      
+      // Check if all doses for this day were taken
+      const allTaken = dayLogs.every(log => log.status === 'taken');
+      const hasDoses = dayLogs.length > 0;
+      
+      if (hasDoses && allTaken) {
+        streak++;
+      } else if (hasDoses) {
+        // If there were doses but not all taken, break the streak
+        break;
+      }
+      // If no doses scheduled for this day, continue checking
+    }
+
+    return streak;
   }
 }
 
