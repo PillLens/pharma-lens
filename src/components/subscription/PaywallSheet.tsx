@@ -35,10 +35,12 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
         body: { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' }
       });
 
-      console.log('[CHECKOUT] Function response:', { data, error });
+      console.log('[CHECKOUT] Function response:', JSON.stringify({ data, error }, null, 2));
 
       if (error) {
         console.error('[CHECKOUT] Supabase function error:', error);
+        console.error('[CHECKOUT] Error message:', error.message);
+        console.error('[CHECKOUT] Error details:', JSON.stringify(error, null, 2));
         throw error;
       }
 
