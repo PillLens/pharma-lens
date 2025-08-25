@@ -18,6 +18,7 @@ import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
 import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
+import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import React, { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,6 @@ const queryClient = new QueryClient();
 const App = () => {
   React.useEffect(() => {
     // Track app startup performance
-    const { performanceMonitoringService } = require("@/services/performanceMonitoringService");
     performanceMonitoringService.trackPageLoad('app_init');
   }, []);
 
