@@ -315,16 +315,16 @@
     "ointment": "Məlhəm",
     "drops": "Damcı",
     "spray": "Sprey",
-    "patch": "Yama",
-     "gel": "Gel",
-     "validation": {
-       "nameRequired": "Dərman adı tələb olunur",
-       "startDateRequired": "Başlama tarixi tələb olunur",
-       "endDateAfterStart": "Bitiş tarixi başlama tarixindən sonra olmalıdır",
-       "frequencyRequired": "Tezlik tələb olunur",
-       "timesRequired": "Ən azı bir xatırlatma vaxtı tələb olunur"
+      "patch": "Yama",
+      "gel": "Gel",
+      "validation": {
+        "nameRequired": "Dərman adı tələb olunur",
+        "startDateRequired": "Başlama tarixi tələb olunur",
+        "endDateAfterStart": "Bitiş tarixi başlama tarixindən sonra olmalıdır",
+        "frequencyRequired": "Tezlik tələb olunur",
+        "timesRequired": "Ən azı bir xatırlatma vaxtı tələb olunur"
       }
-  },
+    },
   "safety": {
     "warnings": "Xəbərdarlıqlar",
     "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
