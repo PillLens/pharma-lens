@@ -28,13 +28,9 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
   const handleUpgrade = async (plan: 'pro_individual' | 'pro_family') => {
     try {
       setLoading(true);
-      
-      const priceId = isYearly 
-        ? pricing[plan].yearly.stripe_price_id 
-        : pricing[plan].monthly.stripe_price_id;
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { price_id: priceId, plan }
+        body: { plan, billing_cycle: isYearly ? 'yearly' : 'monthly' }
       });
 
       if (error) throw error;
