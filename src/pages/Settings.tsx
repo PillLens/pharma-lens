@@ -598,34 +598,79 @@ const Settings: React.FC = () => {
               <TranslatedText translationKey="settings.billing.title" fallback="Billing & Plan" />
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{t('settings.billing.currentPlan')}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge 
-                    variant={subscription.plan === 'free' ? 'outline' : 'default'}
-                    className={subscription.plan !== 'free' ? 'bg-gradient-to-r from-primary to-primary-glow text-white' : ''}
-                  >
-                    {getSubscriptionLabel()}
-                  </Badge>
-                  {isInTrial && (
-                    <Badge variant="secondary" className="text-xs">
-                      {trialDaysRemaining} {t('settings.billing.daysLeft')}
-                    </Badge>
-                  )}
+          <CardContent className="p-6">
+            {/* Plan Status Card */}
+            <div className="bg-gradient-to-br from-background to-muted/30 rounded-xl p-4 border border-border/50">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getSubscriptionStatusColor()} flex items-center justify-center`}>
+                    {subscription.plan !== 'free' || isInTrial ? (
+                      <Crown className="w-4 h-4 text-white" />
+                    ) : (
+                      <CreditCard className="w-4 h-4 text-white" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{t('settings.billing.currentPlan')}</p>
+                    <p className="font-semibold text-lg">{getSubscriptionLabel()}</p>
+                  </div>
+                </div>
+                {isInTrial && (
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Trial expires in</p>
+                    <p className="font-semibold text-amber-600">{trialDaysRemaining} days</p>
+                  </div>
+                )}
+              </div>
+              
+              {/* Plan Features Preview */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-primary">
+                    {subscription.plan === 'free' ? '1' : '∞'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Reminders</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-primary">
+                    {subscription.plan === 'pro_family' ? '5' : subscription.plan === 'pro_individual' ? '1' : '0'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Family Members</p>
                 </div>
               </div>
+
+              {/* Action Button */}
               <Button 
-                variant="outline" 
-                size="sm"
                 onClick={handleManageSubscription}
                 disabled={loading}
+                className="w-full"
+                variant={subscription.plan === 'free' ? 'default' : 'outline'}
               >
-                {subscription.plan === 'free' ? t('settings.billing.upgrade') : t('settings.billing.manage')}
-                <ExternalLink className="w-4 h-4 ml-2" />
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                ) : subscription.plan === 'free' ? (
+                  <Crown className="w-4 h-4 mr-2" />
+                ) : (
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                )}
+                {subscription.plan === 'free' ? t('settings.billing.upgrade') : t('settings.billing.manageBilling')}
               </Button>
             </div>
+
+            {/* Billing History */}
+            {subscription.plan !== 'free' && (
+              <div className="mt-6">
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  Billing History
+                </h4>
+                <div className="bg-muted/30 rounded-lg p-4 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    View your billing history and invoices in the customer portal
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
