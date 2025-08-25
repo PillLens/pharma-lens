@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "PharmaLens"
+    "title": "PillLens"
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -280,7 +280,7 @@
   "safety": {
     "warnings": "Uyarılar",
     "importantInfo": "Önemli Güvenlik Bilgileri",
-    "disclaimer": "PharmaLens resmi ilaç etiketlerinden ve prospektüslerinden çıkarılan bilgileri sağlar. Bu tıbbi tavsiye değildir.",
+    "disclaimer": "PillLens resmi ilaç etiketlerinden ve prospektüslerinden çıkarılan bilgileri sağlar. Bu tıbbi tavsiye değildir.",
     "consultDoctor": "Doktorunuza danışın",
     "readLabel": "İlaç etiketini dikkatli okuyun",
     "followInstructions": "Reçete edilen talimatlara uyun",
@@ -621,7 +621,7 @@
     }
   },
   "authPage": {
-    "welcome": "PharmaLens'e hoş geldiniz",
+    "welcome": "PillLens'e hoş geldiniz",
     "subtitle": "İlaç güvenliğinizi yönetin",
     "signIn": {
       "title": "Hesabınıza giriş yapın",

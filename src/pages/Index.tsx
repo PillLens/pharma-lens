@@ -103,7 +103,7 @@ const Index = () => {
                 <Shield className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">PharmaLens</h1>
+                <h1 className="text-2xl font-bold text-foreground">PillLens</h1>
                 <p className="text-sm text-muted-foreground">Medication Guide</p>
               </div>
             </div>
@@ -236,7 +236,7 @@ const Index = () => {
                   <TranslatedText translationKey="safety.importantInfo" fallback="Important Medical Information" />
                 </MobileCardTitle>
                 <MobileCardDescription className="text-sm leading-relaxed text-muted-foreground">
-                  <TranslatedText translationKey="safety.disclaimer" fallback="PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance and treatment decisions." />
+                  <TranslatedText translationKey="safety.disclaimer" fallback="PillLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance and treatment decisions." />
                 </MobileCardDescription>
               </div>
             </div>
@@ -265,7 +265,7 @@ const Index = () => {
 
   if (isMobile) {
     return (
-      <ProfessionalMobileLayout title={t('app.title', 'PharmaLens')} showHeader={false}>
+      <ProfessionalMobileLayout title={t('app.title', 'PillLens')} showHeader={false}>
         <MobileDashboard 
           onScanPress={() => setShowCamera(true)}
           language={language}

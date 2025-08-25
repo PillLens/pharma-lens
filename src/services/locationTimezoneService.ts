@@ -82,7 +82,7 @@ class LocationTimezoneService {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
         {
           headers: {
-            'User-Agent': 'PharmaLens/1.0'
+            'User-Agent': 'PillLens/1.0'
           }
         }
       );

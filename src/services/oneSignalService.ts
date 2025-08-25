@@ -185,7 +185,7 @@ export class OneSignalService {
         body: {
           userId: this.userId,
           title: 'Test Notification',
-          body: 'This is a test notification from PharmaLens!',
+          body: 'This is a test notification from PillLens!',
           data: {
             type: 'test',
             timestamp: new Date().toISOString()

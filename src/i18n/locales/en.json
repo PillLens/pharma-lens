@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "PharmaLens"
+    "title": "PillLens"
   },
   "common": {
     "loading": "Loading...",
@@ -309,7 +309,7 @@
   "safety": {
     "warnings": "Warnings",
     "importantInfo": "Important Safety Information",
-    "disclaimer": "PharmaLens provides information extracted from official medication labels and leaflets. This is not medical advice.",
+    "disclaimer": "PillLens provides information extracted from official medication labels and leaflets. This is not medical advice.",
     "consultDoctor": "Consult your doctor",
     "readLabel": "Read the medication label carefully",
     "followInstructions": "Follow the prescribed instructions",
@@ -710,7 +710,7 @@
     "returnHome": "Return to Home"
   },
   "authPage": {
-    "title": "PharmaLens",
+    "title": "PillLens",
     "subtitle": "Your trusted medication companion",
     "signInSecurely": "Sign In Securely",
     "createSecureAccount": "Create Secure Account",
@@ -730,7 +730,7 @@
     "welcomeBack": "Welcome back!",
     "welcomeBackDescription": "You have been signed in successfully.",
     "dataEncryptedSecure": "Your medical data is encrypted and secure",
-    "initializing": "Initializing PharmaLens..."
+    "initializing": "Initializing PillLens..."
   },
   "security": {
     "title": "Security",

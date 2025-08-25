@@ -135,8 +135,8 @@ export const MobileFamilyInvitationWizard: React.FC<MobileFamilyInvitationWizard
   };
 
   const shareViaEmail = () => {
-    const subject = `Join ${familyGroup.name} on PharmaLens`;
-    const body = `You've been invited to join ${familyGroup.name} on PharmaLens.\n\nClick here to accept: ${inviteLink}`;
+    const subject = `Join ${familyGroup.name} on PillLens`;
+    const body = `You've been invited to join ${familyGroup.name} on PillLens.\n\nClick here to accept: ${inviteLink}`;
     window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
   };
 

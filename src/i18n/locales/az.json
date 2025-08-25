@@ -1,7 +1,7 @@
 
 {
   "app": {
-    "title": "PharmaLens"
+    "title": "PillLens"
   },
   "common": {
     "loading": "Yüklənir...",
@@ -254,7 +254,7 @@
   "safety": {
     "warnings": "Xəbərdarlıqlar",
     "importantInfo": "Vacib Təhlükəsizlik Məlumatı",
-    "disclaimer": "PharmaLens rəsmi dərman etiketlərindən və vərəqələrindən çıxarılan məlumatları təqdim edir. Bu tibbi məsləhət deyil.",
+    "disclaimer": "PillLens rəsmi dərman etiketlərindən və vərəqələrindən çıxarılan məlumatları təqdim edir. Bu tibbi məsləhət deyil.",
     "consultDoctor": "Həkiminizlə məsləhətləşin",
     "readLabel": "Dərman etiketini diqqətlə oxuyun",
     "followInstructions": "Təyin edilmiş təlimatlara əməl edin",
