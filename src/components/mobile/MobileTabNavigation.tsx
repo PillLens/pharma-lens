@@ -38,9 +38,8 @@ const MobileTabNavigation: React.FC = () => {
     }
   }, [location.pathname]);
 
-  const handleTabPress = async (index: number) => {
+  const handleNavigate = async () => {
     await hapticService.feedback('light');
-    setActiveIndex(index);
   };
 
   return (
@@ -59,12 +58,12 @@ const MobileTabNavigation: React.FC = () => {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px] relative",
+                    "flex flex-col items-center justify-center px-3 py-2 rounded-xl min-w-[64px] min-h-[56px] relative",
                     isActive 
                       ? "text-white bg-primary shadow-lg" 
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                      : "text-slate-600 dark:text-slate-400"
                   )}
-                  onTouchStart={() => handleTabPress(index)}
+                  onClick={handleNavigate}
                   aria-label={item.labelKey}
                 >
                   <Icon className={cn("w-5 h-5 mb-1", isActive && "text-white")} />
@@ -72,7 +71,7 @@ const MobileTabNavigation: React.FC = () => {
                     <TranslatedText translationKey={item.labelKey} />
                   </span>
                   {isActive && (
-                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
                   )}
                 </NavLink>
               );
@@ -82,12 +81,12 @@ const MobileTabNavigation: React.FC = () => {
             <NavLink
               to="/dashboard"
               className={cn(
-                "flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 min-w-[64px] min-h-[56px] relative",
+                "flex flex-col items-center justify-center px-3 py-2 rounded-xl min-w-[64px] min-h-[56px] relative",
                 location.pathname === '/dashboard'
                   ? "text-white bg-primary shadow-lg" 
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  : "text-slate-600 dark:text-slate-400"
               )}
-              onTouchStart={async () => await hapticService.feedback('light')}
+              onClick={handleNavigate}
               aria-label="Dashboard"
             >
               <LayoutDashboard className={cn("w-5 h-5 mb-1", location.pathname === '/dashboard' && "text-white")} />
@@ -95,7 +94,7 @@ const MobileTabNavigation: React.FC = () => {
                 <TranslatedText translationKey="navigation.dashboard" />
               </span>
               {location.pathname === '/dashboard' && (
-                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full opacity-80"></div>
               )}
             </NavLink>
           </div>

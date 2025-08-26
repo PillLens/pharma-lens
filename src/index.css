@@ -222,12 +222,48 @@
 }
 
 @layer utilities {
-  /* Global animation disable */
+  /* Global animation disable - strengthened */
   *, *::before, *::after {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
     transition-duration: 0s !important;
     transition-delay: 0s !important;
+    transition-property: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Override all possible animation and transition classes */
+  .transition-all,
+  .transition-colors,
+  .transition-transform,
+  .transition-opacity,
+  .duration-100,
+  .duration-150,
+  .duration-200,
+  .duration-300,
+  .duration-500,
+  .duration-700,
+  .duration-1000,
+  .ease-in,
+  .ease-out,
+  .ease-in-out,
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce,
+  .animate-ping,
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-in-right,
+  .hover\\:scale-110,
+  .hover\\:shadow-lg,
+  .hover\\:shadow-xl,
+  .hover\\:bg-white\\/20,
+  .hover\\:translate-x-1,
+  .active\\:scale-\\[0\\.98\\] {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 
   /* Touch-optimized scrolling */
