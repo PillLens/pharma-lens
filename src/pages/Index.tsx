@@ -26,9 +26,8 @@ const Index = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showScanResult, setShowScanResult] = useState(false);
   const [scanResultData, setScanResultData] = useState(null);
-  const [language, setLanguage] = useState("AZ");
   const { user, signOut } = useAuth();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const commonT = useCommonTranslations();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -108,7 +107,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <LanguageSelector value={language} onChange={setLanguage} />
+              <LanguageSelector />
               <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className="gap-2">
                 <History className="h-4 w-4" />
                 <TranslatedText translationKey="navigation.history" />
