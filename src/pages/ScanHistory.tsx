@@ -841,43 +841,52 @@ export const ScanHistory = () => {
           isOpen={!!sessionToDelete}
           onClose={handleCancelDelete}
           title="Delete Scan?"
-          height="sm"
+          height="md"
+          dismissible={!deletingSessionId}
         >
-          <div className="p-4 space-y-4">
-            <div className="flex items-center gap-2 text-red-600 mb-2">
-              <AlertTriangle className="w-5 h-5" />
-              <span className="font-semibold">Are you sure?</span>
+          <div className="px-6 pb-8 pt-2">
+            {/* Warning Icon and Message */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Are you sure?
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                <TranslatedText translationKey="history.deleteConfirmation" />
+              </p>
             </div>
-            <p className="text-muted-foreground text-center">
-              <TranslatedText translationKey="history.deleteConfirmation" />
-            </p>
             
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={handleCancelDelete}
-                disabled={!!deletingSessionId}
-                className="flex-1"
-              >
-                <TranslatedText translationKey="common.cancel" />
-              </Button>
+            {/* Action Buttons */}
+            <div className="space-y-3">
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={!!deletingSessionId}
-                className="flex-1"
+                className="w-full h-12 text-base font-medium"
+                size="lg"
               >
                 {deletingSessionId ? (
                   <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
                     <TranslatedText translationKey="history.deleting" />
                   </>
                 ) : (
                   <>
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="w-5 h-5 mr-2" />
                     <TranslatedText translationKey="common.delete" />
                   </>
                 )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleCancelDelete}
+                disabled={!!deletingSessionId}
+                className="w-full h-12 text-base font-medium"
+                size="lg"
+              >
+                <TranslatedText translationKey="common.cancel" />
               </Button>
             </div>
           </div>
