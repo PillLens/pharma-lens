@@ -9,13 +9,11 @@ import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { MobileCard } from '@/components/ui/mobile/MobileCard';
 import { MobileLoadingState } from '@/components/ui/mobile/MobileLoadingState';
-import { TouchOptimizedInput } from '@/components/ui/mobile/TouchOptimizedInput';
-import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Shield, Stethoscope, Fingerprint, Lock, Eye, EyeOff, Mail, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { Loader2, Shield, Stethoscope, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function Auth() {
   const { signUp, signIn, signInWithGoogle, user, loading } = useAuth();
@@ -28,6 +26,7 @@ export default function Auth() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('signin');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Redirect if already authenticated
   if (user) {
@@ -97,35 +96,30 @@ export default function Auth() {
         <div className="fixed -top-20 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
         <div className="fixed -bottom-20 -left-20 w-80 h-80 bg-primary-light/5 rounded-full blur-3xl" />
         
-        {/* Compact Header - 20% */}
-        <div className="relative z-10 flex-none px-6 pt-12 pb-4">
-          <div className="text-center space-y-3">
-            {/* Compact App Icon */}
-            <div className="w-16 h-16 mx-auto medical-surface rounded-2xl flex items-center justify-center shadow-soft">
-              <Stethoscope className="w-8 h-8 text-primary" />
+        {/* Ultra-Compact Header - 10% */}
+        <div className="relative z-10 flex-none px-6 pt-8 pb-2">
+          <div className="text-center space-y-2">
+            {/* Minimized App Icon */}
+            <div className="w-12 h-12 mx-auto medical-surface rounded-xl flex items-center justify-center shadow-soft">
+              <Stethoscope className="w-6 h-6 text-primary" />
             </div>
             
-            {/* Compact Title */}
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold text-foreground">
-                <TranslatedText translationKey="app.title" />
-              </h1>
-              <p className="text-sm text-muted-foreground font-medium">
-                <TranslatedText translationKey="authPage.subtitle" />
-              </p>
-            </div>
+            {/* Minimized Title */}
+            <h1 className="text-xl font-bold text-foreground">
+              <TranslatedText translationKey="app.title" />
+            </h1>
           </div>
         </div>
 
         {/* Main Form Area - 65% */}
         <div className="relative z-10 flex-1 px-6 flex flex-col">
-          {/* Native Segmented Control */}
-          <div className="mb-6">
-            <div className="medical-surface p-1.5 rounded-2xl shadow-soft border border-border/20">
+          {/* Compact Segmented Control */}
+          <div className="mb-4">
+            <div className="medical-surface p-1 rounded-xl shadow-soft border border-border/20">
               <div className="grid grid-cols-2 gap-1">
                 <button
                   onClick={() => setActiveTab('signin')}
-                  className={`h-11 rounded-xl font-semibold text-sm transition-all ${
+                  className={`h-10 rounded-lg font-semibold text-sm transition-all ${
                     activeTab === 'signin'
                       ? 'bg-primary text-primary-foreground shadow-medical'
                       : 'text-muted-foreground hover:text-foreground'
@@ -135,7 +129,7 @@ export default function Auth() {
                 </button>
                 <button
                   onClick={() => setActiveTab('signup')}
-                  className={`h-11 rounded-xl font-semibold text-sm transition-all ${
+                  className={`h-10 rounded-lg font-semibold text-sm transition-all ${
                     activeTab === 'signup'
                       ? 'bg-primary text-primary-foreground shadow-medical'
                       : 'text-muted-foreground hover:text-foreground'
@@ -147,72 +141,82 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* Seamless Form Content */}
-          <div className="flex-1 space-y-5">
-            {/* Google Sign In */}
+          {/* Ultra-Compact Form Content */}
+          <div className="flex-1 space-y-3">
+            {/* Compact Google Sign In */}
             <GoogleSignInButton 
               onClick={handleGoogleSignIn}
               loading={isGoogleLoading}
               variant={activeTab === 'signin' ? 'sign-in' : 'sign-up'}
-              className="w-full h-14 text-base font-semibold rounded-2xl shadow-soft"
+              className="w-full h-12 text-sm font-semibold rounded-xl shadow-soft"
             />
             
-            {/* Compact Divider */}
-            <div className="relative py-2">
+            {/* Minimal Divider */}
+            <div className="relative py-1">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border/30" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-4 bg-background text-muted-foreground text-xs font-medium">
+                <span className="px-3 bg-background text-muted-foreground text-xs">
                   <TranslatedText translationKey="auth.orContinueWith" />
                 </span>
               </div>
             </div>
 
-            {/* Email/Password Form */}
-            <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-4 flex-1">
-              <TouchOptimizedInput
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('authPage.emailPlaceholder')}
-                label={t('authPage.emailAddress')}
-                leftIcon={<Mail className="w-5 h-5" />}
-                medical
-                required
-              />
+            {/* Ultra-Compact Form */}
+            <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-2 flex-1">
+              <div className="space-y-1">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('authPage.emailPlaceholder')}
+                  className="w-full h-12 px-4 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                  required
+                />
+              </div>
               
-              <TouchOptimizedInput
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
-                label={activeTab === 'signin' ? t('auth.password') : t('authPage.createPassword')}
-                leftIcon={<Lock className="w-5 h-5" />}
-                showPasswordToggle
-                medical
-                helperText={activeTab === 'signup' ? t('authPage.passwordRequirements') : undefined}
-                required
-                minLength={6}
-              />
+              <div className="space-y-1 relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
+                  className="w-full h-12 px-4 pr-12 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+                {activeTab === 'signup' && (
+                  <p className="text-xs text-muted-foreground px-1">
+                    {t('authPage.passwordRequirements')}
+                  </p>
+                )}
+              </div>
               
               {error && (
-                <Alert variant="destructive" className="rounded-2xl border-destructive/30 bg-destructive/10 p-3">
-                  <AlertDescription className="font-medium text-center text-sm">{error}</AlertDescription>
+                <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/10 p-2">
+                  <AlertDescription className="font-medium text-center text-xs">{error}</AlertDescription>
                 </Alert>
               )}
             </form>
           </div>
         </div>
 
-        {/* Bottom Action Area - 15% */}
-        <div className="relative z-10 flex-none px-6 pb-8 pt-4 space-y-4">
-          {/* Primary Action Button */}
+        {/* Minimal Bottom Area - 12% */}
+        <div className="relative z-10 flex-none px-6 pb-6 pt-2 space-y-2">
+          {/* Compact Primary Action Button */}
           <MobileButton
             type="submit"
             variant="medical"
-            size="xl"
-            className="w-full h-14 text-base font-bold rounded-2xl shadow-glow medical-button"
+            size="lg"
+            className="w-full h-12 text-sm font-bold rounded-xl shadow-glow medical-button"
             disabled={isLoading}
             loading={isLoading}
             haptic
@@ -223,20 +227,20 @@ export default function Auth() {
                 <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signingIn' : 'authPage.creatingAccount'} />
               ) : (
                 <>
-                  <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signInSecurely' : 'authPage.createSecureAccount'} />
+                  <TranslatedText translationKey={activeTab === 'signin' ? 'auth.signIn' : 'auth.signUp'} />
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </span>
           </MobileButton>
 
-          {/* Compact Security Indicator */}
-          <div className="flex items-center justify-center gap-3 opacity-70">
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary">
-              <TranslatedText translationKey="authPage.medicalGradeSecurity" />
+          {/* Minimal Security Indicator */}
+          <div className="flex items-center justify-center gap-2 opacity-70">
+            <Shield className="w-3 h-3 text-primary" />
+            <span className="text-xs text-primary">
+              Secure
             </span>
-            <div className="w-2 h-2 bg-success rounded-full" />
+            <div className="w-1.5 h-1.5 bg-success rounded-full" />
           </div>
         </div>
       </div>
