@@ -48,18 +48,6 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
 }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-
-  // Use mobile version on mobile devices
-  if (isMobile) {
-    return (
-      <MobileInviteMemberSheet
-        isOpen={isOpen}
-        onClose={onClose}
-        onInvite={onInvite}
-        isLoading={isLoading}
-      />
-    );
-  }
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -73,6 +61,18 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
     },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Use mobile version on mobile devices
+  if (isMobile) {
+    return (
+      <MobileInviteMemberSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        onInvite={onInvite}
+        isLoading={isLoading}
+      />
+    );
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
