@@ -540,6 +540,9 @@
     "followInstructions": "Reçete edilen talimatlara uyun",
     "reportSideEffects": "Herhangi bir yan etkiyi sağlık hizmetleri sağlayıcınıza bildirin"
   },
+  "history": {
+    "deleteConfirmation": "Bu taramayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+  },
   "feedback": {
     "submit": "Geri bildirim gönder",
     "submitting": "Gönderiliyor..."

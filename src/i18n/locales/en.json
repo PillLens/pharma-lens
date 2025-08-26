@@ -908,6 +908,7 @@
     "deleteFailedDescription": "Could not delete scan. Please try again.",
     "deleteConfirmTitle": "Delete Scan",
     "deleteConfirmDescription": "Are you sure you want to delete this scan? This action cannot be undone.",
+    "deleteConfirmation": "Are you sure you want to delete this scan? This action cannot be undone.",
     "exportData": "Export Data",
     "refresh": "Refresh"
   },

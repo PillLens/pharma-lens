@@ -651,6 +651,9 @@
     "warning": "Xəbərdarlıq",
     "info": "Məlumat"
   },
+  "history": {
+    "deleteConfirmation": "Bu skanı silmək istədiyinizdən əminsiniz? Bu əməl geri qaytarıla bilməz."
+  },
   "feedback": {
     "submit": "Geri bildirim göndər",
     "submitting": "Göndərilir..."
