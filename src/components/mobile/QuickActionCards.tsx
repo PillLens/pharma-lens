@@ -102,24 +102,21 @@ const QuickActionCards: React.FC = () => {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-2.5">
         {loading ? (
           // Loading skeletons
           Array.from({ length: 4 }).map((_, index) => (
-            <MobileCard key={`skeleton-${index}`} variant="glass">
-              <MobileCardHeader>
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-12 h-12 rounded-xl" />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-5 w-8 rounded-full" />
-                    </div>
-                    <Skeleton className="h-3 w-48" />
+            <MobileCard key={`skeleton-${index}`} variant="glass" className="p-3">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-9 h-9 rounded-lg flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Skeleton className="h-3.5 w-24" />
+                    <Skeleton className="h-4 w-6 rounded-full" />
                   </div>
-                  <Skeleton className="w-5 h-5" />
+                  <Skeleton className="h-3 w-36" />
                 </div>
-              </MobileCardHeader>
+              </div>
             </MobileCard>
           ))
         ) : (
@@ -129,42 +126,38 @@ const QuickActionCards: React.FC = () => {
               variant="glass"
               interactive
               onClick={() => navigate(action.route)}
-              className={`bg-gradient-to-r ${action.gradient} border-border/50 hover:border-primary/30 transition-all duration-300 group`}
+              className={`bg-gradient-to-r ${action.gradient} border-border/50 hover:border-primary/30 transition-all duration-300 group p-3 relative`}
             >
-              <MobileCardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl ${action.iconBg} flex items-center justify-center shadow-soft group-hover:scale-110 transition-transform duration-200`}>
-                      <action.icon className={`w-6 h-6 ${action.iconColor}`} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <MobileCardTitle className="text-base group-hover:text-primary transition-colors">
-                          <TranslatedText translationKey={action.titleKey} />
-                        </MobileCardTitle>
-                        {(action.count !== undefined && action.count > 0) && (
-                          <span className="text-xs bg-foreground/10 text-foreground px-2 py-1 rounded-full font-medium">
-                            {action.count}
-                          </span>
-                        )}
-                        {action.badge && (
-                          <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full font-medium">
-                            {action.badge}
-                          </span>
-                        )}
-                      </div>
-                      <MobileCardDescription className="text-sm mt-1">
-                        {action.dynamicDescription ? (
-                          action.customDescription
-                        ) : (
-                          <TranslatedText translationKey={action.descriptionKey} />
-                        )}
-                      </MobileCardDescription>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg ${action.iconBg} flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-200 flex-shrink-0`}>
+                  <action.icon className={`w-5 h-5 ${action.iconColor}`} />
                 </div>
-              </MobileCardHeader>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <MobileCardTitle className="text-sm font-medium group-hover:text-primary transition-colors truncate">
+                      <TranslatedText translationKey={action.titleKey} />
+                    </MobileCardTitle>
+                    {(action.count !== undefined && action.count > 0) && (
+                      <span className="text-xs bg-foreground/10 text-foreground px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">
+                        {action.count}
+                      </span>
+                    )}
+                    {action.badge && (
+                      <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">
+                        {action.badge}
+                      </span>
+                    )}
+                  </div>
+                  <MobileCardDescription className="text-xs leading-tight truncate">
+                    {action.dynamicDescription ? (
+                      action.customDescription
+                    ) : (
+                      <TranslatedText translationKey={action.descriptionKey} />
+                    )}
+                  </MobileCardDescription>
+                </div>
+                <ArrowRight className="w-4 h-4 text-muted-foreground/60 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
+              </div>
             </MobileCard>
           ))
         )}
