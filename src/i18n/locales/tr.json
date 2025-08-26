@@ -328,6 +328,7 @@
       "name": "Grup Adı",
       "description": "Açıklama",
       "members": "Üyeler",
+      "noMembers": "Henüz üye yok",
       "settings": "Ayarlar",
       "delete": "Grubu Sil",
       "edit": "Grubu Düzenle",

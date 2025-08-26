@@ -352,6 +352,7 @@
       "name": "Group Name",
       "description": "Description",
       "members": "Members",
+      "noMembers": "No members yet",
       "settings": "Settings",
       "delete": "Delete Group",
       "edit": "Edit Group",

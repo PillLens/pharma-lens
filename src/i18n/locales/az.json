@@ -479,6 +479,7 @@
       "name": "Qrup Adı",
       "description": "Təsvir",
       "members": "Üzvlər",
+      "noMembers": "Hələ üzv yoxdur",
       "settings": "Tənzimləmələr",
       "delete": "Qrupu Sil",
       "edit": "Qrupu Redaktə Et",
