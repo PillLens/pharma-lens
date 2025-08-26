@@ -569,6 +569,36 @@
       "testFailed": "Failed to send test notification",
       "notificationsNotReady": "Push notifications are initializing..."
     },
+    "profile": {
+      "title": "Profile",
+      "editProfile": "Edit Profile",
+      "editProfileDescription": "Update your personal information",
+      "displayName": "Display Name",
+      "phone": "Phone",
+      "bio": "Bio", 
+      "enterName": "Enter your display name",
+      "enterPhone": "Enter your phone number",
+      "enterBio": "Enter your bio",
+      "saved": "Profile Saved",
+      "savedDescription": "Your profile has been updated successfully",
+      "saveError": "Failed to save profile"
+    },
+    "preferences": {
+      "title": "Preferences"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "location": {
+      "title": "Location & Timezone", 
+      "description": "Manage location and timezone settings"
+    },
+    "language": {
+      "language": "Language",
+      "selectLanguage": "Select Language"
+    },
     "billing": {
       "title": "Billing & Plan",
       "currentPlan": "Current Plan",

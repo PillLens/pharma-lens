@@ -36,18 +36,28 @@
     /* Medical theme colors */
     --medical-primary: 201 96% 32%;
     --medical-secondary: 199 89% 48%;
+    --primary-light: 199 89% 48%;
+    --primary-dark: 201 76% 28%;
+    --primary-glow: 199 95% 55%;
+    --secondary-light: 210 30% 98%;
     --success: 142 76% 36%;
     --success-light: 142 69% 58%;
     --success-foreground: 355 100% 97%;
+    --success-glow: 142 60% 70%;
     --warning: 38 92% 50%;
     --warning-light: 48 96% 89%;
     --warning-foreground: 48 96% 9%;
+    --warning-glow: 48 85% 65%;
     --info: 201 96% 32%;
     --info-light: 199 89% 48%;
     --info-foreground: 210 40% 98%;
+    --info-glow: 199 85% 60%;
     --emergency: 0 84% 60%;
     --emergency-light: 0 93% 94%;
     --emergency-foreground: 210 40% 98%;
+    --emergency-glow: 0 75% 70%;
+    --destructive-light: 0 75% 70%;
+    --destructive-glow: 0 65% 75%;
 
     /* Enhanced mobile navigation */
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -160,6 +170,26 @@
   .shadow-elevated {
     box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15), 0 8px 32px -8px rgba(0, 0, 0, 0.15);
   }
+
+  .shadow-medical {
+    box-shadow: 0 4px 16px -4px hsl(var(--primary) / 0.15), 0 8px 24px -8px hsl(var(--primary) / 0.1);
+  }
+
+  .shadow-success {
+    box-shadow: 0 4px 16px -4px hsl(var(--success) / 0.15), 0 8px 24px -8px hsl(var(--success) / 0.1);
+  }
+
+  .shadow-warning {
+    box-shadow: 0 4px 16px -4px hsl(var(--warning) / 0.15), 0 8px 24px -8px hsl(var(--warning) / 0.1);
+  }
+
+  .shadow-emergency {
+    box-shadow: 0 4px 16px -4px hsl(var(--emergency) / 0.15), 0 8px 24px -8px hsl(var(--emergency) / 0.1);
+  }
+
+  .shadow-card {
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1), 0 4px 16px -4px rgba(0, 0, 0, 0.1);
+  }
 }
 
 @layer components {
@@ -170,6 +200,14 @@
 
   .medical-button {
     @apply bg-gradient-to-r from-primary to-primary-light text-primary-foreground;
+  }
+
+  .bg-gradient-medical {
+    @apply bg-gradient-to-br from-primary/10 via-primary/5 to-primary-light/10;
+  }
+
+  .medical-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary-light) / 0.05));
   }
 
   .gradient-surface {

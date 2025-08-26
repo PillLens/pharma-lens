@@ -402,8 +402,8 @@ const Settings: React.FC = () => {
           <div className="bg-background">
             <SettingsRow
               icon={<User className="w-5 h-5 text-primary" />}
-              title="Edit Profile"
-              subtitle="Update your personal information"
+              title={t('settings.profile.editProfile')}
+              subtitle={t('settings.profile.editProfileDescription')}
               onClick={() => setShowEditProfile(true)}
             />
             <SettingsRow
@@ -423,7 +423,7 @@ const Settings: React.FC = () => {
 
         {/* Preferences Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title="Preferences" />
+          <SettingsSectionHeader title={t('settings.preferences.title')} />
           <div className="bg-background">
             <SettingsRow
               icon={<Globe className="w-5 h-5 text-primary" />}
@@ -435,8 +435,8 @@ const Settings: React.FC = () => {
               icon={<Bell className="w-5 h-5 text-primary" />}
               title={t('settings.notifications.title')}
               subtitle={profileData.notification_preferences.enabled 
-                ? "Enabled"
-                : "Disabled"
+                ? t('settings.notifications.enabled')
+                : t('settings.notifications.disabled')
               }
               rightElement={
                 <Switch
@@ -448,8 +448,8 @@ const Settings: React.FC = () => {
             />
             <SettingsRow
               icon={<MapPin className="w-5 h-5 text-primary" />}
-              title="Location & Timezone"
-              subtitle="Manage location and timezone settings"
+              title={t('settings.location.title')}
+              subtitle={t('settings.location.description')}
               onClick={() => setShowLocationSettings(true)}
             />
           </div>
@@ -457,7 +457,7 @@ const Settings: React.FC = () => {
 
         {/* Privacy & Security Section */}
         <div className="mt-6">
-          <SettingsSectionHeader title="Privacy & Security" />
+          <SettingsSectionHeader title={t('settings.privacy.title')} />
           <div className="bg-background">
             <SettingsRow
               icon={<Download className="w-5 h-5 text-primary" />}
@@ -565,7 +565,7 @@ const Settings: React.FC = () => {
       <Sheet open={showEditProfile} onOpenChange={setShowEditProfile}>
         <SheetContent side="bottom" className="h-[80vh]">
           <SheetHeader>
-            <SheetTitle>Edit Profile</SheetTitle>
+            <SheetTitle>{t('settings.profile.editProfile')}</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-4">
             <div>
