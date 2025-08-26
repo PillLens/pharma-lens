@@ -43,55 +43,55 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
   const benefits = [
     {
       icon: Heart,
-      title: 'Medication Sharing',
-      description: 'Share medication schedules and track adherence together',
+      title: t('family.emptyState.benefits.medicationSharing.title'),
+      description: t('family.emptyState.benefits.medicationSharing.description'),
       color: 'primary'
     },
     {
       icon: Shield,
-      title: 'Safety Monitoring',
-      description: 'Get alerts for missed medications and emergency situations',
+      title: t('family.emptyState.benefits.safetyMonitoring.title'),
+      description: t('family.emptyState.benefits.safetyMonitoring.description'),
       color: 'success'
     },
     {
       icon: Activity,
-      title: 'Health Insights',
-      description: 'View family health trends and compliance analytics',
+      title: t('family.emptyState.benefits.healthInsights.title'),
+      description: t('family.emptyState.benefits.healthInsights.description'),
       color: 'blue'
     },
     {
       icon: Video,
-      title: 'Remote Care',
-      description: 'Video calls and check-ins with family members',
+      title: t('family.emptyState.benefits.remoteCare.title'),
+      description: t('family.emptyState.benefits.remoteCare.description'),
       color: 'purple'
     }
   ];
 
   const steps = [
     {
-      title: 'Create Your Family Group',
-      description: 'Start by creating your first family care group',
+      title: t('family.emptyState.steps.createGroup.title'),
+      description: t('family.emptyState.steps.createGroup.description'),
       icon: Users,
-      action: 'Create Group',
+      action: t('family.emptyState.steps.createGroup.action'),
       primary: true
     },
     {
-      title: 'Invite Family Members',
-      description: 'Add caregivers, patients, and healthcare providers',
+      title: t('family.emptyState.steps.inviteMembers.title'),
+      description: t('family.emptyState.steps.inviteMembers.description'),
       icon: UserPlus,
-      action: 'Import Contacts'
+      action: t('family.emptyState.steps.inviteMembers.action')
     },
     {
-      title: 'Share Medications',
-      description: 'Set up shared medication schedules and reminders',
+      title: t('family.emptyState.steps.shareMedications.title'),
+      description: t('family.emptyState.steps.shareMedications.description'),
       icon: Calendar,
-      action: 'Share Meds'
+      action: t('family.emptyState.steps.shareMedications.action')
     },
     {
-      title: 'Start Caring Together',
-      description: 'Monitor health, send reminders, and stay connected',
+      title: t('family.emptyState.steps.startCaring.title'),
+      description: t('family.emptyState.steps.startCaring.description'),
       icon: Heart,
-      action: 'Begin Care'
+      action: t('family.emptyState.steps.startCaring.action')
     }
   ];
 
@@ -161,24 +161,23 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
           {/* Content */}
           <div className="space-y-4 mb-8">
             <h2 className="text-2xl font-bold text-foreground">
-              Welcome to Family Care
+              {t('family.emptyState.welcomeTitle')}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Create your family care network to share medications, monitor health, 
-              and keep everyone safe together.
+              {t('family.emptyState.welcomeDescription')}
             </p>
             <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4 text-primary" />
-                <span>Connect Family</span>
+                <span>{t('family.emptyState.connectFamily')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-4 h-4 text-success" />
-                <span>Share Care</span>
+                <span>{t('family.emptyState.shareCare')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Shield className="w-4 h-4 text-blue-600" />
-                <span>Stay Safe</span>
+                <span>{t('family.emptyState.staySafe')}</span>
               </div>
             </div>
           </div>
@@ -191,7 +190,7 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
               className="rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 active:scale-[0.98] bg-gradient-to-r from-primary to-primary/90"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Create Your First Group
+              {t('family.emptyState.createFirstGroup')}
             </Button>
             <Button 
               variant="outline"
@@ -200,7 +199,7 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
               className="rounded-xl border-2 hover:bg-muted/50"
             >
               <Video className="w-5 h-5 mr-2" />
-              Watch Demo
+              {t('family.emptyState.watchDemo')}
             </Button>
           </div>
         </CardContent>
@@ -238,9 +237,9 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Star className="w-5 h-5 text-primary" />
-            Quick Setup Templates
+            {t('family.emptyState.quickSetupTitle')}
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Choose a template to get started quickly</p>
+          <p className="text-sm text-muted-foreground">{t('family.emptyState.quickSetupDescription')}</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -255,7 +254,7 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
                         <h4 className="font-semibold">{template.name}</h4>
                       </div>
                       {template.popular && (
-                        <Badge className="bg-primary/20 text-primary text-xs">Popular</Badge>
+                        <Badge className="bg-primary/20 text-primary text-xs">{t('family.emptyState.templates.popular')}</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
@@ -273,7 +272,7 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
                       className="w-full justify-between group-hover:bg-background/50"
                       onClick={() => onCreateGroup(template)}
                     >
-                      Use Template
+                      {t('family.emptyState.templates.useTemplate')}
                       <ChevronRight className="w-4 h-4" />
                     </Button>
                   </CardContent>
@@ -289,7 +288,7 @@ const EnhancedFamilyEmptyState: React.FC<EnhancedFamilyEmptyStateProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
-            Getting Started in 4 Easy Steps
+            {t('family.emptyState.gettingStartedTitle')}
           </CardTitle>
           <Progress value={(currentStep + 1) * 25} className="h-2 mt-3" />
         </CardHeader>

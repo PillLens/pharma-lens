@@ -195,6 +195,127 @@
     "medicationReminders": "Напоминания о лекарствах",
     "securityDashboard": "Панель безопасности"
   },
+  "family": {
+    "tabs": {
+      "overview": "Обзор",
+      "groups": "Группы",
+      "timeline": "Временная шкала",
+      "analytics": "Аналитика"
+    },
+    "actions": {
+      "addGroup": "Добавить группу",
+      "addGroupPro": "Добавить группу (Pro)",
+      "groupVideoCall": "Групповой видеозвонок",
+      "groupMessage": "Групповое сообщение"
+    },
+    "status": {
+      "online": "онлайн",
+      "shared": "общих",
+      "adherence": "Соблюдение",
+      "alerts": "Уведомления",
+      "active": "Активных",
+      "groupAdherence": "Групповое соблюдение",
+      "alert": "Уведомление", 
+      "pending": "Ожидает"
+    },
+    "emptyState": {
+      "welcomeTitle": "Добро пожаловать в семейную заботу",
+      "welcomeDescription": "Создайте сеть семейной заботы для обмена лекарствами, мониторинга здоровья и безопасности всех вместе.",
+      "connectFamily": "Соединить семью",
+      "shareCare": "Разделить заботу",
+      "staySafe": "Оставаться в безопасности",
+      "createFirstGroup": "Создать первую группу",
+      "watchDemo": "Посмотреть демо",
+      "benefits": {
+        "medicationSharing": {
+          "title": "Обмен лекарствами",
+          "description": "Делитесь расписанием лекарств и отслеживайте соблюдение вместе"
+        },
+        "safetyMonitoring": {
+          "title": "Мониторинг безопасности",
+          "description": "Получайте уведомления о пропущенных лекарствах и чрезвычайных ситуациях"
+        },
+        "healthInsights": {
+          "title": "Аналитика здоровья",
+          "description": "Просматривайте тенденции семейного здоровья и аналитику соблюдения"
+        },
+        "remoteCare": {
+          "title": "Удаленная забота",
+          "description": "Видеозвонки и проверки состояния членов семьи"
+        }
+      },
+      "templates": {
+        "elderlyCare": {
+          "name": "Забота о пожилых",
+          "description": "Идеально для ухода за стареющими родителями"
+        },
+        "childCare": {
+          "name": "Забота о детях",
+          "description": "Управление лекарствами для детей"
+        },
+        "chronicCondition": {
+          "name": "Хроническое заболевание",
+          "description": "Поддержка при постоянных проблемах со здоровьем"
+        },
+        "popular": "Популярное",
+        "useTemplate": "Использовать шаблон"
+      },
+      "quickSetupTitle": "Шаблоны быстрой настройки",
+      "quickSetupDescription": "Выберите шаблон для быстрого начала",
+      "gettingStartedTitle": "Начало работы в 4 простых шага",
+      "steps": {
+        "createGroup": {
+          "title": "Создайте семейную группу",
+          "description": "Начните с создания первой группы семейной заботы",
+          "action": "Создать группу"
+        },
+        "inviteMembers": {
+          "title": "Пригласите членов семьи",
+          "description": "Добавьте опекунов, пациентов и медицинских работников",
+          "action": "Импорт контактов"
+        },
+        "shareMedications": {
+          "title": "Поделитесь лекарствами",
+          "description": "Настройте общие расписания лекарств и напоминания",
+          "action": "Поделиться лекарствами"
+        },
+        "startCaring": {
+          "title": "Начните заботиться вместе",
+          "description": "Следите за здоровьем, отправляйте напоминания и оставайтесь на связи",
+          "action": "Начать заботу"
+        }
+      }
+    },
+    "dashboard": {
+      "familyMembers": "Члены семьи",
+      "ofTotal": "из {total} всего",
+      "adherenceRate": "Уровень соблюдения",
+      "thisWeek": "+2% на этой неделе",
+      "pendingTasks": "Ожидающие задачи",
+      "needAttention": "Требуют внимания",
+      "careScore": "Оценка заботы",
+      "careScoreExcellent": "Отличная забота",
+      "careScoreGood": "Хорошая забота",
+      "careScoreFair": "Справедливая забота",
+      "careScoreNeedsAttention": "Требует внимания",
+      "emergencyContact": "Экстренный контакт",
+      "emergencyDescription": "Экстренный звонок одним касанием",
+      "shareMedications": "Поделиться лекарствами",
+      "shareDescription": "Быстрый обмен лекарствами",
+      "dailyCheckup": "Ежедневная проверка",
+      "checkupDescription": "Начать проверку семейного благополучия",
+      "weeklyTrend": "Недельная тенденция соблюдения",
+      "medicationStatus": "Статус лекарств",
+      "recentActivity": "Недавняя семейная активность",
+      "noRecentActivity": "Нет недавней семейной активности",
+      "onTime": "Вовремя",
+      "delayed": "Задержано",
+      "missed": "Пропущено",
+      "completed": "Завершено",
+      "activeStatus": "Активно",
+      "vsLastWeek": "по сравнению с прошлой неделей"
+    }
+  },
   "scanner": {
     "scanMedication": "Сканировать Лекарство",
     "medicationFound": "Лекарство Найдено",

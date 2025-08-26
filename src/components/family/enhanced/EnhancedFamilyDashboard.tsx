@@ -46,9 +46,9 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
         // Load real medication status distribution
         const distribution = await familyAnalyticsService.getMedicationStatusDistribution(familyGroups);
         setMedicationDistribution([
-          { name: 'On Time', value: distribution.onTime, color: 'hsl(var(--success))' },
-          { name: 'Delayed', value: distribution.delayed, color: 'hsl(var(--warning))' },
-          { name: 'Missed', value: distribution.missed, color: 'hsl(var(--destructive))' }
+          { name: t('family.dashboard.onTime'), value: distribution.onTime, color: 'hsl(var(--success))' },
+          { name: t('family.dashboard.delayed'), value: distribution.delayed, color: 'hsl(var(--warning))' },
+          { name: t('family.dashboard.missed'), value: distribution.missed, color: 'hsl(var(--destructive))' }
         ]);
 
         // Load recent family activity
@@ -84,9 +84,9 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground font-medium">Family Members</p>
+                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.familyMembers')}</p>
                 <p className="text-2xl font-bold text-primary">{activeMembers}</p>
-                <p className="text-xs text-muted-foreground">of {totalMembers} total</p>
+                <p className="text-xs text-muted-foreground">{t('family.dashboard.ofTotal', { total: totalMembers })}</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                 <Users className="w-5 h-5 text-primary" />
@@ -99,9 +99,9 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground font-medium">Adherence Rate</p>
+                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.adherenceRate')}</p>
                 <p className="text-2xl font-bold text-success">{overallAdherence}%</p>
-                <p className="text-xs text-success">+2% this week</p>
+                <p className="text-xs text-success">{t('family.dashboard.thisWeek')}</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-success" />
@@ -114,9 +114,9 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground font-medium">Pending Tasks</p>
+                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.pendingTasks')}</p>
                 <p className="text-2xl font-bold text-warning">{pendingTasks}</p>
-                <p className="text-xs text-muted-foreground">Need attention</p>
+                <p className="text-xs text-muted-foreground">{t('family.dashboard.needAttention')}</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
                 <Clock className="w-5 h-5 text-warning" />
@@ -129,12 +129,12 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground font-medium">Care Score</p>
+                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.careScore')}</p>
                 <p className="text-2xl font-bold text-blue-600">{careScore}</p>
                 <p className="text-xs text-blue-600">
-                  {careScore === 'A+' || careScore === 'A' ? 'Excellent care' : 
-                   careScore === 'B+' || careScore === 'B' ? 'Good care' : 
-                   careScore === 'C' ? 'Fair care' : 'Needs attention'}
+                  {careScore === 'A+' || careScore === 'A' ? t('family.dashboard.careScoreExcellent') : 
+                   careScore === 'B+' || careScore === 'B' ? t('family.dashboard.careScoreGood') : 
+                   careScore === 'C' ? t('family.dashboard.careScoreFair') : t('family.dashboard.careScoreNeedsAttention')}
                 </p>
               </div>
               <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
@@ -152,8 +152,8 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-destructive/20 flex items-center justify-center animate-pulse">
               <Phone className="w-6 h-6 text-destructive" />
             </div>
-            <h3 className="font-semibold text-destructive mb-1">Emergency Contact</h3>
-            <p className="text-xs text-muted-foreground">One-touch emergency call</p>
+            <h3 className="font-semibold text-destructive mb-1">{t('family.dashboard.emergencyContact')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.emergencyDescription')}</p>
           </CardContent>
         </Card>
 
@@ -162,8 +162,8 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
               <Heart className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="font-semibold text-primary mb-1">Share Medications</h3>
-            <p className="text-xs text-muted-foreground">Quick medication sharing</p>
+            <h3 className="font-semibold text-primary mb-1">{t('family.dashboard.shareMedications')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.shareDescription')}</p>
           </CardContent>
         </Card>
 
@@ -172,8 +172,8 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-500/20 flex items-center justify-center">
               <Activity className="w-6 h-6 text-blue-600" />
             </div>
-            <h3 className="font-semibold text-blue-600 mb-1">Daily Check-up</h3>
-            <p className="text-xs text-muted-foreground">Start family wellness check</p>
+            <h3 className="font-semibold text-blue-600 mb-1">{t('family.dashboard.dailyCheckup')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.checkupDescription')}</p>
           </CardContent>
         </Card>
       </div>
@@ -185,7 +185,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-primary" />
-              Weekly Adherence Trend
+              {t('family.dashboard.weeklyTrend')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -207,7 +207,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
             <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
               <span>Average: {Math.round(adherenceData.reduce((sum, day) => sum + day.adherence, 0) / Math.max(adherenceData.length, 1))}%</span>
               <Badge className="bg-success/10 text-success">
-                {overallAdherence >= 85 ? '+' : ''}{overallAdherence >= 85 ? '2.3' : '-1.2'}% vs last week
+                {overallAdherence >= 85 ? '+' : ''}{overallAdherence >= 85 ? '2.3' : '-1.2'}% {t('family.dashboard.vsLastWeek')}
               </Badge>
             </div>
           </CardContent>
@@ -218,7 +218,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
-              Medication Status
+              {t('family.dashboard.medicationStatus')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -260,7 +260,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Activity className="w-4 h-4 text-primary" />
-            Recent Family Activity
+            {t('family.dashboard.recentActivity')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -280,7 +280,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
           ) : recentActivity.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No recent family activity</p>
+              <p className="text-sm">{t('family.dashboard.noRecentActivity')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -300,8 +300,8 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
                     activity.status === 'pending' ? 'bg-warning/10 text-warning' :
                     'bg-blue-500/10 text-blue-600'
                   }`}>
-                    {activity.status === 'completed' ? 'Completed' :
-                     activity.status === 'pending' ? 'Pending' : 'Active'}
+                    {activity.status === 'completed' ? t('family.dashboard.completed') :
+                     activity.status === 'pending' ? t('family.status.pending') : t('family.dashboard.activeStatus')}
                   </Badge>
                 </div>
               ))}

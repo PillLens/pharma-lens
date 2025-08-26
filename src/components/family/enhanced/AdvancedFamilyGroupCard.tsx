@@ -126,11 +126,11 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
               </span>
               <span className="flex items-center gap-1">
                 <Activity className="w-3 h-3" />
-                {onlineMembers} online
+                {onlineMembers} {t('family.status.online')}
               </span>
               <span className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
-                {sharedMedications} shared
+                {sharedMedications} {t('family.status.shared')}
               </span>
             </div>
           </div>
@@ -154,11 +154,11 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onVideoCall?.(group.id)}>
                 <Video className="w-4 h-4 mr-2" />
-                Group Video Call
+                {t('family.actions.groupVideoCall')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onMessage?.(group.id)}>
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Group Message
+                {t('family.actions.groupMessage')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onEditGroup}>
@@ -182,28 +182,28 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
                 <TrendingUp className="w-4 h-4 text-primary" />
               </div>
               <p className="text-xs font-medium text-foreground">{groupAdherence}%</p>
-              <p className="text-xs text-muted-foreground">Adherence</p>
+              <p className="text-xs text-muted-foreground">{t('family.status.adherence')}</p>
             </div>
             <div className="text-center">
               <div className="w-8 h-8 mx-auto mb-1 rounded-full bg-blue-500/10 flex items-center justify-center">
                 <Shield className="w-4 h-4 text-blue-600" />
               </div>
               <p className="text-xs font-medium text-foreground">{activeAlerts}</p>
-              <p className="text-xs text-muted-foreground">Alerts</p>
+              <p className="text-xs text-muted-foreground">{t('family.status.alerts')}</p>
             </div>
             <div className="text-center">
               <div className="w-8 h-8 mx-auto mb-1 rounded-full bg-green-500/10 flex items-center justify-center">
                 <Zap className="w-4 h-4 text-green-600" />
               </div>
               <p className="text-xs font-medium text-foreground">{onlineMembers}</p>
-              <p className="text-xs text-muted-foreground">Active</p>
+              <p className="text-xs text-muted-foreground">{t('family.status.active')}</p>
             </div>
           </div>
 
           {/* Adherence Progress Bar */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground">Group Adherence</span>
+              <span className="text-xs text-muted-foreground">{t('family.status.groupAdherence')}</span>
               <span className="text-xs font-medium text-foreground">{groupAdherence}%</span>
             </div>
             <Progress value={groupAdherence} className="h-2" />
@@ -282,7 +282,7 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
           <div className="flex flex-wrap gap-1">
             {activeAlerts > 0 && (
               <Badge className="text-xs px-2 py-0.5 bg-destructive/10 text-destructive border-destructive/20">
-                {activeAlerts} Alert{activeAlerts > 1 ? 's' : ''}
+                {activeAlerts} {activeAlerts > 1 ? t('family.status.alerts') : t('family.status.alert')}
               </Badge>
             )}
             {group.members && group.members.some(m => m.invitation_status === 'pending') && (
@@ -292,7 +292,7 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
             )}
             {onlineMembers > 0 && (
               <Badge className="text-xs px-2 py-0.5 bg-success/10 text-success border-success/20">
-                {onlineMembers} Online
+                {onlineMembers} {t('family.status.online')}
               </Badge>
             )}
           </div>

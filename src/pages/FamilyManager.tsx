@@ -356,19 +356,19 @@ const FamilyManager: React.FC = () => {
             <TabsList className="grid w-full grid-cols-4 mb-6 h-auto">
               <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <BarChart3 className="w-4 h-4" />
-                <span>Overview</span>
+                <span>{t('family.tabs.overview')}</span>
               </TabsTrigger>
               <TabsTrigger value="groups" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Users className="w-4 h-4" />
-                <span>Groups</span>
+                <span>{t('family.tabs.groups')}</span>
               </TabsTrigger>
               <TabsTrigger value="timeline" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Calendar className="w-4 h-4" />
-                <span>Timeline</span>
+                <span>{t('family.tabs.timeline')}</span>
               </TabsTrigger>
               <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
                 <Activity className="w-4 h-4" />
-                <span>Analytics</span>
+                <span>{t('family.tabs.analytics')}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -390,15 +390,15 @@ const FamilyManager: React.FC = () => {
                   <FeatureGate 
                     feature="can_create_family_group"
                     fallback={
-                      <Button variant="outline" disabled>
+                    <Button variant="outline" disabled>
                         <Users className="w-4 h-4 mr-2" />
-                        Add Group (Pro)
+                        {t('family.actions.addGroupPro')}
                       </Button>
                     }
                   >
                     <Button onClick={() => setShowCreateGroup(true)}>
                       <Users className="w-4 h-4 mr-2" />
-                      Add Group
+                      {t('family.actions.addGroup')}
                     </Button>
                   </FeatureGate>
                 </div>

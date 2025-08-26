@@ -356,6 +356,127 @@
     "securityNotice": "Məlumatlarınız uçdan-uca şifrələnir və HIPAA standartlarına uyğun olaraq təhlükəsiz saxlanılır.",
     "dataEncryptedSecure": "Məlumatlarınız şifrələnmiş və təhlükəsizdir"
   },
+  "family": {
+    "tabs": {
+      "overview": "Ümumi baxış",
+      "groups": "Qruplar",
+      "timeline": "Vaxt çizelgesi",
+      "analytics": "Analitika"
+    },
+    "actions": {
+      "addGroup": "Qrup əlavə et",
+      "addGroupPro": "Qrup əlavə et (Pro)",
+      "groupVideoCall": "Qrup video zəngi",
+      "groupMessage": "Qrup mesajı"
+    },
+    "status": {
+      "online": "onlayn",
+      "shared": "paylaşılan",
+      "adherence": "Riayət",
+      "alerts": "Xəbərdarlıqlar",
+      "active": "Aktiv",
+      "groupAdherence": "Qrup riayəti",
+      "alert": "Xəbərdarlıq",
+      "pending": "Gözləyir"
+    },
+    "emptyState": {
+      "welcomeTitle": "Ailə Qayğısına Xoş Gəldiniz",
+      "welcomeDescription": "Dərmanları paylaşmaq, sağlamlığı izləmək və hamını birlikdə təhlükəsiz saxlamaq üçün ailə qayğı şəbəkənizi yaradın.",
+      "connectFamily": "Ailəni Bağla",
+      "shareCare": "Qayğını Paylaş",
+      "staySafe": "Təhlükəsiz Qal",
+      "createFirstGroup": "İlk Qrupunuzu Yaradın",
+      "watchDemo": "Demo İzlə",
+      "benefits": {
+        "medicationSharing": {
+          "title": "Dərman Paylaşımı",
+          "description": "Dərman cədvəllərini paylaşın və riayəti birlikdə izləyin"
+        },
+        "safetyMonitoring": {
+          "title": "Təhlükəsizlik Monitorinqi",
+          "description": "Qaçırılan dərmanlar və təcili hallar üçün xəbərdarlıqlar alın"
+        },
+        "healthInsights": {
+          "title": "Sağlamlıq Məlumatları",
+          "description": "Ailə sağlamlıq tendensiyalarını və riayət analitikalarını görün"
+        },
+        "remoteCare": {
+          "title": "Uzaqdan Qayğı",
+          "description": "Ailə üzvləri ilə video zənglər və yoxlamalar"
+        }
+      },
+      "templates": {
+        "elderlyCare": {
+          "name": "Yaşlı Qayğısı",
+          "description": "Qocalan valideynlərin qayğısı üçün mükəmməl"
+        },
+        "childCare": {
+          "name": "Uşaq Qayğısı",
+          "description": "Uşaqlar üçün dərman idarəetməsi"
+        },
+        "chronicCondition": {
+          "name": "Xroniki Vəziyyət",
+          "description": "Davam edən sağlamlıq problemləri üçün dəstək"
+        },
+        "popular": "Populyar",
+        "useTemplate": "Şablonu İstifadə Et"
+      },
+      "quickSetupTitle": "Sürətli Quraşdırma Şablonları",
+      "quickSetupDescription": "Sürətlə başlamaq üçün şablon seçin",
+      "gettingStartedTitle": "4 Asan Addımda Başlayın",
+      "steps": {
+        "createGroup": {
+          "title": "Ailə Qrupunuzu Yaradın",
+          "description": "İlk ailə qayğı qrupunuzu yaratmaqla başlayın",
+          "action": "Qrup Yarat"
+        },
+        "inviteMembers": {
+          "title": "Ailə Üzvlərini Dəvət Edin",
+          "description": "Baxıcılar, xəstələr və səhiyyə təminatçıları əlavə edin",
+          "action": "Kontaktları İdxal Et"
+        },
+        "shareMedications": {
+          "title": "Dərmanları Paylaşın",
+          "description": "Paylaşılan dərman cədvəlləri və xatırlatmalar qurun",
+          "action": "Dərmanları Paylaş"
+        },
+        "startCaring": {
+          "title": "Birlikdə Qayğıya Başlayın",
+          "description": "Sağlamlığı izləyin, xatırlatmalar göndərin və əlaqədə qalın",
+          "action": "Qayğıya Başla"
+        }
+      }
+    },
+    "dashboard": {
+      "familyMembers": "Ailə Üzvləri",
+      "ofTotal": "{total} ümumidən",
+      "adherenceRate": "Riayət Dərəcəsi",
+      "thisWeek": "bu həftə +2%",
+      "pendingTasks": "Gözləyən Tapşırıqlar",
+      "needAttention": "Diqqət tələb edir",
+      "careScore": "Qayğı Balı",
+      "careScoreExcellent": "Əla qayğı",
+      "careScoreGood": "Yaxşı qayğı",
+      "careScoreFair": "Ədalətli qayğı",
+      "careScoreNeedsAttention": "Diqqət tələb edir",
+      "emergencyContact": "Təcili Əlaqə",
+      "emergencyDescription": "Bir toxunuşla təcili zəng",
+      "shareMedications": "Dərmanları Paylaş",
+      "shareDescription": "Sürətli dərman paylaşımı",
+      "dailyCheckup": "Gündəlik Yoxlama",
+      "checkupDescription": "Ailə rifahı yoxlamasına başla",
+      "weeklyTrend": "Həftəlik Riayət Tendensiyası",
+      "medicationStatus": "Dərman Statusu",
+      "recentActivity": "Son Ailə Fəaliyyəti",
+      "noRecentActivity": "Son ailə fəaliyyəti yoxdur",
+      "onTime": "Vaxtında",
+      "delayed": "Gecikmiş",
+      "missed": "Qaçırılmış",
+      "completed": "Tamamlandı",
+      "activeStatus": "Aktiv",
+      "vsLastWeek": "keçən həftəyə görə"
+    }
+  },
   "scanner": {
     "scanMedication": "Dərman Skan Et",
     "medicationFound": "Dərman Tapıldı",

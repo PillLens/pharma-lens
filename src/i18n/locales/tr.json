@@ -195,6 +195,127 @@
     "medicationReminders": "İlaç hatırlatıcıları",
     "securityDashboard": "Güvenlik panosu"
   },
+  "family": {
+    "tabs": {
+      "overview": "Genel Bakış",
+      "groups": "Gruplar",
+      "timeline": "Zaman Çizelgesi",
+      "analytics": "Analitik"
+    },
+    "actions": {
+      "addGroup": "Grup Ekle",
+      "addGroupPro": "Grup Ekle (Pro)",
+      "groupVideoCall": "Grup Video Görüşmesi",
+      "groupMessage": "Grup Mesajı"
+    },
+    "status": {
+      "online": "çevrimiçi",
+      "shared": "paylaşılan",
+      "adherence": "Uyum",
+      "alerts": "Uyarılar",
+      "active": "Aktif",
+      "groupAdherence": "Grup Uyumu",
+      "alert": "Uyarı",
+      "pending": "Beklemede"
+    },
+    "emptyState": {
+      "welcomeTitle": "Aile Bakımına Hoş Geldiniz",
+      "welcomeDescription": "İlaçları paylaşmak, sağlığı izlemek ve herkesi birlikte güvende tutmak için aile bakım ağınızı oluşturun.",
+      "connectFamily": "Aileyi Bağla",
+      "shareCare": "Bakımı Paylaş",
+      "staySafe": "Güvende Kal",
+      "createFirstGroup": "İlk Grubunuzu Oluşturun",
+      "watchDemo": "Demo İzle",
+      "benefits": {
+        "medicationSharing": {
+          "title": "İlaç Paylaşımı",
+          "description": "İlaç programlarını paylaşın ve uyumu birlikte takip edin"
+        },
+        "safetyMonitoring": {
+          "title": "Güvenlik İzleme",
+          "description": "Kaçırılan ilaçlar ve acil durumlar için uyarılar alın"
+        },
+        "healthInsights": {
+          "title": "Sağlık Öngörüleri",
+          "description": "Aile sağlık trendlerini ve uyum analitiğini görüntüleyin"
+        },
+        "remoteCare": {
+          "title": "Uzaktan Bakım",
+          "description": "Aile üyeleriyle video aramalar ve kontroller"
+        }
+      },
+      "templates": {
+        "elderlyCare": {
+          "name": "Yaşlı Bakımı",
+          "description": "Yaşlanan ebeveynlerin bakımı için mükemmel"
+        },
+        "childCare": {
+          "name": "Çocuk Bakımı",
+          "description": "Çocuklar için ilaç yönetimi"
+        },
+        "chronicCondition": {
+          "name": "Kronik Hastalık",
+          "description": "Devam eden sağlık sorunları için destek"
+        },
+        "popular": "Popüler",
+        "useTemplate": "Şablonu Kullan"
+      },
+      "quickSetupTitle": "Hızlı Kurulum Şablonları",
+      "quickSetupDescription": "Hızlıca başlamak için bir şablon seçin",
+      "gettingStartedTitle": "4 Kolay Adımda Başlayın",
+      "steps": {
+        "createGroup": {
+          "title": "Aile Grubunuzu Oluşturun",
+          "description": "İlk aile bakım grubunuzu oluşturarak başlayın",
+          "action": "Grup Oluştur"
+        },
+        "inviteMembers": {
+          "title": "Aile Üyelerini Davet Edin",
+          "description": "Bakıcılar, hastalar ve sağlık sağlayıcıları ekleyin",
+          "action": "Kişileri İçe Aktar"
+        },
+        "shareMedications": {
+          "title": "İlaçları Paylaşın",
+          "description": "Paylaşılan ilaç programları ve hatırlatıcılar kurun",
+          "action": "İlaçları Paylaş"
+        },
+        "startCaring": {
+          "title": "Birlikte Bakım Yapmaya Başlayın",
+          "description": "Sağlığı izleyin, hatırlatıcılar gönderin ve bağlantıda kalın",
+          "action": "Bakıma Başla"
+        }
+      }
+    },
+    "dashboard": {
+      "familyMembers": "Aile Üyeleri",
+      "ofTotal": "{total} toplam içinde",
+      "adherenceRate": "Uyum Oranı",
+      "thisWeek": "bu hafta +%2",
+      "pendingTasks": "Bekleyen Görevler",
+      "needAttention": "Dikkat gerekiyor",
+      "careScore": "Bakım Puanı",
+      "careScoreExcellent": "Mükemmel bakım",
+      "careScoreGood": "İyi bakım",
+      "careScoreFair": "Adil bakım",
+      "careScoreNeedsAttention": "Dikkat gerekiyor",
+      "emergencyContact": "Acil Durum İletişimi",
+      "emergencyDescription": "Tek dokunuşla acil arama",
+      "shareMedications": "İlaçları Paylaş",
+      "shareDescription": "Hızlı ilaç paylaşımı",
+      "dailyCheckup": "Günlük Kontrol",
+      "checkupDescription": "Aile sağlığı kontrolü başlat",
+      "weeklyTrend": "Haftalık Uyum Trendi",
+      "medicationStatus": "İlaç Durumu",
+      "recentActivity": "Son Aile Aktivitesi",
+      "noRecentActivity": "Son aile aktivitesi yok",
+      "onTime": "Zamanında",
+      "delayed": "Gecikmiş",
+      "missed": "Kaçırılmış",
+      "completed": "Tamamlandı",
+      "activeStatus": "Aktif",
+      "vsLastWeek": "geçen haftaya göre"
+    }
+  },
   "scanner": {
     "scanMedication": "İlacı Tara",
     "medicationFound": "İlaç Bulundu",

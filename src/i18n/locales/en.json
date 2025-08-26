@@ -219,6 +219,127 @@
     "medicationReminders": "Medication reminders",
     "securityDashboard": "Security dashboard"
   },
+  "family": {
+    "tabs": {
+      "overview": "Overview",
+      "groups": "Groups",
+      "timeline": "Timeline",
+      "analytics": "Analytics"
+    },
+    "actions": {
+      "addGroup": "Add Group",
+      "addGroupPro": "Add Group (Pro)",
+      "groupVideoCall": "Group Video Call",
+      "groupMessage": "Group Message"
+    },
+    "status": {
+      "online": "online",
+      "shared": "shared",
+      "adherence": "Adherence",
+      "alerts": "Alerts",
+      "active": "Active",
+      "groupAdherence": "Group Adherence",
+      "alert": "Alert",
+      "pending": "Pending"
+    },
+    "emptyState": {
+      "welcomeTitle": "Welcome to Family Care",
+      "welcomeDescription": "Create your family care network to share medications, monitor health, and keep everyone safe together.",
+      "connectFamily": "Connect Family",
+      "shareCare": "Share Care",
+      "staySafe": "Stay Safe",
+      "createFirstGroup": "Create Your First Group",
+      "watchDemo": "Watch Demo",
+      "benefits": {
+        "medicationSharing": {
+          "title": "Medication Sharing",
+          "description": "Share medication schedules and track adherence together"
+        },
+        "safetyMonitoring": {
+          "title": "Safety Monitoring",
+          "description": "Get alerts for missed medications and emergency situations"
+        },
+        "healthInsights": {
+          "title": "Health Insights",
+          "description": "View family health trends and compliance analytics"
+        },
+        "remoteCare": {
+          "title": "Remote Care",
+          "description": "Video calls and check-ins with family members"
+        }
+      },
+      "templates": {
+        "elderlyCare": {
+          "name": "Elderly Care",
+          "description": "Perfect for caring for aging parents"
+        },
+        "childCare": {
+          "name": "Child Care",
+          "description": "Manage medications for children"
+        },
+        "chronicCondition": {
+          "name": "Chronic Condition",
+          "description": "Support for ongoing health conditions"
+        },
+        "popular": "Popular",
+        "useTemplate": "Use Template"
+      },
+      "quickSetupTitle": "Quick Setup Templates",
+      "quickSetupDescription": "Choose a template to get started quickly",
+      "gettingStartedTitle": "Getting Started in 4 Easy Steps",
+      "steps": {
+        "createGroup": {
+          "title": "Create Your Family Group",
+          "description": "Start by creating your first family care group",
+          "action": "Create Group"
+        },
+        "inviteMembers": {
+          "title": "Invite Family Members",
+          "description": "Add caregivers, patients, and healthcare providers",
+          "action": "Import Contacts"
+        },
+        "shareMedications": {
+          "title": "Share Medications",
+          "description": "Set up shared medication schedules and reminders",
+          "action": "Share Meds"
+        },
+        "startCaring": {
+          "title": "Start Caring Together",
+          "description": "Monitor health, send reminders, and stay connected",
+          "action": "Begin Care"
+        }
+      }
+    },
+    "dashboard": {
+      "familyMembers": "Family Members",
+      "ofTotal": "of {total} total",
+      "adherenceRate": "Adherence Rate",
+      "thisWeek": "+2% this week",
+      "pendingTasks": "Pending Tasks",
+      "needAttention": "Need attention",
+      "careScore": "Care Score",
+      "careScoreExcellent": "Excellent care",
+      "careScoreGood": "Good care",
+      "careScoreFair": "Fair care",
+      "careScoreNeedsAttention": "Needs attention",
+      "emergencyContact": "Emergency Contact",
+      "emergencyDescription": "One-touch emergency call",
+      "shareMedications": "Share Medications",
+      "shareDescription": "Quick medication sharing",
+      "dailyCheckup": "Daily Check-up",
+      "checkupDescription": "Start family wellness check",
+      "weeklyTrend": "Weekly Adherence Trend",
+      "medicationStatus": "Medication Status",
+      "recentActivity": "Recent Family Activity",
+      "noRecentActivity": "No recent family activity",
+      "onTime": "On Time",
+      "delayed": "Delayed",
+      "missed": "Missed",
+      "completed": "Completed",
+      "activeStatus": "Active",
+      "vsLastWeek": "vs last week"
+    }
+  },
   "scanner": {
     "scanMedication": "Scan Medication",
     "medicationFound": "Medication Found",
