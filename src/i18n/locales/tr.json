@@ -70,6 +70,23 @@
     "dontHaveAccount": "Hesabınız yok mu?",
     "createAccount": "Hesap oluştur"
   },
+  "authPage": {
+    "subtitle": "Güvenli tıbbi yardımcınız",
+    "welcomeMessage": "PillLens'e hoş geldiniz",
+    "welcomeDescription": "İlaç yönetimi için güvenli tıbbi yardımcınız",
+    "emailAddress": "E-posta Adresi",
+    "emailPlaceholder": "E-posta adresinizi girin",
+    "passwordPlaceholder": "Şifrenizi girin",
+    "createPassword": "Şifre Oluşturun",
+    "createPasswordPlaceholder": "Güvenli şifre oluşturun",
+    "passwordRequirements": "En az 6 karakter gerekli",
+    "signInSecurely": "Güvenli Giriş",
+    "createSecureAccount": "Güvenli Hesap Oluştur",
+    "signingIn": "Giriş yapılıyor...",
+    "creatingAccount": "Hesap oluşturuluyor...",
+    "medicalGradeSecurity": "Tıbbi Düzeyde Güvenlik",
+    "dataEncryption": "256-bit Veri Şifreleme"
+  },
   "hero": {
     "badge": "Gizlilik Öncelikli • Güvenlik Odaklı",
     "title1": "Çek. Tara. Anla.",

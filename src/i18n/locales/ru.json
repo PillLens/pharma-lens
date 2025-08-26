@@ -70,6 +70,23 @@
     "dontHaveAccount": "Нет аккаунта?",
     "createAccount": "Создать аккаунт"
   },
+  "authPage": {
+    "subtitle": "Ваш безопасный медицинский помощник",
+    "welcomeMessage": "Добро пожаловать в PillLens",
+    "welcomeDescription": "Ваш безопасный медицинский помощник для управления лекарствами",
+    "emailAddress": "Адрес электронной почты",
+    "emailPlaceholder": "Введите адрес электронной почты",
+    "passwordPlaceholder": "Введите пароль",
+    "createPassword": "Создать пароль",
+    "createPasswordPlaceholder": "Создать безопасный пароль",
+    "passwordRequirements": "Минимум 6 символов",
+    "signInSecurely": "Безопасный вход",
+    "createSecureAccount": "Создать безопасный аккаунт",
+    "signingIn": "Вход...",
+    "creatingAccount": "Создание аккаунта...",
+    "medicalGradeSecurity": "Медицинская безопасность",
+    "dataEncryption": "256-битное шифрование данных"
+  },
   "hero": {
     "badge": "Приватность Первична • Безопасность в Фокусе",
     "title1": "Снимай. Сканируй. Понимай.",

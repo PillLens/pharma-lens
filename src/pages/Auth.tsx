@@ -151,13 +151,13 @@ export default function Auth() {
               className="w-full h-12 text-sm font-semibold rounded-xl shadow-soft"
             />
             
-            {/* Minimal Divider */}
-            <div className="relative py-1">
+            {/* Enhanced Divider */}
+            <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/30" />
+                <div className="w-full border-t border-gradient-to-r from-transparent via-primary/20 to-transparent" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-background text-muted-foreground text-xs">
+                <span className="px-4 bg-gradient-to-r from-background via-primary/5 to-background text-muted-foreground text-xs font-medium rounded-full border border-primary/10 shadow-soft">
                   <TranslatedText translationKey="auth.orContinueWith" />
                 </span>
               </div>
@@ -171,30 +171,32 @@ export default function Auth() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('authPage.emailPlaceholder')}
-                  className="w-full h-12 px-4 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                  className="w-full h-11 px-4 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
                   required
                 />
               </div>
               
               <div className="space-y-1 relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
-                  className="w-full h-12 px-4 pr-12 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
+                    className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 {activeTab === 'signup' && (
-                  <p className="text-xs text-muted-foreground px-1">
+                  <p className="text-xs text-muted-foreground px-1 mt-1">
                     {t('authPage.passwordRequirements')}
                   </p>
                 )}

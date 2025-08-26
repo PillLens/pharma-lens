@@ -71,6 +71,23 @@
     "dontHaveAccount": "Hesabınız yoxdur?",
     "createAccount": "Hesab yarat"
   },
+  "authPage": {
+    "subtitle": "Təhlükəsiz tibbi yardımçınız",
+    "welcomeMessage": "PillLens-ə xoş gəlmisiniz",
+    "welcomeDescription": "Dərman idarəetməsi üçün təhlükəsiz tibbi yardımçınız",
+    "emailAddress": "E-poçt Ünvanı",
+    "emailPlaceholder": "E-poçt ünvanınızı daxil edin",
+    "passwordPlaceholder": "Şifrənizi daxil edin",
+    "createPassword": "Şifrə Yaradın",
+    "createPasswordPlaceholder": "Təhlükəsiz şifrə yaradın",
+    "passwordRequirements": "Ən azı 6 simvol tələb olunur",
+    "signInSecurely": "Təhlükəsiz Daxil Olun",
+    "createSecureAccount": "Təhlükəsiz Hesab Yaradın",
+    "signingIn": "Daxil olunur...",
+    "creatingAccount": "Hesab yaradılır...",
+    "medicalGradeSecurity": "Tibbi Səviyyədə Təhlükəsizlik",
+    "dataEncryption": "256-bit Məlumat Şifrələməsi"
+  },
   "hero": {
     "badge": "Məxfilik Birinci • Təhlükəsizlik Yönümlü",
     "title1": "Çək. Skan et. Başa düş.",
