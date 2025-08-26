@@ -371,6 +371,44 @@
       "familyDescription": "Güvenilir aile üyesi",
       "emergencyDescription": "Acil durum iletişim kişisi"
     },
+    "tabs": {
+      "overview": "Genel Bakış",
+      "groups": "Gruplar",
+      "timeline": "Zaman Çizelgesi",
+      "analytics": "Analizler"
+    },
+    "dashboard": {
+      "familyMembers": "Aile Üyeleri",
+      "ofTotal": "toplam {{total}}'den",
+      "adherenceRate": "Uyum Oranı",
+      "thisWeek": "bu hafta",
+      "pendingTasks": "Bekleyen Görevler",
+      "needAttention": "dikkat gerekiyor",
+      "careScore": "Bakım Puanı",
+      "careScoreExcellent": "Mükemmel",
+      "careScoreGood": "İyi",
+      "careScoreFair": "Orta",
+      "careScoreNeedsAttention": "Dikkat Gerekli",
+      "emergencyContact": "Acil Durum İletişim",
+      "emergencyDescription": "Acil durum kişilerine hızlı erişim",
+      "shareMedications": "İlaç Paylaş",
+      "shareDescription": "İlaç bilgilerini aile ile paylaş",
+      "dailyCheckup": "Günlük Kontrol",
+      "checkupDescription": "Günlük sağlık kontrolünü tamamla",
+      "weeklyTrend": "Haftalık Uyum Trendi",
+      "vsLastWeek": "geçen haftaya göre",
+      "medicationStatus": "İlaç Durumu",
+      "onTime": "Zamanında",
+      "delayed": "Gecikmiş",
+      "missed": "Kaçırılmış",
+      "recentActivity": "Son Aktiviteler",
+      "noRecentActivity": "Son aktivite yok",
+      "completed": "Tamamlandı",
+      "activeStatus": "Aktif"
+    },
+    "status": {
+      "pending": "Beklemede"
+    },
     "permissions": {
       "view": "İlaçları Görüntüle",
       "edit": "Düzenle ve Yönet",

@@ -972,6 +972,44 @@
       "emergency": "Экстренный контакт",
       "emergencyDescription": "Только экстренный контакт"
     },
+    "tabs": {
+      "overview": "Обзор",
+      "groups": "Группы",
+      "timeline": "Временная шкала",
+      "analytics": "Аналитика"
+    },
+    "dashboard": {
+      "familyMembers": "Члены семьи",
+      "ofTotal": "из {{total}} всего",
+      "adherenceRate": "Коэффициент соблюдения",
+      "thisWeek": "на этой неделе",
+      "pendingTasks": "Ожидающие задачи",
+      "needAttention": "требуют внимания",
+      "careScore": "Оценка ухода",
+      "careScoreExcellent": "Отлично",
+      "careScoreGood": "Хорошо",
+      "careScoreFair": "Удовлетворительно",
+      "careScoreNeedsAttention": "Требует внимания",
+      "emergencyContact": "Экстренный контакт",
+      "emergencyDescription": "Быстрый доступ к экстренным контактам",
+      "shareMedications": "Поделиться лекарствами",
+      "shareDescription": "Поделиться информацией о лекарствах с семьей",
+      "dailyCheckup": "Ежедневная проверка",
+      "checkupDescription": "Завершить ежедневную проверку здоровья",
+      "weeklyTrend": "Еженедельная тенденция соблюдения",
+      "vsLastWeek": "по сравнению с прошлой неделей",
+      "medicationStatus": "Статус лекарств",
+      "onTime": "Вовремя",
+      "delayed": "Задержано",
+      "missed": "Пропущено",
+      "recentActivity": "Недавняя активность",
+      "noRecentActivity": "Нет недавней активности",
+      "completed": "Завершено",
+      "activeStatus": "Активно"
+    },
+    "status": {
+      "pending": "Ожидает"
+    },
     "permissions": {
       "view": "Просмотр",
       "edit": "Редактирование",

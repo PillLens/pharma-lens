@@ -522,6 +522,44 @@
       "familyDescription": "Etibar edilən ailə üzvü",
       "emergencyDescription": "Təcili əlaqə şəxsi"
     },
+    "tabs": {
+      "overview": "Ümumi Baxış",
+      "groups": "Qruplar",
+      "timeline": "Zaman Çizelgesi",
+      "analytics": "Analitika"
+    },
+    "dashboard": {
+      "familyMembers": "Ailə Üzvləri",
+      "ofTotal": "{{total}} ümumidən",
+      "adherenceRate": "Riayət Dərəcəsi",
+      "thisWeek": "bu həftə",
+      "pendingTasks": "Gözləyən Tapşırıqlar",
+      "needAttention": "diqqət tələb edir",
+      "careScore": "Qayğı Balı",
+      "careScoreExcellent": "Əla",
+      "careScoreGood": "Yaxşı",
+      "careScoreFair": "Orta",
+      "careScoreNeedsAttention": "Diqqət Tələb Edir",
+      "emergencyContact": "Təcili Əlaqə",
+      "emergencyDescription": "Təcili əlaqə şəxslərinə sürətli çıxış",
+      "shareMedications": "Dərmanları Paylaş",
+      "shareDescription": "Dərman məlumatlarını ailə ilə paylaş",
+      "dailyCheckup": "Günlük Yoxlama",
+      "checkupDescription": "Günlük sağlamlıq yoxlamasını tamamla",
+      "weeklyTrend": "Həftəlik Riayət Trendi",
+      "vsLastWeek": "keçən həftəyə qarşı",
+      "medicationStatus": "Dərman Statusu",
+      "onTime": "Vaxtında",
+      "delayed": "Gecikmiş",
+      "missed": "Qaçırılmış",
+      "recentActivity": "Son Fəaliyyət",
+      "noRecentActivity": "Son fəaliyyət yoxdur",
+      "completed": "Tamamlandı",
+      "activeStatus": "Aktiv"
+    },
+    "status": {
+      "pending": "Gözləyir"
+    },
     "template": {
       "membersIncluded": "Daxil Edilən Üzvlər",
       "membersDescription": "Bu şablon aşağıdakı üzv rollarını ehtiva edir"

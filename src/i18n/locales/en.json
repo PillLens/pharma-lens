@@ -394,12 +394,50 @@
     "roles": {
       "patient": "Patient",
       "caregiver": "Caregiver",
-      "family": "Family Member", 
+      "family": "Family Member",
       "emergency": "Emergency Contact",
       "patientDescription": "Primary care recipient",
-      "caregiverDescription": "Professional care provider", 
+      "caregiverDescription": "Professional care provider",
       "familyDescription": "Trusted family member",
       "emergencyDescription": "Emergency contact person"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "groups": "Groups",
+      "timeline": "Timeline",
+      "analytics": "Analytics"
+    },
+    "dashboard": {
+      "familyMembers": "Family Members",
+      "ofTotal": "of {{total}} total",
+      "adherenceRate": "Adherence Rate",
+      "thisWeek": "this week",
+      "pendingTasks": "Pending Tasks",
+      "needAttention": "need attention",
+      "careScore": "Care Score",
+      "careScoreExcellent": "Excellent",
+      "careScoreGood": "Good",
+      "careScoreFair": "Fair",
+      "careScoreNeedsAttention": "Needs Attention",
+      "emergencyContact": "Emergency Contact",
+      "emergencyDescription": "Quick access to emergency contacts",
+      "shareMedications": "Share Medications",
+      "shareDescription": "Share medication info with family",
+      "dailyCheckup": "Daily Checkup",
+      "checkupDescription": "Complete daily health checkup",
+      "weeklyTrend": "Weekly Adherence Trend",
+      "vsLastWeek": "vs last week",
+      "medicationStatus": "Medication Status",
+      "onTime": "On Time",
+      "delayed": "Delayed",
+      "missed": "Missed",
+      "recentActivity": "Recent Activity",
+      "noRecentActivity": "No recent activity",
+      "completed": "Completed",
+      "activeStatus": "Active"
+    },
+    "status": {
+      "pending": "Pending"
     },
     "template": {
       "membersIncluded": "Members Included",
