@@ -58,6 +58,17 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     }
   };
 
+  // Map language to region
+  const getRegionFromLanguage = (lang: string): string => {
+    const languageRegionMap: { [key: string]: string } = {
+      'AZ': 'AZ', // Azerbaijan
+      'EN': 'US', // English - United States
+      'RU': 'RU', // Russian - Russia  
+      'TR': 'TR'  // Turkish - Turkey
+    };
+    return languageRegionMap[lang] || 'US';
+  };
+
   const saveSession = async (barcodeValue?: string, extractionData?: any) => {
     if (!user) return null;
 
@@ -68,7 +79,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
           user_id: user.id,
           barcode_value: barcodeValue || null,
           language,
-          region: 'AZ',
+          region: getRegionFromLanguage(language),
           images: capturedImage ? [capturedImage] : [],
         })
         .select()
@@ -147,7 +158,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
           text, 
           barcode,
           language,
-          region: 'AZ',
+          region: getRegionFromLanguage(language),
           sessionId
         }
       });

@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, language = 'EN', region = 'AZ', barcode = null, sessionId = null } = await req.json();
+    const { text, language = 'EN', region = 'US', barcode = null, sessionId = null } = await req.json();
     
     if (!text && !barcode) {
       return new Response(
