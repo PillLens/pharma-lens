@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileActionSheet } from '../MobileActionSheet';
 import { FamilyGroup } from '@/services/familySharingService';
 
 interface AdvancedFamilyGroupCardProps {
@@ -40,6 +42,7 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
   onVideoCall,
 }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [memberStatuses, setMemberStatuses] = useState<{[key: string]: 'online' | 'offline' | 'away'}>({});
 
   // Mock real-time status updates
@@ -136,8 +139,15 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
           </div>
 
           {/* Actions Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {isMobile ? (
+            <MobileActionSheet
+              onInviteMember={onInviteMember}
+              onVideoCall={() => onVideoCall?.(group.id)}
+              onMessage={() => onMessage?.(group.id)}
+              onEditGroup={onEditGroup}
+              onDeleteGroup={onDeleteGroup}
+              groupName={group.name}
+            >
               <Button 
                 variant="ghost" 
                 size="icon"
@@ -145,31 +155,49 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
               >
                 <MoreVertical className="w-4 h-4" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 sm:w-56 bg-background border shadow-lg z-50 mx-2 sm:mx-0">
-              <DropdownMenuItem onClick={onInviteMember} className="py-3 px-3 sm:py-2 sm:px-2">
-                <UserPlus className="w-4 h-4 mr-3 sm:mr-2" />
-                <span className="text-base sm:text-sm">{t('family.member.invite')}</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onVideoCall?.(group.id)} className="py-3 px-3 sm:py-2 sm:px-2">
-                <Video className="w-4 h-4 mr-3 sm:mr-2" />
-                <span className="text-base sm:text-sm">{t('family.actions.groupVideoCall')}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onMessage?.(group.id)} className="py-3 px-3 sm:py-2 sm:px-2">
-                <MessageCircle className="w-4 h-4 mr-3 sm:mr-2" />
-                <span className="text-base sm:text-sm">{t('family.actions.groupMessage')}</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onEditGroup} className="py-3 px-3 sm:py-2 sm:px-2">
-                <Settings className="w-4 h-4 mr-3 sm:mr-2" />
-                <span className="text-base sm:text-sm">{t('family.group.settings')}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDeleteGroup} className="text-destructive py-3 px-3 sm:py-2 sm:px-2">
-                <span className="text-base sm:text-sm">{t('common.delete')}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </MobileActionSheet>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-md w-8 h-8 hover:bg-background/80"
+                >
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                side="bottom"
+                sideOffset={8}
+                avoidCollisions={true}
+                className="w-56 bg-background border shadow-lg z-50"
+              >
+                <DropdownMenuItem onClick={onInviteMember} className="py-2 px-3">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{t('family.member.invite')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onVideoCall?.(group.id)} className="py-2 px-3">
+                  <Video className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{t('family.actions.groupVideoCall')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onMessage?.(group.id)} className="py-2 px-3">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{t('family.actions.groupMessage')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onEditGroup} className="py-2 px-3">
+                  <Settings className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{t('family.group.settings')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDeleteGroup} className="text-destructive py-2 px-3">
+                  <span className="text-sm">{t('common.delete')}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </CardHeader>
 
