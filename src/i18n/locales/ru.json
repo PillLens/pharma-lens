@@ -911,13 +911,87 @@
      "success": "Успех",
      "warning": "Предупреждение",
    "info": "Информация"
-   },
-   "feedback": {
-     "submit": "Отправить отзыв",
-     "submitting": "Отправка..."
-   },
-   "permissions": {
-     "viewMedications": "Просмотр лекарств",
-     "editMedications": "Редактирование лекарств"
-   }
- }
+  },
+  "family": {
+    "title": "Семья",
+    "actions": {
+      "create": "Создать",
+      "createGroup": "Создать группу",
+      "sendInvite": "Отправить приглашение",
+      "cancel": "Отмена",
+      "creating": "Создание группы...",
+      "inviting": "Отправка приглашения..."
+    },
+    "group": {
+      "title": "Группа",
+      "name": "Название группы",
+      "nameYourGroup": "Назовите вашу группу",
+      "nameDescription": "Выберите запоминающееся название, описывающее вашу группу ухода",
+      "namePlaceholder": "Введите название группы",
+      "createDescription": "Создайте безопасную группу для обмена лекарствами с доверенными людьми",
+      "popularNames": "Популярные названия групп",
+      "popularNamesDescription": "Быстрые предложения для начала",
+      "privacy": "Конфиденциальность и безопасность",
+      "privacyDescription": "Только приглашенные участники могут видеть общие лекарства. Вы контролируете, у кого есть доступ и что они могут делать.",
+      "encrypted": "Сквозное шифрование",
+      "hipaaCompliant": "Соответствует HIPAA",
+      "controlledAccess": "Контролируемый доступ"
+    },
+    "member": {
+      "invite": "Пригласить участника",
+      "name": "Полное имя",
+      "email": "Адрес электронной почты",
+      "phone": "Номер телефона",
+      "role": "Роль",
+      "permissions": "Разрешения",
+      "basicInfo": "Основная информация",
+      "selectRole": "Выберите роль"
+    },
+    "roles": {
+      "patient": "Пациент",
+      "patientDescription": "Основной получатель ухода",
+      "caregiver": "Попечитель",
+      "caregiverDescription": "Полный доступ для управления уходом",
+      "family": "Член семьи",
+      "familyDescription": "Член семьи с доступом для просмотра",
+      "emergency": "Экстренный контакт",
+      "emergencyDescription": "Только экстренный контакт"
+    },
+    "permissions": {
+      "view": "Просмотр",
+      "edit": "Редактирование",
+      "notifications": "Уведомления",
+      "emergencyAccess": "Экстренный доступ",
+      "viewDescription": "Просмотр информации о лекарствах",
+      "editDescription": "Редактирование и управление лекарствами",
+      "notificationsDescription": "Получение напоминаний о лекарствах",
+      "emergencyAccessDescription": "Доступ в экстренных ситуациях",
+      "alerts": "Оповещения"
+    },
+    "validation": {
+      "groupNameRequired": "Название группы обязательно",
+      "memberNameRequired": "Имя участника обязательно",
+      "emailRequired": "Адрес электронной почты обязателен",
+      "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты",
+      "roleRequired": "Пожалуйста, выберите роль"
+    },
+    "template": {
+      "membersIncluded": "Включенные участники",
+      "membersDescription": "Этот шаблон включает следующие роли участников"
+    },
+    "suggestions": {
+      "familyDescription": "Ваши близкие члены семьи",
+      "caregiversDescription": "Профессиональные поставщики ухода",
+      "friendsDescription": "Доверенные друзья, которые помогают",
+      "supportDescription": "Ваша сеть поддержки"
+    }
+  },
+  "feedback": {
+    "submit": "Отправить отзыв",
+    "submitting": "Отправка..."
+  },
+  "permissions": {
+    "viewMedications": "Просмотр лекарств",
+    "editMedications": "Редактирование лекарств"
+  }
+}

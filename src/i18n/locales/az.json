@@ -653,6 +653,80 @@
     "submit": "Geri bildirim göndər",
     "submitting": "Göndərilir..."
   },
+  "family": {
+    "title": "Ailə",
+    "actions": {
+      "create": "Yarat",
+      "createGroup": "Qrup Yarat",
+      "sendInvite": "Dəvət Göndər",
+      "cancel": "Ləğv Et",
+      "creating": "Qrup Yaradılır...",
+      "inviting": "Dəvət Göndərilir..."
+    },
+    "group": {
+      "title": "Qrup",
+      "name": "Qrup Adı",
+      "nameYourGroup": "Qrupunuzu Adlandırın",
+      "nameDescription": "Qayğı qrupunuzu təsvir edən unudulmaz ad seçin",
+      "namePlaceholder": "Qrup adı daxil edin",
+      "createDescription": "Etibarlı insanlarla dərmanları paylaşmaq üçün təhlükəsiz qrup yaradın",
+      "popularNames": "Məşhur Qrup Adları",
+      "popularNamesDescription": "Başlamaq üçün sürətli təkliflər",
+      "privacy": "Məxfilik və Təhlükəsizlik",
+      "privacyDescription": "Yalnız dəvət edilən üzvlər paylaşılan dərmanları görə bilər. Kimin giriş icazəsi olduğunu və nə edə biləcəyini siz idarə edirsiniz.",
+      "encrypted": "Ucdan-uca şifrələnmiş",
+      "hipaaCompliant": "HIPAA uyğun",
+      "controlledAccess": "Nəzarət edilən giriş"
+    },
+    "member": {
+      "invite": "Üzv Dəvət Et",
+      "name": "Ad Soyad",
+      "email": "E-poçt Ünvanı",
+      "phone": "Telefon Nömrəsi",
+      "role": "Rol",
+      "permissions": "İcazələr",
+      "basicInfo": "Əsas Məlumat",
+      "selectRole": "Rol Seç"
+    },
+    "roles": {
+      "patient": "Xəstə",
+      "patientDescription": "Əsas qayğı alan",
+      "caregiver": "Qayğıkeş",
+      "caregiverDescription": "Qayğını idarə etmək üçün tam giriş",
+      "family": "Ailə Üzvü",
+      "familyDescription": "Baxış girişi olan ailə üzvü",
+      "emergency": "Təcili Əlaqə",
+      "emergencyDescription": "Yalnız təcili əlaqə"
+    },
+    "permissions": {
+      "view": "Bax",
+      "edit": "Redaktə Et",
+      "notifications": "Bildirişlər",
+      "emergencyAccess": "Təcili Giriş",
+      "viewDescription": "Dərman məlumatlarını gör",
+      "editDescription": "Dərmanları redaktə et və idarə et",
+      "notificationsDescription": "Dərman xatırlatmaları al",
+      "emergencyAccessDescription": "Təcili hallarda giriş",
+      "alerts": "Xəbərdarlıqlar"
+    },
+    "validation": {
+      "groupNameRequired": "Qrup adı tələb olunur",
+      "memberNameRequired": "Üzv adı tələb olunur",
+      "emailRequired": "E-poçt ünvanı tələb olunur",
+      "invalidEmail": "Xahiş edirik etibarlı e-poçt ünvanı daxil edin",
+      "roleRequired": "Xahiş edirik rol seçin"
+    },
+    "template": {
+      "membersIncluded": "Daxil Olan Üzvlər",
+      "membersDescription": "Bu şablon aşağıdakı üzv rollarını daxil edir"
+    },
+    "suggestions": {
+      "familyDescription": "Yaxın ailə üzvləriniz",
+      "caregiversDescription": "Peşəkar qayğı təminatçıları",
+      "friendsDescription": "Kömək edən etibarlı dostlar",
+      "supportDescription": "Dəstək şəbəkəniz"
+    }
+  },
   "permissions": {
     "viewMedications": "Dərmanları Gör",
     "editMedications": "Dərmanları Redaktə Et"

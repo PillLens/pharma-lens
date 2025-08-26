@@ -1183,6 +1183,80 @@
     "medicationUpdatedRemindersNote": "Medication updated! Please manage reminders in the Reminders tab.",
     "medicationDeleted": "Medication deleted"
   },
+  "family": {
+    "title": "Family",
+    "actions": {
+      "create": "Create",
+      "createGroup": "Create Group",
+      "sendInvite": "Send Invite",
+      "cancel": "Cancel",
+      "creating": "Creating Group...",
+      "inviting": "Sending Invite..."
+    },
+    "group": {
+      "title": "Group",
+      "name": "Group Name",
+      "nameYourGroup": "Name Your Group",
+      "nameDescription": "Choose a memorable name that describes your care group",
+      "namePlaceholder": "Enter group name",
+      "createDescription": "Create a secure group to share medications with trusted people",
+      "popularNames": "Popular Group Names",
+      "popularNamesDescription": "Quick suggestions to get you started",
+      "privacy": "Privacy & Security",
+      "privacyDescription": "Only invited members can see shared medications. You control who has access and what they can do.",
+      "encrypted": "End-to-end encrypted",
+      "hipaaCompliant": "HIPAA compliant",
+      "controlledAccess": "Controlled access"
+    },
+    "member": {
+      "invite": "Invite Member",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "role": "Role",
+      "permissions": "Permissions",
+      "basicInfo": "Basic Information",
+      "selectRole": "Select Role"
+    },
+    "roles": {
+      "patient": "Patient",
+      "patientDescription": "Primary care recipient",
+      "caregiver": "Caregiver",
+      "caregiverDescription": "Full access to manage care",
+      "family": "Family Member",
+      "familyDescription": "Family member with view access",
+      "emergency": "Emergency Contact",
+      "emergencyDescription": "Emergency contact only"
+    },
+    "permissions": {
+      "view": "View",
+      "edit": "Edit",
+      "notifications": "Notifications",
+      "emergencyAccess": "Emergency Access",
+      "viewDescription": "View medication information",
+      "editDescription": "Edit and manage medications",
+      "notificationsDescription": "Get medication reminders",
+      "emergencyAccessDescription": "Access during emergencies",
+      "alerts": "Alerts"
+    },
+    "validation": {
+      "groupNameRequired": "Group name is required",
+      "memberNameRequired": "Member name is required",
+      "emailRequired": "Email address is required",
+      "invalidEmail": "Please enter a valid email address",
+      "roleRequired": "Please select a role"
+    },
+    "template": {
+      "membersIncluded": "Members Included",
+      "membersDescription": "This template includes the following member roles"
+    },
+    "suggestions": {
+      "familyDescription": "Your close family members",
+      "caregiversDescription": "Professional care providers",
+      "friendsDescription": "Trusted friends who help",
+      "supportDescription": "Your support network"
+    }
+  },
   "feedback": {
     "submit": "Submit Feedback",
     "submitting": "Submitting..."

@@ -531,6 +531,80 @@
     "submit": "Geri bildirim gönder",
     "submitting": "Gönderiliyor..."
   },
+  "family": {
+    "title": "Aile",
+    "actions": {
+      "create": "Oluştur",
+      "createGroup": "Grup Oluştur",
+      "sendInvite": "Davet Gönder",
+      "cancel": "İptal",
+      "creating": "Grup Oluşturuluyor...",
+      "inviting": "Davet Gönderiliyor..."
+    },
+    "group": {
+      "title": "Grup",
+      "name": "Grup Adı",
+      "nameYourGroup": "Grubunuzu Adlandırın",
+      "nameDescription": "Bakım grubunuzu tanımlayan unutulmaz bir ad seçin",
+      "namePlaceholder": "Grup adı girin",
+      "createDescription": "Güvenilir kişilerle ilaçları paylaşmak için güvenli bir grup oluşturun",
+      "popularNames": "Popüler Grup Adları",
+      "popularNamesDescription": "Başlamanız için hızlı öneriler",
+      "privacy": "Gizlilik ve Güvenlik",
+      "privacyDescription": "Sadece davet edilen üyeler paylaşılan ilaçları görebilir. Kimin erişimi olduğunu ve ne yapabileceğini siz kontrol edersiniz.",
+      "encrypted": "Uçtan uca şifreli",
+      "hipaaCompliant": "HIPAA uyumlu",
+      "controlledAccess": "Kontrollü erişim"
+    },
+    "member": {
+      "invite": "Üye Davet Et",
+      "name": "Ad Soyad",
+      "email": "E-posta Adresi",
+      "phone": "Telefon Numarası",
+      "role": "Rol",
+      "permissions": "İzinler",
+      "basicInfo": "Temel Bilgiler",
+      "selectRole": "Rol Seç"
+    },
+    "roles": {
+      "patient": "Hasta",
+      "patientDescription": "Birincil bakım alıcısı",
+      "caregiver": "Bakıcı",
+      "caregiverDescription": "Bakımı yönetmek için tam erişim",
+      "family": "Aile Üyesi",
+      "familyDescription": "Görüntüleme erişimi olan aile üyesi",
+      "emergency": "Acil Durum İletişimi",
+      "emergencyDescription": "Sadece acil durum iletişimi"
+    },
+    "permissions": {
+      "view": "Görüntüle",
+      "edit": "Düzenle",
+      "notifications": "Bildirimler",
+      "emergencyAccess": "Acil Durum Erişimi",
+      "viewDescription": "İlaç bilgilerini görüntüle",
+      "editDescription": "İlaçları düzenle ve yönet",
+      "notificationsDescription": "İlaç hatırlatıcıları al",
+      "emergencyAccessDescription": "Acil durumlarda erişim",
+      "alerts": "Uyarılar"
+    },
+    "validation": {
+      "groupNameRequired": "Grup adı gereklidir",
+      "memberNameRequired": "Üye adı gereklidir",
+      "emailRequired": "E-posta adresi gereklidir",
+      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin",
+      "roleRequired": "Lütfen bir rol seçin"
+    },
+    "template": {
+      "membersIncluded": "Dahil Edilen Üyeler",
+      "membersDescription": "Bu şablon aşağıdaki üye rollerini içerir"
+    },
+    "suggestions": {
+      "familyDescription": "Yakın aile üyeleriniz",
+      "caregiversDescription": "Profesyonel bakım sağlayıcıları",
+      "friendsDescription": "Yardım eden güvenilir arkadaşlar",
+      "supportDescription": "Destek ağınız"
+    }
+  },
   "permissions": {
     "viewMedications": "İlaçları Görüntüle",
     "editMedications": "İlaçları Düzenle"
