@@ -742,56 +742,37 @@
       "trialExpiring": "Пробный период заканчивается",
       "newFeature": "Доступна новая функция"
     }
-  },
-  "notFound": {
-    "title": "Страница не найдена",
-    "subtitle": "Страница, которую вы ищете, не существует",
-    "description": "Эта ссылка может быть неправильной или страница могла быть перемещена",
-    "action": "Вернуться на главную"
-  },
-  "authPage": {
-    "title": "PillLens",
-    "subtitle": "Ваш Персональный Сканер Лекарств и Приложение-Напоминание",
-    "welcomeMessage": "Добро пожаловать в PillLens",
-    "welcomeDescription": "Безопасный доступ к вашей платформе управления лекарствами",
-    "emailAddress": "Адрес электронной почты",
-    "emailPlaceholder": "Введите ваш email адрес",
-    "passwordPlaceholder": "Введите ваш пароль",
-    "createPassword": "Создать пароль",
-    "createPasswordPlaceholder": "Создайте безопасный пароль",
-    "signingIn": "Вход в систему...",
-    "signInSecurely": "Безопасный вход",
-    "creatingAccount": "Создание аккаунта...",
-    "createSecureAccount": "Создать безопасный аккаунт",
-    "medicalGradeSecurity": "Безопасность медицинского уровня",
-    "securityNotice": "Ваши данные зашифрованы сквозным шифрованием и надежно хранятся согласно стандартам HIPAA.",
-    "dataEncryptedSecure": "Ваши данные зашифрованы и защищены"
-  },
-    "camera": {
-      "permissionDenied": "Разрешение на использование камеры отклонено",
-      "notAvailable": "Камера недоступна",
-      "initializationFailed": "Не удалось инициализировать камеру"
-    },
-    "network": {
-      "offline": "Нет подключения к интернету",
-      "timeout": "Время ожидания запроса истекло",
-      "connectionFailed": "Подключение не удалось"
-    },
-    "validation": {
-      "required": "Это поле обязательно",
-      "invalidFormat": "Неверный формат",
-      "tooShort": "Слишком короткий",
-      "tooLong": "Слишком длинный",
-      "invalidEmail": "Неверный формат электронной почты",
-      "weakPassword": "Пароль слишком слабый"
-    }
-  },
-  "toast": {
-    "welcomeBack": "С возвращением!",
-    "signedIn": "Вы успешно вошли в систему",
-    "error": "Ошибка",
-    "success": "Успех",
-    "warning": "Предупреждение",
-    "info": "Информация"
-  }
-}
+   },
+   "notFound": {
+     "title": "Страница не найдена",
+     "subtitle": "Страница, которую вы ищете, не существует",
+     "description": "Эта ссылка может быть неправильной или страница могла быть перемещена",
+     "action": "Вернуться на главную"
+   },
+   "authPage": {
+     "title": "PillLens",
+     "subtitle": "Ваш Персональный Сканер Лекарств и Приложение-Напоминание",
+     "welcomeMessage": "Добро пожаловать в PillLens",
+     "welcomeDescription": "Безопасный доступ к вашей платформе управления лекарствами",
+     "emailAddress": "Адрес электронной почты",
+     "emailPlaceholder": "Введите ваш email адрес",
+     "passwordPlaceholder": "Введите ваш пароль",
+     "createPassword": "Создать пароль",
+     "createPasswordPlaceholder": "Создайте безопасный пароль",
+     "signingIn": "Вход в систему...",
+     "signInSecurely": "Безопасный вход",
+     "creatingAccount": "Создание аккаунта...",
+     "createSecureAccount": "Создать безопасный аккаунт",
+     "medicalGradeSecurity": "Безопасность медицинского уровня",
+     "securityNotice": "Ваши данные зашифрованы сквозным шифрованием и надежно хранятся согласно стандартам HIPAA.",
+     "dataEncryptedSecure": "Ваши данные зашифрованы и защищены"
+   },
+   "toast": {
+     "welcomeBack": "С возвращением!",
+     "signedIn": "Вы успешно вошли в систему",
+     "error": "Ошибка",
+     "success": "Успех",
+     "warning": "Предупреждение",
+     "info": "Информация"
+   }
+ }
