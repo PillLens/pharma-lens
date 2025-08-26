@@ -44,7 +44,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language
               {user?.email?.split('@')[0] || 'User'}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-full bg-gradient-medical flex items-center justify-center shadow-medical">
+          <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-medical">
             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
         </div>
