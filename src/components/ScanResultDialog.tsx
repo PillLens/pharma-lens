@@ -14,6 +14,8 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useMedicationHistory } from "@/hooks/useMedicationHistory";
 import { useReminders } from "@/hooks/useReminders";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import BottomSheet from "@/components/ui/mobile/BottomSheet";
 
 interface MedicationData {
   brand_name: string;
@@ -52,6 +54,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
   const { t } = useTranslation();
   const { addMedication } = useMedicationHistory();
   const { addReminder } = useReminders();
+  const isMobile = useIsMobile();
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [formData, setFormData] = useState({
     dosage: medicationData.usage_instructions?.dosage || '',
@@ -153,268 +156,281 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
     }));
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-        <div className="flex-1 overflow-y-auto scrollbar-hide p-1">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>{t('scanner.medicationFound')}</span>
-            <Badge className={getConfidenceColor(medicationData.confidence_score)}>
-              {Math.round(medicationData.confidence_score * 100)}% {t('common.confidence')}
-            </Badge>
-          </DialogTitle>
-        </DialogHeader>
+  const renderContent = () => (
+    <div className="space-y-4">
+      {/* Header with medication name and confidence */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1">
+          <h2 className="text-xl font-bold text-foreground mb-1">
+            {medicationData.brand_name}
+          </h2>
+          {medicationData.generic_name && (
+            <p className="text-sm text-muted-foreground mb-2">
+              {t('medications.genericName')}: {medicationData.generic_name}
+            </p>
+          )}
+          <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+            {medicationData.strength && <span>{medicationData.strength}</span>}
+            {medicationData.form && <span>• {medicationData.form}</span>}
+            {medicationData.manufacturer && <span>• {medicationData.manufacturer}</span>}
+          </div>
+        </div>
+        <Badge className={getConfidenceColor(medicationData.confidence_score)}>
+          {Math.round(medicationData.confidence_score * 100)}%
+        </Badge>
+      </div>
 
-        <div className="space-y-6">
-          {/* Medication Overview */}
-          <Card className="p-6">
-            <div className="flex items-start justify-between mb-4">
+      {/* Usage Instructions */}
+      {medicationData.usage_instructions && (
+        <Card className="p-4">
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
+            {t('medications.howToUse')}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            {medicationData.usage_instructions.dosage && (
               <div>
-                <h2 className="text-2xl font-bold text-foreground">
-                  {medicationData.brand_name}
-                </h2>
-                 {medicationData.generic_name && (
-                  <p className="text-muted-foreground">
-                    {t('medications.genericName')}: {medicationData.generic_name}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mt-1">
-                  {medicationData.strength && <span>{medicationData.strength}</span>}
-                  {medicationData.form && <span>• {medicationData.form}</span>}
-                  {medicationData.manufacturer && <span>• {medicationData.manufacturer}</span>}
-                </div>
+                <span className="font-medium">{t('medications.dosage')}: </span>
+                <span>{medicationData.usage_instructions.dosage}</span>
+              </div>
+            )}
+            {medicationData.usage_instructions.frequency && (
+              <div>
+                <span className="font-medium">{t('medications.frequency')}: </span>
+                <span>{medicationData.usage_instructions.frequency}</span>
+              </div>
+            )}
+            {medicationData.usage_instructions.timing && (
+              <div>
+                <span className="font-medium">{t('medications.timing')}: </span>
+                <span>{medicationData.usage_instructions.timing}</span>
+              </div>
+            )}
+            {medicationData.usage_instructions.duration && (
+              <div>
+                <span className="font-medium">{t('medications.duration')}: </span>
+                <span>{medicationData.usage_instructions.duration}</span>
+              </div>
+            )}
+          </div>
+          {medicationData.usage_instructions.special_instructions && (
+            <div className="mt-3 p-3 bg-muted/50 rounded">
+              <span className="font-medium">{t('medications.specialInstructions')}: </span>
+              <span className="text-muted-foreground">
+                {medicationData.usage_instructions.special_instructions}
+              </span>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        <Button 
+          onClick={() => setShowScheduleForm(!showScheduleForm)} 
+          className="flex-1"
+        >
+          <Calendar className="w-4 h-4 mr-2" />
+          {showScheduleForm ? t('common.cancel') : t('medications.addToMyMedications')}
+        </Button>
+        {!isMobile && (
+          <Button variant="outline" onClick={onClose}>
+            {t('common.close')}
+          </Button>
+        )}
+      </div>
+
+      {/* Schedule Form */}
+      {showScheduleForm && (
+        <Card className="p-4 border-primary/30">
+          <h3 className="font-semibold mb-4">{t('medications.createSchedule')}</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="dosage">{t('medications.dosage')}</Label>
+                <Input
+                  id="dosage"
+                  value={formData.dosage}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
+                  placeholder={`${t('common.enterText')}...`}
+                />
+              </div>
+              <div>
+                <Label htmlFor="frequency">{t('medications.frequency')}</Label>
+                <Select value={formData.frequency} onValueChange={(value) => setFormData(prev => ({ ...prev, frequency: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('medications.selectFrequency')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="once_daily">{t('medications.onceDaily')}</SelectItem>
+                    <SelectItem value="twice_daily">{t('medications.twiceDaily')}</SelectItem>
+                    <SelectItem value="three_times_daily">{t('medications.threeTimes')}</SelectItem>
+                    <SelectItem value="four_times_daily">{t('medications.fourTimes')}</SelectItem>
+                    <SelectItem value="as_needed">{t('medications.asNeeded')}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            {/* Usage Instructions */}
-            {medicationData.usage_instructions && (
-              <div className="bg-primary-light/50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-primary" />
-                  {t('medications.howToUse')}
-                </h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  {medicationData.usage_instructions.dosage && (
-                    <div>
-                      <span className="font-medium">{t('medications.dosage')}: </span>
-                      <span>{medicationData.usage_instructions.dosage}</span>
-                    </div>
-                  )}
-                  {medicationData.usage_instructions.frequency && (
-                    <div>
-                      <span className="font-medium">{t('medications.frequency')}: </span>
-                      <span>{medicationData.usage_instructions.frequency}</span>
-                    </div>
-                  )}
-                  {medicationData.usage_instructions.timing && (
-                    <div>
-                      <span className="font-medium">{t('medications.timing')}: </span>
-                      <span>{medicationData.usage_instructions.timing}</span>
-                    </div>
-                  )}
-                  {medicationData.usage_instructions.duration && (
-                    <div>
-                      <span className="font-medium">{t('medications.duration')}: </span>
-                      <span>{medicationData.usage_instructions.duration}</span>
-                    </div>
-                  )}
-                </div>
-                {medicationData.usage_instructions.special_instructions && (
-                  <div className="mt-3 p-3 bg-background/60 rounded">
-                    <span className="font-medium">{t('medications.specialInstructions')}: </span>
-                    <span className="text-muted-foreground">
-                      {medicationData.usage_instructions.special_instructions}
-                    </span>
-                  </div>
-                )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="startDate">{t('medications.startDate')}</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                />
               </div>
-            )}
-          </Card>
+              <div>
+                <Label htmlFor="endDate">{t('medications.endDate')} ({t('common.optional')})</Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                />
+              </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3">
-            <Button 
-              onClick={() => setShowScheduleForm(!showScheduleForm)} 
-              className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              {showScheduleForm ? t('common.cancel') : t('medications.addToMyMedications')}
-            </Button>
-            <Button variant="outline" onClick={onClose}>
-              {t('common.close')}
-            </Button>
-          </div>
+            <div>
+              <Label htmlFor="prescriber">{t('medications.prescriber')} ({t('common.optional')})</Label>
+              <Input
+                id="prescriber"
+                value={formData.prescriber}
+                onChange={(e) => setFormData(prev => ({ ...prev, prescriber: e.target.value }))}
+                placeholder={`${t('common.enterText')}...`}
+              />
+            </div>
 
-          {/* Schedule Form */}
-          {showScheduleForm && (
-            <Card className="p-6 border-primary/30">
-              <h3 className="font-semibold mb-4">{t('medications.createSchedule')}</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="dosage">{t('medications.dosage')}</Label>
-                    <Input
-                      id="dosage"
-                      value={formData.dosage}
-                      onChange={(e) => setFormData(prev => ({ ...prev, dosage: e.target.value }))}
-                      placeholder={`${t('common.enterText')}...`}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="frequency">{t('medications.frequency')}</Label>
-                    <Select value={formData.frequency} onValueChange={(value) => setFormData(prev => ({ ...prev, frequency: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('medications.selectFrequency')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="once_daily">{t('medications.onceDaily')}</SelectItem>
-                        <SelectItem value="twice_daily">{t('medications.twiceDaily')}</SelectItem>
-                        <SelectItem value="three_times_daily">{t('medications.threeTimes')}</SelectItem>
-                        <SelectItem value="four_times_daily">{t('medications.fourTimes')}</SelectItem>
-                        <SelectItem value="as_needed">{t('medications.asNeeded')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+            <div>
+              <Label htmlFor="notes">{t('medications.notes')} ({t('common.optional')})</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder={`${t('common.enterText')}...`}
+                rows={3}
+              />
+            </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="startDate">{t('medications.startDate')}</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="endDate">{t('medications.endDate')} ({t('common.optional')})</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={formData.endDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                    />
-                  </div>
-                </div>
+            {/* Reminder Settings */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>{t('reminders.createReminder')}</Label>
+                <Switch
+                  checked={formData.createReminder}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, createReminder: checked }))}
+                />
+              </div>
 
-                <div>
-                  <Label htmlFor="prescriber">{t('medications.prescriber')} ({t('common.optional')})</Label>
-                  <Input
-                    id="prescriber"
-                    value={formData.prescriber}
-                    onChange={(e) => setFormData(prev => ({ ...prev, prescriber: e.target.value }))}
-                    placeholder={`${t('common.enterText')}...`}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="notes">{t('medications.notes')} ({t('common.optional')})</Label>
-                  <Textarea
-                    id="notes"
-                    value={formData.notes}
-                    onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder={`${t('common.enterText')}...`}
-                    rows={3}
-                  />
-                </div>
-
-                {/* Reminder Settings */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label>{t('reminders.createReminder')}</Label>
-                    <Switch
-                      checked={formData.createReminder}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, createReminder: checked }))}
-                    />
-                  </div>
-
-                  {formData.createReminder && (
-                    <div className="space-y-2">
-                      <Label>{t('reminders.reminderTimes')}</Label>
-                      {formData.reminderTimes.map((time, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <Input
-                            type="time"
-                            value={time}
-                            onChange={(e) => updateReminderTime(index, e.target.value)}
-                            className="flex-1"
-                          />
-                          {formData.reminderTimes.length > 1 && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeReminderTime(index)}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={addReminderTime}
-                        className="w-full"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        {t('reminders.addTime')}
-                      </Button>
+              {formData.createReminder && (
+                <div className="space-y-2">
+                  <Label>{t('reminders.reminderTimes')}</Label>
+                  {formData.reminderTimes.map((time, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        type="time"
+                        value={time}
+                        onChange={(e) => updateReminderTime(index, e.target.value)}
+                        className="flex-1"
+                      />
+                      {formData.reminderTimes.length > 1 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeReminderTime(index)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
-                  )}
-                </div>
-
-                <Separator />
-
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={handleAddToMedications} 
-                    className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addReminderTime}
+                    className="w-full"
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {t('medications.saveMedication')}
-                  </Button>
-                  <Button variant="outline" onClick={() => setShowScheduleForm(false)}>
-                    {t('common.cancel')}
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('reminders.addTime')}
                   </Button>
                 </div>
-              </div>
-            </Card>
-          )}
+              )}
+            </div>
 
-          {/* Detailed Information Cards */}
-          <div className="grid gap-4">
-            {medicationData.indications && medicationData.indications.length > 0 && (
-              <Card className="p-4">
-                <h4 className="font-semibold mb-2">{t('medications.indications')}</h4>
-                <ul className="space-y-1">
-                  {medicationData.indications.map((indication, index) => (
-                    <li key={index} className="text-sm text-muted-foreground">• {indication}</li>
-                  ))}
-                </ul>
-              </Card>
-            )}
+            <Separator />
 
-            {medicationData.warnings && medicationData.warnings.length > 0 && (
-              <Card className="p-4 bg-warning/10">
-                <h4 className="font-semibold mb-2 text-warning">{t('safety.warnings')}</h4>
-                <ul className="space-y-1">
-                  {medicationData.warnings.map((warning, index) => (
-                    <li key={index} className="text-sm text-muted-foreground">• {warning}</li>
-                  ))}
-                </ul>
-              </Card>
-            )}
-
-            {medicationData.storage_instructions && (
-              <Card className="p-4">
-                <h4 className="font-semibold mb-2">{t('medications.storage')}</h4>
-                <p className="text-sm text-muted-foreground">{medicationData.storage_instructions}</p>
-              </Card>
-            )}
+            <div className="flex gap-3">
+              <Button 
+                onClick={handleAddToMedications} 
+                className="flex-1"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                {t('medications.saveMedication')}
+              </Button>
+              <Button variant="outline" onClick={() => setShowScheduleForm(false)}>
+                {t('common.cancel')}
+              </Button>
+            </div>
           </div>
-        </div>
+        </Card>
+      )}
+
+      {/* Detailed Information Cards */}
+      <div className="space-y-4">
+        {medicationData.indications && medicationData.indications.length > 0 && (
+          <Card className="p-4">
+            <h4 className="font-semibold mb-2">{t('medications.indications')}</h4>
+            <ul className="space-y-1">
+              {medicationData.indications.map((indication, index) => (
+                <li key={index} className="text-sm text-muted-foreground">• {indication}</li>
+              ))}
+            </ul>
+          </Card>
+        )}
+
+        {medicationData.warnings && medicationData.warnings.length > 0 && (
+          <Card className="p-4 bg-warning/10">
+            <h4 className="font-semibold mb-2 text-warning">{t('safety.warnings')}</h4>
+            <ul className="space-y-1">
+              {medicationData.warnings.map((warning, index) => (
+                <li key={index} className="text-sm text-muted-foreground">• {warning}</li>
+              ))}
+            </ul>
+          </Card>
+        )}
+
+        {medicationData.storage_instructions && (
+          <Card className="p-4">
+            <h4 className="font-semibold mb-2">{t('medications.storage')}</h4>
+            <p className="text-sm text-muted-foreground">{medicationData.storage_instructions}</p>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+
+  return isMobile ? (
+    <BottomSheet
+      isOpen={open}
+      onClose={onClose}
+      title={t('scanner.medicationFound')}
+      height="xl"
+      className="overflow-y-auto"
+    >
+      <div className="p-4 pb-safe">
+        {renderContent()}
+      </div>
+    </BottomSheet>
+  ) : (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{t('scanner.medicationFound')}</DialogTitle>
+        </DialogHeader>
+        <div className="pr-2">
+          {renderContent()}
         </div>
       </DialogContent>
     </Dialog>
