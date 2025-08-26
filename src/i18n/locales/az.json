@@ -361,6 +361,7 @@
     "actions": {
       "create": "Yarat",
       "createGroup": "Qrup Yarat",
+      "creating": "Yaradılır...",
       "addGroup": "Qrup əlavə et",
       "addGroupPro": "Qrup əlavə et (Pro)",
       "groupVideoCall": "Qrup video zəngi",
@@ -480,6 +481,16 @@
     "group": {
       "title": "Qrup", 
       "createDescription": "Dərmanları paylaşmaq və qayğını koordine etmək üçün yeni ailə qrubu yaradın",
+      "nameYourGroup": "Qrupunuzu Adlandırın",
+      "nameDescription": "Qayğı qrupunuzu təsvir edən yadda qalan ad seçin",
+      "namePlaceholder": "Qrup adını daxil edin",
+      "popularNames": "Məşhur Qrup Adları",
+      "popularNamesDescription": "Başlamaq üçün sürətli təkliflər",
+      "privacy": "Məxfilik və Təhlükəsizlik",
+      "privacyDescription": "Yalnız dəvət olunmuş üzvlər paylaşılan dərmanları görə bilər. Kimin giriş icazəsi var və nə edə biləcəyini siz idarə edirsiniz.",
+      "encrypted": "Uçdan-Uca Şifrələnmiş",
+      "hipaaCompliant": "HIPAA Uyğun",
+      "controlledAccess": "Nəzarət Edilən Giriş",
       "name": "Qrup Adı",
       "description": "Təsvir",
       "members": "Üzvlər",
@@ -505,7 +516,21 @@
       "patient": "Xəstə",
       "caregiver": "Baxıcı",
       "family": "Ailə Üzvü",
-      "emergency": "Təcili Hallar Əlaqəsi"
+      "emergency": "Təcili Hallar Əlaqəsi",
+      "patientDescription": "Əsas qayğı alan",
+      "caregiverDescription": "Peşəkar qayğı təminatçısı",
+      "familyDescription": "Etibar edilən ailə üzvü",
+      "emergencyDescription": "Təcili əlaqə şəxsi"
+    },
+    "template": {
+      "membersIncluded": "Daxil Edilən Üzvlər",
+      "membersDescription": "Bu şablon aşağıdakı üzv rollarını ehtiva edir"
+    },
+    "suggestions": {
+      "familyDescription": "Yaxın ailə üzvləriniz",
+      "caregiversDescription": "Peşəkar qayğı təminatçıları",
+      "friendsDescription": "Kömək edən etibar edilən dostlar",
+      "supportDescription": "Dəstək şəbəkəniz"
     },
     "permissions": {
       "view": "Dərmanları Görüntülə",

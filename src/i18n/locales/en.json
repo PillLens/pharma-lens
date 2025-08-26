@@ -236,6 +236,7 @@
     "actions": {
       "create": "Create",
       "createGroup": "Create Group",
+      "creating": "Creating...",
       "addGroup": "Add Group",
       "addGroupPro": "Add Group (Pro)",
       "groupVideoCall": "Group Video Call",
@@ -355,6 +356,16 @@
     "group": {
       "title": "Group",
       "createDescription": "Create a new family group to share medications and coordinate care",
+      "nameYourGroup": "Name Your Group",
+      "nameDescription": "Choose a memorable name that describes your care group",
+      "namePlaceholder": "Enter group name",
+      "popularNames": "Popular Group Names",
+      "popularNamesDescription": "Quick suggestions to get you started",
+      "privacy": "Privacy & Security",
+      "privacyDescription": "Only invited members can see shared medications. You control who has access and what they can do.",
+      "encrypted": "End-to-End Encrypted",
+      "hipaaCompliant": "HIPAA Compliant",
+      "controlledAccess": "Controlled Access",
       "name": "Group Name",
       "description": "Description",
       "members": "Members",
@@ -384,7 +395,21 @@
       "patient": "Patient",
       "caregiver": "Caregiver",
       "family": "Family Member", 
-      "emergency": "Emergency Contact"
+      "emergency": "Emergency Contact",
+      "patientDescription": "Primary care recipient",
+      "caregiverDescription": "Professional care provider", 
+      "familyDescription": "Trusted family member",
+      "emergencyDescription": "Emergency contact person"
+    },
+    "template": {
+      "membersIncluded": "Members Included",
+      "membersDescription": "This template includes the following member roles"
+    },
+    "suggestions": {
+      "familyDescription": "Your close family members",
+      "caregiversDescription": "Professional care providers",
+      "friendsDescription": "Trusted friends who help",
+      "supportDescription": "Your support network"
     },
     "permissions": {
       "view": "View Medications",

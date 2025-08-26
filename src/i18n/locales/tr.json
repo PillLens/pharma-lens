@@ -210,6 +210,7 @@
     "actions": {
       "create": "Oluştur",
       "createGroup": "Grup Oluştur",
+      "creating": "Oluşturuluyor...",
       "addGroup": "Grup Ekle",
       "addGroupPro": "Grup Ekle (Pro)",
       "groupVideoCall": "Grup Video Görüşmesi",
@@ -329,6 +330,16 @@
     "group": {
       "title": "Grup",
       "createDescription": "İlaçları paylaşmak ve bakımı koordine etmek için yeni bir aile grubu oluşturun",
+      "nameYourGroup": "Grubunuzu Adlandırın",
+      "nameDescription": "Bakım grubunuzu tanımlayan akılda kalıcı bir isim seçin",
+      "namePlaceholder": "Grup adını girin",
+      "popularNames": "Popüler Grup Adları",
+      "popularNamesDescription": "Başlamanız için hızlı öneriler",
+      "privacy": "Gizlilik ve Güvenlik",
+      "privacyDescription": "Sadece davet edilen üyeler paylaşılan ilaçları görebilir. Kimin erişimi olduğunu ve ne yapabileceğini siz kontrol edersiniz.",
+      "encrypted": "Uçtan Uca Şifreli",
+      "hipaaCompliant": "HIPAA Uyumlu",
+      "controlledAccess": "Kontrollü Erişim",
       "name": "Grup Adı",
       "description": "Açıklama",
       "members": "Üyeler",
@@ -354,7 +365,11 @@
       "patient": "Hasta",
       "caregiver": "Bakım Verici",
       "family": "Aile Üyesi",
-      "emergency": "Acil Durum İletişim"
+      "emergency": "Acil Durum İletişim",
+      "patientDescription": "Birincil bakım alıcısı",
+      "caregiverDescription": "Profesyonel bakım sağlayıcısı",
+      "familyDescription": "Güvenilir aile üyesi",
+      "emergencyDescription": "Acil durum iletişim kişisi"
     },
     "permissions": {
       "view": "İlaçları Görüntüle",
