@@ -135,7 +135,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
   const validateSafetyThresholds = (confidence: number, extractedData: any) => {
     const warnings: string[] = [];
 
-    // Image quality warnings (informational only)
+    // Only show warnings if confidence is below 70%
     if (confidence < 0.7) {
       warnings.push(t('scanner.lowQuality'));
     }
@@ -144,7 +144,8 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       warnings.push(t('scanner.criticalWarning'));
     }
 
-    setSafetyWarnings(warnings);
+    // Only set warnings if confidence is below 70%
+    setSafetyWarnings(confidence < 0.7 ? warnings : []);
 
     // Only block results if extraction completely failed or confidence is extremely low
     const hasValidExtraction = extractedData?.brand_name && (extractedData.confidence_score || 0) > 0.5;
@@ -252,11 +253,13 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
             variant: "destructive",
           });
         } else {
-          // Show success even with image quality warnings
-          toast({
-            title: t('common.success'),
-            description: t('scanner.medicationFound'),
-          });
+          // Only show success toast if confidence is 70% or higher
+          if (ocrResult.confidence >= 0.7) {
+            toast({
+              title: t('common.success'),
+              description: t('scanner.medicationFound'),
+            });
+          }
         }
       } else {
         throw new Error(t('errors.extractionFailed'));
