@@ -118,7 +118,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     
     // Check confidence score
     if ((medicationData.confidence_score || 0) < 0.7) {
-      flags.push("Low confidence extraction - verification recommended");
+      flags.push(t('scanner.lowConfidenceWarning'));
     }
 
     // Check for high-risk medication keywords
@@ -126,7 +126,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     const medicationText = `${medicationData.brand_name || ''} ${medicationData.generic_name || ''}`.toLowerCase();
     
     if (highRiskKeywords.some(keyword => medicationText.includes(keyword))) {
-      flags.push("High-risk medication - requires careful monitoring");
+      flags.push(t('scanner.highRiskWarning'));
     }
 
     return flags;

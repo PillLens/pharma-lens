@@ -227,7 +227,9 @@
     "lowQuality": "Image quality too low for reliable extraction. Please retake with better lighting.",
     "criticalWarning": "Critical: Cannot reliably extract medication information from this image.",
     "manualVerification": "Unable to identify medication brand name. Manual verification required.",
-    "extractedMedicationInfo": "Extracted Medication Information"
+    "extractedMedicationInfo": "Extracted Medication Information",
+    "lowConfidenceWarning": "Low confidence extraction - verification recommended",
+    "highRiskWarning": "High-risk medication - requires careful monitoring"
   },
   "medications": {
     "title": "Medications",
@@ -461,6 +463,7 @@
     "title": "Family & Caregivers",
     "management": "Family Management",
     "yourGroups": "Your Family Groups",
+    "createFamilyGroup": "Create Family Group",
     "subtitle": "Share medication plans with people who care for you",
     "empty": {
       "title": "Start Your Care Network",
@@ -1051,5 +1054,13 @@
     "medicationAddedButRemindersFailed": "Medication added but failed to create {{count}} reminder{{plural}}. Please add reminders manually.",
     "medicationUpdatedRemindersNote": "Medication updated! Please manage reminders in the Reminders tab.",
     "medicationDeleted": "Medication deleted"
+  },
+  "feedback": {
+    "submit": "Submit Feedback",
+    "submitting": "Submitting..."
+  },
+  "permissions": {
+    "viewMedications": "View Medications",
+    "editMedications": "Edit Medications"
   }
 }

@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { supabase } from "@/integrations/supabase/client";
 
 interface FeedbackDialogProps {
@@ -27,6 +28,7 @@ export const FeedbackDialog = ({ open, onOpenChange, sessionId, onComplete }: Fe
   const [comment, setComment] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleStarClick = (value: number) => {
     setRating(value);
@@ -182,7 +184,7 @@ export const FeedbackDialog = ({ open, onOpenChange, sessionId, onComplete }: Fe
               disabled={isSubmitting || rating === 0}
               className="flex-1"
             >
-              {isSubmitting ? "Submitting..." : "Submit Feedback"}
+              {isSubmitting ? t('feedback.submitting') : t('feedback.submit')}
             </Button>
           </div>
         </div>

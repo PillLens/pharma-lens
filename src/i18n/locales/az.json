@@ -363,7 +363,9 @@
     "lowQuality": "Şəkil keyfiyyəti etibarlı analiz üçün çox aşağıdır. Xahiş olunur daha yaxşı işıqlandırma ilə yenidən çəkin.",
     "criticalWarning": "Kritik: Bu şəkildən dərman məlumatlarını etibarlı şəkildə çıxarmaq mümkün deyil.",
     "manualVerification": "Dərmanın brend adını müəyyən etmək mümkün olmadı. Əl ilə yoxlama tələb olunur.",
-    "extractedMedicationInfo": "Çıxarılmış Dərman Məlumatları"
+    "extractedMedicationInfo": "Çıxarılmış Dərman Məlumatları",
+    "lowConfidenceWarning": "Aşağı etibar çıxarımı - yoxlama tövsiyə olunur",
+    "highRiskWarning": "Yüksək risk dərmanı - diqqətli izləmə tələb olunur"
   },
   "legal": {
     "title": "Hüquqi və Dəstək",
@@ -416,5 +418,24 @@
     "success": "Uğurlu",
     "warning": "Xəbərdarlıq",
     "info": "Məlumat"
+  },
+  "family": {
+    "title": "Ailə və Baxıcılar",
+    "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
+    "createFamilyGroup": "Ailə qrupu yarat",
+    "empty": {
+      "title": "Qayğı Şəbəkənizi Başladın",
+      "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
+      "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
+      "createButton": "Ailə Qrupu Yarat"
+    }
+  },
+  "feedback": {
+    "submit": "Geri bildirim göndər",
+    "submitting": "Göndərilir..."
+  },
+  "permissions": {
+    "viewMedications": "Dərmanları Gör",
+    "editMedications": "Dərmanları Redaktə Et"
   }
 }

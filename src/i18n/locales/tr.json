@@ -837,5 +837,13 @@
     "success": "Başarılı",
     "warning": "Uyarı",
     "info": "Bilgi"
+  },
+  "feedback": {
+    "submit": "Geri bildirim gönder",
+    "submitting": "Gönderiliyor..."
+  },
+  "permissions": {
+    "viewMedications": "İlaçları Görüntüle",
+    "editMedications": "İlaçları Düzenle"
   }
 }

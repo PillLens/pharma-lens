@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/useTranslation';
 import { MobileFamilyManagement } from '@/components/mobile/MobileFamilyManagement';
 import { 
   familySharingService, 
@@ -21,6 +22,7 @@ import {
 
 export const FamilyManagement: React.FC = () => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   // All hooks must be called before any conditional logic
   const [familyGroups, setFamilyGroups] = useState<FamilyGroup[]>([]);
@@ -140,17 +142,17 @@ export const FamilyManagement: React.FC = () => {
           <DialogTrigger asChild>
             <Button className="gap-2 w-full sm:w-auto min-h-[44px]">
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Create Group</span>
-              <span className="sm:hidden">Create</span>
+              <span className="hidden sm:inline">{t('family.group.create')}</span>
+              <span className="sm:hidden">{t('common.add')}</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="w-[95vw] max-w-md mx-auto">
             <DialogHeader>
-              <DialogTitle>Create Family Group</DialogTitle>
+              <DialogTitle>{t('family.createFamilyGroup')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="group-name">Group Name</Label>
+                <Label htmlFor="group-name">{t('family.group.name')}</Label>
                 <Input
                   id="group-name"
                   value={newGroupName}
@@ -165,14 +167,14 @@ export const FamilyManagement: React.FC = () => {
                   onClick={() => setCreateGroupDialog(false)}
                   className="min-h-[44px]"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button 
                   onClick={handleCreateGroup} 
                   disabled={!newGroupName.trim()}
                   className="min-h-[44px]"
                 >
-                  Create Group
+                  {t('family.group.create')}
                 </Button>
               </div>
             </div>
@@ -288,11 +290,11 @@ export const FamilyManagement: React.FC = () => {
                             </Select>
                           </div>
                           
-                          <div className="space-y-3">
-                            <Label>Permissions</Label>
+                            <div className="space-y-3">
+                            <Label>{t('family.member.permissions')}</Label>
                             <div className="space-y-4">
                               <div className="flex items-center justify-between">
-                                <Label htmlFor="view-meds" className="text-sm">View Medications</Label>
+                                <Label htmlFor="view-meds" className="text-sm">{t('permissions.viewMedications')}</Label>
                                 <Switch
                                   id="view-meds"
                                   checked={invitePermissions.view_medications}
@@ -302,7 +304,7 @@ export const FamilyManagement: React.FC = () => {
                                 />
                               </div>
                               <div className="flex items-center justify-between">
-                                <Label htmlFor="edit-meds" className="text-sm">Edit Medications</Label>
+                                <Label htmlFor="edit-meds" className="text-sm">{t('permissions.editMedications')}</Label>
                                 <Switch
                                   id="edit-meds"
                                   checked={invitePermissions.edit_medications}
