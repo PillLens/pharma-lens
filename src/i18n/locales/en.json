@@ -197,7 +197,10 @@
     "holdSteady": "Hold device steady",
     "alignMedication": "Align medication within the frame",
     "goodLighting": "Ensure good lighting",
-    "scanInstructions": "Place medication label clearly in the frame"
+    "scanInstructions": "Place medication label clearly in the frame",
+    "takePhoto": "Take Photo",
+    "brandNameAndStrength": "Brand Name and Strength",
+    "onDeviceProcessing": "Images are processed on-device for privacy"
   },
   "medications": {
     "title": "Medications",

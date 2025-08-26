@@ -304,6 +304,26 @@
     "title": "PillLens",
     "subtitle": "Sizin Şəxsi Dərman Skaneri və Xatırlatma Tətbiqi"
   },
+  "scanner": {
+    "scanMedication": "Dərman Skan Et",
+    "medicationFound": "Dərman Tapıldı",
+    "scanning": "Skan edilir...",
+    "takingPhoto": "Şəkil çəkilir...",
+    "processingImage": "Şəkil işlənir...",
+    "extractingInfo": "Məlumat çıxarılır...",
+    "medicationNotFound": "Dərman tapılmadı",
+    "scanAgain": "Yenidən skan et",
+    "continue": "Davam et",
+    "cameraAccess": "Kamera girişi tələb olunur",
+    "cameraPermission": "Dərmanları skan etmək üçün kamera girişinə icazə verin",
+    "holdSteady": "Cihazı sabit tutun",
+    "alignMedication": "Dərmanı çərçivə daxilində düzləndirin",
+    "goodLighting": "Yaxşı işıqlandırma təmin edin",
+    "scanInstructions": "Dərman etiketini çərçivədə aydın şəkildə yerləşdirin",
+    "takePhoto": "Şəkil Çək",
+    "brandNameAndStrength": "Marka Adı və Güc",
+    "onDeviceProcessing": "Şəkillər məxfilik üçün cihazda işlənir"
+  },
   "toast": {
     "welcomeBack": "Yenidən xoş gəlmisiniz!",
     "signedIn": "Uğurla daxil oldunuz",

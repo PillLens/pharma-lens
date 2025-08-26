@@ -172,7 +172,10 @@
     "holdSteady": "Cihazı sabit tutun",
     "alignMedication": "İlacı çerçeve içinde hizalayın",
     "goodLighting": "İyi aydınlatma sağlayın",
-    "scanInstructions": "İlaç etiketini çerçevede net bir şekilde yerleştirin"
+    "scanInstructions": "İlaç etiketini çerçevede net bir şekilde yerleştirin",
+    "takePhoto": "Fotoğraf Çek",
+    "brandNameAndStrength": "Marka Adı ve Güç",
+    "onDeviceProcessing": "Görüntüler gizlilik için cihazda işlenir"
   },
   "medications": {
      "title": "İlaçlar",
