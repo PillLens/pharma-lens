@@ -265,8 +265,7 @@ class FamilyCareTimelineService {
           days_of_week,
           user_id,
           medication_id,
-          user_medications:medication_id (medication_name, dosage),
-          profiles:user_id (display_name, email)
+          user_medications:medication_id (medication_name, dosage)
         `)
         .in('user_id', allUserIds)
         .eq('is_active', true);
@@ -278,9 +277,8 @@ class FamilyCareTimelineService {
         // Check if reminder is scheduled for this day
         if (!reminder.days_of_week.includes(currentDay)) return;
 
-        const profile = reminder.profiles as any;
         const medication = reminder.user_medications as any;
-        const displayName = profile?.display_name || profile?.email?.split('@')[0] || 'Unknown';
+        const displayName = 'Family Member'; // Generic display name since we don't have profile data
 
         // Check if dose was already taken
         const status = this.getMedicationStatus(reminder.reminder_time, startDate);
