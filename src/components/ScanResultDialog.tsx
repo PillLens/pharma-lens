@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useMedicationHistory } from "@/hooks/useMedicationHistory";
+import { useReminders } from "@/hooks/useReminders";
 import { toast } from "@/hooks/use-toast";
 
 interface MedicationData {
@@ -50,6 +51,7 @@ interface ScanResultDialogProps {
 export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDialogProps) => {
   const { t } = useTranslation();
   const { addMedication } = useMedicationHistory();
+  const { addReminder } = useReminders();
   const [showScheduleForm, setShowScheduleForm] = useState(false);
   const [formData, setFormData] = useState({
     dosage: medicationData.usage_instructions?.dosage || '',
@@ -64,7 +66,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
 
   const handleAddToMedications = async () => {
     try {
-      await addMedication({
+      const medicationResult = await addMedication({
         medication_name: medicationData.brand_name,
         generic_name: medicationData.generic_name || null,
         dosage: formData.dosage,
@@ -76,9 +78,27 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
         is_active: true
       });
 
+      // Create reminders if enabled and medication was added successfully
+      if (formData.createReminder && medicationResult && formData.reminderTimes.length > 0) {
+        for (const time of formData.reminderTimes) {
+          await addReminder({
+            medication_id: medicationResult.id,
+            reminder_time: time,
+            days_of_week: [1, 2, 3, 4, 5, 6, 7], // All days by default
+            notification_settings: {
+              sound: true,
+              vibration: true,
+              led: true
+            }
+          });
+        }
+      }
+
       toast({
         title: t('common.success'),
-        description: t('medications.medicationAdded'),
+        description: formData.createReminder 
+          ? t('medications.medicationAndReminderAdded')
+          : t('medications.medicationAdded'),
       });
 
       onClose();

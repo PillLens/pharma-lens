@@ -127,14 +127,15 @@ export const useDashboardData = () => {
         reminder.days_of_week.includes(currentDayOfWeek === 0 ? 7 : currentDayOfWeek) // Convert Sunday (0) to 7
       );
       
-      // Calculate today's actual dose count
+      // Calculate today's actual dose count from scheduled reminders
       const todaysDoses = todaysReminders.length;
       
-      // Calculate adherence rate based on actual today's data
+      // Calculate adherence rate based on scheduled vs taken
       const takenToday = adherenceData?.filter(a => a.status === 'taken').length || 0;
-      const totalToday = Math.max(todaysDoses, adherenceData?.length || 0);
       const missedToday = adherenceData?.filter(a => a.status === 'missed').length || 0;
-      const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 0;
+      // Use scheduled reminders as the baseline, not adherence log entries
+      const totalToday = todaysDoses;
+      const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
 
       // Calculate streak from adherence log
       const calculateStreak = async () => {
@@ -233,7 +234,7 @@ export const useDashboardData = () => {
           streak: streak,
           completedToday: takenToday,
           totalToday: totalToday,
-          missedToday: Math.max(0, totalToday - takenToday)
+          missedToday: missedToday
         },
         family: {
           groups: new Set(familyGroups?.map(fg => fg.family_group_id)).size || 0,
