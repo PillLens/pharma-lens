@@ -1,7 +1,6 @@
 import React from 'react';
-import { Pill, Bell, Users, Plus, ArrowRight, Calendar, Shield } from 'lucide-react';
+import { Pill, Bell, Users, Plus, ChevronRight, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from '@/components/ui/mobile/MobileCard';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,10 +9,10 @@ const QuickActionCards: React.FC = () => {
   const navigate = useNavigate();
   const { dashboardStats, loading } = useDashboardData();
 
-  // Format next reminder time
+  // Format next reminder text
   const getNextReminderText = () => {
     if (!dashboardStats.reminders.nextReminder) {
-      return dashboardStats.reminders.active > 0 ? 'No reminders today' : 'No active reminders';
+      return dashboardStats.reminders.active > 0 ? 'No reminders today' : '0 active reminders';
     }
     
     const { time } = dashboardStats.reminders.nextReminder;
@@ -36,153 +35,98 @@ const QuickActionCards: React.FC = () => {
 
   const getFamilyText = () => {
     const { members } = dashboardStats.family;
-    if (members === 0) {
-      return 'No family members';
-    } else if (members === 1) {
-      return '1 member connected';
-    } else {
-      return `${members} members connected`;
-    }
+    return members === 0 ? 'Set up family care' : `${members} member${members === 1 ? '' : 's'} connected`;
   };
 
   const quickActions = [
     {
-      icon: Pill,
-      titleKey: 'dashboard.mymedicationsTitle',
-      descriptionKey: 'dashboard.mymedicationsDescription',
-      route: '/medications',
-      gradient: 'from-success/10 to-success/5',
-      iconBg: 'bg-success/20',
-      iconColor: 'text-success',
-      count: dashboardStats.medications.active,
-      dynamicDescription: false
+      icon: Plus,
+      titleKey: 'dashboard.addMedication',
+      description: 'Scan or enter medication details',
+      route: '/medications?action=add',
+      iconColor: 'text-blue-500',
+      iconBg: 'bg-blue-50 dark:bg-blue-950/30'
     },
     {
       icon: Bell,
-      titleKey: 'dashboard.reminderstodayTitle',
-      descriptionKey: 'dashboard.reminderstodayDescription',
+      titleKey: 'dashboard.manageReminders',
+      description: getNextReminderText(),
       route: '/reminders',
-      gradient: 'from-warning/10 to-warning/5',
-      iconBg: 'bg-warning/20',
-      iconColor: 'text-warning',
-      count: dashboardStats.reminders.active,
-      dynamicDescription: true,
-      customDescription: getNextReminderText()
+      iconColor: 'text-orange-500',
+      iconBg: 'bg-orange-50 dark:bg-orange-950/30'
     },
     {
       icon: Users,
-      titleKey: 'dashboard.familygroupTitle',
-      descriptionKey: 'dashboard.familygroupDescription',
+      titleKey: 'family.title',
+      description: getFamilyText(),
       route: '/family',
-      gradient: 'from-info/10 to-info/5',
-      iconBg: 'bg-info/20',
-      iconColor: 'text-info',
-      count: dashboardStats.family.members,
-      dynamicDescription: true,
-      customDescription: getFamilyText()
+      iconColor: 'text-purple-500',
+      iconBg: 'bg-purple-50 dark:bg-purple-950/30'
     },
     {
-      icon: Shield,
-      titleKey: 'dashboard.healthdashboardTitle',
-      descriptionKey: 'dashboard.healthdashboardDescription',
-      route: '/security',
-      gradient: 'from-primary/10 to-primary/5',
-      iconBg: 'bg-primary/20',
-      iconColor: 'text-primary',
-      badge: 'New',
-      dynamicDescription: false
+      icon: Settings,
+      titleKey: 'navigation.settings',
+      description: 'Manage your account and preferences',
+      route: '/settings',
+      iconColor: 'text-gray-500',
+      iconBg: 'bg-gray-50 dark:bg-gray-950/30'
     }
   ];
 
   return (
     <div className="px-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
+          <div className="w-2 h-2 bg-white rounded-sm"></div>
+        </div>
+        <h2 className="text-lg font-medium text-foreground">
           <TranslatedText translationKey="dashboard.quickActions" fallback="Quick Actions" />
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-2.5">
+      <div className="bg-background rounded-xl border border-border/60 overflow-hidden">
         {loading ? (
           // Loading skeletons
           Array.from({ length: 4 }).map((_, index) => (
-            <MobileCard key={`skeleton-${index}`} variant="glass" className="p-3">
+            <div key={`skeleton-${index}`} className={`p-4 ${index < 3 ? 'border-b border-border/30' : ''}`}>
               <div className="flex items-center gap-3">
-                <Skeleton className="w-9 h-9 rounded-lg flex-shrink-0" />
+                <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Skeleton className="h-3.5 w-24" />
-                    <Skeleton className="h-4 w-6 rounded-full" />
-                  </div>
-                  <Skeleton className="h-3 w-36" />
+                  <Skeleton className="h-4 w-32 mb-1" />
+                  <Skeleton className="h-3 w-48" />
                 </div>
+                <Skeleton className="w-4 h-4" />
               </div>
-            </MobileCard>
+            </div>
           ))
         ) : (
           quickActions.map((action, index) => (
-            <MobileCard
+            <div
               key={index}
-              variant="glass"
-              interactive
               onClick={() => navigate(action.route)}
-              className={`bg-gradient-to-r ${action.gradient} border-border/50 hover:border-primary/30 transition-all duration-300 group p-3 relative`}
+              className={`p-4 ${index < quickActions.length - 1 ? 'border-b border-border/30' : ''} 
+                        active:bg-muted/50 cursor-pointer transition-colors duration-150 
+                        hover:bg-muted/30 group`}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-lg ${action.iconBg} flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform duration-200 flex-shrink-0`}>
+                <div className={`w-10 h-10 rounded-full ${action.iconBg} flex items-center justify-center flex-shrink-0`}>
                   <action.icon className={`w-5 h-5 ${action.iconColor}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <MobileCardTitle className="text-sm font-medium group-hover:text-primary transition-colors truncate">
-                      <TranslatedText translationKey={action.titleKey} />
-                    </MobileCardTitle>
-                    {(action.count !== undefined && action.count > 0) && (
-                      <span className="text-xs bg-foreground/10 text-foreground px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">
-                        {action.count}
-                      </span>
-                    )}
-                    {action.badge && (
-                      <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-medium flex-shrink-0">
-                        {action.badge}
-                      </span>
-                    )}
+                  <div className="font-medium text-foreground mb-0.5 text-base">
+                    <TranslatedText translationKey={action.titleKey} />
                   </div>
-                  <MobileCardDescription className="text-xs leading-tight truncate">
-                    {action.dynamicDescription ? (
-                      action.customDescription
-                    ) : (
-                      <TranslatedText translationKey={action.descriptionKey} />
-                    )}
-                  </MobileCardDescription>
+                  <div className="text-sm text-muted-foreground leading-tight">
+                    {action.description}
+                  </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/60 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
+                <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
               </div>
-            </MobileCard>
+            </div>
           ))
         )}
       </div>
-
-      {/* Add New Quick Action */}
-      <MobileCard
-        variant="outline"
-        interactive
-        onClick={() => navigate('/medications?action=add')}
-        className="mt-3 border-dashed border-muted-foreground/30 hover:border-primary/50 transition-colors group"
-      >
-        <MobileCardContent className="py-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-            </div>
-            <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-              <TranslatedText translationKey="dashboard.addMedication" fallback="Add New Medication" />
-            </span>
-          </div>
-        </MobileCardContent>
-      </MobileCard>
     </div>
   );
 };
-
 export default QuickActionCards;
