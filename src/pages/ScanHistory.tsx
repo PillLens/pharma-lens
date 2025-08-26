@@ -841,13 +841,13 @@ export const ScanHistory = () => {
           isOpen={!!sessionToDelete}
           onClose={handleCancelDelete}
           title="Delete Scan"
-          height="sm"
+          height="md"
           dismissible={!deletingSessionId}
         >
-          <div className="p-6">
-            <div className="text-center mb-6">
-              <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-500" />
-              <p className="text-muted-foreground">
+          <div className="p-4">
+            <div className="text-center mb-4">
+              <AlertTriangle className="w-10 h-10 mx-auto mb-2 text-red-500" />
+              <p className="text-muted-foreground text-sm">
                 <TranslatedText translationKey="history.deleteConfirmation" />
               </p>
             </div>
