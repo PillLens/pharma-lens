@@ -212,19 +212,19 @@ const Dashboard: React.FC = () => {
                     {/* Health status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full border border-green-500/20 shadow-soft">
                       <Heart className="w-3 h-3 text-red-500 animate-heartbeat" />
-                      <span className="text-xs font-medium text-green-700">Health Active</span>
+                      <span className="text-xs font-medium text-green-700">{t('dashboard.healthActive')}</span>
                     </div>
                     
                     {/* Sync status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full border border-blue-500/20 shadow-soft">
                       <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                      <span className="text-xs font-medium text-blue-700">Synced</span>
+                      <span className="text-xs font-medium text-blue-700">{t('dashboard.synced')}</span>
                     </div>
                   </div>
 
                   {/* Today's date with subtle styling */}
                   <div className="text-xs text-muted-foreground font-medium bg-muted/30 px-3 py-1 rounded-full border border-border/50">
-                    {new Date().toLocaleDateString('en-US', { 
+                    {new Date().toLocaleDateString(t('common.locale', 'en-US'), { 
                       weekday: 'short', 
                       month: 'short', 
                       day: 'numeric' 
@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
           <div className="px-6 mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Activity className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold">Quick Overview</h2>
+              <h2 className="text-lg font-semibold">{t('dashboard.quickOverview')}</h2>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {quickStats.map((stat, index) => (
@@ -289,14 +289,14 @@ const Dashboard: React.FC = () => {
                   <div className="p-2 bg-primary/10 rounded-xl">
                     <Sparkles className="w-5 h-5 text-primary animate-pulse" />
                   </div>
-                  <MobileCardTitle className="text-lg font-semibold">Today's Focus</MobileCardTitle>
+                  <MobileCardTitle className="text-lg font-semibold">{t('dashboard.todaysFocus')}</MobileCardTitle>
                 </div>
               </MobileCardHeader>
               <MobileCardContent className="relative z-10 space-y-4">
                 {/* Adherence Progress */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Daily Adherence</span>
+                    <span className="text-sm font-medium">{t('dashboard.dailyAdherence')}</span>
                     <span className="text-sm font-bold text-primary">{dashboardStats.adherence.rate}%</span>
                   </div>
                   <div className="relative">
@@ -313,15 +313,15 @@ const Dashboard: React.FC = () => {
                 <div className="grid grid-cols-3 gap-4 pt-2">
                   <div className="text-center">
                     <div className="text-xl font-bold text-green-500">{dashboardStats.adherence.completedToday}</div>
-                    <div className="text-xs text-muted-foreground">Completed</div>
+                    <div className="text-xs text-muted-foreground">{t('dashboard.completed')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xl font-bold text-amber-500">{dashboardStats.adherence.totalToday - dashboardStats.adherence.completedToday}</div>
-                    <div className="text-xs text-muted-foreground">Pending</div>
+                    <div className="text-xs text-muted-foreground">{t('dashboard.pending')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-xl font-bold text-red-500">{dashboardStats.adherence.missedToday}</div>
-                    <div className="text-xs text-muted-foreground">Missed</div>
+                    <div className="text-xs text-muted-foreground">{t('dashboard.missed')}</div>
                   </div>
                 </div>
               </MobileCardContent>
@@ -348,8 +348,8 @@ const Dashboard: React.FC = () => {
                       <Plus className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">Add New Medication</h4>
-                      <p className="text-sm text-muted-foreground">Scan or enter medication details</p>
+                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.addMedication')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('dashboard.scanOrEnterDetails')}</p>
                     </div>
                     <div className="text-primary group-hover:translate-x-1 transition-transform">
                       →
@@ -370,8 +370,8 @@ const Dashboard: React.FC = () => {
                       <Bell className="w-6 h-6 text-amber-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">Manage Reminders</h4>
-                      <p className="text-sm text-muted-foreground">{dashboardStats.reminders.active} active reminders</p>
+                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.manageReminders')}</h4>
+                      <p className="text-sm text-muted-foreground">{dashboardStats.reminders.active} {t('dashboard.activeRemindersText')}</p>
                     </div>
                     <div className="text-amber-500 group-hover:translate-x-1 transition-transform">
                       →
@@ -392,11 +392,11 @@ const Dashboard: React.FC = () => {
                       <Users className="w-6 h-6 text-purple-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">Family Health</h4>
+                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.familyHealth')}</h4>
                       <p className="text-sm text-muted-foreground">
                         {dashboardStats.family.groups > 0 
-                          ? `${dashboardStats.family.members} family members` 
-                          : 'Set up family care'
+                          ? `${dashboardStats.family.members} ${t('dashboard.familyMembersText')}` 
+                          : t('dashboard.setupFamilyCare')
                         }
                       </p>
                     </div>
@@ -419,8 +419,8 @@ const Dashboard: React.FC = () => {
                       <SettingsIcon className="w-6 h-6 text-slate-500" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">Settings</h4>
-                      <p className="text-sm text-muted-foreground">Manage your account and preferences</p>
+                      <h4 className="font-semibold text-foreground mb-1">{t('navigation.settings')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('dashboard.manageAccountPreferences')}</p>
                     </div>
                     <div className="text-slate-500 group-hover:translate-x-1 transition-transform">
                       →
