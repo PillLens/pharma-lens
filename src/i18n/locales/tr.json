@@ -35,7 +35,9 @@
     "later": "Sonra",
     "fillRequiredFields": "Lütfen gerekli tüm alanları doldurun",
     "areYouSure": "Emin misiniz?",
-    "actionCannotBeUndone": "Bu işlem geri alınamaz"
+    "actionCannotBeUndone": "Bu işlem geri alınamaz",
+    "saving": "Kaydediliyor...",
+    "saveChanges": "Değişiklikleri Kaydet"
   },
   "navigation": {
     "home": "Ana Sayfa",
@@ -221,7 +223,8 @@
       "active": "Aktif",
       "groupAdherence": "Grup Uyumu",
       "alert": "Uyarı",
-      "pending": "Beklemede"
+      "pending": "Beklemede",
+      "invited": "Davet Edildi"
     },
     "emptyState": {
       "title": "Bakım Ağınızı Başlatın",
@@ -328,11 +331,16 @@
       "name": "Grup Adı",
       "description": "Açıklama",
       "members": "Üyeler",
+      "member": "Üye",
       "noMembers": "Henüz üye yok",
       "settings": "Ayarlar",
       "delete": "Grubu Sil",
       "edit": "Grubu Düzenle",
-      "leave": "Gruptan Ayrıl"
+      "leave": "Gruptan Ayrıl",
+      "confirmDelete": "Bu grubu silmek istediğinizden emin misiniz?",
+      "information": "Grup Bilgileri",
+      "enterName": "Grup adını girin",
+      "enterDescription": "Grup açıklamasını girin"
     },
     "member": {
       "role": "Rol",
@@ -344,7 +352,9 @@
       "invite": "Üye Davet Et",
       "name": "Ad Soyad",
       "email": "E-posta Adresi",
-      "phone": "Telefon Numarası"
+      "phone": "Telefon Numarası",
+      "share": "Paylaş",
+      "resend": "Tekrar Gönder"
     },
     "roles": {
       "patient": "Hasta",
@@ -381,7 +391,8 @@
       "memberAdded": "Üye başarıyla eklendi",
       "invitationSent": "Davetiye başarıyla gönderildi",
       "memberRemoved": "Üye başarıyla kaldırıldı",
-      "groupDeleted": "Grup başarıyla silindi"
+      "groupDeleted": "Grup başarıyla silindi",
+      "groupUpdated": "Grup başarıyla güncellendi"
     },
     "validation": {
       "groupNameRequired": "Grup adı gereklidir",
