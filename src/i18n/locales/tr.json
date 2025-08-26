@@ -86,8 +86,8 @@
     "createSecureAccount": "Güvenli Hesap Oluştur",
     "signingIn": "Giriş yapılıyor...",
     "creatingAccount": "Hesap oluşturuluyor...",
-    "medicalGradeSecurity": "Tıbbi Düzeyde Güvenlik",
-    "dataEncryption": "256-bit Veri Şifreleme"
+    "dataEncryption": "256-bit Veri Şifreleme",
+    "medicalGradeSecurity": "Tıbbi Düzeyde Güvenlik"
   },
   "hero": {
     "badge": "Gizlilik Öncelikli • Güvenlik Odaklı",
