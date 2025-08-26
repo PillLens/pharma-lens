@@ -38,6 +38,7 @@
     "fillRequiredFields": "Please fill in all required fields",
     "areYouSure": "Are you sure?",
     "actionCannotBeUndone": "This action cannot be undone",
+    "initializing": "Initializing...",
     "sound": "Sound",
     "vibration": "Vibration",
     "ledLight": "LED Light",

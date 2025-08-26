@@ -22,7 +22,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'EN',
-    debug: process.env.NODE_ENV === 'development',
+    debug: true, // Enable debug to see what's happening
     
     interpolation: {
       escapeValue: false,
@@ -38,5 +38,10 @@ i18n
       useSuspense: false,
     },
   });
+
+// Debug logging
+console.log('i18n initialized with resources:', Object.keys(resources));
+console.log('Detected language:', i18n.language);
+console.log('Available languages:', i18n.languages);
 
 export default i18n;
