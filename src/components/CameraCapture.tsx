@@ -417,45 +417,13 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </Card>
             )}
 
+            {/* Processing Complete Message */}
             {(barcodeData || ocrText) && !isProcessing && (
               <Card className="p-6">
-                <div className="space-y-4">
-                  {barcodeData && (
-                    <div>
-                      <h4 className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2">
-                        <Scan className="h-4 w-4" />
-                        Detected Barcode:
-                      </h4>
-                      <div className="bg-muted p-3 rounded-md text-sm">
-                        <p><strong>Code:</strong> {barcodeData.code}</p>
-                        <p><strong>Format:</strong> {barcodeData.format}</p>
-                        <p><strong>Confidence:</strong> {(barcodeData.confidence * 100).toFixed(1)}%</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {ocrText && (
-                    <div>
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-sm text-muted-foreground">Extracted Text:</h4>
-                        <Badge 
-                          {...getConfidenceBadge(confidence)}
-                          className="text-xs"
-                        >
-                          {Math.round(confidence * 100)}% {t('common.confidence')}
-                        </Badge>
-                      </div>
-                      <div className="bg-muted p-3 rounded-md text-sm whitespace-pre-wrap max-h-32 overflow-y-auto">
-                        {ocrText}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span>{t('common.success')}</span>
-                    </div>
+                <div className="text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span>{t('common.success')}</span>
                   </div>
                 </div>
               </Card>
