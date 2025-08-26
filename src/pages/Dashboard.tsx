@@ -15,6 +15,7 @@ import {
   Shield,
   Plus,
   Crown,
+  ChevronRight,
   Settings as SettingsIcon
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -330,104 +331,102 @@ const Dashboard: React.FC = () => {
 
           {/* Action Cards */}
           <div className="px-6 space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              <TranslatedText translationKey="dashboard.quickActions" fallback="Quick Actions" />
-            </h3>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
+                <div className="w-2 h-2 bg-white rounded-sm"></div>
+              </div>
+              <h3 className="text-lg font-medium text-foreground">
+                <TranslatedText translationKey="dashboard.quickActions" fallback="Quick Actions" />
+              </h3>
+            </div>
             
-            <div className="grid gap-4">
+            <div className="bg-background rounded-xl border border-border/60 overflow-hidden">
               {/* Add Medication */}
-              <MobileCard 
-                interactive 
+              <div
                 onClick={() => navigate('/medications')}
-                className="group hover:scale-[1.01] transition-all duration-300 border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10"
+                className="p-4 border-b border-border/30 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
               >
-                <MobileCardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
-                      <Plus className="w-6 h-6 text-primary" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center flex-shrink-0">
+                    <Plus className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground mb-0.5 text-base">
+                      <TranslatedText translationKey="dashboard.addMedication" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.addMedication')}</h4>
-                      <p className="text-sm text-muted-foreground">{t('dashboard.scanOrEnterDetails')}</p>
-                    </div>
-                    <div className="text-primary group-hover:translate-x-1 transition-transform">
-                      →
+                    <div className="text-sm text-muted-foreground leading-tight">
+                      <TranslatedText translationKey="dashboard.scanOrEnterDetails" />
                     </div>
                   </div>
-                </MobileCardContent>
-              </MobileCard>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+                </div>
+              </div>
 
               {/* View Reminders */}
-              <MobileCard 
-                interactive 
+              <div
                 onClick={() => navigate('/reminders')}
-                className="group hover:scale-[1.01] transition-all duration-300 border border-amber-500/20 bg-gradient-to-r from-amber-500/5 to-amber-500/10"
+                className="p-4 border-b border-border/30 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
               >
-                <MobileCardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-amber-500/10 rounded-xl group-hover:bg-amber-500/20 transition-colors">
-                      <Bell className="w-6 h-6 text-amber-500" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center flex-shrink-0">
+                    <Bell className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground mb-0.5 text-base">
+                      <TranslatedText translationKey="dashboard.manageReminders" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.manageReminders')}</h4>
-                      <p className="text-sm text-muted-foreground">{dashboardStats.reminders.active} {t('dashboard.activeRemindersText')}</p>
-                    </div>
-                    <div className="text-amber-500 group-hover:translate-x-1 transition-transform">
-                      →
+                    <div className="text-sm text-muted-foreground leading-tight">
+                      {dashboardStats.reminders.active} <TranslatedText translationKey="dashboard.activeRemindersText" />
                     </div>
                   </div>
-                </MobileCardContent>
-              </MobileCard>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+                </div>
+              </div>
 
               {/* Family Care */}
-              <MobileCard 
-                interactive 
+              <div
                 onClick={() => navigate('/family')}
-                className="group hover:scale-[1.01] transition-all duration-300 border border-purple-500/20 bg-gradient-to-r from-purple-500/5 to-purple-500/10"
+                className="p-4 border-b border-border/30 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
               >
-                <MobileCardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-500/10 rounded-xl group-hover:bg-purple-500/20 transition-colors">
-                      <Users className="w-6 h-6 text-purple-500" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center flex-shrink-0">
+                    <Users className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground mb-0.5 text-base">
+                      <TranslatedText translationKey="dashboard.familyHealth" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">{t('dashboard.familyHealth')}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {dashboardStats.family.groups > 0 
-                          ? `${dashboardStats.family.members} ${t('dashboard.familyMembersText')}` 
-                          : t('dashboard.setupFamilyCare')
-                        }
-                      </p>
-                    </div>
-                    <div className="text-purple-500 group-hover:translate-x-1 transition-transform">
-                      →
+                    <div className="text-sm text-muted-foreground leading-tight">
+                      {dashboardStats.family.groups > 0 
+                        ? `${dashboardStats.family.members} ${t('dashboard.familyMembersText')}` 
+                        : t('dashboard.setupFamilyCare')
+                      }
                     </div>
                   </div>
-                </MobileCardContent>
-              </MobileCard>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+                </div>
+              </div>
 
               {/* Settings Card */}
-              <MobileCard 
-                interactive 
-                onClick={() => navigate('/settings')}  
-                className="group hover:scale-[1.01] transition-all duration-300 border border-slate-500/20 bg-gradient-to-r from-slate-500/5 to-slate-500/10"
+              <div
+                onClick={() => navigate('/settings')}
+                className="p-4 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
               >
-                <MobileCardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-slate-500/10 rounded-xl group-hover:bg-slate-500/20 transition-colors">
-                      <SettingsIcon className="w-6 h-6 text-slate-500" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-950/30 flex items-center justify-center flex-shrink-0">
+                    <SettingsIcon className="w-5 h-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground mb-0.5 text-base">
+                      <TranslatedText translationKey="navigation.settings" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-foreground mb-1">{t('navigation.settings')}</h4>
-                      <p className="text-sm text-muted-foreground">{t('dashboard.manageAccountPreferences')}</p>
-                    </div>
-                    <div className="text-slate-500 group-hover:translate-x-1 transition-transform">
-                      →
+                    <div className="text-sm text-muted-foreground leading-tight">
+                      <TranslatedText translationKey="dashboard.manageAccountPreferences" />
                     </div>
                   </div>
-                </MobileCardContent>
-              </MobileCard>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
