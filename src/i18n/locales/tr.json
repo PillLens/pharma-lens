@@ -341,7 +341,31 @@
       "status": "Durum",
       "remove": "Üyeyi Kaldır",
       "edit": "Üyeyi Düzenle",
-      "invite": "Üye Davet Et"
+      "invite": "Üye Davet Et",
+      "name": "Ad Soyad",
+      "email": "E-posta Adresi",
+      "phone": "Telefon Numarası"
+    },
+    "roles": {
+      "patient": "Hasta",
+      "caregiver": "Bakım Verici",
+      "family": "Aile Üyesi",
+      "emergency": "Acil Durum İletişim"
+    },
+    "permissions": {
+      "view": "İlaçları Görüntüle",
+      "edit": "Düzenle ve Yönet",
+      "notifications": "Bildirim Al",
+      "emergencyAccess": "Acil Durum Erişimi"
+    },
+    "actions": {
+      "sendInvite": "Davet Gönder",
+      "cancel": "İptal",
+      "inviteMember": "Üye Davet Et",
+      "groupVideoCall": "Grup Görüntülü Arama",
+      "groupMessage": "Grup Mesajı",
+      "settings": "Grup Ayarları",
+      "deleteGroup": "Grubu Sil"
     },
     "invitations": {
       "pending": "Bekleyen Davetiyeler",
@@ -362,7 +386,9 @@
     "validation": {
       "groupNameRequired": "Grup adı gereklidir",
       "emailRequired": "E-posta adresi gereklidir",
-      "roleRequired": "Rol seçimi gereklidir"
+      "roleRequired": "Rol seçimi gereklidir",
+      "memberNameRequired": "Üye adı gereklidir",
+      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin"
     }
   },
   "scanner": {

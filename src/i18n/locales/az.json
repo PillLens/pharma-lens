@@ -490,9 +490,33 @@
       "permissions": "İcazələr",
       "lastSeen": "Son Görülmə",
       "status": "Status",
-      "remove": "Üzvü Çıxar",
-      "edit": "Üzvü Redaktə Et",
-      "invite": "Üzvü Dəvət Et"
+      "remove": "Üyəni Sil",
+      "edit": "Üyəni Redaktə Et",
+      "invite": "Üyə Dəvət Et",
+      "name": "Tam Ad",
+      "email": "E-poçt Ünvanı",
+      "phone": "Telefon Nömrəsi"
+    },
+    "roles": {
+      "patient": "Xəstə",
+      "caregiver": "Baxıcı",
+      "family": "Ailə Üzvü",
+      "emergency": "Təcili Hallar Əlaqəsi"
+    },
+    "permissions": {
+      "view": "Dərmanları Görüntülə",
+      "edit": "Redaktə və İdarə Et",
+      "notifications": "Bildirişlər Al",
+      "emergencyAccess": "Təcili Hal Girişi"
+    },
+    "actions": {
+      "sendInvite": "Dəvət Göndər",
+      "cancel": "Ləğv Et",
+      "inviteMember": "Üyə Dəvət Et",
+      "groupVideoCall": "Qrup Video Zəngi",
+      "groupMessage": "Qrup Mesajı",
+      "settings": "Qrup Tənzimləmələri",
+      "deleteGroup": "Qrupu Sil"
     },
     "invitations": {
       "pending": "Gözləyən Dəvətlər",
@@ -513,7 +537,9 @@
     "validation": {
       "groupNameRequired": "Qrup adı tələb olunur",
       "emailRequired": "E-poçt ünvanı tələb olunur",
-      "roleRequired": "Rol seçimi tələb olunur"
+      "roleRequired": "Rol seçimi tələb olunur",
+      "memberNameRequired": "Üyə adı tələb olunur",
+      "invalidEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin"
     },
     "dashboard": {
       "familyMembers": "Ailə Üzvləri",

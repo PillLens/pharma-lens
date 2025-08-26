@@ -371,7 +371,31 @@
       "status": "Status",
       "remove": "Remove Member",
       "edit": "Edit Member",
-      "invite": "Invite Member"
+      "invite": "Invite Member",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number"
+    },
+    "roles": {
+      "patient": "Patient",
+      "caregiver": "Caregiver",
+      "family": "Family Member", 
+      "emergency": "Emergency Contact"
+    },
+    "permissions": {
+      "view": "View Medications",
+      "edit": "Edit & Manage",
+      "notifications": "Receive Notifications",
+      "emergencyAccess": "Emergency Access"
+    },
+    "actions": {
+      "sendInvite": "Send Invitation",
+      "cancel": "Cancel",
+      "inviteMember": "Invite Member",
+      "groupVideoCall": "Group Video Call",
+      "groupMessage": "Group Message",
+      "settings": "Group Settings",
+      "deleteGroup": "Delete Group"
     },
     "invitations": {
       "pending": "Pending Invitations",
@@ -393,7 +417,9 @@
     "validation": {
       "groupNameRequired": "Group name is required",
       "emailRequired": "Email address is required",
-      "roleRequired": "Role selection is required"
+      "roleRequired": "Role selection is required",
+      "memberNameRequired": "Member name is required",
+      "invalidEmail": "Please enter a valid email address"
     }
   },
   "scanner": {

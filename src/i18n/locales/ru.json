@@ -362,7 +362,9 @@
     "validation": {
       "groupNameRequired": "Название группы обязательно",
       "emailRequired": "Адрес электронной почты обязателен",
-      "roleRequired": "Выбор роли обязателен"
+      "roleRequired": "Выбор роли обязателен",
+      "memberNameRequired": "Имя участника обязательно",
+      "invalidEmail": "Пожалуйста, введите действующий адрес электронной почты"
     }
   },
   "scanner": {

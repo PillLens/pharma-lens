@@ -19,6 +19,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useIsMobile } from '@/hooks/use-mobile';
+import MobileInviteMemberSheet from './MobileInviteMemberSheet';
 
 interface InviteMemberSheetProps {
   isOpen: boolean;
@@ -45,6 +47,19 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
   isLoading = false,
 }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
+  // Use mobile version on mobile devices
+  if (isMobile) {
+    return (
+      <MobileInviteMemberSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        onInvite={onInvite}
+        isLoading={isLoading}
+      />
+    );
+  }
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -148,7 +163,10 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full max-w-md p-0">
+      <SheetContent 
+        className="w-full max-w-md p-0" 
+        side="right"
+      >
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Header */}
           <SheetHeader className="p-6 pb-4">
@@ -227,7 +245,13 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
                   <SelectTrigger className={errors.role ? 'border-destructive' : ''}>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent 
+                    side="bottom"
+                    align="start"
+                    sideOffset={4}
+                    avoidCollisions={true}
+                    className="z-50 bg-background border border-border shadow-lg"
+                  >
                     <SelectItem value="patient">{t('family.roles.patient')}</SelectItem>
                     <SelectItem value="caregiver">{t('family.roles.caregiver')}</SelectItem>
                     <SelectItem value="family">{t('family.roles.family')}</SelectItem>
