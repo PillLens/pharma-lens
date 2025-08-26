@@ -57,18 +57,25 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     const startY = e.touches[0].clientY;
     const element = e.currentTarget as HTMLElement;
     const startTransform = element.style.transform;
+    let isDragging = false;
 
     const handleDragMove = (e: TouchEvent) => {
       const currentY = e.touches[0].clientY;
-      const deltaY = Math.max(0, currentY - startY);
-      element.style.transform = `translateY(${deltaY}px)`;
+      const deltaY = currentY - startY;
+      
+      // Only start dragging if moving down significantly
+      if (deltaY > 10) {
+        isDragging = true;
+        const translateY = Math.max(0, deltaY);
+        element.style.transform = `translateY(${translateY}px)`;
+      }
     };
 
     const handleDragEnd = (e: TouchEvent) => {
       const currentY = e.changedTouches[0].clientY;
       const deltaY = currentY - startY;
       
-      if (deltaY > 100 && dismissible) {
+      if (isDragging && deltaY > 150 && dismissible) {
         onClose();
       } else {
         element.style.transform = startTransform;
@@ -78,7 +85,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       document.removeEventListener('touchend', handleDragEnd);
     };
 
-    document.addEventListener('touchmove', handleDragMove);
+    document.addEventListener('touchmove', handleDragMove, { passive: false });
     document.addEventListener('touchend', handleDragEnd);
   };
 
@@ -112,7 +119,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
         {/* Header */}
         {(title || dismissible) && (
-          <div className="flex items-center justify-between px-4 pb-4 border-b border-border">
+          <div className="flex-shrink-0 flex items-center justify-between px-4 pb-4 border-b border-border">
             <div className="flex-1">
               {title && (
                 <h2 className="text-lg font-semibold text-foreground">
@@ -139,7 +146,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide">
+        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide touch-pan-y">
           {children}
         </div>
       </div>

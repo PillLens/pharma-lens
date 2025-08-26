@@ -244,7 +244,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
       {showScheduleForm && (
         <Card className="p-4 border-primary/30">
           <h3 className="font-semibold mb-4">{t('medications.createSchedule')}</h3>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="dosage">{t('medications.dosage')}</Label>
@@ -416,20 +416,19 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
       isOpen={open}
       onClose={onClose}
       title={t('scanner.medicationFound')}
-      height="xl"
-      className="overflow-y-auto"
+      height="full"
     >
-      <div className="p-4 pb-safe">
+      <div className="px-4 pb-safe space-y-4">
         {renderContent()}
       </div>
     </BottomSheet>
   ) : (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('scanner.medicationFound')}</DialogTitle>
         </DialogHeader>
-        <div className="pr-2">
+        <div className="flex-1 overflow-y-auto pr-2 space-y-4">
           {renderContent()}
         </div>
       </DialogContent>
