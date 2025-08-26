@@ -903,29 +903,6 @@
     "message": "Oops! Page not found",
     "returnHome": "Return to Home"
   },
-  "authPage": {
-    "title": "PillLens",
-    "subtitle": "Your Personal Medication Scanner & Reminder App",
-    "signInSecurely": "Sign In Securely",
-    "createSecureAccount": "Create Secure Account",
-    "signingIn": "Signing In...",
-    "creatingAccount": "Creating Account...",
-    "emailAddress": "Email Address",
-    "createPassword": "Create Password",
-    "emailPlaceholder": "doctor@example.com",
-    "passwordPlaceholder": "Enter secure password",
-    "createPasswordPlaceholder": "Minimum 6 characters",
-    "medicalGradeSecurity": "Medical-Grade Security",
-    "securityNotice": "Your medication data is protected with enterprise-level encryption and never shared with third parties.",
-    "welcomeMessage": "Welcome",
-    "welcomeDescription": "Sign in to access your medication information securely",
-    "accountCreated": "Account created!",
-    "accountCreatedDescription": "Please check your email to verify your account.",
-    "welcomeBack": "Welcome back!",
-    "welcomeBackDescription": "You have been signed in successfully.",
-    "dataEncryptedSecure": "Your medical data is encrypted and secure",
-    "initializing": "Initializing PillLens..."
-  },
   "security": {
     "title": "Security",
     "overview": "Security Overview",
@@ -1192,4 +1169,5 @@
     "viewMedications": "View Medications",
     "editMedications": "Edit Medications"
   }
+}
 }
