@@ -840,41 +840,34 @@ export const ScanHistory = () => {
         <BottomSheet
           isOpen={!!sessionToDelete}
           onClose={handleCancelDelete}
-          title="Delete Scan?"
-          height="md"
+          title="Delete Scan"
+          height="sm"
           dismissible={!deletingSessionId}
         >
-          <div className="px-6 pb-8 pt-2">
-            {/* Warning Icon and Message */}
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Are you sure?
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
+          <div className="p-6">
+            <div className="text-center mb-6">
+              <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-500" />
+              <p className="text-muted-foreground">
                 <TranslatedText translationKey="history.deleteConfirmation" />
               </p>
             </div>
             
-            {/* Action Buttons */}
             <div className="space-y-3">
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={!!deletingSessionId}
-                className="w-full h-12 text-base font-medium"
+                className="w-full"
                 size="lg"
               >
                 {deletingSessionId ? (
                   <>
-                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                     <TranslatedText translationKey="history.deleting" />
                   </>
                 ) : (
                   <>
-                    <Trash2 className="w-5 h-5 mr-2" />
+                    <Trash2 className="w-4 h-4 mr-2" />
                     <TranslatedText translationKey="common.delete" />
                   </>
                 )}
@@ -883,7 +876,7 @@ export const ScanHistory = () => {
                 variant="outline"
                 onClick={handleCancelDelete}
                 disabled={!!deletingSessionId}
-                className="w-full h-12 text-base font-medium"
+                className="w-full"
                 size="lg"
               >
                 <TranslatedText translationKey="common.cancel" />
