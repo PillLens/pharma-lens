@@ -39,6 +39,14 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
   const [error, setError] = useState('');
 
+  // This useEffect must also be called before conditional returns
+  useEffect(() => {
+    if (template && isOpen) {
+      setGroupName(template.name);
+      setSelectedSuggestion(template.name);
+    }
+  }, [template, isOpen]);
+
   // Use mobile version on mobile devices
   if (isMobile) {
     return (
@@ -51,14 +59,6 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
       />
     );
   }
-
-  // ... keep existing code (desktop version)
-  useEffect(() => {
-    if (template && isOpen) {
-      setGroupName(template.name);
-      setSelectedSuggestion(template.name);
-    }
-  }, [template, isOpen]);
 
   const suggestions = [
     { name: 'Family', icon: Heart, color: 'bg-medical-success/20 text-medical-success' },
