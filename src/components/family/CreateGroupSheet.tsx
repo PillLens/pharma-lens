@@ -73,34 +73,32 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
       <SheetContent className="w-full max-w-md p-0">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Header */}
-          <SheetHeader className="relative p-0 bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/5">
-            <div className="relative p-4 pb-6 sm:p-6 sm:pb-8">
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-primary/5 rounded-full blur-3xl -translate-y-4 sm:-translate-y-8 translate-x-4 sm:translate-x-8"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 bg-secondary/10 rounded-full blur-2xl translate-y-2 sm:translate-y-4 -translate-x-2 sm:-translate-x-4"></div>
-              
-              <div className="relative flex items-start gap-3 sm:gap-4">
-                <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/25">
-                  <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          <SheetHeader className="border-b bg-background">
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-primary" />
                 </div>
-                <div className="flex-1 pt-0.5 sm:pt-1 min-w-0">
-                  <SheetTitle className="text-lg sm:text-xl font-semibold text-foreground mb-1.5 sm:mb-2 line-clamp-2">
+                <div>
+                  <SheetTitle className="text-lg font-semibold text-left">
                     {template ? `Create ${template.name} Group` : t('family.actions.createGroup')}
                   </SheetTitle>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                    {template 
-                      ? template.description 
-                      : "Create a group to share medications with trusted people"
-                    }
-                  </p>
-                  {template && (
-                    <div className="mt-2 sm:mt-3 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary flex-shrink-0"></div>
-                      <span className="text-xs font-medium text-primary truncate">Template Selected</span>
-                    </div>
-                  )}
                 </div>
               </div>
+            </div>
+            <div className="px-4 pb-4">
+              <p className="text-sm text-muted-foreground text-left">
+                {template 
+                  ? template.description 
+                  : "Create a group to share medications with trusted people"
+                }
+              </p>
+              {template && (
+                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span className="text-xs font-medium text-primary">Using {template.name} template</span>
+                </div>
+              )}
             </div>
           </SheetHeader>
 
