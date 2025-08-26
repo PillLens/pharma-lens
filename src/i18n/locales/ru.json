@@ -693,6 +693,8 @@
   "toast": {
     "success": {
       "medicationAdded": "Лекарство успешно добавлено",
+      "medicationAndReminderAdded": "Лекарство и напоминание успешно добавлены",
+      "failedToAddMedication": "Не удалось добавить лекарство",
       "medicationUpdated": "Лекарство успешно обновлено",
       "medicationDeleted": "Лекарство успешно удалено",
       "reminderAdded": "Напоминание успешно добавлено",

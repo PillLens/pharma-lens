@@ -694,6 +694,8 @@
   "toast": {
     "success": {
       "medicationAdded": "İlaç başarıyla eklendi",
+      "medicationAndReminderAdded": "İlaç ve hatırlatıcı başarıyla eklendi",
+      "failedToAddMedication": "İlaç eklenemedi",
       "medicationUpdated": "İlaç başarıyla güncellendi",
       "medicationDeleted": "İlaç başarıyla silindi",
       "reminderAdded": "Hatırlatıcı başarıyla eklendi",

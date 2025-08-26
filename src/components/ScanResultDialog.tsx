@@ -80,8 +80,11 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
 
       // Create reminders if enabled and medication was added successfully
       if (formData.createReminder && medicationResult && formData.reminderTimes.length > 0) {
+        console.log('Creating reminders for medication:', medicationResult.id);
+        let successfulReminders = 0;
+        
         for (const time of formData.reminderTimes) {
-          await addReminder({
+          const reminderResult = await addReminder({
             medication_id: medicationResult.id,
             reminder_time: time,
             days_of_week: [1, 2, 3, 4, 5, 6, 7], // All days by default
@@ -91,21 +94,33 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
               led: true
             }
           });
+          
+          if (reminderResult) {
+            successfulReminders++;
+            console.log('Successfully created reminder:', reminderResult.id);
+          } else {
+            console.error('Failed to create reminder for time:', time);
+          }
+        }
+        
+        if (successfulReminders === 0) {
+          console.error('All reminder creations failed');
         }
       }
 
       toast({
         title: t('common.success'),
         description: formData.createReminder 
-          ? t('medications.medicationAndReminderAdded')
-          : t('medications.medicationAdded'),
+          ? t('toast.medicationAndReminderAdded')
+          : t('toast.medicationAdded'),
       });
 
       onClose();
     } catch (error) {
+      console.error('Error adding medication from scan:', error);
       toast({
         title: t('common.error'),
-        description: t('common.tryAgain'),
+        description: t('toast.failedToAddMedication'),
         variant: "destructive",
       });
     }

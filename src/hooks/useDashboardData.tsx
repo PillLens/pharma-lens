@@ -133,9 +133,20 @@ export const useDashboardData = () => {
       // Calculate adherence rate based on scheduled vs taken
       const takenToday = adherenceData?.filter(a => a.status === 'taken').length || 0;
       const missedToday = adherenceData?.filter(a => a.status === 'missed').length || 0;
-      // Use scheduled reminders as the baseline, not adherence log entries
-      const totalToday = todaysDoses;
-      const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
+      
+      // Handle cases where adherence entries exist but no reminders are set up
+      let totalToday = todaysDoses;
+      let adherenceRate = 100;
+      
+      if (totalToday > 0) {
+        // Normal case: use scheduled reminders as baseline
+        adherenceRate = Math.round((takenToday / totalToday) * 100);
+      } else if (takenToday > 0 || missedToday > 0) {
+        // Edge case: adherence entries exist but no reminders set up
+        // This happens when medications are added from scan but reminders weren't created
+        totalToday = takenToday + missedToday;
+        adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
+      }
 
       // Calculate streak from adherence log
       const calculateStreak = async () => {
