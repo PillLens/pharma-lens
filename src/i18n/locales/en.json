@@ -829,8 +829,82 @@
     "termsOfService": "Terms of Service",
     "contact": "Contact Us",
     "contactEmail": "info@pilllens.com",
-    "supportHours": "Support Hours: Mon-Fri 9AM-5PM UTC",
-    "responseTime": "We typically respond within 24 hours"
+    "supportHours": "Monday-Friday, 9:00 AM - 5:00 PM UTC",
+    "responseTime": "We typically respond within 24 hours",
+    "emailSubject": "PillLens Support Request",
+    "emailBody": "Hello PillLens Support Team,\n\nI need assistance with:\n\n[Please describe your issue or question here]\n\nApp Version: 1.0.0\nDevice: [Your device information]\n\nThank you!",
+    "emailSupportTitle": "Email Support",
+    "emailSupportDescription": "Get in touch with our support team for any questions or issues.",
+    "sendEmail": "Send Email",
+    "supportHoursTitle": "Support Hours",
+    "responseTimeTitle": "Response Time",
+    "helpTopicsTitle": "How can we help?",
+    "helpTopic1": "Medication scanning issues",
+    "helpTopic2": "Reminder setup and troubleshooting",
+    "helpTopic3": "Family sharing problems",
+    "helpTopic4": "Account and subscription questions",
+    "helpTopic5": "Privacy and security concerns",
+    "helpTopic6": "Feature requests and feedback",
+    "emergencyNoticeTitle": "Emergency Notice",
+    "emergencyNotice": "PillLens is not for medical emergencies. If you're experiencing a medical emergency, please contact your local emergency services immediately.",
+    "privacy": {
+      "section1": {
+        "title": "1. Information We Collect",
+        "content": "PillLens collects medication information that you scan or manually enter, personal health data for reminder purposes, and account information for authentication. All medication scanning is performed locally on your device to protect your privacy."
+      },
+      "section2": {
+        "title": "2. How We Use Your Information",
+        "content": "Your data is used to provide medication reminders, enable family sharing features, and improve our services. We never sell or share your personal health information with third parties without your explicit consent."
+      },
+      "section3": {
+        "title": "3. Data Security",
+        "content": "We implement industry-standard encryption and security measures to protect your data. All communication between your device and our servers is encrypted using TLS. Your medication images are processed locally and not transmitted to our servers."
+      },
+      "section4": {
+        "title": "4. Medical Compliance",
+        "content": "PillLens follows healthcare privacy standards and is designed with HIPAA compliance principles in mind. We maintain audit logs and implement appropriate safeguards for protected health information."
+      },
+      "section5": {
+        "title": "5. Your Rights",
+        "content": "You have the right to access, update, or delete your personal information at any time. You can export all your data or permanently delete your account through the Settings page."
+      },
+      "section6": {
+        "title": "6. Contact Us",
+        "content": "If you have any questions about this Privacy Policy or how we handle your data, please contact us at privacy@pilllens.com."
+      },
+      "lastUpdated": "Last updated: December 2024. This privacy policy may be updated from time to time. We will notify you of any significant changes."
+    },
+    "terms": {
+      "section1": {
+        "title": "1. Acceptance of Terms",
+        "content": "By using PillLens, you agree to these Terms of Service. If you do not agree to these terms, please do not use our application."
+      },
+      "section2": {
+        "title": "2. Medical Disclaimer",
+        "content": "PillLens is a medication information and reminder tool. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals regarding your medical conditions and treatments."
+      },
+      "section3": {
+        "title": "3. Accuracy of Information",
+        "content": "While we strive to provide accurate medication information extracted from official sources, we cannot guarantee the completeness or accuracy of all information. Users are responsible for verifying medication details with healthcare providers."
+      },
+      "section4": {
+        "title": "4. User Responsibilities",
+        "content": "You are responsible for maintaining the confidentiality of your account, providing accurate information, and using the service in compliance with applicable laws and regulations."
+      },
+      "section5": {
+        "title": "5. Limitation of Liability",
+        "content": "PillLens and its developers shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the application or reliance on the information provided."
+      },
+      "section6": {
+        "title": "6. Service Availability",
+        "content": "We strive to maintain service availability but do not guarantee uninterrupted access. We reserve the right to modify or discontinue services with appropriate notice."
+      },
+      "section7": {
+        "title": "7. Termination",
+        "content": "Either party may terminate the service agreement at any time. Upon termination, your right to use the service will cease immediately."
+      },
+      "lastUpdated": "Last updated: December 2024. These terms may be updated from time to time. Continued use of the service constitutes acceptance of any changes."
+    }
   },
   "toast": {
     "welcomeBack": "Welcome back!",

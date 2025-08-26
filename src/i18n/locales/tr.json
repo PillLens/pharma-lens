@@ -770,13 +770,48 @@
     }
   },
   "legal": {
-    "title": "Hukuki ve Destek",
+    "title": "Yasal ve Destek",
     "privacyPolicy": "Gizlilik Politikası",
     "termsOfService": "Hizmet Şartları",
-    "contact": "İletişim",
+    "contact": "Bize Ulaşın",
     "contactEmail": "info@pilllens.com",
-    "supportHours": "Destek Saatleri: Pzt-Cum 09:00-17:00 UTC",
-    "responseTime": "Genellikle 24 saat içinde yanıt veriyoruz"
+    "supportHours": "Pazartesi-Cuma, 09:00 - 17:00 UTC",
+    "responseTime": "Genellikle 24 saat içinde yanıt veriyoruz",
+    "emailSubject": "PillLens Destek Talebi",
+    "emailBody": "Merhaba PillLens Destek Ekibi,\n\nAşağıdaki konularda yardıma ihtiyacım var:\n\n[Lütfen sorununuzu veya sorunuzu burada açıklayın]\n\nUygulama Sürümü: 1.0.0\nCihaz: [Cihaz bilgileriniz]\n\nTeşekkürler!",
+    "emailSupportTitle": "E-posta Desteği",
+    "emailSupportDescription": "Herhangi bir soru veya sorun için destek ekibimizle iletişime geçin.",
+    "sendEmail": "E-posta Gönder",
+    "supportHoursTitle": "Destek Saatleri",
+    "responseTimeTitle": "Yanıt Süresi",
+    "helpTopicsTitle": "Nasıl yardımcı olabiliriz?",
+    "helpTopic1": "İlaç tarama sorunları",
+    "helpTopic2": "Hatırlatıcı kurulumu ve sorun giderme",
+    "helpTopic3": "Aile paylaşım sorunları",
+    "helpTopic4": "Hesap ve abonelik soruları",
+    "helpTopic5": "Gizlilik ve güvenlik endişeleri",
+    "helpTopic6": "Özellik istekleri ve geri bildirim",
+    "emergencyNoticeTitle": "Acil Durum Bildirimi",
+    "emergencyNotice": "PillLens tıbbi acil durumlar için değildir. Tıbbi bir acil durum yaşıyorsanız, lütfen derhal yerel acil servislerinizle iletişime geçin.",
+    "privacy": {
+      "section1": {"title": "1. Topladığımız Bilgiler", "content": "PillLens, taradığınız veya manuel olarak girdiğiniz ilaç bilgilerini, hatırlatma amaçları için kişisel sağlık verilerini ve kimlik doğrulama için hesap bilgilerini toplar."},
+      "section2": {"title": "2. Bilgilerinizi Nasıl Kullanıyoruz", "content": "Verileriniz ilaç hatırlatıcıları sağlamak, aile paylaşım özelliklerini etkinleştirmek ve hizmetlerimizi geliştirmek için kullanılır."},
+      "section3": {"title": "3. Veri Güvenliği", "content": "Verilerinizi korumak için endüstri standardı şifreleme ve güvenlik önlemlerini uyguluyoruz."},
+      "section4": {"title": "4. Tıbbi Uyumluluk", "content": "PillLens sağlık gizliliği standartlarını takip eder ve HIPAA uyumluluk ilkeleri göz önünde bulundurularak tasarlanmıştır."},
+      "section5": {"title": "5. Haklarınız", "content": "Kişisel bilgilerinize istediğiniz zaman erişme, güncelleme veya silme hakkınız vardır."},
+      "section6": {"title": "6. Bize Ulaşın", "content": "Bu Gizlilik Politikası hakkında sorularınız varsa, privacy@pilllens.com adresinden bize ulaşın."},
+      "lastUpdated": "Son güncelleme: Aralık 2024"
+    },
+    "terms": {
+      "section1": {"title": "1. Şartların Kabulü", "content": "PillLens'i kullanarak bu Hizmet Şartlarını kabul etmiş olursunuz."},
+      "section2": {"title": "2. Tıbbi Sorumluluk Reddi", "content": "PillLens bir ilaç bilgisi ve hatırlatıcı aracıdır. Profesyonel tıbbi tavsiyenin yerine geçmez."},
+      "section3": {"title": "3. Bilgi Doğruluğu", "content": "Doğru ilaç bilgileri sağlamaya çalışsak da, tüm bilgilerin doğruluğunu garanti edemeyiz."},
+      "section4": {"title": "4. Kullanıcı Sorumlulukları", "content": "Hesabınızın gizliliğini korumakla sorumlusunuz."},
+      "section5": {"title": "5. Sorumluluk Sınırlaması", "content": "PillLens zararlardan sorumlu değildir."},
+      "section6": {"title": "6. Hizmet Kullanılabilirliği", "content": "Hizmet kullanılabilirliğini sürdürmeye çalışırız."},
+      "section7": {"title": "7. Fesih", "content": "Taraflardan herhangi biri sözleşmeyi feshedebilir."},
+      "lastUpdated": "Son güncelleme: Aralık 2024"
+    }
   },
   "toast": {
     "welcomeBack": "Tekrar hoş geldin!",

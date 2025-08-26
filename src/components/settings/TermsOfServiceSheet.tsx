@@ -28,57 +28,57 @@ export const TermsOfServiceSheet: React.FC<TermsOfServiceSheetProps> = ({
         <ScrollArea className="h-full mt-6">
           <div className="space-y-6 pb-6">
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">1. Acceptance of Terms</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section1.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                By using PillLens, you agree to these Terms of Service. If you do not agree to these terms, please do not use our application.
+                {t('legal.terms.section1.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">2. Medical Disclaimer</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section2.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                PillLens is a medication information and reminder tool. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals regarding your medical conditions and treatments.
+                {t('legal.terms.section2.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">3. Accuracy of Information</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section3.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                While we strive to provide accurate medication information extracted from official sources, we cannot guarantee the completeness or accuracy of all information. Users are responsible for verifying medication details with healthcare providers.
+                {t('legal.terms.section3.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">4. User Responsibilities</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section4.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                You are responsible for maintaining the confidentiality of your account, providing accurate information, and using the service in compliance with applicable laws and regulations.
+                {t('legal.terms.section4.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">5. Limitation of Liability</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section5.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                PillLens and its developers shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the application or reliance on the information provided.
+                {t('legal.terms.section5.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">6. Service Availability</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section6.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We strive to maintain service availability but do not guarantee uninterrupted access. We reserve the right to modify or discontinue services with appropriate notice.
+                {t('legal.terms.section6.content')}
               </p>
             </section>
 
             <section>
-              <h3 className="text-lg font-semibold text-foreground mb-3">7. Termination</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">{t('legal.terms.section7.title')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Either party may terminate the service agreement at any time. Upon termination, your right to use the service will cease immediately.
+                {t('legal.terms.section7.content')}
               </p>
             </section>
 
             <div className="mt-8 p-4 bg-muted/50 rounded-lg">
               <p className="text-xs text-muted-foreground">
-                Last updated: December 2024. These terms may be updated from time to time. Continued use of the service constitutes acceptance of any changes.
+                {t('legal.terms.lastUpdated')}
               </p>
             </div>
           </div>
