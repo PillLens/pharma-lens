@@ -135,6 +135,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
   const validateSafetyThresholds = (confidence: number, extractedData: any) => {
     const warnings: string[] = [];
 
+    // Image quality warnings (informational only)
     if (confidence < 0.7) {
       warnings.push(t('scanner.lowQuality'));
     }
@@ -143,12 +144,11 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       warnings.push(t('scanner.criticalWarning'));
     }
 
-    if (!extractedData?.brand_name) {
-      warnings.push(t('scanner.manualVerification'));
-    }
-
     setSafetyWarnings(warnings);
-    return warnings.length === 0;
+
+    // Only block results if extraction completely failed or confidence is extremely low
+    const hasValidExtraction = extractedData?.brand_name && (extractedData.confidence_score || 0) > 0.5;
+    return hasValidExtraction;
   };
 
   const extractMedicationInfo = async (text: string, barcode?: string, sessionId?: string) => {
@@ -240,18 +240,19 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue, currentSessionId);
         setExtractedData(medicationData);
 
-        // Validate safety thresholds
-        const isSafe = validateSafetyThresholds(ocrResult.confidence, medicationData);
+        // Validate extraction success
+        const hasValidExtraction = validateSafetyThresholds(ocrResult.confidence, medicationData);
         
-        if (!isSafe) {
-          // Clear extracted data if unsafe to prevent showing results with warnings
+        if (!hasValidExtraction) {
+          // Only clear if extraction completely failed
           setExtractedData(null);
           toast({
-            title: t('safety.warnings'),
+            title: t('errors.extractionFailed'),
             description: t('common.tryAgain'),
             variant: "destructive",
           });
         } else {
+          // Show success even with image quality warnings
           toast({
             title: t('common.success'),
             description: t('scanner.medicationFound'),
@@ -392,7 +393,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                   {t('scanner.scanAgain')}
                 </Button>
                 
-                {!isProcessing && scanComplete && safetyWarnings.length === 0 && (
+                {!isProcessing && scanComplete && extractedData && (
                   <Button 
                     onClick={handleContinue}
                     className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
@@ -429,15 +430,35 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </Card>
             )}
 
-            {/* Safety Warnings */}
-            {safetyWarnings.length > 0 && !isProcessing && (
+            {/* Image Quality Warnings (Informational) */}
+            {safetyWarnings.length > 0 && !isProcessing && extractedData && (
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <div className="space-y-1">
+                    <p className="font-medium">Image Quality Notice:</p>
+                    {safetyWarnings.map((warning, index) => (
+                      <p key={index} className="text-sm">{warning}</p>
+                    ))}
+                    <p className="text-sm mt-2 text-muted-foreground">
+                      Medication extracted successfully. You can continue or retake for better quality.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Critical Extraction Failures */}
+            {safetyWarnings.length > 0 && !isProcessing && !extractedData && (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
                   <div className="space-y-1">
+                    <p className="font-medium">Extraction Failed:</p>
                     {safetyWarnings.map((warning, index) => (
                       <p key={index}>{warning}</p>
                     ))}
+                    <p className="text-sm mt-2">Please retake the photo with better lighting and focus.</p>
                   </div>
                 </AlertDescription>
               </Alert>
@@ -468,8 +489,8 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </Card>
             )}
 
-            {/* Extracted Medication Information - Only show if no safety warnings */}
-            {extractedData && !isProcessing && safetyWarnings.length === 0 && (
+            {/* Extracted Medication Information */}
+            {extractedData && !isProcessing && (
               <Card className="p-6 border-success">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle className="w-5 h-5 text-success" />
