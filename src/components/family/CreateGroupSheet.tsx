@@ -33,6 +33,11 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
 }) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  
+  // All hooks must be called before any conditional returns
+  const [groupName, setGroupName] = useState('');
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   // Use mobile version on mobile devices
   if (isMobile) {
@@ -46,10 +51,6 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
       />
     );
   }
-
-  const [groupName, setGroupName] = useState('');
-  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
-  const [error, setError] = useState('');
 
   // ... keep existing code (desktop version)
   useEffect(() => {
