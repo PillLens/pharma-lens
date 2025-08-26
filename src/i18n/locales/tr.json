@@ -769,6 +769,15 @@
       "weakPassword": "Şifre çok zayıf"
     }
   },
+  "legal": {
+    "title": "Hukuki ve Destek",
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsOfService": "Hizmet Şartları",
+    "contact": "İletişim",
+    "contactEmail": "info@pilllens.com",
+    "supportHours": "Destek Saatleri: Pzt-Cum 09:00-17:00 UTC",
+    "responseTime": "Genellikle 24 saat içinde yanıt veriyoruz"
+  },
   "toast": {
     "welcomeBack": "Tekrar hoş geldin!",
     "signedIn": "Başarıyla giriş yaptınız",

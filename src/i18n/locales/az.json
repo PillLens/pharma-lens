@@ -348,6 +348,15 @@
     "manualVerification": "Dərmanın brend adını müəyyən etmək mümkün olmadı. Əl ilə yoxlama tələb olunur.",
     "extractedMedicationInfo": "Çıxarılmış Dərman Məlumatları"
   },
+  "legal": {
+    "title": "Hüquqi və Dəstək",
+    "privacyPolicy": "Məxfilik Siyasəti",
+    "termsOfService": "İstifadə Şərtləri",
+    "contact": "Bizimlə Əlaqə",
+    "contactEmail": "info@pilllens.com",
+    "supportHours": "Dəstək saatları: B.e-Cü 9:00-17:00 UTC",
+    "responseTime": "Biz adətən 24 saat ərzində cavab veririk"
+  },
   "toast": {
     "welcomeBack": "Yenidən xoş gəlmisiniz!",
     "signedIn": "Uğurla daxil oldunuz",

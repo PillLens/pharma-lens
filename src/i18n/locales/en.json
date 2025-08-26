@@ -823,6 +823,15 @@
     "userDataExported": "User data exported successfully",
     "failedToExportData": "Failed to export user data"
   },
+  "legal": {
+    "title": "Legal & Support",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "contact": "Contact Us",
+    "contactEmail": "info@pilllens.com",
+    "supportHours": "Support Hours: Mon-Fri 9AM-5PM UTC",
+    "responseTime": "We typically respond within 24 hours"
+  },
   "toast": {
     "welcomeBack": "Welcome back!",
     "signedIn": "You have been signed in successfully",

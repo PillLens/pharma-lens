@@ -32,6 +32,9 @@ import { SettingsSecurity } from '@/components/settings/SettingsSecurity';
 import { SettingsAccount } from '@/components/settings/SettingsAccount';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSectionHeader } from '@/components/settings/SettingsSectionHeader';
+import { PrivacyPolicySheet } from '@/components/settings/PrivacyPolicySheet';
+import { TermsOfServiceSheet } from '@/components/settings/TermsOfServiceSheet';
+import { ContactSheet } from '@/components/settings/ContactSheet';
 import { LocationTimezoneSettings } from '@/components/settings/LocationTimezoneSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -96,6 +99,9 @@ const Settings: React.FC = () => {
   const [showLanguageSelect, setShowLanguageSelect] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showLocationSettings, setShowLocationSettings] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showTermsOfService, setShowTermsOfService] = useState(false);
+  const [showContact, setShowContact] = useState(false);
 
   const languages = [
     { code: 'EN', name: 'English', flag: '🇺🇸' },
@@ -503,6 +509,29 @@ const Settings: React.FC = () => {
           </div>
         </div>
 
+        {/* Legal & Support Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('legal.title')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<Shield className="w-5 h-5 text-primary" />}
+              title={t('legal.privacyPolicy')}
+              onClick={() => setShowPrivacyPolicy(true)}
+            />
+            <SettingsRow
+              icon={<HelpCircle className="w-5 h-5 text-primary" />}
+              title={t('legal.termsOfService')}
+              onClick={() => setShowTermsOfService(true)}
+            />
+            <SettingsRow
+              icon={<Info className="w-5 h-5 text-primary" />}
+              title={t('legal.contact')}
+              subtitle={t('legal.contactEmail')}
+              onClick={() => setShowContact(true)}
+            />
+          </div>
+        </div>
+
         {/* Account Actions Section */}
         <div className="mt-6 mb-6">
           <div className="bg-background">
@@ -662,6 +691,22 @@ const Settings: React.FC = () => {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Legal & Support Sheets */}
+      <PrivacyPolicySheet
+        isOpen={showPrivacyPolicy}
+        onClose={() => setShowPrivacyPolicy(false)}
+      />
+      
+      <TermsOfServiceSheet
+        isOpen={showTermsOfService}
+        onClose={() => setShowTermsOfService(false)}
+      />
+      
+      <ContactSheet
+        isOpen={showContact}
+        onClose={() => setShowContact(false)}
+      />
 
       <PaywallSheet 
         isOpen={showPaywall}
