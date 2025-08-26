@@ -187,6 +187,7 @@
   "medications": {
     "title": "Dərman",
     "subtitle": "Nə götürdüyünüzü və nə vaxt götürdüyünüzü izləyin",
+    "management": "Dərman idarəsi",
     "add": "Dərman Əlavə Et",
     "addFirst": "İlk Dərmanınızı Əlavə Edin",
     "medication": "dərman",

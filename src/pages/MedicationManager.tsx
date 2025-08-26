@@ -330,62 +330,8 @@ const MedicationManager: React.FC = () => {
   };
 
   return (
-    <ProfessionalMobileLayout>
+    <ProfessionalMobileLayout title={t('medications.management')} showHeader={true}>
       <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
-        {/* Enhanced Header with Quick Stats */}
-        <div className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-40">
-          <div className="max-w-6xl mx-auto px-6 py-4">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
-                  <Pill className="w-7 h-7 text-primary-foreground" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Medication Hub</h1>
-                  <p className="text-sm text-muted-foreground">
-                    {medications.length === 0 ? 'Start your therapy journey' : `${activeMedications.length} active • ${medicationsNeedingAttention.length} need attention`}
-                  </p>
-                </div>
-              </div>
-
-            {/* Quick Action Bar */}
-            {!loading && medications.length > 0 && (
-              <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
-                {medicationsNeedingAttention.length > 0 && (
-                  <MobileButton
-                    size="sm"
-                    onClick={handleQuickActions.markAllTaken}
-                    className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-success to-success/80 text-success-foreground border-0 hover:from-success/90 hover:to-success/70 shadow-md hover:shadow-lg transition-all duration-200"
-                    haptic
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Mark All Taken
-                  </MobileButton>
-                )}
-                
-                <MobileButton
-                  size="sm"
-                  onClick={handleQuickActions.viewInteractions}
-                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-warning/20 to-warning/10 text-warning border border-warning/20 hover:from-warning/30 hover:to-warning/20 shadow-sm hover:shadow-md transition-all duration-200"
-                  haptic
-                >
-                  <AlertTriangle className="w-4 h-4 mr-2" />
-                  Safety Check
-                </MobileButton>
-
-                <MobileButton
-                  size="sm"
-                  onClick={() => handleQuickActions.snoozeReminders(30)}
-                  className="rounded-2xl whitespace-nowrap bg-gradient-to-r from-blue-500/20 to-blue-400/10 text-blue-600 border border-blue-400/20 hover:from-blue-500/30 hover:to-blue-400/20 shadow-sm hover:shadow-md transition-all duration-200"
-                  haptic
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Snooze
-                </MobileButton>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Main Content with Tabs */}
         <div className="max-w-6xl mx-auto px-6 py-6">
           {!loading && medications.length > 0 ? (

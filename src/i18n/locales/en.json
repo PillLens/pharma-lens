@@ -464,6 +464,7 @@
   "medications": {
     "title": "Medications",
     "subtitle": "Track what you take and when",
+    "management": "Medication Management",
     "add": "Add Medication",
     "addFirst": "Add Your First Medication",
     "medication": "medication",

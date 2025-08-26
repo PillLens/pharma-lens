@@ -724,7 +724,7 @@ export const ScanHistory = () => {
   );
 
   return (
-    <ProfessionalMobileLayout title="Scan History" showHeader={false}>
+    <ProfessionalMobileLayout title={t('history.title')} showHeader={true}>
       {content}
       
       {/* Session Details Bottom Sheet */}

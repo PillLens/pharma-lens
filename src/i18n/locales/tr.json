@@ -428,9 +428,10 @@
     "extractedMedicationInfo": "Çıkarılan İlaç Bilgileri"
   },
   "medications": {
-     "title": "İlaçlar",
-     "subtitle": "Ne aldığınızı ve ne zaman aldığınızı takip edin",
-     "add": "İlaç Ekle",
+    "title": "İlaçlar",
+    "subtitle": "Ne aldığınızı ve ne zaman aldığınızı takip edin",
+    "management": "İlaç Yönetimi",
+    "add": "İlaç Ekle",
      "addFirst": "İlk İlacınızı Ekleyin",
      "medication": "ilaç",
      "medications": "ilaçlar",
