@@ -208,9 +208,6 @@
       "analytics": "Analitik"
     },
     "actions": {
-      "create": "Oluştur",
-      "createGroup": "Grup Oluştur",
-      "creating": "Oluşturuluyor...",
       "addGroup": "Grup Ekle",
       "addGroupPro": "Grup Ekle (Pro)",
       "groupVideoCall": "Grup Video Görüşmesi",
@@ -328,18 +325,6 @@
       "vsLastWeek": "geçen haftaya göre"
     },
     "group": {
-      "title": "Grup",
-      "createDescription": "İlaçları paylaşmak ve bakımı koordine etmek için yeni bir aile grubu oluşturun",
-      "nameYourGroup": "Grubunuzu Adlandırın",
-      "nameDescription": "Bakım grubunuzu tanımlayan akılda kalıcı bir isim seçin",
-      "namePlaceholder": "Grup adını girin",
-      "popularNames": "Popüler Grup Adları",
-      "popularNamesDescription": "Başlamanız için hızlı öneriler",
-      "privacy": "Gizlilik ve Güvenlik",
-      "privacyDescription": "Sadece davet edilen üyeler paylaşılan ilaçları görebilir. Kimin erişimi olduğunu ve ne yapabileceğini siz kontrol edersiniz.",
-      "encrypted": "Uçtan Uca Şifreli",
-      "hipaaCompliant": "HIPAA Uyumlu",
-      "controlledAccess": "Kontrollü Erişim",
       "name": "Grup Adı",
       "description": "Açıklama",
       "members": "Üyeler",
@@ -365,49 +350,7 @@
       "patient": "Hasta",
       "caregiver": "Bakım Verici",
       "family": "Aile Üyesi",
-      "emergency": "Acil Durum İletişim",
-      "patientDescription": "Birincil bakım alıcısı",
-      "caregiverDescription": "Profesyonel bakım sağlayıcısı",
-      "familyDescription": "Güvenilir aile üyesi",
-      "emergencyDescription": "Acil durum iletişim kişisi"
-    },
-    "tabs": {
-      "overview": "Genel Bakış",
-      "groups": "Gruplar",
-      "timeline": "Zaman Çizelgesi",
-      "analytics": "Analizler"
-    },
-    "dashboard": {
-      "familyMembers": "Aile Üyeleri",
-      "ofTotal": "toplam {{total}}'den",
-      "adherenceRate": "Uyum Oranı",
-      "thisWeek": "bu hafta",
-      "pendingTasks": "Bekleyen Görevler",
-      "needAttention": "dikkat gerekiyor",
-      "careScore": "Bakım Puanı",
-      "careScoreExcellent": "Mükemmel",
-      "careScoreGood": "İyi",
-      "careScoreFair": "Orta",
-      "careScoreNeedsAttention": "Dikkat Gerekli",
-      "emergencyContact": "Acil Durum İletişim",
-      "emergencyDescription": "Acil durum kişilerine hızlı erişim",
-      "shareMedications": "İlaç Paylaş",
-      "shareDescription": "İlaç bilgilerini aile ile paylaş",
-      "dailyCheckup": "Günlük Kontrol",
-      "checkupDescription": "Günlük sağlık kontrolünü tamamla",
-      "weeklyTrend": "Haftalık Uyum Trendi",
-      "vsLastWeek": "geçen haftaya göre",
-      "medicationStatus": "İlaç Durumu",
-      "onTime": "Zamanında",
-      "delayed": "Gecikmiş",
-      "missed": "Kaçırılmış",
-      "recentActivity": "Son Aktiviteler",
-      "noRecentActivity": "Son aktivite yok",
-      "completed": "Tamamlandı",
-      "activeStatus": "Aktif"
-    },
-    "status": {
-      "pending": "Beklemede"
+      "emergency": "Acil Durum İletişim"
     },
     "permissions": {
       "view": "İlaçları Görüntüle",
@@ -587,80 +530,6 @@
   "feedback": {
     "submit": "Geri bildirim gönder",
     "submitting": "Gönderiliyor..."
-  },
-  "family": {
-    "title": "Aile",
-    "actions": {
-      "create": "Oluştur",
-      "createGroup": "Grup Oluştur",
-      "sendInvite": "Davet Gönder",
-      "cancel": "İptal",
-      "creating": "Grup Oluşturuluyor...",
-      "inviting": "Davet Gönderiliyor..."
-    },
-    "group": {
-      "title": "Grup",
-      "name": "Grup Adı",
-      "nameYourGroup": "Grubunuzu Adlandırın",
-      "nameDescription": "Bakım grubunuzu tanımlayan unutulmaz bir ad seçin",
-      "namePlaceholder": "Grup adı girin",
-      "createDescription": "Güvenilir kişilerle ilaçları paylaşmak için güvenli bir grup oluşturun",
-      "popularNames": "Popüler Grup Adları",
-      "popularNamesDescription": "Başlamanız için hızlı öneriler",
-      "privacy": "Gizlilik ve Güvenlik",
-      "privacyDescription": "Sadece davet edilen üyeler paylaşılan ilaçları görebilir. Kimin erişimi olduğunu ve ne yapabileceğini siz kontrol edersiniz.",
-      "encrypted": "Uçtan uca şifreli",
-      "hipaaCompliant": "HIPAA uyumlu",
-      "controlledAccess": "Kontrollü erişim"
-    },
-    "member": {
-      "invite": "Üye Davet Et",
-      "name": "Ad Soyad",
-      "email": "E-posta Adresi",
-      "phone": "Telefon Numarası",
-      "role": "Rol",
-      "permissions": "İzinler",
-      "basicInfo": "Temel Bilgiler",
-      "selectRole": "Rol Seç"
-    },
-    "roles": {
-      "patient": "Hasta",
-      "patientDescription": "Birincil bakım alıcısı",
-      "caregiver": "Bakıcı",
-      "caregiverDescription": "Bakımı yönetmek için tam erişim",
-      "family": "Aile Üyesi",
-      "familyDescription": "Görüntüleme erişimi olan aile üyesi",
-      "emergency": "Acil Durum İletişimi",
-      "emergencyDescription": "Sadece acil durum iletişimi"
-    },
-    "permissions": {
-      "view": "Görüntüle",
-      "edit": "Düzenle",
-      "notifications": "Bildirimler",
-      "emergencyAccess": "Acil Durum Erişimi",
-      "viewDescription": "İlaç bilgilerini görüntüle",
-      "editDescription": "İlaçları düzenle ve yönet",
-      "notificationsDescription": "İlaç hatırlatıcıları al",
-      "emergencyAccessDescription": "Acil durumlarda erişim",
-      "alerts": "Uyarılar"
-    },
-    "validation": {
-      "groupNameRequired": "Grup adı gereklidir",
-      "memberNameRequired": "Üye adı gereklidir",
-      "emailRequired": "E-posta adresi gereklidir",
-      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin",
-      "roleRequired": "Lütfen bir rol seçin"
-    },
-    "template": {
-      "membersIncluded": "Dahil Edilen Üyeler",
-      "membersDescription": "Bu şablon aşağıdaki üye rollerini içerir"
-    },
-    "suggestions": {
-      "familyDescription": "Yakın aile üyeleriniz",
-      "caregiversDescription": "Profesyonel bakım sağlayıcıları",
-      "friendsDescription": "Yardım eden güvenilir arkadaşlar",
-      "supportDescription": "Destek ağınız"
-    }
   },
   "permissions": {
     "viewMedications": "İlaçları Görüntüle",

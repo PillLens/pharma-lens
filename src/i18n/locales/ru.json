@@ -208,9 +208,6 @@
       "analytics": "Аналитика"
     },
     "actions": {
-      "create": "Создать",
-      "createGroup": "Создать группу", 
-      "creating": "Создание...",
       "addGroup": "Добавить группу",
       "addGroupPro": "Добавить группу (Pro)",
       "groupVideoCall": "Групповой видеозвонок",
@@ -328,18 +325,6 @@
       "vsLastWeek": "по сравнению с прошлой неделей"
     },
     "group": {
-      "title": "Группа",
-      "createDescription": "Создайте новую семейную группу для обмена лекарствами и координации ухода",
-      "nameYourGroup": "Назовите Вашу Группу",
-      "nameDescription": "Выберите запоминающееся имя, которое описывает вашу группу ухода",
-      "namePlaceholder": "Введите название группы",
-      "popularNames": "Популярные Названия Групп",
-      "popularNamesDescription": "Быстрые предложения для начала",
-      "privacy": "Конфиденциальность и Безопасность",
-      "privacyDescription": "Только приглашенные участники могут видеть общие лекарства. Вы контролируете, кто имеет доступ и что может делать.",
-      "encrypted": "Сквозное Шифрование",
-      "hipaaCompliant": "Соответствует HIPAA",
-      "controlledAccess": "Контролируемый Доступ",
       "name": "Название Группы",
       "description": "Описание",
       "members": "Участники",
@@ -926,125 +911,13 @@
      "success": "Успех",
      "warning": "Предупреждение",
    "info": "Информация"
-  },
-  "family": {
-    "title": "Семья",
-    "actions": {
-      "create": "Создать",
-      "createGroup": "Создать группу",
-      "sendInvite": "Отправить приглашение",
-      "cancel": "Отмена",
-      "creating": "Создание группы...",
-      "inviting": "Отправка приглашения..."
-    },
-    "group": {
-      "title": "Группа",
-      "name": "Название группы",
-      "nameYourGroup": "Назовите вашу группу",
-      "nameDescription": "Выберите запоминающееся название, описывающее вашу группу ухода",
-      "namePlaceholder": "Введите название группы",
-      "createDescription": "Создайте безопасную группу для обмена лекарствами с доверенными людьми",
-      "popularNames": "Популярные названия групп",
-      "popularNamesDescription": "Быстрые предложения для начала",
-      "privacy": "Конфиденциальность и безопасность",
-      "privacyDescription": "Только приглашенные участники могут видеть общие лекарства. Вы контролируете, у кого есть доступ и что они могут делать.",
-      "encrypted": "Сквозное шифрование",
-      "hipaaCompliant": "Соответствует HIPAA",
-      "controlledAccess": "Контролируемый доступ"
-    },
-    "member": {
-      "invite": "Пригласить участника",
-      "name": "Полное имя",
-      "email": "Адрес электронной почты",
-      "phone": "Номер телефона",
-      "role": "Роль",
-      "permissions": "Разрешения",
-      "basicInfo": "Основная информация",
-      "selectRole": "Выберите роль"
-    },
-    "roles": {
-      "patient": "Пациент",
-      "patientDescription": "Основной получатель ухода",
-      "caregiver": "Попечитель",
-      "caregiverDescription": "Полный доступ для управления уходом",
-      "family": "Член семьи",
-      "familyDescription": "Член семьи с доступом для просмотра",
-      "emergency": "Экстренный контакт",
-      "emergencyDescription": "Только экстренный контакт"
-    },
-    "tabs": {
-      "overview": "Обзор",
-      "groups": "Группы",
-      "timeline": "Временная шкала",
-      "analytics": "Аналитика"
-    },
-    "dashboard": {
-      "familyMembers": "Члены семьи",
-      "ofTotal": "из {{total}} всего",
-      "adherenceRate": "Коэффициент соблюдения",
-      "thisWeek": "на этой неделе",
-      "pendingTasks": "Ожидающие задачи",
-      "needAttention": "требуют внимания",
-      "careScore": "Оценка ухода",
-      "careScoreExcellent": "Отлично",
-      "careScoreGood": "Хорошо",
-      "careScoreFair": "Удовлетворительно",
-      "careScoreNeedsAttention": "Требует внимания",
-      "emergencyContact": "Экстренный контакт",
-      "emergencyDescription": "Быстрый доступ к экстренным контактам",
-      "shareMedications": "Поделиться лекарствами",
-      "shareDescription": "Поделиться информацией о лекарствах с семьей",
-      "dailyCheckup": "Ежедневная проверка",
-      "checkupDescription": "Завершить ежедневную проверку здоровья",
-      "weeklyTrend": "Еженедельная тенденция соблюдения",
-      "vsLastWeek": "по сравнению с прошлой неделей",
-      "medicationStatus": "Статус лекарств",
-      "onTime": "Вовремя",
-      "delayed": "Задержано",
-      "missed": "Пропущено",
-      "recentActivity": "Недавняя активность",
-      "noRecentActivity": "Нет недавней активности",
-      "completed": "Завершено",
-      "activeStatus": "Активно"
-    },
-    "status": {
-      "pending": "Ожидает"
-    },
-    "permissions": {
-      "view": "Просмотр",
-      "edit": "Редактирование",
-      "notifications": "Уведомления",
-      "emergencyAccess": "Экстренный доступ",
-      "viewDescription": "Просмотр информации о лекарствах",
-      "editDescription": "Редактирование и управление лекарствами",
-      "notificationsDescription": "Получение напоминаний о лекарствах",
-      "emergencyAccessDescription": "Доступ в экстренных ситуациях",
-      "alerts": "Оповещения"
-    },
-    "validation": {
-      "groupNameRequired": "Название группы обязательно",
-      "memberNameRequired": "Имя участника обязательно",
-      "emailRequired": "Адрес электронной почты обязателен",
-      "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты",
-      "roleRequired": "Пожалуйста, выберите роль"
-    },
-    "template": {
-      "membersIncluded": "Включенные участники",
-      "membersDescription": "Этот шаблон включает следующие роли участников"
-    },
-    "suggestions": {
-      "familyDescription": "Ваши близкие члены семьи",
-      "caregiversDescription": "Профессиональные поставщики ухода",
-      "friendsDescription": "Доверенные друзья, которые помогают",
-      "supportDescription": "Ваша сеть поддержки"
-    }
-  },
-  "feedback": {
-    "submit": "Отправить отзыв",
-    "submitting": "Отправка..."
-  },
-  "permissions": {
-    "viewMedications": "Просмотр лекарств",
-    "editMedications": "Редактирование лекарств"
-  }
-}
+   },
+   "feedback": {
+     "submit": "Отправить отзыв",
+     "submitting": "Отправка..."
+   },
+   "permissions": {
+     "viewMedications": "Просмотр лекарств",
+     "editMedications": "Редактирование лекарств"
+   }
+ }

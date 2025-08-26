@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private handleReportIssue = () => {
     // In a real app, this could open a support ticket or feedback form
-    const mailtoLink = `mailto:info@pilllens.com?subject=Error Report ${this.state.errorId}&body=Error Message: ${this.state.errorMessage}%0D%0ATime: ${new Date().toISOString()}`;
+    const mailtoLink = `mailto:support@carecapsule.app?subject=Error Report ${this.state.errorId}&body=Error Message: ${this.state.errorMessage}%0D%0ATime: ${new Date().toISOString()}`;
     window.open(mailtoLink, '_blank');
   };
 

@@ -234,9 +234,6 @@
       "analytics": "Analytics"
     },
     "actions": {
-      "create": "Create",
-      "createGroup": "Create Group",
-      "creating": "Creating...",
       "addGroup": "Add Group",
       "addGroupPro": "Add Group (Pro)",
       "groupVideoCall": "Group Video Call",
@@ -354,18 +351,6 @@
       "vsLastWeek": "vs last week"
     },
     "group": {
-      "title": "Group",
-      "createDescription": "Create a new family group to share medications and coordinate care",
-      "nameYourGroup": "Name Your Group",
-      "nameDescription": "Choose a memorable name that describes your care group",
-      "namePlaceholder": "Enter group name",
-      "popularNames": "Popular Group Names",
-      "popularNamesDescription": "Quick suggestions to get you started",
-      "privacy": "Privacy & Security",
-      "privacyDescription": "Only invited members can see shared medications. You control who has access and what they can do.",
-      "encrypted": "End-to-End Encrypted",
-      "hipaaCompliant": "HIPAA Compliant",
-      "controlledAccess": "Controlled Access",
       "name": "Group Name",
       "description": "Description",
       "members": "Members",
@@ -394,60 +379,8 @@
     "roles": {
       "patient": "Patient",
       "caregiver": "Caregiver",
-      "family": "Family Member",
-      "emergency": "Emergency Contact",
-      "patientDescription": "Primary care recipient",
-      "caregiverDescription": "Professional care provider",
-      "familyDescription": "Trusted family member",
-      "emergencyDescription": "Emergency contact person"
-    },
-    "tabs": {
-      "overview": "Overview",
-      "groups": "Groups",
-      "timeline": "Timeline",
-      "analytics": "Analytics"
-    },
-    "dashboard": {
-      "familyMembers": "Family Members",
-      "ofTotal": "of {{total}} total",
-      "adherenceRate": "Adherence Rate",
-      "thisWeek": "this week",
-      "pendingTasks": "Pending Tasks",
-      "needAttention": "need attention",
-      "careScore": "Care Score",
-      "careScoreExcellent": "Excellent",
-      "careScoreGood": "Good",
-      "careScoreFair": "Fair",
-      "careScoreNeedsAttention": "Needs Attention",
-      "emergencyContact": "Emergency Contact",
-      "emergencyDescription": "Quick access to emergency contacts",
-      "shareMedications": "Share Medications",
-      "shareDescription": "Share medication info with family",
-      "dailyCheckup": "Daily Checkup",
-      "checkupDescription": "Complete daily health checkup",
-      "weeklyTrend": "Weekly Adherence Trend",
-      "vsLastWeek": "vs last week",
-      "medicationStatus": "Medication Status",
-      "onTime": "On Time",
-      "delayed": "Delayed",
-      "missed": "Missed",
-      "recentActivity": "Recent Activity",
-      "noRecentActivity": "No recent activity",
-      "completed": "Completed",
-      "activeStatus": "Active"
-    },
-    "status": {
-      "pending": "Pending"
-    },
-    "template": {
-      "membersIncluded": "Members Included",
-      "membersDescription": "This template includes the following member roles"
-    },
-    "suggestions": {
-      "familyDescription": "Your close family members",
-      "caregiversDescription": "Professional care providers",
-      "friendsDescription": "Trusted friends who help",
-      "supportDescription": "Your support network"
+      "family": "Family Member", 
+      "emergency": "Emergency Contact"
     },
     "permissions": {
       "view": "View Medications",
@@ -1249,80 +1182,6 @@
     "medicationAddedButRemindersFailed": "Medication added but failed to create {{count}} reminder{{plural}}. Please add reminders manually.",
     "medicationUpdatedRemindersNote": "Medication updated! Please manage reminders in the Reminders tab.",
     "medicationDeleted": "Medication deleted"
-  },
-  "family": {
-    "title": "Family",
-    "actions": {
-      "create": "Create",
-      "createGroup": "Create Group",
-      "sendInvite": "Send Invite",
-      "cancel": "Cancel",
-      "creating": "Creating Group...",
-      "inviting": "Sending Invite..."
-    },
-    "group": {
-      "title": "Group",
-      "name": "Group Name",
-      "nameYourGroup": "Name Your Group",
-      "nameDescription": "Choose a memorable name that describes your care group",
-      "namePlaceholder": "Enter group name",
-      "createDescription": "Create a secure group to share medications with trusted people",
-      "popularNames": "Popular Group Names",
-      "popularNamesDescription": "Quick suggestions to get you started",
-      "privacy": "Privacy & Security",
-      "privacyDescription": "Only invited members can see shared medications. You control who has access and what they can do.",
-      "encrypted": "End-to-end encrypted",
-      "hipaaCompliant": "HIPAA compliant",
-      "controlledAccess": "Controlled access"
-    },
-    "member": {
-      "invite": "Invite Member",
-      "name": "Full Name",
-      "email": "Email Address",
-      "phone": "Phone Number",
-      "role": "Role",
-      "permissions": "Permissions",
-      "basicInfo": "Basic Information",
-      "selectRole": "Select Role"
-    },
-    "roles": {
-      "patient": "Patient",
-      "patientDescription": "Primary care recipient",
-      "caregiver": "Caregiver",
-      "caregiverDescription": "Full access to manage care",
-      "family": "Family Member",
-      "familyDescription": "Family member with view access",
-      "emergency": "Emergency Contact",
-      "emergencyDescription": "Emergency contact only"
-    },
-    "permissions": {
-      "view": "View",
-      "edit": "Edit",
-      "notifications": "Notifications",
-      "emergencyAccess": "Emergency Access",
-      "viewDescription": "View medication information",
-      "editDescription": "Edit and manage medications",
-      "notificationsDescription": "Get medication reminders",
-      "emergencyAccessDescription": "Access during emergencies",
-      "alerts": "Alerts"
-    },
-    "validation": {
-      "groupNameRequired": "Group name is required",
-      "memberNameRequired": "Member name is required",
-      "emailRequired": "Email address is required",
-      "invalidEmail": "Please enter a valid email address",
-      "roleRequired": "Please select a role"
-    },
-    "template": {
-      "membersIncluded": "Members Included",
-      "membersDescription": "This template includes the following member roles"
-    },
-    "suggestions": {
-      "familyDescription": "Your close family members",
-      "caregiversDescription": "Professional care providers",
-      "friendsDescription": "Trusted friends who help",
-      "supportDescription": "Your support network"
-    }
   },
   "feedback": {
     "submit": "Submit Feedback",
