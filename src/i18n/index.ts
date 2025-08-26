@@ -11,6 +11,7 @@ import trTranslation from './locales/tr.json';
 const resources = {
   AZ: { translation: azTranslation },
   EN: { translation: enTranslation },
+  'en-US': { translation: enTranslation },
   RU: { translation: ruTranslation },
   TR: { translation: trTranslation },
 };
