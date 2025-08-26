@@ -9,7 +9,7 @@ import AdvancedFamilyGroupCard from '@/components/family/enhanced/AdvancedFamily
 import EnhancedFamilyDashboard from '@/components/family/enhanced/EnhancedFamilyDashboard';
 import InteractiveFamilyCareTimeline from '@/components/family/enhanced/InteractiveFamilyCareTimeline';
 import FamilyAnalyticsDashboard from '@/components/family/enhanced/FamilyAnalyticsDashboard';
-import GroupDetailsSheet from '@/components/family/GroupDetailsSheet';
+import GroupSettingsSheet from '@/components/family/GroupSettingsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
 import FamilyFloatingActionButton from '@/components/family/FamilyFloatingActionButton';
@@ -41,6 +41,8 @@ const FamilyManager: React.FC = () => {
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [isInvitingMember, setIsInvitingMember] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<FamilyGroupTemplate | undefined>(undefined);
+  const [editingGroup, setEditingGroup] = useState<FamilyGroup | null>(null);
+  const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
 
   // Load family data
   const loadFamilyData = async () => {
@@ -200,11 +202,41 @@ const FamilyManager: React.FC = () => {
   };
 
   const handleEditGroup = (group: FamilyGroup) => {
-    // Handle group editing
-    toast({ 
-      title: t('toast.editGroup'), 
-      description: t('toast.groupEditingComingSoon') 
-    });
+    setEditingGroup(group);
+    setIsGroupSettingsOpen(true);
+  };
+
+  const handleUpdateGroup = async (groupId: string, updates: { name: string; description?: string }) => {
+    try {
+      // TODO: Implement group update API call
+      await familySharingService.updateFamilyGroup(groupId, updates);
+      await loadFamilyData(); // Refresh data
+    } catch (error) {
+      console.error('Error updating group:', error);
+      throw error;
+    }
+  };
+
+  const handleRemoveMember = async (groupId: string, memberId: string) => {
+    try {
+      // TODO: Implement member removal API call
+      await familySharingService.removeFamilyMember(groupId, memberId);
+      await loadFamilyData(); // Refresh data
+    } catch (error) {
+      console.error('Error removing member:', error);
+      throw error;
+    }
+  };
+
+  const handleDeleteGroupFromSettings = async (groupId: string) => {
+    try {
+      // TODO: Implement group deletion API call
+      await familySharingService.deleteFamilyGroup(groupId);
+      await loadFamilyData(); // Refresh data
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      throw error;
+    }
   };
 
   // Enhanced handlers for new features
@@ -457,23 +489,23 @@ const FamilyManager: React.FC = () => {
         template={selectedTemplate}
       />
 
-      <GroupDetailsSheet
-        group={selectedGroup}
-        isOpen={showGroupDetails}
-        onClose={() => setShowGroupDetails(false)}
-        onInviteMember={() => {
-          setShowGroupDetails(false);
-          setShowInviteMember(true);
-        }}
-        onMemberAction={handleMemberAction}
-      />
-
       <InviteMemberSheet
         isOpen={showInviteMember}
         onClose={() => setShowInviteMember(false)}
         onInvite={handleInviteMember}
         isLoading={isInvitingMember}
       />
+
+      {editingGroup && (
+        <GroupSettingsSheet
+          group={editingGroup}
+          isOpen={isGroupSettingsOpen}
+          onClose={() => setIsGroupSettingsOpen(false)}
+          onUpdateGroup={handleUpdateGroup}
+          onRemoveMember={handleRemoveMember}
+          onDeleteGroup={handleDeleteGroupFromSettings}
+        />
+      )}
     </ProfessionalMobileLayout>
   );
 };

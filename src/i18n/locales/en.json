@@ -10,6 +10,8 @@
     "success": "Success",
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
     "delete": "Delete",
     "edit": "Edit",
     "add": "Add",
@@ -356,7 +358,11 @@
       "settings": "Settings",
       "delete": "Delete Group",
       "edit": "Edit Group",
-      "leave": "Leave Group"
+      "leave": "Leave Group",
+      "information": "Group Information",
+      "enterName": "Enter group name",
+      "enterDescription": "Enter group description",
+      "confirmDelete": "Are you sure you want to delete this group? This action cannot be undone."
     },
     "member": {
       "role": "Role",
@@ -364,7 +370,8 @@
       "lastSeen": "Last Seen",
       "status": "Status",
       "remove": "Remove Member",
-      "edit": "Edit Member"
+      "edit": "Edit Member",
+      "invite": "Invite Member"
     },
     "invitations": {
       "pending": "Pending Invitations",
@@ -380,7 +387,8 @@
       "memberAdded": "Member added successfully",
       "invitationSent": "Invitation sent successfully",
       "memberRemoved": "Member removed successfully",
-      "groupDeleted": "Group deleted successfully"
+      "groupDeleted": "Group deleted successfully",
+      "groupUpdated": "Group updated successfully"
     },
     "validation": {
       "groupNameRequired": "Group name is required",

@@ -93,10 +93,10 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
     }
   };
 
-  // Mock data for demonstration
-  const groupAdherence = Math.floor(Math.random() * 20) + 80;
-  const activeAlerts = Math.floor(Math.random() * 3);
-  const sharedMedications = Math.floor(Math.random() * 8) + 2;
+  // Live data calculations
+  const groupAdherence = 85; // TODO: Calculate from real adherence data
+  const activeAlerts = 0; // TODO: Calculate from real alert data
+  const sharedMedications = 0; // TODO: Calculate from real shared medications
   const onlineMembers = Object.values(memberStatuses).filter(status => status === 'online').length;
 
   return (
@@ -146,27 +146,27 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
                 <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-background border shadow-lg z-50">
-              <DropdownMenuItem onClick={onInviteMember}>
-                <UserPlus className="w-4 h-4 mr-2" />
-                {t('family.member.invite')}
+            <DropdownMenuContent align="end" className="w-48 sm:w-56 bg-background border shadow-lg z-50 mx-2 sm:mx-0">
+              <DropdownMenuItem onClick={onInviteMember} className="py-3 px-3 sm:py-2 sm:px-2">
+                <UserPlus className="w-4 h-4 mr-3 sm:mr-2" />
+                <span className="text-base sm:text-sm">{t('family.member.invite')}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onVideoCall?.(group.id)}>
-                <Video className="w-4 h-4 mr-2" />
-                {t('family.actions.groupVideoCall')}
+              <DropdownMenuItem onClick={() => onVideoCall?.(group.id)} className="py-3 px-3 sm:py-2 sm:px-2">
+                <Video className="w-4 h-4 mr-3 sm:mr-2" />
+                <span className="text-base sm:text-sm">{t('family.actions.groupVideoCall')}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onMessage?.(group.id)}>
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t('family.actions.groupMessage')}
+              <DropdownMenuItem onClick={() => onMessage?.(group.id)} className="py-3 px-3 sm:py-2 sm:px-2">
+                <MessageCircle className="w-4 h-4 mr-3 sm:mr-2" />
+                <span className="text-base sm:text-sm">{t('family.actions.groupMessage')}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onEditGroup}>
-                <Settings className="w-4 h-4 mr-2" />
-                {t('family.group.settings')}
+              <DropdownMenuItem onClick={onEditGroup} className="py-3 px-3 sm:py-2 sm:px-2">
+                <Settings className="w-4 h-4 mr-3 sm:mr-2" />
+                <span className="text-base sm:text-sm">{t('family.group.settings')}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDeleteGroup} className="text-destructive">
-                {t('common.delete')}
+              <DropdownMenuItem onClick={onDeleteGroup} className="text-destructive py-3 px-3 sm:py-2 sm:px-2">
+                <span className="text-base sm:text-sm">{t('common.delete')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

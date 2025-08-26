@@ -491,7 +491,8 @@
       "lastSeen": "Son Görülmə",
       "status": "Status",
       "remove": "Üzvü Çıxar",
-      "edit": "Üzvü Redaktə Et"
+      "edit": "Üzvü Redaktə Et",
+      "invite": "Üzvü Dəvət Et"
     },
     "invitations": {
       "pending": "Gözləyən Dəvətlər",

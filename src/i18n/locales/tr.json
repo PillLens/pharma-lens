@@ -340,7 +340,8 @@
       "lastSeen": "Son Görülme",
       "status": "Durum",
       "remove": "Üyeyi Kaldır",
-      "edit": "Üyeyi Düzenle"
+      "edit": "Üyeyi Düzenle",
+      "invite": "Üye Davet Et"
     },
     "invitations": {
       "pending": "Bekleyen Davetiyeler",
