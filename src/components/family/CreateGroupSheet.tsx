@@ -73,22 +73,34 @@ const CreateGroupSheet: React.FC<CreateGroupSheetProps> = ({
       <SheetContent className="w-full max-w-md p-0">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           {/* Header */}
-          <SheetHeader className="p-6 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-primary" />
+          <SheetHeader className="relative p-0 bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/5">
+            <div className="relative p-6 pb-8">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-8 translate-x-8"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full blur-2xl translate-y-4 -translate-x-4"></div>
+              
+              <div className="relative flex items-start gap-4">
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/25">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <SheetTitle className="text-xl font-semibold text-foreground mb-2">
+                    {template ? `Create ${template.name} Group` : t('family.actions.createGroup')}
+                  </SheetTitle>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {template 
+                      ? template.description 
+                      : "Create a group to share medications with trusted people"
+                    }
+                  </p>
+                  {template && (
+                    <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      <span className="text-xs font-medium text-primary">Template Selected</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            <div>
-              <SheetTitle>
-                {template ? `Create ${template.name} Group` : t('family.actions.createGroup')}
-              </SheetTitle>
-              <p className="text-sm text-muted-foreground">
-                {template 
-                  ? template.description 
-                  : "Create a group to share medications with trusted people"
-                }
-              </p>
-            </div>
             </div>
           </SheetHeader>
 
