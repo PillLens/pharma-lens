@@ -695,27 +695,10 @@
       "securityScore": "Güvenlik puanınız mevcut güvenlik ayarlarınıza göre hesaplanır",
       "loginAttempts": "Son 24 saatteki giriş denemelerinizin sayısı",
       "dataBreaches": "Hesabınızla ilişkili bilinen veri ihlallerinin sayısı"
-    }
-  },
-  "authPage": {
-    "title": "PillLens",
-    "subtitle": "Kişisel İlaç Tarayıcı ve Hatırlatıcı Uygulamanız",
-    "welcomeMessage": "PillLens'e Hoş Geldiniz",
-    "welcomeDescription": "İlaç yönetimi platformunuza güvenli erişim",
-    "emailAddress": "E-posta Adresi",
-    "emailPlaceholder": "E-posta adresinizi girin",
-    "passwordPlaceholder": "Şifrenizi girin",
-    "createPassword": "Şifre Oluştur",
-    "createPasswordPlaceholder": "Güvenli bir şifre oluşturun",
-    "signingIn": "Giriş yapılıyor...",
-    "signInSecurely": "Güvenli Giriş",
-    "creatingAccount": "Hesap oluşturuluyor...",
-    "createSecureAccount": "Güvenli Hesap Oluştur",
-    "medicalGradeSecurity": "Tıbbi Düzeyde Güvenlik",
-    "securityNotice": "Verileriniz uçtan uca şifrelenir ve HIPAA standartlarına uygun olarak güvenli bir şekilde saklanır.",
-    "dataEncryptedSecure": "Verileriniz şifrelenmiş ve güvenlidir"
-  },
-    "success": {
+     }
+   },
+   "notifications": {
+     "success": {
       "medicationAdded": "İlaç başarıyla eklendi",
       "medicationAndReminderAdded": "İlaç ve hatırlatıcı başarıyla eklendi",
       "failedToAddMedication": "İlaç eklenemedi",
@@ -757,9 +740,9 @@
       "syncInProgress": "Senkronizasyon devam ediyor",
       "maintenanceMode": "Bakım modu",
       "trialExpiring": "Deneme süresi bitiyor",
-      "newFeature": "Yeni özellik mevcut"
-    }
-  },
+       "newFeature": "Yeni özellik mevcut"
+      }
+    },
   "notFound": {
     "title": "Sayfa bulunamadı",
     "subtitle": "Aradığınız sayfa mevcut değil",
