@@ -63,7 +63,13 @@
     "signOut": "Çıxış",
     "signOutSuccess": "Uğurla çıxdınız",
     "email": "E-poçt",
-    "password": "Şifrə"
+    "password": "Şifrə",
+    "signInWithGoogle": "Google ilə davam et",
+    "signUpWithGoogle": "Google ilə qeydiyyat",
+    "orContinueWith": "Və ya davam et",
+    "alreadyHaveAccount": "Artıq hesabınız var?",
+    "dontHaveAccount": "Hesabınız yoxdur?",
+    "createAccount": "Hesab yarat"
   },
   "hero": {
     "badge": "Məxfilik Birinci • Təhlükəsizlik Yönümlü",
@@ -302,7 +308,21 @@
   },
   "authPage": {
     "title": "PillLens",
-    "subtitle": "Sizin Şəxsi Dərman Skaneri və Xatırlatma Tətbiqi"
+    "subtitle": "Sizin Şəxsi Dərman Skaneri və Xatırlatma Tətbiqi",
+    "welcomeMessage": "PillLens-ə xoş gəlmisiniz",
+    "welcomeDescription": "Dərman idarəetmə platformanıza təhlükəsiz giriş",
+    "emailAddress": "E-poçt Ünvanı",
+    "emailPlaceholder": "E-poçt ünvanınızı daxil edin",
+    "passwordPlaceholder": "Şifrənizi daxil edin",
+    "createPassword": "Şifrə Yaradın",
+    "createPasswordPlaceholder": "Təhlükəsiz şifrə yaradın",
+    "signingIn": "Daxil olunur...",
+    "signInSecurely": "Təhlükəsiz Giriş",
+    "creatingAccount": "Hesab yaradılır...",
+    "createSecureAccount": "Təhlükəsiz Hesab Yarat",
+    "medicalGradeSecurity": "Tibbi Səviyyəli Təhlükəsizlik",
+    "securityNotice": "Məlumatlarınız uçdan-uca şifrələnir və HIPAA standartlarına uyğun olaraq təhlükəsiz saxlanılır.",
+    "dataEncryptedSecure": "Məlumatlarınız şifrələnmiş və təhlükəsizdir"
   },
   "scanner": {
     "scanMedication": "Dərman Skan Et",

@@ -62,7 +62,13 @@
     "signOut": "Çıkış",
     "signOutSuccess": "Başarıyla çıkış yaptınız",
     "email": "E-posta",
-    "password": "Şifre"
+    "password": "Şifre",
+    "signInWithGoogle": "Google ile devam et",
+    "signUpWithGoogle": "Google ile kayıt ol",
+    "orContinueWith": "Veya devam et",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "dontHaveAccount": "Hesabınız yok mu?",
+    "createAccount": "Hesap oluştur"
   },
   "hero": {
     "badge": "Gizlilik Öncelikli • Güvenlik Odaklı",
@@ -691,7 +697,24 @@
       "dataBreaches": "Hesabınızla ilişkili bilinen veri ihlallerinin sayısı"
     }
   },
-  "toast": {
+  "authPage": {
+    "title": "PillLens",
+    "subtitle": "Kişisel İlaç Tarayıcı ve Hatırlatıcı Uygulamanız",
+    "welcomeMessage": "PillLens'e Hoş Geldiniz",
+    "welcomeDescription": "İlaç yönetimi platformunuza güvenli erişim",
+    "emailAddress": "E-posta Adresi",
+    "emailPlaceholder": "E-posta adresinizi girin",
+    "passwordPlaceholder": "Şifrenizi girin",
+    "createPassword": "Şifre Oluştur",
+    "createPasswordPlaceholder": "Güvenli bir şifre oluşturun",
+    "signingIn": "Giriş yapılıyor...",
+    "signInSecurely": "Güvenli Giriş",
+    "creatingAccount": "Hesap oluşturuluyor...",
+    "createSecureAccount": "Güvenli Hesap Oluştur",
+    "medicalGradeSecurity": "Tıbbi Düzeyde Güvenlik",
+    "securityNotice": "Verileriniz uçtan uca şifrelenir ve HIPAA standartlarına uygun olarak güvenli bir şekilde saklanır.",
+    "dataEncryptedSecure": "Verileriniz şifrelenmiş ve güvenlidir"
+  },
     "success": {
       "medicationAdded": "İlaç başarıyla eklendi",
       "medicationAndReminderAdded": "İlaç ve hatırlatıcı başarıyla eklendi",

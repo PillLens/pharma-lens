@@ -5,6 +5,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/useTranslation';
 import { TranslatedText } from '@/components/TranslatedText';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
 import { MobileCard } from '@/components/ui/mobile/MobileCard';
 import { MobileLoadingState } from '@/components/ui/mobile/MobileLoadingState';
@@ -15,13 +16,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Shield, Stethoscope, Fingerprint, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function Auth() {
-  const { signUp, signIn, user, loading } = useAuth();
+  const { signUp, signIn, signInWithGoogle, user, loading } = useAuth();
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
@@ -69,6 +71,19 @@ export default function Auth() {
     setIsLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    setError('');
+
+    const { error } = await signInWithGoogle();
+    
+    if (error) {
+      setError(error.message);
+      setIsGoogleLoading(false);
+    }
+    // Note: Don't set loading to false here as the redirect will happen
+  };
+
   if (loading) {
     return <MobileLoadingState message={t('common.initializing')} type="medical" />;
   }
@@ -113,6 +128,27 @@ export default function Auth() {
                   </TabsList>
                   
                   <TabsContent value="signin" className="mt-6">
+                    {/* Google Sign In Button */}
+                    <div className="mb-6">
+                      <GoogleSignInButton 
+                        onClick={handleGoogleSignIn}
+                        loading={isGoogleLoading}
+                        variant="sign-in"
+                        className="h-12 text-base"
+                      />
+                      
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-border/20" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-4 bg-card text-muted-foreground">
+                            <TranslatedText translationKey="auth.orContinueWith" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     <form onSubmit={handleSignIn} className="space-y-5">
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm font-medium">
@@ -174,6 +210,27 @@ export default function Auth() {
                   </TabsContent>
                   
                   <TabsContent value="signup" className="mt-6">
+                    {/* Google Sign Up Button */}
+                    <div className="mb-6">
+                      <GoogleSignInButton 
+                        onClick={handleGoogleSignIn}
+                        loading={isGoogleLoading}
+                        variant="sign-up"
+                        className="h-12 text-base"
+                      />
+                      
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-border/20" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-4 bg-card text-muted-foreground">
+                            <TranslatedText translationKey="auth.orContinueWith" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     <form onSubmit={handleSignUp} className="space-y-5">
                       <div className="space-y-2">
                         <Label htmlFor="signup-email" className="text-sm font-medium">
@@ -291,6 +348,26 @@ export default function Auth() {
             </TabsList>
             
             <TabsContent value="signin">
+              {/* Google Sign In Button */}
+              <div className="mt-4 space-y-4">
+                <GoogleSignInButton 
+                  onClick={handleGoogleSignIn}
+                  loading={isGoogleLoading}
+                  variant="sign-in"
+                />
+                
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-card text-muted-foreground">
+                      <TranslatedText translationKey="auth.orContinueWith" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <form onSubmit={handleSignIn} className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <Label htmlFor="desktop-email">
@@ -330,6 +407,26 @@ export default function Auth() {
             </TabsContent>
             
             <TabsContent value="signup">
+              {/* Google Sign Up Button */}
+              <div className="mt-4 space-y-4">
+                <GoogleSignInButton 
+                  onClick={handleGoogleSignIn}
+                  loading={isGoogleLoading}
+                  variant="sign-up"
+                />
+                
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-card text-muted-foreground">
+                      <TranslatedText translationKey="auth.orContinueWith" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <form onSubmit={handleSignUp} className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <Label htmlFor="desktop-signup-email">

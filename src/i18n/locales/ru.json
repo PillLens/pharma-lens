@@ -62,7 +62,13 @@
     "signOut": "Выход",
     "signOutSuccess": "Вы успешно вышли из системы",
     "email": "Эл. почта",
-    "password": "Пароль"
+    "password": "Пароль",
+    "signInWithGoogle": "Продолжить с Google",
+    "signUpWithGoogle": "Зарегистрироваться с Google",
+    "orContinueWith": "Или продолжить с",
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "dontHaveAccount": "Нет аккаунта?",
+    "createAccount": "Создать аккаунт"
   },
   "hero": {
     "badge": "Приватность Первична • Безопасность в Фокусе",
@@ -743,7 +749,24 @@
     "description": "Эта ссылка может быть неправильной или страница могла быть перемещена",
     "action": "Вернуться на главную"
   },
-  "errors": {
+  "authPage": {
+    "title": "PillLens",
+    "subtitle": "Ваш Персональный Сканер Лекарств и Приложение-Напоминание",
+    "welcomeMessage": "Добро пожаловать в PillLens",
+    "welcomeDescription": "Безопасный доступ к вашей платформе управления лекарствами",
+    "emailAddress": "Адрес электронной почты",
+    "emailPlaceholder": "Введите ваш email адрес",
+    "passwordPlaceholder": "Введите ваш пароль",
+    "createPassword": "Создать пароль",
+    "createPasswordPlaceholder": "Создайте безопасный пароль",
+    "signingIn": "Вход в систему...",
+    "signInSecurely": "Безопасный вход",
+    "creatingAccount": "Создание аккаунта...",
+    "createSecureAccount": "Создать безопасный аккаунт",
+    "medicalGradeSecurity": "Безопасность медицинского уровня",
+    "securityNotice": "Ваши данные зашифрованы сквозным шифрованием и надежно хранятся согласно стандартам HIPAA.",
+    "dataEncryptedSecure": "Ваши данные зашифрованы и защищены"
+  },
     "camera": {
       "permissionDenied": "Разрешение на использование камеры отклонено",
       "notAvailable": "Камера недоступна",
