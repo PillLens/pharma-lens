@@ -222,11 +222,33 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
         </CardHeader>
         <CardContent>
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
-              <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
-              <TabsTrigger value="adherence" className="text-xs sm:text-sm">Adherence</TabsTrigger>
-              <TabsTrigger value="health" className="text-xs sm:text-sm">Health</TabsTrigger>
-              <TabsTrigger value="trends" className="text-xs sm:text-sm">Trends</TabsTrigger>
+            <TabsList className="w-full h-auto p-1 bg-muted/50">
+              <div className="flex w-full overflow-x-auto scrollbar-hide">
+                <TabsTrigger 
+                  value="overview" 
+                  className="flex-1 min-w-0 text-xs sm:text-sm px-3 py-2.5 sm:px-4 sm:py-3 mx-0.5 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="adherence" 
+                  className="flex-1 min-w-0 text-xs sm:text-sm px-3 py-2.5 sm:px-4 sm:py-3 mx-0.5 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  Adherence
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="health" 
+                  className="flex-1 min-w-0 text-xs sm:text-sm px-3 py-2.5 sm:px-4 sm:py-3 mx-0.5 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  Health
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="trends" 
+                  className="flex-1 min-w-0 text-xs sm:text-sm px-3 py-2.5 sm:px-4 sm:py-3 mx-0.5 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  Trends
+                </TabsTrigger>
+              </div>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
