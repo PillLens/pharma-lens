@@ -65,7 +65,7 @@ const TodaysOverview: React.FC = () => {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-primary" />
               <MobileCardTitle className="text-base">
-                <TranslatedText translationKey="dashboard.todayOverview" fallback="Today's Overview" />
+                <TranslatedText translationKey="dashboard.todaysOverview" fallback="Today's Overview" />
               </MobileCardTitle>
             </div>
             <Badge variant="outline" className="border-primary/30 text-primary">
