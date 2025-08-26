@@ -125,15 +125,15 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     const warnings: string[] = [];
 
     if (confidence < 0.7) {
-      warnings.push("Image quality too low for reliable extraction. Please retake with better lighting.");
+      warnings.push(t('scanner.lowQuality'));
     }
 
     if (confidence < 0.5) {
-      warnings.push("Critical: Cannot reliably extract medication information from this image.");
+      warnings.push(t('scanner.criticalWarning'));
     }
 
     if (!extractedData?.brand_name) {
-      warnings.push("Unable to identify medication brand name. Manual verification required.");
+      warnings.push(t('scanner.manualVerification'));
     }
 
     setSafetyWarnings(warnings);
@@ -233,6 +233,8 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         const isSafe = validateSafetyThresholds(ocrResult.confidence, medicationData);
         
         if (!isSafe) {
+          // Clear extracted data if unsafe to prevent showing results with warnings
+          setExtractedData(null);
           toast({
             title: t('safety.warnings'),
             description: t('common.tryAgain'),
@@ -353,7 +355,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </div>
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
-                <span>Images are processed on-device for privacy</span>
+                <span>{t('scanner.onDeviceProcessing')}</span>
               </div>
             </div>
           </div>
@@ -379,10 +381,10 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
                   {t('scanner.scanAgain')}
                 </Button>
                 
-                {!isProcessing && scanComplete && (
+                {!isProcessing && scanComplete && safetyWarnings.length === 0 && (
                   <Button 
                     onClick={handleContinue}
-                    className="flex-1 bg-gradient-to-r from-secondary to-secondary text-white"
+                    className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
                     {t('scanner.continue')}
@@ -487,35 +489,37 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </Card>
             )}
 
-            {/* Extracted Medication Information */}
-            {extractedData && !isProcessing && (
-              <Card className="p-6">
-                <h3 className="font-semibold text-foreground mb-4">
-                  {productFromDb ? "OCR Verification" : "Extracted Medication Information"}
-                </h3>
-                <div className="space-y-4">
+            {/* Extracted Medication Information - Only show if no safety warnings */}
+            {extractedData && !isProcessing && safetyWarnings.length === 0 && (
+              <Card className="p-6 border-success">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  <h3 className="font-semibold text-foreground">{t('scanner.extractedMedicationInfo')}</h3>
+                </div>
+                
+                <div className="space-y-3">
                   <div>
-                    <h4 className="font-medium text-foreground">{extractedData.brand_name}</h4>
+                    <h4 className="font-medium text-foreground text-lg">{extractedData.brand_name}</h4>
                     {extractedData.generic_name && (
-                      <p className="text-sm text-muted-foreground">Generic: {extractedData.generic_name}</p>
+                      <p className="text-sm text-muted-foreground">{t('medications.genericName')}: {extractedData.generic_name}</p>
                     )}
                     {extractedData.strength && (
-                      <p className="text-sm text-muted-foreground">Strength: {extractedData.strength}</p>
+                      <p className="text-sm text-muted-foreground">{t('medications.strength')}: {extractedData.strength}</p>
                     )}
                     {extractedData.form && (
-                      <p className="text-sm text-muted-foreground">Form: {extractedData.form}</p>
+                      <p className="text-sm text-muted-foreground">{t('medications.form')}: {extractedData.form}</p>
                     )}
                     {extractedData.manufacturer && (
-                      <p className="text-sm text-muted-foreground">Manufacturer: {extractedData.manufacturer}</p>
+                      <p className="text-sm text-muted-foreground">{t('medications.manufacturer')}: {extractedData.manufacturer}</p>
                     )}
                   </div>
 
                   {extractedData.indications && extractedData.indications.length > 0 && (
                     <div>
-                      <h5 className="font-medium text-foreground mb-2">Indications:</h5>
-                      <ul className="list-disc list-inside space-y-1">
+                      <h5 className="font-medium text-sm text-muted-foreground mb-1">{t('medications.indications')}:</h5>
+                      <ul className="text-sm text-muted-foreground space-y-1">
                         {extractedData.indications.map((indication: string, index: number) => (
-                          <li key={index} className="text-sm text-muted-foreground">{indication}</li>
+                          <li key={index}>• {indication}</li>
                         ))}
                       </ul>
                     </div>
@@ -523,25 +527,18 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
                   {extractedData.warnings && extractedData.warnings.length > 0 && (
                     <div>
-                      <h5 className="font-medium text-foreground mb-2">Warnings:</h5>
-                      <ul className="list-disc list-inside space-y-1">
+                      <h5 className="font-medium text-sm text-warning mb-1">{t('safety.warnings')}:</h5>
+                      <ul className="text-sm text-muted-foreground space-y-1">
                         {extractedData.warnings.map((warning: string, index: number) => (
-                          <li key={index} className="text-sm text-muted-foreground">{warning}</li>
+                          <li key={index}>• {warning}</li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  {extractedData.dosage && (
-                    <div>
-                      <h5 className="font-medium text-foreground">Dosage:</h5>
-                      <p className="text-sm text-muted-foreground">{extractedData.dosage}</p>
-                    </div>
-                  )}
-
                   <div className="flex items-center gap-2 pt-2 border-t">
                     <Badge variant={extractedData.confidence_score >= 0.8 ? "default" : "secondary"}>
-                      Confidence: {Math.round((extractedData.confidence_score || 0) * 100)}%
+                      {t('common.confidence')}: {Math.round((extractedData.confidence_score || 0) * 100)}%
                     </Badge>
                     {calculateRiskFlags(extractedData).length > 0 && (
                       <Badge variant="destructive">

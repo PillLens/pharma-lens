@@ -175,7 +175,11 @@
     "scanInstructions": "İlaç etiketini çerçevede net bir şekilde yerleştirin",
     "takePhoto": "Fotoğraf Çek",
     "brandNameAndStrength": "Marka Adı ve Güç",
-    "onDeviceProcessing": "Görüntüler gizlilik için cihazda işlenir"
+    "onDeviceProcessing": "Görüntüler gizlilik için cihazda işlenir",
+    "lowQuality": "Görüntü kalitesi güvenilir analiz için çok düşük. Lütfen daha iyi aydınlatma ile yeniden çekin.",
+    "criticalWarning": "Kritik: Bu görüntüden ilaç bilgisi güvenilir şekilde çıkarılamıyor.",
+    "manualVerification": "İlaç marka adı tanımlanamadı. Manuel doğrulama gerekli.",
+    "extractedMedicationInfo": "Çıkarılan İlaç Bilgileri"
   },
   "medications": {
      "title": "İlaçlar",

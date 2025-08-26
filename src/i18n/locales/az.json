@@ -322,7 +322,11 @@
     "scanInstructions": "Dərman etiketini çərçivədə aydın şəkildə yerləşdirin",
     "takePhoto": "Şəkil Çək",
     "brandNameAndStrength": "Marka Adı və Güc",
-    "onDeviceProcessing": "Şəkillər məxfilik üçün cihazda işlənir"
+    "onDeviceProcessing": "Şəkillər məxfilik üçün cihazda işlənir",
+    "lowQuality": "Şəkil keyfiyyəti etibarlı analiz üçün çox aşağıdır. Xahiş olunur daha yaxşı işıqlandırma ilə yenidən çəkin.",
+    "criticalWarning": "Kritik: Bu şəkildən dərman məlumatlarını etibarlı şəkildə çıxarmaq mümkün deyil.",
+    "manualVerification": "Dərmanın brend adını müəyyən etmək mümkün olmadı. Əl ilə yoxlama tələb olunur.",
+    "extractedMedicationInfo": "Çıxarılmış Dərman Məlumatları"
   },
   "toast": {
     "welcomeBack": "Yenidən xoş gəlmisiniz!",

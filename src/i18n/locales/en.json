@@ -200,7 +200,10 @@
     "scanInstructions": "Place medication label clearly in the frame",
     "takePhoto": "Take Photo",
     "brandNameAndStrength": "Brand Name and Strength",
-    "onDeviceProcessing": "Images are processed on-device for privacy"
+    "lowQuality": "Image quality too low for reliable extraction. Please retake with better lighting.",
+    "criticalWarning": "Critical: Cannot reliably extract medication information from this image.",
+    "manualVerification": "Unable to identify medication brand name. Manual verification required.",
+    "extractedMedicationInfo": "Extracted Medication Information"
   },
   "medications": {
     "title": "Medications",

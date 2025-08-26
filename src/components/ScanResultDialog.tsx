@@ -120,7 +120,8 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto scrollbar-hide">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <div className="flex-1 overflow-y-auto scrollbar-hide p-1">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>{t('scanner.medicationFound')}</span>
@@ -198,7 +199,10 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button onClick={() => setShowScheduleForm(!showScheduleForm)} className="flex-1">
+            <Button 
+              onClick={() => setShowScheduleForm(!showScheduleForm)} 
+              className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
+            >
               <Calendar className="w-4 h-4 mr-2" />
               {showScheduleForm ? t('common.cancel') : t('medications.addToMyMedications')}
             </Button>
@@ -329,7 +333,10 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
                 <Separator />
 
                 <div className="flex gap-3">
-                  <Button onClick={handleAddToMedications} className="flex-1">
+                  <Button 
+                    onClick={handleAddToMedications} 
+                    className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical"
+                  >
                     <Calendar className="w-4 h-4 mr-2" />
                     {t('medications.saveMedication')}
                   </Button>
@@ -372,6 +379,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
               </Card>
             )}
           </div>
+        </div>
         </div>
       </DialogContent>
     </Dialog>
