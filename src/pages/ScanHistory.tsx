@@ -485,8 +485,8 @@ export const ScanHistory = () => {
       setBookmarkedSessions(newBookmarked);
       
       toast({
-        title: t('toast.deletedSuccessfully'),
-        description: t('history.deletedPermanently'),
+        title: t('history.deletedSuccessfully'),
+        description: t('history.deletedSuccessfullyDescription'),
       });
       
       if (navigator.vibrate) {
