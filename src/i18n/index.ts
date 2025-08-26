@@ -11,7 +11,11 @@ import trTranslation from './locales/tr.json';
 const resources = {
   AZ: { translation: azTranslation },
   EN: { translation: enTranslation },
+  'en': { translation: enTranslation },
   'en-US': { translation: enTranslation },
+  'en-GB': { translation: enTranslation },
+  'en-AU': { translation: enTranslation },
+  'en-CA': { translation: enTranslation },
   RU: { translation: ruTranslation },
   TR: { translation: trTranslation },
 };
@@ -21,7 +25,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'EN',
+    fallbackLng: ['EN', 'en', 'en-US'],
     debug: true, // Enable debug to see what's happening
     
     interpolation: {
@@ -32,6 +36,15 @@ i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'selectedLanguage',
+      convertDetectedLanguage: (lng) => {
+        console.log('Detected browser language:', lng);
+        // Convert any English variant to our base English
+        if (lng.startsWith('en')) {
+          console.log('Converting to EN');
+          return 'EN';
+        }
+        return lng;
+      }
     },
     
     react: {
@@ -41,7 +54,7 @@ i18n
 
 // Debug logging
 console.log('i18n initialized with resources:', Object.keys(resources));
-console.log('Detected language:', i18n.language);
+console.log('Final language after init:', i18n.language);
 console.log('Available languages:', i18n.languages);
 
 export default i18n;
