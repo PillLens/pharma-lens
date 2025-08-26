@@ -319,9 +319,9 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-y-auto">
       {/* Header */}
-      <header className="px-4 py-6 bg-background border-b border-border">
+      <header className="sticky top-0 z-50 px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={onClose}>
@@ -336,7 +336,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 pb-safe">
         {!capturedImage ? (
           /* Camera Interface */
           <div className="text-center">
@@ -433,23 +433,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </Card>
             )}
 
-            {/* Image Quality Warnings (Informational) */}
-            {safetyWarnings.length > 0 && !isProcessing && extractedData && (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  <div className="space-y-1">
-                    <p className="font-medium">Image Quality Notice:</p>
-                    {safetyWarnings.map((warning, index) => (
-                      <p key={index} className="text-sm">{warning}</p>
-                    ))}
-                    <p className="text-sm mt-2 text-muted-foreground">
-                      Medication extracted successfully. You can continue or retake for better quality.
-                    </p>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Image Quality Warnings - Hidden for confidence < 70% */}
 
             {/* Critical Extraction Failures */}
             {safetyWarnings.length > 0 && !isProcessing && !extractedData && (
