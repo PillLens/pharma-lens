@@ -234,6 +234,8 @@
       "analytics": "Analytics"
     },
     "actions": {
+      "create": "Create",
+      "createGroup": "Create Group",
       "addGroup": "Add Group",
       "addGroupPro": "Add Group (Pro)",
       "groupVideoCall": "Group Video Call",
@@ -351,6 +353,8 @@
       "vsLastWeek": "vs last week"
     },
     "group": {
+      "title": "Group",
+      "createDescription": "Create a new family group to share medications and coordinate care",
       "name": "Group Name",
       "description": "Description",
       "members": "Members",

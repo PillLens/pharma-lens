@@ -359,6 +359,8 @@
       "analytics": "Analitika"
     },
     "actions": {
+      "create": "Yarat",
+      "createGroup": "Qrup Yarat",
       "addGroup": "Qrup əlavə et",
       "addGroupPro": "Qrup əlavə et (Pro)",
       "groupVideoCall": "Qrup video zəngi",
@@ -476,6 +478,8 @@
       "vsLastWeek": "keçən həftəyə nisbətən"
     },
     "group": {
+      "title": "Qrup", 
+      "createDescription": "Dərmanları paylaşmaq və qayğını koordine etmək üçün yeni ailə qrubu yaradın",
       "name": "Qrup Adı",
       "description": "Təsvir",
       "members": "Üzvlər",

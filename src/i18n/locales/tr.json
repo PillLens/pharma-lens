@@ -208,6 +208,8 @@
       "analytics": "Analitik"
     },
     "actions": {
+      "create": "Oluştur",
+      "createGroup": "Grup Oluştur",
       "addGroup": "Grup Ekle",
       "addGroupPro": "Grup Ekle (Pro)",
       "groupVideoCall": "Grup Video Görüşmesi",
@@ -325,6 +327,8 @@
       "vsLastWeek": "geçen haftaya göre"
     },
     "group": {
+      "title": "Grup",
+      "createDescription": "İlaçları paylaşmak ve bakımı koordine etmek için yeni bir aile grubu oluşturun",
       "name": "Grup Adı",
       "description": "Açıklama",
       "members": "Üyeler",
