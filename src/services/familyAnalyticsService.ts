@@ -80,7 +80,7 @@ class FamilyAnalyticsService {
         .select('status, user_id')
         .gte('created_at', oneWeekAgo.toISOString());
 
-      let overallAdherence = 85; // Default fallback
+      let overallAdherence = 0; // Start with 0 - only show real data
       if (adherenceData && adherenceData.length > 0) {
         const takenCount = adherenceData.filter(log => log.status === 'taken').length;
         overallAdherence = Math.round((takenCount / adherenceData.length) * 100);
@@ -217,7 +217,7 @@ class FamilyAnalyticsService {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !familyGroups.length) {
-        return { onTime: 78, delayed: 15, missed: 7 }; // Fallback
+        return { onTime: 0, delayed: 0, missed: 0 }; // Empty state - no data
       }
 
       const groupIds = familyGroups.map(group => group.id);
@@ -241,7 +241,7 @@ class FamilyAnalyticsService {
         .gte('created_at', oneWeekAgo.toISOString());
 
       if (!adherenceData || adherenceData.length === 0) {
-        return { onTime: 78, delayed: 15, missed: 7 }; // Fallback
+        return { onTime: 0, delayed: 0, missed: 0 }; // No data available
       }
 
       let onTime = 0;
@@ -270,7 +270,7 @@ class FamilyAnalyticsService {
 
       const total = onTime + delayed + missed;
       if (total === 0) {
-        return { onTime: 78, delayed: 15, missed: 7 }; // Fallback
+        return { onTime: 0, delayed: 0, missed: 0 }; // No valid data
       }
 
       return {
@@ -280,7 +280,7 @@ class FamilyAnalyticsService {
       };
     } catch (error) {
       console.error('Error getting medication status distribution:', error);
-      return { onTime: 78, delayed: 15, missed: 7 }; // Fallback
+      return { onTime: 0, delayed: 0, missed: 0 }; // Error state - no mock data
     }
   }
 
@@ -484,6 +484,11 @@ class FamilyAnalyticsService {
   }
 
   private calculateCareScore(adherence: number, pendingTasks: number, activeMembers: number): string {
+    // If there's no real data, return empty state instead of mock score
+    if (adherence === 0 && pendingTasks === 0 && activeMembers === 0) {
+      return 'No Data';
+    }
+    
     let score = adherence;
     
     // Deduct points for pending tasks

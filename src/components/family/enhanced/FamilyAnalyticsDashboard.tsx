@@ -86,20 +86,12 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
     }
   }, [familyGroups, selectedPeriod]);
 
-  // Mock data for features not yet implemented
-  const weeklyTrendsData = [
-    { week: 'Week 1', medications: 42, checkups: 3, appointments: 1 },
-    { week: 'Week 2', medications: 45, checkups: 2, appointments: 2 },
-    { week: 'Week 3', medications: 40, checkups: 4, appointments: 1 },
-    { week: 'Week 4', medications: 47, checkups: 3, appointments: 3 }
-  ];
-
-  const healthMetrics_mock = [
-    { metric: 'Blood Pressure', sarah: 120, john: 135, normal: 120 },
-    { metric: 'Heart Rate', sarah: 72, john: 78, normal: 70 },
-    { metric: 'Weight', sarah: 65, john: 80, normal: 70 },
-    { metric: 'Blood Sugar', sarah: 95, john: 110, normal: 100 }
-  ];
+  // Only use real data - no mock data
+  const shouldShowData = healthMetrics && (
+    healthMetrics.totalMembers > 0 || 
+    adherenceData.length > 0 || 
+    medicationStatusData.some(d => d.value > 0)
+  );
 
   const COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--destructive))', 'hsl(var(--primary))'];
 
@@ -262,36 +254,46 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-32 sm:h-40 flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={medicationStatusData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={30}
-                            outerRadius={60}
-                            dataKey="value"
-                            label={({value}) => `${value}%`}
-                          >
-                            {medicationStatusData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      {medicationStatusData.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                            <span>{item.name}</span>
-                          </div>
-                          <span className="font-medium">{item.value}%</span>
+                    {medicationStatusData.every(d => d.value === 0) ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Zap className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No medication data available</p>
+                        <p className="text-xs">Add medications to track status</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="h-32 sm:h-40 flex items-center justify-center">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={medicationStatusData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={30}
+                                outerRadius={60}
+                                dataKey="value"
+                                label={({value}) => `${value}%`}
+                              >
+                                {medicationStatusData.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Pie>
+                            </PieChart>
+                          </ResponsiveContainer>
                         </div>
-                      ))}
-                    </div>
+                        <div className="mt-4 space-y-2">
+                          {medicationStatusData.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                                <span>{item.name}</span>
+                              </div>
+                              <span className="font-medium">{item.value}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -451,21 +453,11 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Using mock data for now - health metrics integration would require additional health tracking features */}
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={healthMetrics_mock}>
-                        <XAxis dataKey="metric" className="text-xs" />
-                        <YAxis />
-                        <Bar dataKey="sarah" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="john" fill="hsl(var(--success))" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="normal" fill="hsl(var(--muted))" radius={[2, 2, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                  <div className="text-center py-16 text-muted-foreground">
+                    <Heart className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm font-medium mb-1">Health Metrics Coming Soon</p>
+                    <p className="text-xs">Connect health devices to track vital signs</p>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Note: Health metrics tracking requires additional setup
-                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -479,16 +471,10 @@ const FamilyAnalyticsDashboard: React.FC<FamilyAnalyticsDashboardProps> = ({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={weeklyTrendsData}>
-                        <XAxis dataKey="week" className="text-xs" />
-                        <YAxis />
-                        <Bar dataKey="medications" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="checkups" fill="hsl(var(--success))" radius={[2, 2, 0, 0]} />
-                        <Bar dataKey="appointments" fill="hsl(var(--warning))" radius={[2, 2, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                  <div className="text-center py-16 text-muted-foreground">
+                    <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm font-medium mb-1">Weekly Trends Coming Soon</p>
+                    <p className="text-xs">Start adding medications to see activity trends</p>
                   </div>
                 </CardContent>
               </Card>
