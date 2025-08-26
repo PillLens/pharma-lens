@@ -835,49 +835,97 @@ export const ScanHistory = () => {
         )}
       </BottomSheet>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={!!sessionToDelete} onOpenChange={handleCancelDelete}>
-        <DialogContent className="max-w-sm mx-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-600">
+      {/* Delete Confirmation - Mobile/Desktop */}
+      {isMobile ? (
+        <BottomSheet
+          isOpen={!!sessionToDelete}
+          onClose={handleCancelDelete}
+          title="Delete Scan?"
+          height="sm"
+        >
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-red-600 mb-2">
               <AlertTriangle className="w-5 h-5" />
-              Delete Scan?
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to permanently delete this scan? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={handleCancelDelete}
-              disabled={!!deletingSessionId}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={!!deletingSessionId}
-              className="flex-1"
-            >
-              {deletingSessionId ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </>
-              )}
-            </Button>
+              <span className="font-semibold">Are you sure?</span>
+            </div>
+            <p className="text-muted-foreground text-center">
+              <TranslatedText translationKey="history.deleteConfirmation" />
+            </p>
+            
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={handleCancelDelete}
+                disabled={!!deletingSessionId}
+                className="flex-1"
+              >
+                <TranslatedText translationKey="common.cancel" />
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={!!deletingSessionId}
+                className="flex-1"
+              >
+                {deletingSessionId ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    <TranslatedText translationKey="history.deleting" />
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    <TranslatedText translationKey="common.delete" />
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </BottomSheet>
+      ) : (
+        <Dialog open={!!sessionToDelete} onOpenChange={handleCancelDelete}>
+          <DialogContent className="max-w-sm mx-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-600">
+                <AlertTriangle className="w-5 h-5" />
+                <TranslatedText translationKey="history.deleteScan" />
+              </DialogTitle>
+              <DialogDescription>
+                <TranslatedText translationKey="history.deleteConfirmation" />
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="flex gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={handleCancelDelete}
+                disabled={!!deletingSessionId}
+                className="flex-1"
+              >
+                <TranslatedText translationKey="common.cancel" />
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={!!deletingSessionId}
+                className="flex-1"
+              >
+                {deletingSessionId ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    <TranslatedText translationKey="history.deleting" />
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    <TranslatedText translationKey="common.delete" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </ProfessionalMobileLayout>
   );
 };
