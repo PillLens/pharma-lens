@@ -56,5 +56,8 @@ i18n
 console.log('i18n initialized with resources:', Object.keys(resources));
 console.log('Final language after init:', i18n.language);
 console.log('Available languages:', i18n.languages);
+console.log('EN authPage translations:', resources.EN?.translation?.authPage);
+console.log('Testing direct key access:', i18n.t('authPage.dataEncryption'));
+console.log('All authPage keys:', Object.keys(resources.EN?.translation?.authPage || {}));
 
 export default i18n;
