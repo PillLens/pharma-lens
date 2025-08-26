@@ -298,16 +298,6 @@
     "followInstructions": "Təyin edilmiş təlimatlara əməl edin",
     "reportSideEffects": "Hər hansı yan təsiri səhiyyə xidməti təminatçınıza bildirin"
   },
-  "family": {
-    "title": "Ailə və Baxıcılar",
-    "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
-    "empty": {
-      "title": "Qayğı Şəbəkənizi Başladın",
-      "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
-      "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
-      "createButton": "Ailə Qrupu Yarat"
-    }
-  },
   "settings": {
     "title": "Tənzimləmələr",
     "profile": {
@@ -521,8 +511,7 @@
       "groupNameRequired": "Qrup adı tələb olunur",
       "emailRequired": "E-poçt ünvanı tələb olunur",
       "roleRequired": "Rol seçimi tələb olunur"
-    }
-  },
+    },
     "dashboard": {
       "familyMembers": "Ailə Üzvləri",
       "ofTotal": "{total} ümumidən",
