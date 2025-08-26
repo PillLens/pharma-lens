@@ -382,21 +382,21 @@ const FamilyManager: React.FC = () => {
 
             <TabsContent value="groups">
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                    <Users className="w-6 h-6 text-primary" />
-                    {t('family.yourGroups')} ({familyGroups.length})
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <h2 className="text-lg sm:text-2xl font-bold text-foreground flex items-center gap-2 sm:gap-3">
+                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+                    <span className="truncate">{t('family.yourGroups')} ({familyGroups.length})</span>
                   </h2>
                   <FeatureGate 
                     feature="can_create_family_group"
                     fallback={
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" disabled size="sm" className="w-full sm:w-auto">
                         <Users className="w-4 h-4 mr-2" />
                         {t('family.actions.addGroupPro')}
                       </Button>
                     }
                   >
-                    <Button onClick={() => setShowCreateGroup(true)}>
+                    <Button onClick={() => setShowCreateGroup(true)} size="sm" className="w-full sm:w-auto">
                       <Users className="w-4 h-4 mr-2" />
                       {t('family.actions.addGroup')}
                     </Button>
