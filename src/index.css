@@ -49,17 +49,6 @@
     --emergency-light: 0 93% 94%;
     --emergency-foreground: 210 40% 98%;
 
-    /* Missing gradient and glow variables */
-    --primary-dark: 201 96% 28%;
-    --primary-glow: 201 96% 40%;
-    --secondary-light: 210 40% 98%;
-    --destructive-light: 0 84% 70%;
-    --destructive-glow: 0 84% 50%;
-    --warning-glow: 38 92% 60%;
-    --success-glow: 142 76% 46%;
-    --emergency-glow: 0 84% 70%;
-    --info-glow: 201 96% 40%;
-
     /* Enhanced mobile navigation */
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
     --touch-target: 44px;
@@ -113,6 +102,10 @@
     html::-webkit-scrollbar, 
     body::-webkit-scrollbar {
       display: none;
+    }
+    
+    body {
+      overflow: hidden;
     }
     
     #root {
@@ -177,34 +170,6 @@
 
   .medical-button {
     @apply bg-gradient-to-r from-primary to-primary-light text-primary-foreground;
-  }
-
-  /* Medical gradient backgrounds */
-  .bg-gradient-medical {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-light)) 100%);
-  }
-  
-  .medical-gradient {
-    background: linear-gradient(135deg, 
-      hsl(var(--primary) / 0.1) 0%, 
-      hsl(var(--primary-light) / 0.05) 50%,
-      hsl(var(--secondary) / 0.1) 100%
-    );
-  }
-
-  /* Medical shadows */
-  .shadow-medical {
-    box-shadow: 0 4px 16px -4px hsl(var(--primary) / 0.25), 
-                0 8px 32px -8px hsl(var(--primary) / 0.15);
-  }
-
-  /* Medical input styles */
-  .medical-input {
-    @apply border-border/30 bg-background/80 backdrop-blur-sm;
-  }
-  
-  .medical-input:focus {
-    @apply border-primary/50 ring-2 ring-primary/20;
   }
 
   .gradient-surface {
