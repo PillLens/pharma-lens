@@ -6,12 +6,11 @@ const EnhancedCard = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     variant?: 'default' | 'glass' | 'gradient' | 'floating';
-    hover?: boolean;
   }
->(({ className, variant = 'default', hover = true, ...props }, ref) => {
+>(({ className, variant = 'default', ...props }, ref) => {
   const isMobile = useIsMobile();
   
-  const baseClasses = "rounded-2xl transition-all duration-300";
+  const baseClasses = "rounded-2xl";
   const variantClasses = {
     default: "bg-card text-card-foreground border border-border shadow-card",
     glass: "glass-card shadow-glass",
@@ -19,8 +18,7 @@ const EnhancedCard = React.forwardRef<
     floating: "glass-card shadow-floating"
   };
   
-  const hoverClasses = hover && !isMobile ? "hover-shadow-desktop hover-scale-desktop" : "";
-  const mobileClasses = isMobile ? "mx-2 active:scale-[0.98]" : "";
+  const mobileClasses = isMobile ? "mx-2" : "";
 
   return (
     <div
@@ -28,7 +26,6 @@ const EnhancedCard = React.forwardRef<
       className={cn(
         baseClasses,
         variantClasses[variant],
-        hoverClasses,
         mobileClasses,
         className
       )}
