@@ -228,6 +228,9 @@
     "yourGroups": "Your Groups",
     "management": "Family Management",
     "createFamilyGroup": "Create Family Group",
+    "create": "Create",
+    "member": "member",
+    "members": "members",
     "tabs": {
       "overview": "Overview",
       "groups": "Groups",
@@ -248,7 +251,8 @@
       "active": "Active",
       "groupAdherence": "Group Adherence",
       "alert": "Alert",
-      "pending": "Pending"
+      "pending": "Pending",
+      "invited": "Invited"
     },
     "emptyState": {
       "title": "Start Your Care Network",
@@ -355,6 +359,7 @@
       "name": "Group Name",
       "description": "Description",
       "members": "Members",
+      "member": "Member",
       "noMembers": "No members yet",
       "settings": "Settings",
       "delete": "Delete Group",
@@ -363,7 +368,8 @@
       "information": "Group Information",
       "enterName": "Enter group name",
       "enterDescription": "Enter group description",
-      "confirmDelete": "Are you sure you want to delete this group? This action cannot be undone."
+      "confirmDelete": "Are you sure you want to delete this group? This action cannot be undone.",
+      "create": "Create Group"
     },
     "member": {
       "role": "Role",
@@ -375,7 +381,9 @@
       "invite": "Invite Member",
       "name": "Full Name",
       "email": "Email Address",
-      "phone": "Phone Number"
+      "phone": "Phone Number",
+      "resend": "Resend Invitation",
+      "share": "Share Medication"
     },
     "roles": {
       "patient": "Patient",
@@ -390,6 +398,9 @@
       "emergencyAccess": "Emergency Access"
     },
     "actions": {
+      "addGroup": "Add Group",
+      "addGroupPro": "Add Group (Pro)",
+      "createGroup": "Create Group",
       "sendInvite": "Send Invitation",
       "cancel": "Cancel",
       "inviteMember": "Invite Member",
