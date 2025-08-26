@@ -287,9 +287,9 @@ const FamilyManager: React.FC = () => {
 
   return (
     <ProfessionalMobileLayout 
-      title={t('family.title')}
+      title={t('family.management')}
       showHeader={true}
-      className="bg-background"
+      className="bg-gradient-surface"
     >
       {loading ? (
         <div className="p-6">
@@ -383,9 +383,9 @@ const FamilyManager: React.FC = () => {
             <TabsContent value="groups">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Your Family Groups ({familyGroups.length})
+                  <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                    <Users className="w-6 h-6 text-primary" />
+                    {t('family.yourGroups')} ({familyGroups.length})
                   </h2>
                   <FeatureGate 
                     feature="can_create_family_group"

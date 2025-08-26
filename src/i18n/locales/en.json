@@ -74,6 +74,23 @@
     "dontHaveAccount": "Don't have an account?",
     "createAccount": "Create account"
   },
+  "authPage": {
+    "subtitle": "Your secure medical companion",
+    "welcomeMessage": "Welcome to PillLens",
+    "welcomeDescription": "Your secure medical companion for medication management",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter your email address",
+    "passwordPlaceholder": "Enter your password",
+    "createPassword": "Create Password",
+    "createPasswordPlaceholder": "Create a secure password",
+    "passwordRequirements": "Minimum 6 characters required",
+    "signInSecurely": "Sign In Securely",
+    "createSecureAccount": "Create Secure Account",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "medicalGradeSecurity": "Medical-Grade Security",
+    "dataEncryption": "256-bit Data Encryption"
+  },
   "hero": {
     "badge": "Privacy-First • Safety-Focused",
     "title1": "Snap. Scan. Understand.",
@@ -442,6 +459,8 @@
   },
   "family": {
     "title": "Family & Caregivers",
+    "management": "Family Management",
+    "yourGroups": "Your Family Groups",
     "subtitle": "Share medication plans with people who care for you",
     "empty": {
       "title": "Start Your Care Network",
