@@ -196,6 +196,10 @@
     "securityDashboard": "Güvenlik panosu"
   },
   "family": {
+    "title": "Aile ve Bakıcılar",
+    "subtitle": "İlaç planlarınızı sizinle ilgilenen kişilerle paylaşın",
+    "management": "Aile Yönetimi",
+    "createFamilyGroup": "Aile Grubu Oluştur",
     "tabs": {
       "overview": "Genel Bakış",
       "groups": "Gruplar",
@@ -219,6 +223,10 @@
       "pending": "Beklemede"
     },
     "emptyState": {
+      "title": "Bakım Ağınızı Başlatın",
+      "subtitle": "Güvenli paylaşım için aile üyeleri ve bakıcılarla bağlantı kurun",
+      "description": "Aile grupları, hayatınızdaki güvenilir kişilerle bakımı koordine etmeye yardımcı olur.",
+      "createButton": "Aile Grubu Oluştur",
       "welcomeTitle": "Aile Bakımına Hoş Geldiniz",
       "welcomeDescription": "İlaçları paylaşmak, sağlığı izlemek ve herkesi birlikte güvende tutmak için aile bakım ağınızı oluşturun.",
       "connectFamily": "Aileyi Bağla",
@@ -314,6 +322,44 @@
       "completed": "Tamamlandı",
       "activeStatus": "Aktif",
       "vsLastWeek": "geçen haftaya göre"
+    },
+    "group": {
+      "name": "Grup Adı",
+      "description": "Açıklama",
+      "members": "Üyeler",
+      "settings": "Ayarlar",
+      "delete": "Grubu Sil",
+      "edit": "Grubu Düzenle",
+      "leave": "Gruptan Ayrıl"
+    },
+    "member": {
+      "role": "Rol",
+      "permissions": "İzinler",
+      "lastSeen": "Son Görülme",
+      "status": "Durum",
+      "remove": "Üyeyi Kaldır",
+      "edit": "Üyeyi Düzenle"
+    },
+    "invitations": {
+      "pending": "Bekleyen Davetiyeler",
+      "sent": "Gönderilen Davetiyeler",
+      "received": "Alınan Davetiyeler",
+      "accept": "Kabul Et",
+      "decline": "Reddet",
+      "send": "Davetiye Gönder",
+      "resend": "Tekrar Gönder"
+    },
+    "messages": {
+      "groupCreated": "Aile grubu başarıyla oluşturuldu",
+      "memberAdded": "Üye başarıyla eklendi",
+      "invitationSent": "Davetiye başarıyla gönderildi",
+      "memberRemoved": "Üye başarıyla kaldırıldı",
+      "groupDeleted": "Grup başarıyla silindi"
+    },
+    "validation": {
+      "groupNameRequired": "Grup adı gereklidir",
+      "emailRequired": "E-posta adresi gereklidir",
+      "roleRequired": "Rol seçimi gereklidir"
     }
   },
   "scanner": {
@@ -451,528 +497,6 @@
     "readLabel": "İlaç etiketini dikkatli okuyun",
     "followInstructions": "Reçete edilen talimatlara uyun",
     "reportSideEffects": "Herhangi bir yan etkiyi sağlık hizmetleri sağlayıcınıza bildirin"
-  },
-  "reminders": {
-    "title": "Hatırlatıcılar",
-    "subtitle": "Akıllı bildirimlerle hiç bir dozu kaçırma",
-    "createReminder": "Hatırlatıcı Oluştur",
-    "reminderTimes": "Hatırlatıcı Zamanları",
-    "addTime": "Zaman Ekle",
-    "setReminder": "Hatırlatıcı Ayarla",
-    "reminderSet": "Hatırlatıcı başarıyla ayarlandı",
-    "morningDose": "Sabah dozu",
-    "afternoonDose": "Öğleden sonra dozu",
-    "eveningDose": "Akşam dozu",
-    "nightDose": "Gece dozu",
-    "empty": {
-      "title": "Hatırlatıcı Ayarlanmamış",
-      "subtitle": "Akıllı bildirimlerle takipte kalın",
-      "description": "İlaç programınızı sürdürmenize yardımcı olmak için ilaç hatırlatıcıları kurun.",
-      "createButton": "İlk Hatırlatıcınızı Ekleyin"
-    },
-    "summary": {
-      "active": "Aktif Hatırlatıcılar",
-      "medications": "Kapsanan İlaçlar",
-      "today": "Bugünkü Dozlar",
-      "todayDoses": "Bugünkü Dozlar",
-      "dayStreak": "Gün Serisi",
-      "adherenceOverview": "Uyum Genel Bakış",
-      "medicationCompliance": "İlaç uyumunuz",
-      "great": "Harika!",
-      "needsAttention": "Dikkat gerekiyor",
-      "thisWeek": "Bu Hafta",
-      "taken": "Alındı",
-      "missed": "Kaçırıldı",
-      "streak": "Seri",
-      "days": "gün",
-      "weeklyTrend": "Haftalık Trend",
-      "adherenceRateWeek": "Geçen hafta uyum oranı"
-    },
-    "status": {
-      "active": "Aktif",
-      "paused": "Duraklatıldı",
-      "inactive": "İnaktif"
-    },
-    "frequency": {
-      "once": "Günde bir kez",
-      "twice": "Günde iki kez",
-      "custom": "Özel",
-      "everyHour": "Her {{hours}} saatte",
-      "asNeeded": "Gerektiğinde"
-    },
-    "details": {
-      "title": "Hatırlatıcı Detayları",
-      "schedule": "Program",
-      "frequency": "Sıklık",
-      "nextDose": "Sonraki doz",
-      "notes": "Notlar",
-      "editButton": "Hatırlatıcıyı Düzenle"
-    },
-    "form": {
-      "title": "Hatırlatıcı Ekle",
-      "editTitle": "Hatırlatıcıyı Düzenle",
-      "medication": "İlaç",
-      "medicationPlaceholder": "İlaç seçin",
-      "dosage": "Doz",
-      "dosagePlaceholder": "örn., 1 tablet",
-      "frequency": "Sıklık",
-      "times": "Zamanlar",
-      "startDate": "Başlangıç Tarihi",
-      "endDate": "Bitiş Tarihi",
-      "notes": "Notlar",
-      "notesPlaceholder": "İsteğe bağlı notlar...",
-      "save": "Hatırlatıcıyı Kaydet",
-      "cancel": "İptal",
-      "update": "Hatırlatıcıyı Güncelle"
-    },
-    "validation": {
-      "medicationRequired": "Lütfen bir ilaç seçin",
-      "dosageRequired": "Lütfen doz girin",
-      "timesRequired": "Lütfen en az bir zaman ekleyin",
-      "startDateRequired": "Lütfen başlangıç tarihi seçin"
-    },
-    "messages": {
-      "reminderAdded": "Hatırlatıcı Eklendi",
-      "reminderUpdated": "Hatırlatıcı Güncellendi",
-      "reminderDeleted": "Hatırlatıcı Silindi",
-      "reminderPaused": "Hatırlatıcı Duraklatıldı",
-      "reminderActivated": "Hatırlatıcı Etkinleştirildi"
-    },
-    "actions": {
-      "edit": "Düzenle",
-      "delete": "Sil",
-      "pause": "Duraklat",
-      "activate": "Etkinleştir",
-      "addReminder": "Hatırlatıcı Ekle"
-    },
-    "timeline": {
-      "todaysSchedule": "Bugünün Programı",
-      "todaysTimeline": "Bugünün Zaman Çizelgesi",
-      "upcomingMedicationTimes": "Yaklaşan ilaç zamanları",
-      "dosesCompleted": "doz tamamlandı",
-      "progress": "İlerleme",
-      "taken": "Alındı",
-      "upcoming": "Yaklaşan",
-      "missed": "Kaçırıldı",
-      "current": "Şimdi",
-      "overdue": "Gecikmiş",
-      "markTaken": "Alındı Olarak İşaretle",
-      "snooze": "Ertele",
-      "yourReminders": "Hatırlatıcılarınız",
-      "noRemindersToday": "Bugün için hatırlatıcı programlanmamış",
-      "of": "/"
-    }
-  },
-  "family": {
-    "title": "Aile ve Bakıcılar",
-    "subtitle": "İlaç planlarınızı size değer veren kişilerle paylaşın",
-    "empty": {
-      "title": "Bakım Ağınızı Başlatın",
-      "subtitle": "Güvenli paylaşım için aile üyeleri ve bakıcılarla bağlantı kurun",
-      "description": "Aile grupları, hayatınızdaki güvenilir kişilerle bakımı koordine etmenize yardımcı olur.",
-      "createButton": "Aile Grubu Oluştur"
-    },
-    "group": {
-      "create": "Grup Oluştur",
-      "name": "Grup Adı",
-      "members": "üye",
-      "member": "üye",
-      "noMembers": "Henüz üye yok",
-      "viewDetails": "Detayları Görüntüle",
-      "edit": "Grubu Düzenle",
-      "delete": "Grubu Sil",
-      "settings": "Grup Ayarları"
-    },
-    "member": {
-      "invite": "Üye Davet Et",
-      "name": "Ad Soyad",
-      "email": "E-posta Adresi",
-      "phone": "Telefon Numarası",
-      "role": "Rol",
-      "permissions": "İzinler",
-      "status": "Durum",
-      "remove": "Üyeyi Kaldır",
-      "resend": "Daveti Tekrar Gönder",
-      "call": "Ara",
-      "message": "Mesaj",
-      "share": "Paylaş"
-    },
-    "roles": {
-      "patient": "Hasta",
-      "caregiver": "Bakıcı",
-      "family": "Aile Üyesi",
-      "emergency": "Acil Durum Kişisi"
-    },
-    "status": {
-      "active": "Aktif",
-      "pending": "Beklemede",
-      "invited": "Davet Edildi",
-      "offline": "Çevrimdışı",
-      "declined": "Reddedildi"
-    },
-    "permissions": {
-      "view": "İlaçları Görüntüle",
-      "edit": "İlaçları Düzenle",
-      "notifications": "Bildirim Al",
-      "emergencyAccess": "Acil Durum Erişimi"
-    },
-    "invitations": {
-      "pending": "Bekleyen Davetler",
-      "accept": "Kabul Et",
-      "decline": "Reddet",
-      "from": "gönderen",
-      "invitedYou": "sizi davet etti",
-      "noInvitations": "Bekleyen davet yok"
-    },
-    "actions": {
-      "createGroup": "Grup Oluştur",
-      "inviteMember": "Üye Davet Et",
-      "saveGroup": "Grubu Kaydet",
-      "sendInvite": "Davet Gönder",
-      "cancel": "İptal",
-      "done": "Tamam"
-    },
-    "messages": {
-      "groupCreated": "Aile grubu başarıyla oluşturuldu",
-      "memberInvited": "Üye başarıyla davet edildi",
-      "invitationSent": "Davet gönderildi",
-      "groupDeleted": "Grup silindi",
-      "memberRemoved": "Üye kaldırıldı",
-      "invitationAccepted": "Davet kabul edildi",
-      "invitationDeclined": "Davet reddedildi"
-    },
-    "validation": {
-      "groupNameRequired": "Grup adı gerekli",
-      "memberNameRequired": "Üye adı gerekli",
-      "emailRequired": "E-posta adresi gerekli",
-      "invalidEmail": "Geçersiz e-posta adresi",
-      "roleRequired": "Lütfen bir rol seçin"
-    }
-  },
-  "settings": {
-    "notifications": {
-      "title": "Bildirimler",
-      "pushNotifications": "Push Bildirimleri",
-      "pushDescription": "Bu cihazda bildirim alın",
-      "medicationReminders": "İlaç Hatırlatmaları",
-      "missedDose": "Kaçırılan Doz Uyarıları",
-      "familyUpdates": "Aile Güncellemeleri",
-      "productAlerts": "Ürün Uyarıları",
-      "quietHours": "Sessiz Saatler",
-      "quietStart": "Başlangıç Saati",
-      "quietEnd": "Bitiş Saati",
-      "testNotification": "Test Bildirimi Gönder",
-      "masterToggle": "Bildirimleri Etkinleştir",
-      "masterDescription": "Bu uygulama için bildirimleri aç",
-      "reminders": "İlaç Hatırlatmaları",
-      "remindersDescription": "İlaç alma zamanı geldiğinde hatırlatılın",
-      "missedDoseDescription": "Kaçırılan ilaçların günlük özeti",
-      "family": "Aile Bildirimleri",
-      "familyDescription": "Aile bakım grubunuzdan güncellemeler",
-      "product": "Ürün Uyarıları",
-      "productDescription": "Güvenlik uyarıları ve ilaç güncellemeleri",
-      "quietHoursDescription": "Bu saatlerde bildirim yok",
-      "from": "Başlangıç",
-      "to": "Bitiş"
-    }
-  },
-  "subscription": {
-    "title": "Planınızı Seçin",
-    "description": "İhtiyaçlarınıza uygun mükemmel planı seçin",
-    "freePlan": "Ücretsiz Plan",
-    "proIndividual": "Pro Bireysel",
-    "proFamily": "Pro Aile",
-    "proIndividualDescription": "Kişisel ilaç yönetimi için mükemmel",
-    "proFamilyDescription": "Tam aile sağlığı yönetimi",
-    "monthly": "Aylık",
-    "yearly": "Yıllık",
-    "perMonth": "/ay",
-    "perYear": "/yıl",
-    "save30percent": "%30 tasarruf",
-    "unlockPremium": "Premium Özelliklerini Aç",
-    "14dayTrial": "14 Günlük Ücretsiz Deneme",
-    "trialDescription": "Tüm Pro Aile özelliklerini 14 gün ücretsiz deneyin. İstediğiniz zaman iptal edin.",
-    "startFreeTrial": "Ücretsiz Deneme Başlat",
-    "upgrade": "Yükselt",
-    "mostPopular": "En Popüler",
-    "unlimitedMedications": "Sınırsız ilaçlar",
-    "advancedReports": "Gelişmiş raporlar ve dışa aktarımlar",
-    "hipaaReports": "HIPAA uyumluluk raporları",
-    "maxDevices": "3'e kadar cihaz",
-    "everythingInPro": "Pro Bireysel'de her şey",
-    "createFamilyGroups": "Aile grupları oluşturun ve yönetin",
-    "upTo5Members": "5'e kadar aile üyesi",
-    "caregiverLogging": "Bakıcı günlüğü",
-    "testimonialPlaceholder": "Sağlıklarını güvenle yöneten binlerce kullanıcıya katılın",
-    "trial": "Deneme",
-    "trialActive": "Premium özelliklerden mi memnunsunuz? Devam etmek için yükseltin.",
-    "trialEndingSoon": "Deneme süresi yakında bitiyor! Premium özellikleri korumak için yükseltin.",
-    "free": "Ücretsiz",
-    "pro": "Pro",
-    "premium": "Premium",
-    "monthly": "Aylık",
-    "yearly": "Yıllık",
-    "features": {
-      "basic_scanning": "Temel tarama",
-      "medication_reminders": "İlaç hatırlatıcıları",
-      "basic_safety": "Temel güvenlik",
-      "unlimited_scanning": "Sınırsız tarama",
-      "family_sharing": "Aile paylaşımı",
-      "advanced_safety": "Gelişmiş güvenlik",
-      "priority_support": "Öncelik desteği",
-      "ai_insights": "AI öngörüleri",
-      "export_reports": "Rapor dışa aktarma"
-    },
-    "cta": {
-      "upgrade": "Yükselt",
-      "manage": "Yönet",
-      "cancel": "İptal"
-    },
-    "enhanced": {
-      "title": "Planınızı yükseltin",
-      "subtitle": "Daha fazla özellik ve imkan elde edin",
-      "currentPlan": "Mevcut plan",
-      "mostPopular": "En popüler",
-      "bestValue": "En iyi değer",
-      "perMonth": "aylık",
-      "perYear": "yıllık",
-      "save": "tasarruf",
-      "startTrial": "Deneme başlat",
-      "continueCurrent": "Mevcut planla devam et",
-      "features": {
-        "unlimitedScans": "Sınırsız tarama",
-        "prioritySupport": "Öncelik desteği",
-        "advancedAnalytics": "Gelişmiş analitik",
-        "familySharing": "Aile paylaşımı",
-        "exportReports": "Rapor dışa aktarma",
-        "offlineMode": "Çevrimdışı mod",
-        "customReminders": "Özel hatırlatıcılar",
-        "aiInsights": "AI öngörüleri"
-      }
-    }
-  },
-  "history": {
-    "title": "Tarama geçmişi",
-    "subtitle": "Geçmiş taranan ilaçların geçmişi",
-    "filters": {
-      "all": "Tümü",
-      "success": "Başarılı",
-      "failed": "Başarısız",
-      "pending": "Bekliyor"
-    },
-    "actions": {
-      "view": "Görüntüle",
-      "delete": "Sil",
-      "share": "Paylaş",
-      "export": "Dışa aktar"
-    },
-    "status": {
-      "success": "Başarılı",
-      "failed": "Başarısız",
-      "pending": "Bekliyor",
-      "processing": "İşleniyor"
-    },
-    "empty": {
-      "title": "Tarama geçmişi yok",
-      "description": "İlk ilacınızı taramaya başlayın",
-      "action": "Taramaya başla"
-    },
-    "scanCard": {
-      "scannedAt": "Taranma zamanı",
-      "result": "Sonuç",
-      "confidence": "Güven",
-      "processing": "İşleniyor...",
-      "failed": "Başarısız oldu",
-      "tryAgain": "Tekrar dene"
-    }
-  },
-  "authPage": {
-    "welcome": "PillLens'e hoş geldiniz",
-    "subtitle": "Kişisel İlaç Tarayıcısı ve Hatırlatıcı Uygulamanız",
-    "signIn": {
-      "title": "Hesabınıza giriş yapın",
-      "subtitle": "İlaç profilinize erişin",
-      "email": "E-posta adresi",
-      "password": "Şifre",
-      "forgotPassword": "Şifrenizi mi unuttunuz?",
-      "signIn": "Giriş yap",
-      "noAccount": "Hesabınız yok mu?",
-      "signUp": "Kayıt ol"
-    },
-    "signUp": {
-      "title": "Hesap oluştur",
-      "subtitle": "Güvenli ilaç yönetimine başlayın",
-      "email": "E-posta adresi",
-      "password": "Şifre",
-      "confirmPassword": "Şifreyi onayla",
-      "signUp": "Kayıt ol",
-      "hasAccount": "Zaten hesabınız var mı?",
-      "signIn": "Giriş yap"
-    },
-    "validation": {
-      "emailRequired": "E-posta adresi gereklidir",
-      "emailInvalid": "Geçerli bir e-posta adresi girin",
-      "passwordRequired": "Şifre gereklidir",
-      "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
-      "passwordsDoNotMatch": "Şifreler eşleşmiyor"
-    },
-    "security": {
-      "title": "Verileriniz güvende",
-      "encryption": "256-bit şifreleme",
-      "privacy": "HIPAA uyumluluğu",
-      "backup": "Otomatik yedekleme"
-    }
-  },
-  "security": {
-    "title": "Güvenlik Paneli",
-    "subtitle": "Hesap güvenliğinizi izleyin",
-    "metrics": {
-      "loginAttempts": "Giriş denemeleri",
-      "dataBreaches": "Veri ihlalleri",
-      "securityScore": "Güvenlik puanı",
-      "lastScan": "Son tarama"
-    },
-    "status": {
-      "secure": "Güvenli",
-      "warning": "Uyarı",
-      "critical": "Kritik",
-      "unknown": "Bilinmiyor"
-    },
-    "actions": {
-      "changePassword": "Şifre değiştir",
-      "enable2FA": "2FA'yı etkinleştir",
-      "viewLogs": "Logları görüntüle",
-      "downloadReport": "Rapor indir"
-    },
-    "help": {
-      "securityScore": "Güvenlik puanınız mevcut güvenlik ayarlarınıza göre hesaplanır",
-      "loginAttempts": "Son 24 saatteki giriş denemelerinizin sayısı",
-      "dataBreaches": "Hesabınızla ilişkili bilinen veri ihlallerinin sayısı"
-     }
-   },
-   "notifications": {
-     "success": {
-      "medicationAdded": "İlaç başarıyla eklendi",
-      "medicationAndReminderAdded": "İlaç ve hatırlatıcı başarıyla eklendi",
-      "failedToAddMedication": "İlaç eklenemedi",
-      "medicationUpdated": "İlaç başarıyla güncellendi",
-      "medicationDeleted": "İlaç başarıyla silindi",
-      "reminderAdded": "Hatırlatıcı başarıyla eklendi",
-      "reminderUpdated": "Hatırlatıcı başarıyla güncellendi",
-      "reminderDeleted": "Hatırlatıcı başarıyla silindi",
-      "familyGroupCreated": "Aile grubu başarıyla oluşturuldu",
-      "memberInvited": "Üye başarıyla davet edildi",
-      "settingsSaved": "Ayarlar başarıyla kaydedildi",
-      "profileUpdated": "Profil başarıyla güncellendi",
-      "dataExported": "Veriler başarıyla dışa aktarıldı",
-      "scanCompleted": "Tarama tamamlandı",
-      "doseTaken": "Doz alındı",
-      "passwordChanged": "Şifre başarıyla değiştirildi"
-    },
-    "error": {
-      "networkError": "Ağ hatası. Lütfen tekrar deneyin",
-      "unauthorized": "Giriş gerekli",
-      "forbidden": "Bu işlem için yetkiniz yok",
-      "notFound": "Kaynak bulunamadı",
-      "serverError": "Sunucu hatası. Lütfen daha sonra deneyin",
-      "scanFailed": "Tarama başarısız oldu",
-      "medicationNotFound": "İlaç bulunamadı",
-      "invalidData": "Geçersiz veri",
-      "uploadFailed": "Yükleme başarısız oldu",
-      "deleteConfirmation": "Bu işlem geri alınamaz"
-    },
-    "warning": {
-      "unsavedChanges": "Kaydedilmemiş değişiklikler var",
-      "lowStorage": "Depolama alanı az",
-      "expiredMedication": "Bazı ilaçların süresi dolmuş",
-      "missedDoses": "Kaçırılan dozlar var",
-      "duplicateEntry": "Mükerrer kayıt tespit edildi"
-    },
-    "info": {
-      "updateAvailable": "Güncelleme mevcut",
-      "syncInProgress": "Senkronizasyon devam ediyor",
-      "maintenanceMode": "Bakım modu",
-      "trialExpiring": "Deneme süresi bitiyor",
-       "newFeature": "Yeni özellik mevcut"
-      }
-    },
-  "notFound": {
-    "title": "Sayfa bulunamadı",
-    "subtitle": "Aradığınız sayfa mevcut değil",
-    "description": "Bu bağlantı hatalı olabilir veya sayfa taşınmış olabilir",
-    "action": "Ana sayfaya dön"
-  },
-  "errors": {
-    "camera": {
-      "permissionDenied": "Kamera izni reddedildi",
-      "notAvailable": "Kamera mevcut değil",
-      "initializationFailed": "Kamera başlatılamadı"
-    },
-    "network": {
-      "offline": "İnternet bağlantısı yok",
-      "timeout": "İstek zaman aşımına uğradı",
-      "connectionFailed": "Bağlantı başarısız oldu"
-    },
-    "validation": {
-      "required": "Bu alan gereklidir",
-      "invalidFormat": "Geçersiz format",
-      "tooShort": "Çok kısa",
-      "tooLong": "Çok uzun",
-      "invalidEmail": "Geçersiz e-posta formatı",
-      "weakPassword": "Şifre çok zayıf"
-    }
-  },
-  "legal": {
-    "title": "Yasal ve Destek",
-    "privacyPolicy": "Gizlilik Politikası",
-    "termsOfService": "Hizmet Şartları",
-    "contact": "Bize Ulaşın",
-    "contactEmail": "info@pilllens.com",
-    "supportHours": "Pazartesi-Cuma, 09:00 - 17:00 UTC",
-    "responseTime": "Genellikle 24 saat içinde yanıt veriyoruz",
-    "emailSubject": "PillLens Destek Talebi",
-    "emailBody": "Merhaba PillLens Destek Ekibi,\n\nAşağıdaki konularda yardıma ihtiyacım var:\n\n[Lütfen sorununuzu veya sorunuzu burada açıklayın]\n\nUygulama Sürümü: 1.0.0\nCihaz: [Cihaz bilgileriniz]\n\nTeşekkürler!",
-    "emailSupportTitle": "E-posta Desteği",
-    "emailSupportDescription": "Herhangi bir soru veya sorun için destek ekibimizle iletişime geçin.",
-    "sendEmail": "E-posta Gönder",
-    "supportHoursTitle": "Destek Saatleri",
-    "responseTimeTitle": "Yanıt Süresi",
-    "helpTopicsTitle": "Nasıl yardımcı olabiliriz?",
-    "helpTopic1": "İlaç tarama sorunları",
-    "helpTopic2": "Hatırlatıcı kurulumu ve sorun giderme",
-    "helpTopic3": "Aile paylaşım sorunları",
-    "helpTopic4": "Hesap ve abonelik soruları",
-    "helpTopic5": "Gizlilik ve güvenlik endişeleri",
-    "helpTopic6": "Özellik istekleri ve geri bildirim",
-    "emergencyNoticeTitle": "Acil Durum Bildirimi",
-    "emergencyNotice": "PillLens tıbbi acil durumlar için değildir. Tıbbi bir acil durum yaşıyorsanız, lütfen derhal yerel acil servislerinizle iletişime geçin.",
-    "privacy": {
-      "section1": {"title": "1. Topladığımız Bilgiler", "content": "PillLens, taradığınız veya manuel olarak girdiğiniz ilaç bilgilerini, hatırlatma amaçları için kişisel sağlık verilerini ve kimlik doğrulama için hesap bilgilerini toplar."},
-      "section2": {"title": "2. Bilgilerinizi Nasıl Kullanıyoruz", "content": "Verileriniz ilaç hatırlatıcıları sağlamak, aile paylaşım özelliklerini etkinleştirmek ve hizmetlerimizi geliştirmek için kullanılır."},
-      "section3": {"title": "3. Veri Güvenliği", "content": "Verilerinizi korumak için endüstri standardı şifreleme ve güvenlik önlemlerini uyguluyoruz."},
-      "section4": {"title": "4. Tıbbi Uyumluluk", "content": "PillLens sağlık gizliliği standartlarını takip eder ve HIPAA uyumluluk ilkeleri göz önünde bulundurularak tasarlanmıştır."},
-      "section5": {"title": "5. Haklarınız", "content": "Kişisel bilgilerinize istediğiniz zaman erişme, güncelleme veya silme hakkınız vardır."},
-      "section6": {"title": "6. Bize Ulaşın", "content": "Bu Gizlilik Politikası hakkında sorularınız varsa, privacy@pilllens.com adresinden bize ulaşın."},
-      "lastUpdated": "Son güncelleme: Aralık 2024"
-    },
-    "terms": {
-      "section1": {"title": "1. Şartların Kabulü", "content": "PillLens'i kullanarak bu Hizmet Şartlarını kabul etmiş olursunuz."},
-      "section2": {"title": "2. Tıbbi Sorumluluk Reddi", "content": "PillLens bir ilaç bilgisi ve hatırlatıcı aracıdır. Profesyonel tıbbi tavsiyenin yerine geçmez."},
-      "section3": {"title": "3. Bilgi Doğruluğu", "content": "Doğru ilaç bilgileri sağlamaya çalışsak da, tüm bilgilerin doğruluğunu garanti edemeyiz."},
-      "section4": {"title": "4. Kullanıcı Sorumlulukları", "content": "Hesabınızın gizliliğini korumakla sorumlusunuz."},
-      "section5": {"title": "5. Sorumluluk Sınırlaması", "content": "PillLens zararlardan sorumlu değildir."},
-      "section6": {"title": "6. Hizmet Kullanılabilirliği", "content": "Hizmet kullanılabilirliğini sürdürmeye çalışırız."},
-      "section7": {"title": "7. Fesih", "content": "Taraflardan herhangi biri sözleşmeyi feshedebilir."},
-      "lastUpdated": "Son güncelleme: Aralık 2024"
-    }
-  },
-  "toast": {
-    "welcomeBack": "Tekrar hoş geldin!",
-    "signedIn": "Başarıyla giriş yaptınız",
-    "error": "Hata",
-    "success": "Başarılı",
-    "warning": "Uyarı",
-    "info": "Bilgi"
   },
   "feedback": {
     "submit": "Geri bildirim gönder",

@@ -357,6 +357,10 @@
     "dataEncryptedSecure": "Məlumatlarınız şifrələnmiş və təhlükəsizdir"
   },
   "family": {
+    "title": "Ailə və Baxıcılar",
+    "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
+    "management": "Ailə İdarəetməsi",
+    "createFamilyGroup": "Ailə Qrupu Yarat",
     "tabs": {
       "overview": "Ümumi baxış",
       "groups": "Qruplar",
@@ -380,6 +384,10 @@
       "pending": "Gözləyir"
     },
     "emptyState": {
+      "title": "Qayğı Şəbəkənizi Başladın",
+      "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
+      "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
+      "createButton": "Ailə Qrupu Yarat",
       "welcomeTitle": "Ailə Qayğısına Xoş Gəldiniz",
       "welcomeDescription": "Dərmanları paylaşmaq, sağlamlığı izləmək və hamını birlikdə təhlükəsiz saxlamaq üçün ailə qayğı şəbəkənizi yaradın.",
       "connectFamily": "Ailəni Bağla",
@@ -441,12 +449,80 @@
           "action": "Dərmanları Paylaş"
         },
         "startCaring": {
-          "title": "Birlikdə Qayğıya Başlayın",
+          "title": "Birlikdə Qayğı Göstərməyə Başlayın",
           "description": "Sağlamlığı izləyin, xatırlatmalar göndərin və əlaqədə qalın",
           "action": "Qayğıya Başla"
         }
       }
     },
+    "dashboard": {
+      "familyMembers": "Ailə Üzvləri",
+      "ofTotal": "{total} cəmidən",
+      "adherenceRate": "Riayət Dərəcəsi",
+      "thisWeek": "bu həftə +%2",
+      "pendingTasks": "Gözləyən Vəzifələr",
+      "needAttention": "Diqqət tələb edir",
+      "careScore": "Qayğı Puanı",
+      "careScoreExcellent": "Əla qayğı",
+      "careScoreGood": "Yaxşı qayğı",
+      "careScoreFair": "Ədalətli qayğı",
+      "careScoreNeedsAttention": "Diqqət tələb edir",
+      "emergencyContact": "Təcili Əlaqə",
+      "emergencyDescription": "Bir toxunuşla təcili zəng",
+      "shareMedications": "Dərmanları Paylaş",
+      "shareDescription": "Sürətli dərman paylaşımı",
+      "dailyCheckup": "Gündəlik Yoxlama",
+      "checkupDescription": "Ailə rifahı yoxlamasına başla",
+      "weeklyTrend": "Həftəlik Riayət Trendu",
+      "medicationStatus": "Dərman Statusu",
+      "recentActivity": "Son Ailə Fəaliyyəti",
+      "noRecentActivity": "Son ailə fəaliyyəti yoxdur",
+      "onTime": "Vaxtında",
+      "delayed": "Gecikmiş",
+      "missed": "Qaçırılmış",
+      "completed": "Tamamlandı",
+      "activeStatus": "Aktiv",
+      "vsLastWeek": "keçən həftəyə nisbətən"
+    },
+    "group": {
+      "name": "Qrup Adı",
+      "description": "Təsvir",
+      "members": "Üzvlər",
+      "settings": "Tənzimləmələr",
+      "delete": "Qrupu Sil",
+      "edit": "Qrupu Redaktə Et",
+      "leave": "Qrupdan Çıx"
+    },
+    "member": {
+      "role": "Rol",
+      "permissions": "İcazələr",
+      "lastSeen": "Son Görülmə",
+      "status": "Status",
+      "remove": "Üzvü Çıxar",
+      "edit": "Üzvü Redaktə Et"
+    },
+    "invitations": {
+      "pending": "Gözləyən Dəvətlər",
+      "sent": "Göndərilən Dəvətlər",
+      "received": "Alınan Dəvətlər",
+      "accept": "Qəbul Et",
+      "decline": "Rədd Et",
+      "send": "Dəvət Göndər",
+      "resend": "Yenidən Göndər"
+    },
+    "messages": {
+      "groupCreated": "Ailə qrupu uğurla yaradıldı",
+      "memberAdded": "Üzv uğurla əlavə edildi",
+      "invitationSent": "Dəvət uğurla göndərildi",
+      "memberRemoved": "Üzv uğurla çıxarıldı",
+      "groupDeleted": "Qrup uğurla silindi"
+    },
+    "validation": {
+      "groupNameRequired": "Qrup adı tələb olunur",
+      "emailRequired": "E-poçt ünvanı tələb olunur",
+      "roleRequired": "Rol seçimi tələb olunur"
+    }
+  },
     "dashboard": {
       "familyMembers": "Ailə Üzvləri",
       "ofTotal": "{total} ümumidən",
@@ -554,17 +630,6 @@
     "success": "Uğurlu",
     "warning": "Xəbərdarlıq",
     "info": "Məlumat"
-  },
-  "family": {
-    "title": "Ailə və Baxıcılar",
-    "subtitle": "Dərman planlarınızı sizə qayğı göstərən insanlarla paylaşın",
-    "createFamilyGroup": "Ailə qrupu yarat",
-    "empty": {
-      "title": "Qayğı Şəbəkənizi Başladın",
-      "subtitle": "Təhlükəsiz paylaşım üçün ailə üzvləri və baxıcılarla əlaqə qurun",
-      "description": "Ailə qrupları həyatınızdakı etibarlı insanlarla qayğını koordinasiya etməyə kömək edir.",
-      "createButton": "Ailə Qrupu Yarat"
-    }
   },
   "feedback": {
     "submit": "Geri bildirim göndər",
