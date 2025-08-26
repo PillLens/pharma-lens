@@ -212,13 +212,13 @@ const Dashboard: React.FC = () => {
                     {/* Health status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full border border-green-500/20 shadow-soft">
                       <Heart className="w-3 h-3 text-red-500 animate-heartbeat" />
-                      <span className="text-xs font-medium text-green-700">{t('dashboard.healthActive')}</span>
+                      <span className="text-xs font-medium text-green-700">Health Active</span>
                     </div>
                     
                     {/* Sync status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full border border-blue-500/20 shadow-soft">
                       <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                      <span className="text-xs font-medium text-blue-700">{t('dashboard.synced')}</span>
+                      <span className="text-xs font-medium text-blue-700">Sync</span>
                     </div>
                   </div>
 
