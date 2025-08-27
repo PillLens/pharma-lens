@@ -100,7 +100,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
       className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer ${getCardVariant()}`}
       onClick={onTap}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-4">
         {/* Header with medication info */}
         <div className="flex items-start justify-between mb-5">
           <div className="flex-1">
