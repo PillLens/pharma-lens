@@ -576,27 +576,10 @@ export const ScanHistory = () => {
 
   const content = (
     <div className="min-h-screen bg-background">
-      {/* Enhanced header */}
+      {/* Stats and content section */}
       <div className="relative overflow-hidden bg-background">
         
         <div className="relative px-4 pt-6 pb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-              <History className="w-6 h-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-foreground">
-                Scan Timeline
-              </h1>
-              <p className="text-sm text-muted-foreground">Your medication scanning history</p>
-            </div>
-            <Badge 
-              variant="outline" 
-              className="px-3 py-1 text-xs bg-primary/10 text-primary border-primary/30"
-            >
-              {filteredSessions.length} scan{filteredSessions.length !== 1 ? 's' : ''}
-            </Badge>
-          </div>
 
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 mb-6">
