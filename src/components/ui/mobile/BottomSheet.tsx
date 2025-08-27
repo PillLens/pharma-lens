@@ -53,41 +53,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     }
   };
 
-  const handleDragStart = (e: React.TouchEvent) => {
-    const startY = e.touches[0].clientY;
-    const element = e.currentTarget as HTMLElement;
-    const startTransform = element.style.transform;
-    let isDragging = false;
-
-    const handleDragMove = (e: TouchEvent) => {
-      const currentY = e.touches[0].clientY;
-      const deltaY = currentY - startY;
-      
-      // Only start dragging if moving down significantly
-      if (deltaY > 10) {
-        isDragging = true;
-        const translateY = Math.max(0, deltaY);
-        element.style.transform = `translateY(${translateY}px)`;
-      }
-    };
-
-    const handleDragEnd = (e: TouchEvent) => {
-      const currentY = e.changedTouches[0].clientY;
-      const deltaY = currentY - startY;
-      
-      if (isDragging && deltaY > 150 && dismissible) {
-        onClose();
-      } else {
-        element.style.transform = startTransform;
-      }
-
-      document.removeEventListener('touchmove', handleDragMove);
-      document.removeEventListener('touchend', handleDragEnd);
-    };
-
-    document.addEventListener('touchmove', handleDragMove, { passive: false });
-    document.addEventListener('touchend', handleDragEnd);
-  };
 
   if (!isOpen) return null;
 
@@ -112,10 +77,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         )}
       >
         {/* Drag Handle */}
-        <div 
-          className="flex justify-center pt-3 pb-2"
-          onTouchStart={handleDragStart}
-        >
+        <div className="flex justify-center pt-3 pb-2">
           <div className="w-12 h-1 bg-muted-foreground/30 rounded-full" />
         </div>
 
@@ -151,9 +113,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         <div 
           className="flex-1 overflow-y-auto scrollbar-hide" 
           style={{ 
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
-            scrollBehavior: 'smooth'
+            WebkitOverflowScrolling: 'touch'
           }}
         >
           {children}
