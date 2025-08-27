@@ -344,6 +344,8 @@
   },
   "errors": {
     "general": "Xəta baş verdi",
+    "cameraError": "Kamera xətası",
+    "galleryError": "Qalereya xətası",
     "network": {
       "offline": "İnternet bağlantısı yoxdur",
       "timeout": "İstək vaxtı bitdi",
@@ -618,6 +620,7 @@
     "goodLighting": "Yaxşı işıqlandırma təmin edin",
     "scanInstructions": "Dərman etiketini çərçivədə aydın şəkildə yerləşdirin",
     "takePhoto": "Şəkil Çək",
+    "uploadFromGallery": "Qalereyadan Yüklə",
     "brandNameAndStrength": "Marka Adı və Güc",
     "onDeviceProcessing": "Şəkillər məxfilik üçün cihazda işlənir",
     "lowQuality": "Şəkil keyfiyyəti etibarlı analiz üçün çox aşağıdır. Xahiş olunur daha yaxşı işıqlandırma ilə yenidən çəkin.",

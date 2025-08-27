@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import { ScanHistory } from "./pages/ScanHistory";
@@ -42,42 +43,58 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={
                   <ProtectedRoute>
-                    <Index />
+                    <AppLayout>
+                      <Index />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <AppLayout>
+                      <Dashboard />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/history" element={
                   <ProtectedRoute>
-                    <ScanHistory />
+                    <AppLayout>
+                      <ScanHistory />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/medications" element={
                   <ProtectedRoute>
-                    <MedicationManager />
+                    <AppLayout>
+                      <MedicationManager />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/security" element={
                   <ProtectedRoute>
-                    <SecurityDashboard />
+                    <AppLayout>
+                      <SecurityDashboard />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/family" element={
                   <ProtectedRoute>
-                    <FamilyManager />
+                    <AppLayout>
+                      <FamilyManager />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/reminders" element={
                   <ProtectedRoute>
-                    <Reminders />
+                    <AppLayout>
+                      <Reminders />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 <Route path="/settings" element={
                   <ProtectedRoute>
-                    <Settings />
+                    <AppLayout>
+                      <Settings />
+                    </AppLayout>
                   </ProtectedRoute>
                 } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

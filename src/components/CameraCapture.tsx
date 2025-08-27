@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2, Scan, Star } from "lucide-react";
+import { Camera as CameraIcon, X, RotateCcw, CheckCircle, AlertTriangle, Loader2, Scan, Star, ImageIcon, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -200,6 +200,30 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     }
   };
 
+  const selectFromGallery = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos,
+      });
+
+      setCapturedImage(image.dataUrl || null);
+      
+      if (image.dataUrl) {
+        await processImage(image.dataUrl);
+      }
+    } catch (error) {
+      console.error('Gallery error:', error);
+      toast({
+        title: t('errors.galleryError'),
+        description: t('errors.permissionDenied'),
+        variant: "destructive",
+      });
+    }
+  };
+
   const processImage = async (imageData: string) => {
     setIsProcessing(true);
     let barcodeValue: string | undefined;
@@ -350,14 +374,26 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
               </p>
             </div>
 
-            <Button 
-              size="lg"
-              onClick={captureImage}
-              className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical text-lg px-8 py-6 h-auto"
-            >
-              <CameraIcon className="w-6 h-6 mr-3" />
-              {t('scanner.takePhoto')}
-            </Button>
+            <div className="flex flex-col gap-4">
+              <Button 
+                size="lg"
+                onClick={captureImage}
+                className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white shadow-medical text-lg px-8 py-6 h-auto"
+              >
+                <CameraIcon className="w-6 h-6 mr-3" />
+                {t('scanner.takePhoto')}
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                onClick={selectFromGallery}
+                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-6 h-auto"
+              >
+                <ImageIcon className="w-6 h-6 mr-3" />
+                {t('scanner.uploadFromGallery')}
+              </Button>
+            </div>
 
             <div className="mt-8 grid gap-4 text-sm text-muted-foreground max-w-md mx-auto">
               <div className="flex items-start gap-3">

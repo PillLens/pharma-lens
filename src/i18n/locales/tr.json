@@ -421,6 +421,7 @@
     "goodLighting": "İyi aydınlatma sağlayın",
     "scanInstructions": "İlaç etiketini çerçevede net bir şekilde yerleştirin",
     "takePhoto": "Fotoğraf Çek",
+    "uploadFromGallery": "Galeriden Yükle",
     "brandNameAndStrength": "Marka Adı ve Güç",
     "onDeviceProcessing": "Görüntüler gizlilik için cihazda işlenir",
     "lowQuality": "Görüntü kalitesi güvenilir analiz için çok düşük. Lütfen daha iyi aydınlatma ile yeniden çekin.",
@@ -608,5 +609,17 @@
     "privacy": {
       "title": "Gizlilik ve Güvenlik"
     }
+  },
+  "errors": {
+    "networkError": "Ağ hatası oluştu",
+    "serverError": "Sunucu hatası oluştu",
+    "scanFailed": "Tarama başarısız",
+    "cameraError": "Kamera hatası",
+    "galleryError": "Galeri hatası",
+    "permissionDenied": "İzin reddedildi",
+    "unsupportedFormat": "Desteklenmeyen format",
+    "processingFailed": "İşleme başarısız",
+    "extractionFailed": "Bilgi çıkarma başarısız"
   }
+}
 }
