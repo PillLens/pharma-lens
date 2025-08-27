@@ -56,18 +56,24 @@ const ReminderSummaryCards: React.FC<ReminderSummaryCardsProps> = ({
           return (
             <div
               key={card.id}
-              className="bg-white dark:bg-slate-900 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 active:scale-[0.98] hover:shadow-md shadow-sm border-0"
+              className="bg-white dark:bg-slate-900 rounded-xl p-2 cursor-pointer transition-all duration-200 active:scale-[0.98] hover:shadow-md shadow-sm border-0"
               onClick={() => onCardTap?.(card.type)}
             >
-              <div className="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-                <IconComponent className="w-4 h-4 text-white" />
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                    <IconComponent className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <p className="text-lg font-bold text-foreground">
+                    {card.value}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground leading-tight font-medium">
+                    {card.title}
+                  </p>
+                </div>
               </div>
-              <p className="text-lg font-bold text-foreground mb-0.5">
-                {card.value}
-              </p>
-              <p className="text-xs text-muted-foreground leading-tight font-medium">
-                {card.title}
-              </p>
             </div>
           );
         })}

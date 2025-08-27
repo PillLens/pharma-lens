@@ -92,15 +92,17 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
               onClick={() => onCardTap?.(stat.id)}
             >
               <CardContent className="p-2">
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-lg`}>
-                    <IconComponent className="w-5 h-5 text-white" />
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className={`w-8 h-8 rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-md`}>
+                      <IconComponent className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="text-xl font-bold text-foreground">{stat.value}</div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground font-medium leading-tight">
-                    {stat.title}
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground font-medium leading-tight">
+                      {stat.title}
+                    </div>
                   </div>
                 </div>
               </CardContent>
