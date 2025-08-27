@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { scheduledDoseService } from '@/services/scheduledDoseService';
 
 interface DashboardStats {
   medications: {
@@ -89,20 +90,8 @@ export const useDashboardData = () => {
 
       if (remindersError) throw remindersError;
 
-      // Fetch adherence data for today
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date();
-      todayEnd.setHours(23, 59, 59, 999);
-
-      const { data: adherenceData, error: adherenceError } = await supabase
-        .from('medication_adherence_log')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('scheduled_time', todayStart.toISOString())
-        .lte('scheduled_time', todayEnd.toISOString());
-
-      if (adherenceError) throw adherenceError;
+      // Get today's adherence status using the scheduled dose service
+      const todaysAdherence = await scheduledDoseService.getTodaysAdherenceStatus(user.id);
 
       // Fetch family groups
       const { data: familyGroups, error: familyError } = await supabase
@@ -127,26 +116,12 @@ export const useDashboardData = () => {
         reminder.days_of_week.includes(currentDayOfWeek === 0 ? 7 : currentDayOfWeek) // Convert Sunday (0) to 7
       );
       
-      // Calculate today's actual dose count from scheduled reminders
-      const todaysDoses = todaysReminders.length;
+      // Use the accurate adherence data from scheduled dose service
+      const totalToday = todaysAdherence.totalToday;
+      const takenToday = todaysAdherence.completedToday;
+      const missedToday = todaysAdherence.missedToday;
       
-      // Calculate adherence rate based on scheduled vs taken
-      const takenToday = adherenceData?.filter(a => a.status === 'taken').length || 0;
-      const missedToday = adherenceData?.filter(a => a.status === 'missed').length || 0;
-      
-      // Handle cases where adherence entries exist but no reminders are set up
-      let totalToday = todaysDoses;
-      let adherenceRate = 100;
-      
-      if (totalToday > 0) {
-        // Normal case: use scheduled reminders as baseline
-        adherenceRate = Math.round((takenToday / totalToday) * 100);
-      } else if (takenToday > 0 || missedToday > 0) {
-        // Edge case: adherence entries exist but no reminders set up
-        // This happens when medications are added from scan but reminders weren't created
-        totalToday = takenToday + missedToday;
-        adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
-      }
+      const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
 
       // Calculate streak from adherence log
       const calculateStreak = async () => {
@@ -237,7 +212,7 @@ export const useDashboardData = () => {
         reminders: {
           total: reminders?.length || 0,
           active: activeReminders.length,
-          todaysDoses,
+          todaysDoses: totalToday,
           nextReminder
         },
         adherence: {

@@ -20,6 +20,7 @@ import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime } from '@/uti
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 import { medicationAdherenceService } from '@/services/medicationAdherenceService';
+import { scheduledDoseService } from '@/services/scheduledDoseService';
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
@@ -168,6 +169,8 @@ const Reminders: React.FC = () => {
 
   const handleMarkTaken = async (entryId: string) => {
     try {
+      if (!user) return;
+      
       // Parse entry ID to get reminder ID and time
       const [reminderId, reminderTime] = entryId.split('-');
       const reminder = reminders.find(r => r.id === reminderId);
@@ -181,11 +184,11 @@ const Reminders: React.FC = () => {
         return;
       }
 
-      // Record in adherence log
-      const success = await medicationAdherenceService.recordMedicationTaken(
+      // Use the scheduled dose service to properly mark as taken
+      const success = await scheduledDoseService.markScheduledDoseAsTaken(
+        user.id,
         reminder.medication_id,
-        new Date().toISOString(), // scheduled time (current time for now)
-        new Date().toISOString(), // actual time
+        reminderTime,
         'Marked as taken from timeline'
       );
 
@@ -195,6 +198,12 @@ const Reminders: React.FC = () => {
         toast({
           title: t('toast.doseTaken'),
           description: t('toast.greatJobStayingOnTrack')
+        });
+      } else {
+        toast({
+          title: t('common.error'),
+          description: 'Failed to mark dose as taken',
+          variant: 'destructive'
         });
       }
     } catch (error) {
@@ -379,10 +388,12 @@ const Reminders: React.FC = () => {
                     onToggleStatus={() => handleToggleReminder(reminder.id)}
                     onMarkTaken={async (time) => {
                       try {
-                        const success = await medicationAdherenceService.recordMedicationTaken(
+                        if (!user) return;
+                        
+                        const success = await scheduledDoseService.markScheduledDoseAsTaken(
+                          user.id,
                           reminder.medication_id,
-                          new Date().toISOString(),
-                          new Date().toISOString(),
+                          time,
                           'Marked as taken from reminder card'
                         );
                         
