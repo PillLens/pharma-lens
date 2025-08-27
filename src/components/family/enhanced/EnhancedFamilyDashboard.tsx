@@ -123,41 +123,37 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
       <QuickStatsGrid stats={familyStats} className="mb-6" />
 
       {/* Quick Action Cards */}
-      <QuickStatsGrid 
-        stats={[
-          {
-            icon: Phone,
-            value: 'SOS',
-            label: t('family.dashboard.emergencyContact') || 'Emergency Contact',
-            translationKey: 'family.dashboard.emergencyContact',
-            color: 'text-destructive',
-            bgColor: 'bg-destructive/10',
-            borderColor: 'border-destructive/20',
-            onClick: onEmergencyCall
-          },
-          {
-            icon: Heart,
-            value: 'Share',
-            label: t('family.dashboard.shareMedications') || 'Share Medications',
-            translationKey: 'family.dashboard.shareMedications',
-            color: 'text-primary',
-            bgColor: 'bg-primary/10',
-            borderColor: 'border-primary/20',
-            onClick: () => onQuickAction?.('medications')
-          },
-          {
-            icon: Activity,
-            value: 'Check',
-            label: t('family.dashboard.dailyCheckup') || 'Daily Checkup',
-            translationKey: 'family.dashboard.dailyCheckup',
-            color: 'text-info',
-            bgColor: 'bg-info/10',
-            borderColor: 'border-info/20',
-            onClick: () => onQuickAction?.('checkup')
-          }
-        ]}
-        className="grid-cols-1 md:grid-cols-3"
-      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-destructive/20 bg-gradient-to-r from-destructive/5 to-red-500/10 hover:shadow-lg transition-all cursor-pointer" onClick={onEmergencyCall}>
+          <CardContent className="p-4 text-center">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-destructive/20 flex items-center justify-center animate-pulse">
+              <Phone className="w-6 h-6 text-destructive" />
+            </div>
+            <h3 className="font-semibold text-destructive mb-1">{t('family.dashboard.emergencyContact')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.emergencyDescription')}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:shadow-lg transition-all cursor-pointer" onClick={() => onQuickAction?.('medications')}>
+          <CardContent className="p-4 text-center">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
+              <Heart className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="font-semibold text-primary mb-1">{t('family.dashboard.shareMedications')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.shareDescription')}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-blue-500/20 bg-gradient-to-r from-blue-500/5 to-blue-500/10 hover:shadow-lg transition-all cursor-pointer" onClick={() => onQuickAction?.('checkup')}>
+          <CardContent className="p-4 text-center">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <Activity className="w-6 h-6 text-blue-600" />
+            </div>
+            <h3 className="font-semibold text-blue-600 mb-1">{t('family.dashboard.dailyCheckup')}</h3>
+            <p className="text-xs text-muted-foreground">{t('family.dashboard.checkupDescription')}</p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
