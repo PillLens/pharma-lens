@@ -318,7 +318,28 @@
     "notifications": {
       "title": "Bildirişlər",
       "enabled": "Aktivdir",
-      "disabled": "Qeyri-aktivdir"
+      "disabled": "Qeyri-aktivdir",
+      "masterToggle": "Bildirişləri Aktivləşdir",
+      "masterDescription": "Bu cihazda bütün növ bildirişləri alın",
+      "reminders": "Dərman Xatırlatmaları",
+      "remindersDescription": "Dərman qəbul etmə vaxtı xatırladılın",
+      "missedDose": "Buraxılmış Doza Xəbərdarlıqları",
+      "missedDoseDescription": "Planlaşdırılmış dozanı buraxdığınızda xəbərdarlıq alın",
+      "family": "Ailə Yenilikləri",
+      "familyDescription": "Ailə üzvlərinin dərman fəaliyyətləri haqqında bildiriş alın",
+      "product": "Məhsul Xəbərdarlıqları",
+      "productDescription": "Təhlükəsizlik xəbərdarlıqları və dərman geri çağırışları alın",
+      "quietHours": "Sakit Saatlar", 
+      "quietHoursDescription": "Bildirişlərin susdurulacağı vaxtları təyin edin",
+      "from": "Başlangıc",
+      "to": "Son",
+      "testNotification": "Test Bildiriş Göndər",
+      "testSent": "Test bildiriş uğurla göndərildi",
+      "testFailed": "Test bildiriş göndərilmədi",
+      "updated": "Bildiriş tərcihləri yeniləndi",
+      "updateError": "Bildiriş tərcihləri yenilənmədi",
+      "quietHoursUpdated": "Sakit saatlar uğurla yeniləndi",
+      "notificationsNotReady": "Bildirişlər hələ hazır deyil"
     }
   },
   "errors": {
