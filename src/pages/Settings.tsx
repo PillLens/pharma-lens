@@ -105,9 +105,6 @@ const Settings: React.FC = () => {
 
   const languages = [
     { code: 'EN', name: 'English', flag: '🇺🇸' },
-    { code: 'AZ', name: 'Azərbaycan', flag: '🇦🇿' },
-    { code: 'TR', name: 'Türkçe', flag: '🇹🇷' },
-    { code: 'RU', name: 'Русский', flag: '🇷🇺' }
   ];
 
   useEffect(() => {

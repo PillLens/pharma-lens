@@ -14,10 +14,7 @@ interface LanguageSelectorProps {
 }
 
 const languages = [
-  { code: "AZ", name: "Azərbaycan", flag: "🇦🇿" },
   { code: "EN", name: "English", flag: "🇬🇧" },
-  { code: "RU", name: "Русский", flag: "🇷🇺" },
-  { code: "TR", name: "Türkçe", flag: "🇹🇷" },
 ];
 
 export const LanguageSelector = ({ value, onChange }: LanguageSelectorProps) => {
