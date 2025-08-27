@@ -91,65 +91,64 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
 
         <Progress value={completionRate} className="mb-6 h-2" />
 
-        <div className="space-y-0 divide-y divide-border/20">
+        <div className="space-y-4">
           {entries.map((entry, index) => (
             <div
               key={entry.id}
-              className="flex items-center gap-4 py-4 px-2 hover:bg-muted/30 transition-colors duration-200"
+              className={`relative flex items-center gap-4 p-2 rounded-2xl border transition-all duration-300 ${getStatusColor(entry.status)}`}
             >
+              {/* Timeline line */}
+              {index < entries.length - 1 && (
+                <div className="absolute left-6 top-12 w-0.5 h-8 bg-border" />
+              )}
+              
               {/* Status icon */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                entry.status === 'taken' ? 'bg-success/20 text-success' :
-                entry.status === 'current' ? 'bg-primary/20 text-primary' :
-                entry.status === 'missed' || entry.status === 'overdue' ? 'bg-destructive/20 text-destructive' :
-                'bg-muted/50 text-muted-foreground'
-              }`}>
+              <div className="flex-shrink-0">
                 {getStatusIcon(entry.status)}
               </div>
               
               {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground text-sm">
-                        {entry.medication}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {entry.dosage}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      {entry.time}
-                    </div>
-                  </div>
-                  
-                  {/* Action buttons for current/upcoming entries */}
-                  {(entry.status === 'current' || entry.status === 'upcoming') && (
-                    <div className="flex gap-2">
-                      {entry.status === 'current' && (
-                        <>
-                          <button
-                            onClick={() => onSnooze?.(entry.id)}
-                            className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted/50 hover:bg-muted/70 rounded-full transition-colors"
-                          >
-                            {t('reminders.timeline.snooze')}
-                          </button>
-                          <button
-                            onClick={() => onMarkTaken?.(entry.id)}
-                            className="px-3 py-1 text-xs font-medium text-success bg-success/10 hover:bg-success/20 rounded-full transition-colors"
-                          >
-                            {t('reminders.timeline.markTaken')}
-                          </button>
-                        </>
-                      )}
-                      {entry.status === 'upcoming' && (
-                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                      )}
-                    </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="font-semibold text-foreground">{entry.time}</div>
+                  <Badge 
+                    variant={entry.status === 'taken' ? "default" : (entry.status === 'missed' || entry.status === 'overdue') ? "destructive" : "outline"}
+                    className="text-xs capitalize"
+                  >
+                    {t(`reminders.timeline.${entry.status}`)}
+                  </Badge>
+                </div>
+                <div className="text-sm text-foreground mb-1">{entry.medication}</div>
+                <div className="text-xs text-muted-foreground">{entry.dosage}</div>
+              </div>
+              
+              {/* Actions for current/upcoming */}
+              {(entry.status === 'current' || entry.status === 'upcoming') && (
+                <div className="flex gap-2">
+                  {entry.status === 'current' && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs px-3 h-8"
+                        onClick={() => onSnooze?.(entry.id)}
+                      >
+                        {t('reminders.timeline.snooze')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="text-xs px-3 h-8"
+                        onClick={() => onMarkTaken?.(entry.id)}
+                      >
+                        {t('reminders.timeline.markTaken')}
+                      </Button>
+                    </>
+                  )}
+                  {entry.status === 'upcoming' && (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
