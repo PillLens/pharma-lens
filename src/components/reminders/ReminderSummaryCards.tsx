@@ -48,32 +48,49 @@ const ReminderSummaryCards: React.FC<ReminderSummaryCardsProps> = ({
     }
   ];
 
+  const statsWithColors = [
+    {
+      ...summaryCards[0],
+      color: 'text-info',
+      bgColor: 'bg-info/10',
+      borderColor: 'border-info/20'
+    },
+    {
+      ...summaryCards[1],
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20'
+    },
+    {
+      ...summaryCards[2],
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
+      borderColor: 'border-warning/20'
+    }
+  ];
+
   return (
-    <div className="px-6 mb-6">
-      <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
-        {summaryCards.map((card) => {
+    <div className="px-4 mb-6">
+      <div className="grid grid-cols-3 gap-2">
+        {statsWithColors.map((card) => {
           const IconComponent = card.icon;
           return (
             <div
               key={card.id}
-              className="bg-white dark:bg-slate-900 rounded-xl p-2 cursor-pointer transition-all duration-200 active:scale-[0.98] hover:shadow-md shadow-sm border-0"
+              className={`${card.borderColor} ${card.bgColor} rounded-lg p-3 cursor-pointer transition-all duration-200 hover:scale-[1.02] border min-h-0`}
               onClick={() => onCardTap?.(card.type)}
             >
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-                    <IconComponent className="w-3.5 h-3.5 text-white" />
-                  </div>
-                  <p className="text-lg font-bold text-foreground">
-                    {card.value}
-                  </p>
+              <div className="flex items-center justify-between mb-1">
+                <div className={`w-8 h-8 rounded-lg ${card.bgColor} flex items-center justify-center shadow-soft`}>
+                  <IconComponent className={`w-4 h-4 ${card.color}`} />
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground leading-tight font-medium">
-                    {card.title}
-                  </p>
+                <div className="text-right">
+                  <div className="text-xl font-bold text-foreground">{card.value}</div>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground font-medium">
+                {card.title}
+              </p>
             </div>
           );
         })}

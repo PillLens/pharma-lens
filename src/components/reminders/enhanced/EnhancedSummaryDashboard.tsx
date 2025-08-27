@@ -46,28 +46,27 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
       title: t('reminders.summary.active'),
       value: activeReminders,
       icon: Bell,
-      color: 'from-blue-500 to-blue-600'
+      color: 'text-info',
+      bgColor: 'bg-info/10',
+      borderColor: 'border-info/20'
     },
     {
       id: 'medications',
       title: t('reminders.summary.medications'),
       value: medicationsCovered,
       icon: Pill,
-      color: 'from-green-500 to-green-600'
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20'
     },
     {
       id: 'today',
-      title: t('reminders.summary.todayDoses'),
+      title: t('reminders.summary.todayDoses'), 
       value: todaysDoses,
       icon: Calendar,
-      color: 'from-amber-500 to-amber-600'
-    },
-    {
-      id: 'streak',
-      title: t('reminders.summary.dayStreak'),
-      value: streak,
-      icon: Award,
-      color: 'from-purple-500 to-purple-600'
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
+      borderColor: 'border-warning/20'
     }
   ];
 
@@ -82,33 +81,31 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 px-4">
-        {quickStats.map((stat) => {
-          const IconComponent = stat.icon;
-          return (
-            <Card
-              key={stat.id}
-              className="rounded-3xl border-0 bg-gradient-to-br from-card to-primary/5 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
-              onClick={() => onCardTap?.(stat.id)}
-            >
-              <CardContent className="p-2">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className={`w-8 h-8 rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-md`}>
-                      <IconComponent className="w-4 h-4 text-white" />
-                    </div>
+      <div className="px-4">
+        <div className="grid grid-cols-3 gap-2">
+          {quickStats.map((stat) => {
+            const IconComponent = stat.icon;
+            return (
+              <div
+                key={stat.id}
+                className={`${stat.borderColor} ${stat.bgColor} rounded-lg p-3 cursor-pointer transition-all duration-200 hover:scale-[1.02] border min-h-0`}
+                onClick={() => onCardTap?.(stat.id)}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className={`w-8 h-8 rounded-lg ${stat.bgColor} flex items-center justify-center shadow-soft`}>
+                    <IconComponent className={`w-4 h-4 ${stat.color}`} />
+                  </div>
+                  <div className="text-right">
                     <div className="text-xl font-bold text-foreground">{stat.value}</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground font-medium leading-tight">
-                      {stat.title}
-                    </div>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                <p className="text-xs text-muted-foreground font-medium">
+                  {stat.title}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Adherence Overview */}
