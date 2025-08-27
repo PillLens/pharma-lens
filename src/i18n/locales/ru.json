@@ -35,7 +35,8 @@
     "later": "Позже",
     "fillRequiredFields": "Пожалуйста, заполните все обязательные поля",
     "areYouSure": "Вы уверены?",
-    "actionCannotBeUndone": "Это действие нельзя отменить"
+    "actionCannotBeUndone": "Это действие нельзя отменить",
+    "view": "Просмотр"
   },
   "navigation": {
     "home": "Главная",

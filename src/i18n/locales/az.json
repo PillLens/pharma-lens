@@ -36,7 +36,8 @@
     "later": "Sonra",
     "fillRequiredFields": "Zəhmət olmasa bütün tələb olunan sahələri doldurun",
     "areYouSure": "Əminsizmi?",
-    "actionCannotBeUndone": "Bu əməl geri qaytarıla bilməz"
+    "actionCannotBeUndone": "Bu əməl geri qaytarıla bilməz",
+    "view": "Bax"
   },
   "navigation": {
     "home": "Əsas",
