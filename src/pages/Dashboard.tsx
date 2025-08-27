@@ -33,6 +33,7 @@ import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle } from
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -118,33 +119,37 @@ const Dashboard: React.FC = () => {
       icon: Pill,
       value: dashboardStats.medications.active,
       label: t('dashboard.activeMedications', 'Active Medications'),
-      color: 'from-blue-500 to-cyan-500',
-      bgColor: 'bg-blue-500/10',
-      route: '/medications'
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20',
+      onClick: () => navigate('/medications')
     },
     {
       icon: Bell,
       value: dashboardStats.reminders.active,
       label: t('dashboard.activeReminders', 'Active Reminders'),
-      color: 'from-amber-500 to-orange-500',
-      bgColor: 'bg-amber-500/10',
-      route: '/reminders'
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
+      borderColor: 'border-warning/20',
+      onClick: () => navigate('/reminders')
     },
     {
       icon: TrendingUp,
       value: `${dashboardStats.adherence.rate}%`,
       label: t('dashboard.adherenceRate', 'Adherence Rate'),
-      color: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-500/10',
-      route: '/medications'
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
+      borderColor: 'border-primary/20',
+      onClick: () => navigate('/medications')
     },
     {
       icon: Users,
       value: dashboardStats.family.members,
       label: t('dashboard.familyMembers', 'Family Members'),
-      color: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-500/10',
-      route: '/family'
+      color: 'text-info',
+      bgColor: 'bg-info/10',
+      borderColor: 'border-info/20',
+      onClick: () => navigate('/family')
     }
   ];
 
@@ -252,33 +257,7 @@ const Dashboard: React.FC = () => {
               <Activity className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-semibold">{t('dashboard.quickOverview')}</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {quickStats.map((stat, index) => (
-                <MobileCard
-                  key={index}
-                  interactive
-                  onClick={() => navigate(stat.route)}
-                  className="group hover:scale-[1.02] transition-all duration-300 border-0 shadow-lg hover:shadow-xl bg-gradient-to-br from-card/80 to-card backdrop-blur-sm"
-                >
-                  <MobileCardContent className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={cn(
-                        "p-2 rounded-xl transition-all duration-300 group-hover:scale-110",
-                        stat.bgColor
-                      )}>
-                        <stat.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                          {stat.value}
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
-                  </MobileCardContent>
-                </MobileCard>
-              ))}
-            </div>
+            <QuickStatsGrid stats={quickStats} />
           </div>
 
           {/* Today's Focus Card */}
