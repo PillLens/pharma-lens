@@ -140,13 +140,13 @@ const Index = () => {
                   <span className="block text-primary bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
                     <TranslatedText translationKey="hero.title2" fallback="Understand." />
                   </span>
-                  <span className="block text-3xl md:text-4xl text-muted-foreground font-medium mt-2">
-                    Your Medication
+                  <span className="block text-3xl md:text-4xl text-primary font-medium mt-2 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                    Your AI Medication Guide
                   </span>
                 </h1>
                 
                 <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-                  <TranslatedText translationKey="hero.description" fallback="Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets." />
+                  <TranslatedText translationKey="hero.description" fallback="Scan any pill box, barcode, or leaflet to get safe, evidence-based details — what it is, how to take it, and important warnings" />
                 </p>
               </div>
 
@@ -245,11 +245,11 @@ const Index = () => {
               <TranslatedText translationKey="hero.title1" fallback="Snap. Scan. Understand." />
               <br />
               <span className="text-primary">
-                <TranslatedText translationKey="hero.title2" fallback="Your Medication" />
+                <TranslatedText translationKey="hero.title2" fallback="Your AI Medication Guide" />
               </span>
             </h2>
             <p className="text-base text-muted-foreground mb-8">
-              <TranslatedText translationKey="hero.description" fallback="Get instant, evidence-based medication information by capturing photos of medicine boxes or leaflets." />
+              <TranslatedText translationKey="hero.description" fallback="Scan any pill box, barcode, or leaflet to get safe, evidence-based details — what it is, how to take it, and important warnings" />
             </p>
           </div>
         )}
