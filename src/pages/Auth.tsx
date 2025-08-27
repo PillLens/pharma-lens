@@ -90,7 +90,7 @@ export default function Auth() {
 
   if (isMobile) {
     return (
-      <div className="h-screen bg-gradient-to-br from-background via-primary/5 to-primary-light/10 relative overflow-hidden flex flex-col">
+      <div className="h-screen bg-background relative overflow-hidden flex flex-col">
         {/* Background Elements */}
         <div className="fixed inset-0 medical-gradient opacity-30" />
         <div className="fixed -top-20 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
@@ -171,7 +171,7 @@ export default function Auth() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('authPage.emailPlaceholder')}
-                  className="w-full h-11 px-4 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                  className="w-full h-11 px-4 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
                   required
                 />
               </div>
@@ -183,7 +183,7 @@ export default function Auth() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
-                    className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-foreground shadow-medical focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                    className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
                     required
                     minLength={6}
                   />

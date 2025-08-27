@@ -575,18 +575,17 @@ export const ScanHistory = () => {
   const sortedDates = Object.keys(groupedSessions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
   const content = (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen bg-background">
       {/* Enhanced header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-        <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-xl animate-float" />
+      <div className="relative overflow-hidden bg-background">
         
         <div className="relative px-4 pt-6 pb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-primary/20 shadow-soft">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
               <History className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-foreground">
                 Scan Timeline
               </h1>
               <p className="text-sm text-muted-foreground">Your medication scanning history</p>
@@ -601,21 +600,21 @@ export const ScanHistory = () => {
 
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 p-3 rounded-xl border border-green-500/20">
-              <div className="text-lg font-bold text-green-700">
+            <div className="bg-success/10 p-3 rounded-xl border border-success/20">
+              <div className="text-lg font-bold text-success">
                 {sessions.filter(s => s.products?.brand_name && s.products.brand_name !== "Unknown Medication").length}
               </div>
-              <div className="text-xs text-green-600">Identified</div>
+              <div className="text-xs text-success">Identified</div>
             </div>
-            <div className="bg-gradient-to-br from-amber-500/10 to-amber-400/5 p-3 rounded-xl border border-amber-500/20">
-              <div className="text-lg font-bold text-amber-700">
+            <div className="bg-warning/10 p-3 rounded-xl border border-warning/20">
+              <div className="text-lg font-bold text-warning">
                 {sessions.filter(s => s.extractions?.risk_flags?.length > 0).length}
               </div>
-              <div className="text-xs text-amber-600">Alerts</div>
+              <div className="text-xs text-warning">Alerts</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-500/10 to-purple-400/5 p-3 rounded-xl border border-purple-500/20">
-              <div className="text-lg font-bold text-purple-700">{bookmarkedSessions.size}</div>
-              <div className="text-xs text-purple-600">Saved</div>
+            <div className="bg-info/10 p-3 rounded-xl border border-info/20">
+              <div className="text-lg font-bold text-info">{bookmarkedSessions.size}</div>
+              <div className="text-xs text-info">Saved</div>
             </div>
           </div>
 
@@ -656,7 +655,7 @@ export const ScanHistory = () => {
               <TimelineLoadingSkeleton />
             ) : filteredSessions.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-muted/20 flex items-center justify-center border border-muted/40">
                   <History className="w-10 h-10 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -684,7 +683,7 @@ export const ScanHistory = () => {
                   <div key={date} className="space-y-4">
                     {/* Date header */}
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border border-primary/30">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/30">
                         <Calendar className="w-4 h-4 text-primary" />
                       </div>
                       <div>

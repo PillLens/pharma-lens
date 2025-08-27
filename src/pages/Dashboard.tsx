@@ -156,14 +156,12 @@ const Dashboard: React.FC = () => {
   return (
     <ProfessionalMobileLayout showHeader={false}>
       <PullToRefreshWrapper onRefresh={handleRefresh}>
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pb-20">
+        <div className="min-h-screen bg-background pb-20">
           {/* Enhanced Header with Glassmorphism */}
           <div className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
+            <div className="absolute inset-0 bg-background" />
             <div className="relative px-4 pt-6 pb-8">
               {/* Floating decorative elements */}
-              <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-xl animate-float" />
-              <div className="absolute top-8 left-8 w-12 h-12 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }} />
               
               {/* Main header content */}
               <div className="relative z-10">
@@ -172,13 +170,12 @@ const Dashboard: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="relative">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-primary/20 shadow-soft">
-                          <GreetingIcon className="w-5 h-5 text-primary animate-pulse" />
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                          <GreetingIcon className="w-5 h-5 text-primary" />
                         </div>
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent animate-pulse" />
                       </div>
                       <div className="flex-1">
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+                        <h1 className="text-2xl font-bold text-foreground leading-tight">
                           {getGreeting()}
                         </h1>
                         <div className="flex items-center gap-2 mt-0.5">
@@ -197,12 +194,12 @@ const Dashboard: React.FC = () => {
                       <Badge
                         variant={getPlanBadgeVariant()} 
                         className={cn(
-                          "px-4 py-2 text-xs font-bold shadow-lg border-0 backdrop-blur-sm",
+                          "px-4 py-2 text-xs font-bold border",
                           isInTrial 
-                            ? "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 animate-glow-pulse" 
+                            ? "bg-warning/20 text-warning border-warning/30" 
                             : subscription.plan === 'free'
-                            ? "bg-gradient-to-r from-muted/50 to-muted/30 text-muted-foreground"
-                            : "bg-gradient-to-r from-primary/20 to-primary/10 text-primary"
+                            ? "bg-muted text-muted-foreground border-border"
+                            : "bg-primary/20 text-primary border-primary/30"
                         )}
                       >
                         <Crown className="w-3 h-3 mr-1" />
@@ -216,15 +213,15 @@ const Dashboard: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     {/* Health status */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full border border-green-500/20 shadow-soft">
-                      <Heart className="w-3 h-3 text-red-500 animate-heartbeat" />
-                      <span className="text-xs font-medium text-green-700">Health Active</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-success/10 rounded-full border border-success/20">
+                      <Heart className="w-3 h-3 text-red-500" />
+                      <span className="text-xs font-medium text-success">Health Active</span>
                     </div>
                     
                     {/* Sync status */}
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full border border-blue-500/20 shadow-soft">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                      <span className="text-xs font-medium text-blue-700">Sync</span>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-info/10 rounded-full border border-info/20">
+                      <div className="w-2 h-2 rounded-full bg-info" />
+                      <span className="text-xs font-medium text-info">Sync</span>
                     </div>
                   </div>
 
@@ -239,7 +236,7 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 {/* Subtle separator line */}
-                <div className="mt-6 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
+                <div className="mt-6 h-px bg-border" />
               </div>
             </div>
           </div>
@@ -262,12 +259,11 @@ const Dashboard: React.FC = () => {
 
           {/* Today's Focus Card */}
           <div className="px-6 mb-8">
-            <MobileCard className="border-0 shadow-xl bg-gradient-to-br from-primary/5 via-card to-card backdrop-blur-sm overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full transform translate-x-16 -translate-y-16" />
+            <MobileCard className="border">
               <MobileCardHeader className="relative z-10 pb-3">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-primary/10 rounded-xl">
-                    <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                    <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <MobileCardTitle className="text-lg font-semibold">{t('dashboard.todaysFocus')}</MobileCardTitle>
                 </div>
@@ -282,10 +278,8 @@ const Dashboard: React.FC = () => {
                   <div className="relative">
                     <Progress 
                       value={dashboardStats.adherence.rate} 
-                      className="h-3 bg-muted/50"
+                      className="h-3"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40 rounded-full animate-pulse" 
-                         style={{ width: `${dashboardStats.adherence.rate}%` }} />
                   </div>
                 </div>
 
@@ -319,7 +313,7 @@ const Dashboard: React.FC = () => {
               </h3>
             </div>
             
-            <div className="bg-background rounded-xl border border-border/60 overflow-hidden">
+            <div className="bg-background rounded-xl border overflow-hidden">
               {/* Add Medication */}
               <div
                 onClick={() => navigate('/medications')}

@@ -21,7 +21,7 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
   return (
     <div className="space-y-4 px-4">
       {/* Today at a Glance */}
-      <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+      <Card className="bg-background border">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />

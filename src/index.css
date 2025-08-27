@@ -195,23 +195,23 @@
 @layer components {
   /* Medical theme components */
   .medical-surface {
-    @apply bg-gradient-to-br from-background via-background to-primary/5;
+    @apply bg-background;
   }
 
   .medical-button {
-    @apply bg-gradient-to-r from-primary to-primary-light text-primary-foreground;
+    @apply bg-primary text-primary-foreground;
   }
 
   .bg-gradient-medical {
-    @apply bg-gradient-to-br from-primary/10 via-primary/5 to-primary-light/10;
+    @apply bg-primary/10;
   }
 
   .medical-gradient {
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary-light) / 0.05));
+    background: hsl(var(--background));
   }
 
   .gradient-surface {
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary) / 0.02) 100%);
+    background: hsl(var(--background));
   }
 
   .gradient-glass {

@@ -18,10 +18,10 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   if (!isMobile) {
     return <div className={className}>{children}</div>;
   }
-  return <div className="min-h-screen bg-gradient-surface flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       {/* Premium Mobile Header */}
       {showHeader && title && (
-        <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
+        <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top">
           <div className="px-6 py-4">
             <h1 className="text-xl font-bold text-foreground text-center">
               {title}

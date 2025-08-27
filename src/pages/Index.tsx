@@ -92,7 +92,7 @@ const Index = () => {
   }
 
   const content = (
-    <div className={`${!isMobile ? 'min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-secondary-light/10' : ''}`}>
+    <div className={`${!isMobile ? 'min-h-screen bg-background' : ''}`}>
       {/* Desktop Header */}
       {!isMobile && (
         <header className="px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">

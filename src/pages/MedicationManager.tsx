@@ -332,7 +332,7 @@ const MedicationManager: React.FC = () => {
 
   return (
     <ProfessionalMobileLayout title={t('medications.management')} showHeader={true}>
-      <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
+      <div className="min-h-screen bg-background">
         {/* Main Content with Tabs */}
         <div className="max-w-6xl mx-auto px-6 py-6">
           {!loading && medications.length > 0 ? (
@@ -450,7 +450,7 @@ const MedicationManager: React.FC = () => {
 
                 {/* All caught up message */}
                 {dueMedications.length === 0 && overdueMedications.length === 0 && (
-                  <MobileCard className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
+                  <MobileCard className="bg-background border">
                     <MobileCardContent className="p-8 text-center">
                       <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
                       <h3 className="text-lg font-semibold text-foreground mb-2">All caught up!</h3>
@@ -697,7 +697,7 @@ const MedicationManager: React.FC = () => {
           {/* Empty State */}
           {!loading && medications.length === 0 && (
             <div className="text-center py-20">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <Pill className="w-12 h-12 text-primary" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-3">Start Your Medication Journey</h3>
