@@ -33,7 +33,7 @@ const MobileCard = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "rounded-lg p-4 min-h-touch", // Ensure minimum touch target
+        "rounded-lg p-3 min-h-touch", // Reduced padding, ensure minimum touch target
         variantClasses[variant],
         severityClasses,
         interactive && "cursor-pointer",
@@ -51,7 +51,7 @@ const MobileCardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-2 pb-4", className)}
+    className={cn("flex flex-col space-y-1.5 pb-2", className)}
     {...props}
   />
 ));
@@ -64,7 +64,7 @@ const MobileCardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-tight tracking-tight text-foreground",
+      "text-base font-semibold leading-tight tracking-tight text-foreground",
       className
     )}
     {...props}
@@ -98,7 +98,7 @@ const MobileCardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center pt-4", className)}
+    className={cn("flex items-center pt-2", className)}
     {...props}
   />
 ));

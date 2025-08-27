@@ -44,15 +44,15 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
       className="rounded-2xl shadow-sm border-0 bg-card transition-all duration-200 active:scale-[0.98] cursor-pointer"
       onClick={onTap}
     >
-      <CardContent className="p-5">
+      <CardContent className="p-3">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-semibold text-foreground text-base">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-foreground text-sm">
                 {reminder.medicationName}
               </h3>
-              <Badge variant={statusChip.variant} className="text-xs px-2 py-1 rounded-full">
+              <Badge variant={statusChip.variant} className="text-xs px-2 py-0.5 rounded-full">
                 {statusChip.label}
               </Badge>
             </div>
@@ -63,10 +63,10 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 opacity-60 hover:opacity-100"
+                className="h-6 w-6 p-0 opacity-60 hover:opacity-100"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical className="w-3.5 h-3.5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
@@ -90,20 +90,20 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
         </div>
 
         {/* Body */}
-        <div className="space-y-3">
-          <div className="text-sm text-muted-foreground">
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground">
             <span className="font-medium text-foreground">{reminder.dosage}</span>
-            <span className="mx-2">•</span>
+            <span className="mx-1">•</span>
             <span>{reminder.frequency}</span>
           </div>
 
           {/* Times */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {reminder.times.map((time, index) => (
               <Badge
                 key={index}
                 variant="outline"
-                className="text-xs px-3 py-1 rounded-full bg-muted/50 text-foreground border-border/50"
+                className="text-xs px-2 py-0.5 rounded-full bg-muted/50 text-foreground border-border/50"
               >
                 {time}
               </Badge>
@@ -112,8 +112,8 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
 
           {/* Next dose */}
           {reminder.nextDose && (
-            <div className="flex items-center gap-2 pt-2 border-t border-border/20">
-              <Clock className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-1.5 pt-1.5 border-t border-border/20">
+              <Clock className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">
                 Next dose: <span className="font-medium text-foreground">{reminder.nextDose}</span>
               </span>
