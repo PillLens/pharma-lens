@@ -229,22 +229,54 @@ const Index = () => {
 
             {/* Right Column - Visual */}
             <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-floating bg-gradient-to-br from-primary/5 to-primary-light/10 p-8">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden shadow-medical bg-gradient-to-br from-background to-secondary/50">
-                  <img 
-                    src={heroImage} 
-                    alt="Medical OCR scanning interface"
-                    className="w-full h-full object-cover"
-                  />
+              {/* Background Glow Effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-light/10 to-transparent rounded-3xl blur-3xl opacity-30 scale-110"></div>
+              <div className="absolute inset-0 bg-gradient-to-tl from-success/20 via-transparent to-info/20 rounded-3xl blur-2xl opacity-40 scale-105 animate-pulse"></div>
+              
+              <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-background/80 to-secondary/20 backdrop-blur-sm border border-primary/10 shadow-2xl p-6">
+                {/* Inner Container with Glass Effect */}
+                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-background/90 to-primary/5 backdrop-blur-md border border-border/30 shadow-inner">
+                  <div className="aspect-[4/3] relative overflow-hidden">
+                    {/* Image with Overlay */}
+                    <img 
+                      src={heroImage} 
+                      alt="Medical OCR scanning interface"
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                    
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-success/10 opacity-60"></div>
+                    
+                    {/* Scan Lines Animation */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/20 to-transparent h-1 animate-pulse opacity-70"></div>
+                  </div>
+                  
+                  {/* Tech Border Effect */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-primary/20 opacity-50"></div>
+                  <div className="absolute inset-2 rounded-xl border border-success/30 opacity-30"></div>
                 </div>
                 
-                {/* Floating Elements */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-success to-success-light rounded-full flex items-center justify-center shadow-success animate-pulse">
-                  <CheckCircle className="w-8 h-8 text-success-foreground" />
+                {/* Enhanced Floating Elements */}
+                <div className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-success via-success-light to-success/80 rounded-2xl flex items-center justify-center shadow-2xl shadow-success/30 animate-bounce">
+                  <CheckCircle className="w-10 h-10 text-white drop-shadow-lg" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent"></div>
                 </div>
                 
-                <div className="absolute -bottom-4 -left-4 w-20 h-12 bg-gradient-to-r from-primary to-primary-light rounded-lg flex items-center justify-center shadow-medical">
-                  <div className="text-xs font-bold text-primary-foreground">99.2% Accurate</div>
+                <div className="absolute -bottom-6 -left-6 px-6 py-3 bg-gradient-to-r from-primary via-primary-light to-primary rounded-xl flex items-center justify-center shadow-2xl shadow-primary/30 border border-primary-light/50">
+                  <div className="text-sm font-bold text-white drop-shadow-lg">99.2% Accurate</div>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent"></div>
+                </div>
+                
+                {/* Additional Floating Stats */}
+                <div className="absolute top-6 -left-4 px-4 py-2 bg-gradient-to-r from-info to-info-light rounded-lg shadow-xl shadow-info/20 border border-info-light/50">
+                  <div className="text-xs font-semibold text-white">AI Powered</div>
+                </div>
+                
+                <div className="absolute -top-2 left-1/3 px-3 py-1 bg-gradient-to-r from-warning to-warning-light rounded-full shadow-lg shadow-warning/20">
+                  <div className="text-xs font-medium text-white flex items-center gap-1">
+                    <Zap className="w-3 h-3" />
+                    Instant
+                  </div>
                 </div>
               </div>
             </div>
