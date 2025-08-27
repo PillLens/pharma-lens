@@ -49,7 +49,7 @@ export class ScheduledDoseService {
             .eq('user_id', userId)
             .eq('medication_id', reminder.medication_id)
             .eq('scheduled_time', scheduledTime.toISOString())
-            .single();
+            .maybeSingle();
 
           if (!existing) {
             scheduledEntries.push({
@@ -95,7 +95,7 @@ export class ScheduledDoseService {
         .eq('medication_id', medicationId)
         .eq('scheduled_time', scheduledTime.toISOString())
         .eq('status', 'scheduled')
-        .single();
+        .maybeSingle();
 
       if (scheduledEntry) {
         // Update existing scheduled entry to taken
