@@ -24,6 +24,7 @@ import { useSubscription } from '@/contexts/SubscriptionContext';
 import { getNextDoseTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useReminders } from '@/hooks/useReminders';
+import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -359,64 +360,43 @@ const MedicationManager: React.FC = () => {
 
               {/* Today Tab - Focus on immediate actions */}
               <TabsContent value="today" className="space-y-6">
-                {/* Today's Overview Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <MobileCard className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                    <MobileCardContent className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Target className="w-4 h-4 text-primary" />
-                        </div>
-                        <div>
-                          <div className="text-lg font-bold text-foreground">{medicationsNeedingAttention.length}</div>
-                          <div className="text-xs text-muted-foreground">Need Attention</div>
-                        </div>
-                      </div>
-                    </MobileCardContent>
-                  </MobileCard>
-
-                  <MobileCard className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
-                    <MobileCardContent className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-                          <TrendingUp className="w-4 h-4 text-success" />
-                        </div>
-                        <div>
-                          <div className="text-lg font-bold text-foreground">{stats.adherence}%</div>
-                          <div className="text-xs text-muted-foreground">Adherence</div>
-                        </div>
-                      </div>
-                    </MobileCardContent>
-                  </MobileCard>
-
-                  <MobileCard className="bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20">
-                    <MobileCardContent className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
-                          <Zap className="w-4 h-4 text-warning" />
-                        </div>
-                        <div>
-                          <div className="text-lg font-bold text-foreground">{stats.streak}</div>
-                          <div className="text-xs text-muted-foreground">Day Streak</div>
-                        </div>
-                      </div>
-                    </MobileCardContent>
-                  </MobileCard>
-
-                  <MobileCard className="bg-gradient-to-br from-info/10 to-info/5 border-info/20">
-                    <MobileCardContent className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
-                          <Calendar className="w-4 h-4 text-info" />
-                        </div>
-                        <div>
-                          <div className="text-lg font-bold text-foreground">{stats.refillsNeeded}</div>
-                          <div className="text-xs text-muted-foreground">Refills Due</div>
-                        </div>
-                      </div>
-                    </MobileCardContent>
-                  </MobileCard>
-                </div>
+                {/* Today's Overview Stats - Compact Style */}
+                <QuickStatsGrid 
+                  stats={[
+                    {
+                      icon: Target,
+                      value: medicationsNeedingAttention.length,
+                      label: "Need Attention",
+                      color: 'text-primary',
+                      bgColor: 'bg-primary/10',
+                      borderColor: 'border-primary/20'
+                    },
+                    {
+                      icon: TrendingUp,
+                      value: `${stats.adherence}%`,
+                      label: "Adherence",
+                      color: 'text-success',
+                      bgColor: 'bg-success/10',
+                      borderColor: 'border-success/20'
+                    },
+                    {
+                      icon: Zap,
+                      value: stats.streak,
+                      label: "Day Streak",
+                      color: 'text-warning',
+                      bgColor: 'bg-warning/10',
+                      borderColor: 'border-warning/20'
+                    },
+                    {
+                      icon: Calendar,
+                      value: stats.refillsNeeded,
+                      label: "Refills Due",
+                      color: 'text-info',
+                      bgColor: 'bg-info/10',
+                      borderColor: 'border-info/20'
+                    }
+                  ]}
+                />
 
                 {/* Today's Schedule - Split into Due and Overdue */}
                 {dueMedications.length > 0 && (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Pill, Users, FileText, Shield, CreditCard, TrendingUp, AlertCircle } from 'lucide-react';
+import { Clock, Pill, Users, FileText, Shield, CreditCard, TrendingUp, AlertCircle, Target, Award, Bell } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 interface DashboardCardsProps {
   onNavigate: (path: string) => void;
@@ -73,81 +74,112 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
       </Card>
 
       {/* Medications Overview */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Pill className="w-5 h-5 text-primary" />
-              <CardTitle className="text-lg">
-                <TranslatedText translationKey="dashboard.medicationsOverview" fallback="Medications Overview" />
-              </CardTitle>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate('/medications')}>
-              <TranslatedText translationKey="common.manage" fallback="Manage" />
-            </Button>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Pill className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">
+              <TranslatedText translationKey="dashboard.medicationsOverview" fallback="Medications Overview" />
+            </h2>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-success/5 border border-success/20 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-1">
-                <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
-                  <Pill className="w-4 h-4 text-success" />
-                </div>
-                <div className="text-xl font-bold text-foreground">{dashboardStats.medications.active}</div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <TranslatedText translationKey="dashboard.active" fallback="Active" />
-              </p>
-            </div>
-            <div className="bg-warning/5 border border-warning/20 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-1">
-                <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
-                  <AlertCircle className="w-4 h-4 text-warning" />
-                </div>
-                <div className="text-xl font-bold text-foreground">{dashboardStats.medications.lowStock}</div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <TranslatedText translationKey="dashboard.lowStock" fallback="Low Stock" />
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          <Button variant="ghost" size="sm" onClick={() => onNavigate('/medications')}>
+            <TranslatedText translationKey="common.manage" fallback="Manage" />
+          </Button>
+        </div>
+        
+        <QuickStatsGrid 
+          stats={[
+            {
+              icon: Pill,
+              value: dashboardStats.medications.active,
+              label: "Active Medications",
+              color: 'text-success',
+              bgColor: 'bg-success/10',
+              borderColor: 'border-success/20',
+              onClick: () => onNavigate('/medications')
+            },
+            {
+              icon: AlertCircle,
+              value: dashboardStats.medications.lowStock,
+              label: "Low Stock",
+              color: 'text-warning',
+              bgColor: 'bg-warning/10',
+              borderColor: 'border-warning/20',
+              onClick: () => onNavigate('/medications')
+            },
+            {
+              icon: Target,
+              value: `${dashboardStats.adherence.rate}%`,
+              label: "Adherence Rate",
+              color: 'text-primary',
+              bgColor: 'bg-primary/10',
+              borderColor: 'border-primary/20'
+            },
+            {
+              icon: Award,
+              value: dashboardStats.adherence.streak,
+              label: "Day Streak",
+              color: 'text-info',
+              bgColor: 'bg-info/10',
+              borderColor: 'border-info/20'
+            }
+          ]}
+        />
+      </div>
 
       {/* Reminders */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-primary" />
-              <CardTitle className="text-lg">
-                <TranslatedText translationKey="dashboard.reminders" fallback="Reminders" />
-              </CardTitle>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => onNavigate('/reminders')}>
-              <TranslatedText translationKey="common.viewAll" fallback="View All" />
-            </Button>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bell className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">
+              <TranslatedText translationKey="dashboard.reminders" fallback="Reminders" />
+            </h2>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="space-y-2">
-            {dashboardStats.reminders.nextReminder ? (
-              <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                <span className="text-sm">{dashboardStats.reminders.nextReminder.medication}</span>
-                <Badge variant="outline" className="text-xs">{dashboardStats.reminders.nextReminder.time}</Badge>
+          <Button variant="ghost" size="sm" onClick={() => onNavigate('/reminders')}>
+            <TranslatedText translationKey="common.viewAll" fallback="View All" />
+          </Button>
+        </div>
+        
+        <QuickStatsGrid 
+          stats={[
+            {
+              icon: Bell,
+              value: dashboardStats.reminders.active,
+              label: "Active Reminders",
+              color: 'text-warning',
+              bgColor: 'bg-warning/10',
+              borderColor: 'border-warning/20',
+              onClick: () => onNavigate('/reminders')
+            },
+            {
+              icon: Clock,
+              value: `${dashboardStats.adherence.completedToday}/${dashboardStats.adherence.totalToday}`,
+              label: "Today's Doses",
+              color: 'text-success',
+              bgColor: 'bg-success/10',
+              borderColor: 'border-success/20',
+              onClick: () => onNavigate('/reminders')
+            }
+          ]}
+          className="grid-cols-2"
+        />
+        
+        {/* Next Reminder */}
+        {dashboardStats.reminders.nextReminder && (
+          <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-warning" />
               </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground">No upcoming reminders</p>
+              <div>
+                <p className="text-sm font-medium">{dashboardStats.reminders.nextReminder.medication}</p>
+                <p className="text-xs text-muted-foreground">Next dose at {dashboardStats.reminders.nextReminder.time}</p>
               </div>
-            )}
-            <div className="text-xs text-muted-foreground text-center">
-              {dashboardStats.reminders.active} active reminders • {dashboardStats.reminders.todaysDoses} doses today
             </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
 
       {/* Family & Care */}
       <FeatureGate feature="can_create_family_group" showPaywall={false}>
