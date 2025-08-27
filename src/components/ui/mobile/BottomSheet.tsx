@@ -27,10 +27,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const heightClasses = {
-    sm: 'h-1/3',
-    md: 'h-1/2', 
-    lg: 'h-2/3',
-    xl: 'h-5/6',
+    sm: 'max-h-[40vh]',
+    md: 'max-h-[60vh]', 
+    lg: 'max-h-[80vh]',
+    xl: 'max-h-[90vh]',
     full: 'h-full'
   };
 
@@ -70,7 +70,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       {/* Bottom Sheet */}
       <div
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-xl shadow-floating border-t border-border transition-transform duration-300 ease-out',
+          'fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-xl shadow-floating border-t border-border transition-transform duration-300 ease-out flex flex-col',
           heightClasses[height],
           isAnimating ? 'translate-y-0' : 'translate-y-full',
           className
@@ -111,7 +111,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
         {/* Content */}
         <div 
-          className="flex-1 overflow-y-auto scrollbar-hide" 
+          className="flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-safe" 
           style={{ 
             WebkitOverflowScrolling: 'touch'
           }}
