@@ -95,7 +95,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
           {entries.map((entry, index) => (
             <div
               key={entry.id}
-              className={`relative flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${getStatusColor(entry.status)}`}
+              className={`relative flex items-center gap-4 p-2 rounded-2xl border transition-all duration-300 ${getStatusColor(entry.status)}`}
             >
               {/* Timeline line */}
               {index < entries.length - 1 && (
