@@ -75,7 +75,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
 
   return (
     <Card className="rounded-3xl border-0 bg-gradient-to-br from-card to-primary/5 shadow-sm">
-      <CardContent className="p-6">
+      <CardContent className="p-4">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-bold text-foreground mb-1">{t('reminders.timeline.todaysTimeline')}</h3>
