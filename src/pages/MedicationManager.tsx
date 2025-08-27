@@ -360,15 +360,15 @@ const MedicationManager: React.FC = () => {
               {/* Today Tab - Focus on immediate actions */}
               <TabsContent value="today" className="space-y-6">
                 {/* Today's Overview Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <MobileCard className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                    <MobileCardContent className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                          <Target className="w-6 h-6 text-primary" />
+                    <MobileCardContent className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Target className="w-4 h-4 text-primary" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-foreground">{medicationsNeedingAttention.length}</div>
+                          <div className="text-lg font-bold text-foreground">{medicationsNeedingAttention.length}</div>
                           <div className="text-xs text-muted-foreground">Need Attention</div>
                         </div>
                       </div>
@@ -376,13 +376,13 @@ const MedicationManager: React.FC = () => {
                   </MobileCard>
 
                   <MobileCard className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
-                    <MobileCardContent className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center">
-                          <TrendingUp className="w-6 h-6 text-success" />
+                    <MobileCardContent className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                          <TrendingUp className="w-4 h-4 text-success" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-foreground">{stats.adherence}%</div>
+                          <div className="text-lg font-bold text-foreground">{stats.adherence}%</div>
                           <div className="text-xs text-muted-foreground">Adherence</div>
                         </div>
                       </div>
@@ -390,13 +390,13 @@ const MedicationManager: React.FC = () => {
                   </MobileCard>
 
                   <MobileCard className="bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20">
-                    <MobileCardContent className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-warning/10 flex items-center justify-center">
-                          <Zap className="w-6 h-6 text-warning" />
+                    <MobileCardContent className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
+                          <Zap className="w-4 h-4 text-warning" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-foreground">{stats.streak}</div>
+                          <div className="text-lg font-bold text-foreground">{stats.streak}</div>
                           <div className="text-xs text-muted-foreground">Day Streak</div>
                         </div>
                       </div>
@@ -404,13 +404,13 @@ const MedicationManager: React.FC = () => {
                   </MobileCard>
 
                   <MobileCard className="bg-gradient-to-br from-info/10 to-info/5 border-info/20">
-                    <MobileCardContent className="p-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-info/10 flex items-center justify-center">
-                          <Calendar className="w-6 h-6 text-info" />
+                    <MobileCardContent className="p-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-info" />
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-foreground">{stats.refillsNeeded}</div>
+                          <div className="text-lg font-bold text-foreground">{stats.refillsNeeded}</div>
                           <div className="text-xs text-muted-foreground">Refills Due</div>
                         </div>
                       </div>
