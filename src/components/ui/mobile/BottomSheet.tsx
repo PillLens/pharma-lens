@@ -110,10 +110,12 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           isAnimating ? 'translate-y-0' : 'translate-y-full',
           className
         )}
-        onTouchStart={handleDragStart}
       >
         {/* Drag Handle */}
-        <div className="flex justify-center pt-3 pb-2">
+        <div 
+          className="flex justify-center pt-3 pb-2"
+          onTouchStart={handleDragStart}
+        >
           <div className="w-12 h-1 bg-muted-foreground/30 rounded-full" />
         </div>
 
@@ -146,7 +148,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide touch-pan-y">
+        <div className="flex-1 overflow-y-auto scrollbar-hide touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
           {children}
         </div>
       </div>

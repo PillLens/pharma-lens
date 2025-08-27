@@ -416,9 +416,9 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
       isOpen={open}
       onClose={onClose}
       title={t('scanner.medicationFound')}
-      height="full"
+      height="lg"
     >
-      <div className="px-4 pb-safe space-y-4">
+      <div className="px-4 pb-4 space-y-4">
         {renderContent()}
       </div>
     </BottomSheet>
