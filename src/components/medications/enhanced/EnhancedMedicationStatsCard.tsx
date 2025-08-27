@@ -62,61 +62,81 @@ const EnhancedMedicationStatsCard: React.FC<EnhancedMedicationStatsCardProps> = 
     return 'outline';
   };
 
-  return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Main Stats Row - Simplified */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* Overview Stats */}
-        <MobileCard variant="default" className="bg-gradient-to-br from-primary/5 to-primary/10">
-          <MobileCardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Target className="w-6 h-6 text-primary" />
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-primary">{activeMedications}</div>
-                <div className="text-xs text-muted-foreground">of {totalMedications} active</div>
-              </div>
-            </div>
-            <div className="text-sm font-medium text-foreground">Active Medications</div>
-          </MobileCardContent>
-        </MobileCard>
+  const statsData = [
+    {
+      icon: Target,
+      value: activeMedications,
+      label: 'Active Medications',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
+      borderColor: 'border-primary/20'
+    },
+    {
+      icon: Award,
+      value: `${adherenceRate}%`,
+      label: 'Adherence Rate',
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20'
+    },
+    {
+      icon: Clock,
+      value: currentStreak,
+      label: 'Day Streak',
+      color: 'text-info',
+      bgColor: 'bg-info/10',
+      borderColor: 'border-info/20'
+    },
+    {
+      icon: Calendar,
+      value: totalMedications,
+      label: 'Total Medications',
+      color: 'text-muted-foreground',
+      bgColor: 'bg-muted/10',
+      borderColor: 'border-muted/20'
+    }
+  ];
 
-        {/* Adherence Overview */}
-        <MobileCard variant="default" className="bg-gradient-to-br from-success/5 to-success/10">
-          <MobileCardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
-                <Award className="w-6 h-6 text-success" />
+  return (
+    <div className={`space-y-4 ${className}`}>
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-2 gap-3">
+        {statsData.map((stat, index) => (
+          <MobileCard
+            key={index}
+            variant="glass"
+            className={`${stat.borderColor} ${stat.bgColor} p-3 min-h-0`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className={`w-8 h-8 rounded-lg ${stat.bgColor} flex items-center justify-center shadow-soft`}>
+                <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-success">{adherenceRate}%</div>
-                <div className="text-xs text-muted-foreground">{currentStreak} day streak</div>
-              </div>
+              <div className="text-xl font-bold text-foreground">{stat.value}</div>
             </div>
-            <div className="text-sm font-medium text-foreground">Adherence Rate</div>
-            <Progress value={adherenceRate} className="h-2 mt-2" />
-          </MobileCardContent>
-        </MobileCard>
+            <p className="text-xs text-muted-foreground">{stat.label}</p>
+          </MobileCard>
+        ))}
+      </div>
+
+      {/* Progress Bar for Adherence */}
+      <div className="px-1">
+        <Progress value={adherenceRate} className="h-2" />
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <span>{currentStreak} day streak</span>
+          <span>{adherenceRate}% adherence</span>
+        </div>
       </div>
 
       {/* Alerts Row */}
       {expiringSoon > 0 && (
-        <MobileCard variant="default" className="bg-gradient-to-r from-warning/5 to-warning/10 border-warning/20">
-          <MobileCardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-warning" />
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium text-foreground">Medications Expiring Soon</div>
-                <div className="text-xs text-muted-foreground">
-                  {expiringSoon} medication{expiringSoon !== 1 ? 's' : ''} expire within 7 days
-                </div>
-              </div>
-              <div className="text-lg font-bold text-warning">{expiringSoon}</div>
+        <MobileCard variant="glass" className="bg-warning/5 border-warning/20 p-3">
+          <div className="flex items-center justify-between mb-1">
+            <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-warning" />
             </div>
-          </MobileCardContent>
+            <div className="text-xl font-bold text-warning">{expiringSoon}</div>
+          </div>
+          <p className="text-xs text-muted-foreground">Expiring Soon</p>
         </MobileCard>
       )}
     </div>

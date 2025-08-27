@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pill, Bell, Users, Activity, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MobileCard } from '@/components/ui/mobile/MobileCard';
+import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useDashboardData } from '@/hooks/useDashboardData';
 
@@ -30,39 +30,43 @@ const QuickStatsCards: React.FC = () => {
   const stats = [
     {
       icon: Pill,
-      count: dashboardStats.medications.active,
+      value: dashboardStats.medications.active,
       label: 'medications',
+      translationKey: 'dashboard.medications',
       color: 'text-success',
       bgColor: 'bg-success/10',
       borderColor: 'border-success/20',
-      route: '/medications'
+      onClick: () => navigate('/medications')
     },
     {
       icon: Bell,
-      count: dashboardStats.reminders.active,
+      value: dashboardStats.reminders.active,
       label: 'reminders',
+      translationKey: 'dashboard.reminders',
       color: 'text-warning',
       bgColor: 'bg-warning/10',
       borderColor: 'border-warning/20', 
-      route: '/reminders'
+      onClick: () => navigate('/reminders')
     },
     {
       icon: Users,
-      count: dashboardStats.family.groups,
+      value: dashboardStats.family.groups,
       label: 'family',
+      translationKey: 'dashboard.family',
       color: 'text-info',
       bgColor: 'bg-info/10',
       borderColor: 'border-info/20',
-      route: '/family'
+      onClick: () => navigate('/family')
     },
     {
       icon: Activity,
-      count: dashboardStats.scans.recentCount,
+      value: dashboardStats.scans.recentCount,
       label: 'scans',
+      translationKey: 'dashboard.scans',
       color: 'text-primary',
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/20',
-      route: '/history'
+      onClick: () => navigate('/history')
     }
   ];
 
@@ -75,29 +79,7 @@ const QuickStatsCards: React.FC = () => {
         <TrendingUp className="w-5 h-5 text-success" />
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
-        {stats.map((stat, index) => (
-          <MobileCard
-            key={index}
-            variant="glass"
-            interactive
-            onClick={() => navigate(stat.route)}
-            className={`${stat.borderColor} ${stat.bgColor} hover:scale-[1.02] transition-all duration-200 p-3 min-h-0`}
-          >
-            <div className="flex items-center justify-between mb-1">
-              <div className={`w-8 h-8 rounded-lg ${stat.bgColor} flex items-center justify-center shadow-soft`}>
-                <stat.icon className={`w-4 h-4 ${stat.color}`} />
-              </div>
-              <div className="text-right">
-                <div className="text-xl font-bold text-foreground">{stat.count}</div>
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground capitalize">
-              <TranslatedText translationKey={`dashboard.${stat.label}`} fallback={stat.label} />
-            </p>
-          </MobileCard>
-        ))}
-      </div>
+      <QuickStatsGrid stats={stats} />
     </div>
   );
 };

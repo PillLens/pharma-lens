@@ -88,23 +88,27 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">{dashboardStats.medications.active}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-success/5 border border-success/20 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                  <Pill className="w-4 h-4 text-success" />
+                </div>
+                <div className="text-xl font-bold text-foreground">{dashboardStats.medications.active}</div>
+              </div>
               <p className="text-xs text-muted-foreground">
                 <TranslatedText translationKey="dashboard.active" fallback="Active" />
               </p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-amber-500">{dashboardStats.medications.lowStock}</p>
+            <div className="bg-warning/5 border border-warning/20 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 text-warning" />
+                </div>
+                <div className="text-xl font-bold text-foreground">{dashboardStats.medications.lowStock}</div>
+              </div>
               <p className="text-xs text-muted-foreground">
                 <TranslatedText translationKey="dashboard.lowStock" fallback="Low Stock" />
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-500">{dashboardStats.medications.total}</p>
-              <p className="text-xs text-muted-foreground">
-                <TranslatedText translationKey="dashboard.total" fallback="Total" />
               </p>
             </div>
           </div>
