@@ -148,7 +148,14 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div 
+          className="flex-1 overflow-y-auto scrollbar-hide" 
+          style={{ 
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            scrollBehavior: 'smooth'
+          }}
+        >
           {children}
         </div>
       </div>

@@ -118,12 +118,44 @@ export default {
 				'spin': {
 					'0%': { transform: 'rotate(0deg)' },
 					'100%': { transform: 'rotate(360deg)' }
+				},
+				'medical-pulse': {
+					'0%, 100%': { 
+						opacity: '1', 
+						transform: 'scale(1)' 
+					},
+					'50%': { 
+						opacity: '0.7', 
+						transform: 'scale(1.05)' 
+					}
+				},
+				'scan-line': {
+					'0%': { transform: 'translateY(0%)' },
+					'50%': { transform: 'translateY(2000%)' },
+					'100%': { transform: 'translateY(0%)' }
+				},
+				'success-bounce': {
+					'0%, 20%, 53%, 80%, 100%': { 
+						transform: 'scale(1) rotate(0deg)' 
+					},
+					'40%, 43%': { 
+						transform: 'scale(1.2) rotate(-5deg)' 
+					},
+					'70%': { 
+						transform: 'scale(1.1) rotate(5deg)' 
+					},
+					'90%': { 
+						transform: 'scale(1.05) rotate(-2deg)' 
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'spin': 'spin 1s linear infinite'
+				'spin': 'spin 1s linear infinite',
+				'medical-pulse': 'medical-pulse 2s ease-in-out infinite',
+				'scan-line': 'scan-line 2s ease-in-out infinite',
+				'success-bounce': 'success-bounce 1s ease-in-out'
 			},
 			spacing: {
 				'touch': 'var(--touch-target)'
