@@ -55,6 +55,11 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
               <Badge variant={statusChip.variant} className="text-xs px-2 py-0.5 rounded-full">
                 {statusChip.label}
               </Badge>
+              {reminder.times.length > 1 && (
+                <Badge variant="outline" className="text-xs px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border-blue-200">
+                  {reminder.times.length}x
+                </Badge>
+              )}
             </div>
           </div>
           
@@ -99,15 +104,23 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
 
           {/* Times */}
           <div className="flex flex-wrap gap-1.5">
-            {reminder.times.map((time, index) => (
-              <Badge
-                key={index}
-                variant="outline"
-                className="text-xs px-2 py-0.5 rounded-full bg-muted/50 text-foreground border-border/50"
-              >
-                {time}
-              </Badge>
-            ))}
+            {reminder.times.map((time, index) => {
+              const getDoseLabel = (index: number, totalTimes: number) => {
+                if (totalTimes === 1) return time;
+                if (totalTimes === 2) return `${time} (${index === 0 ? 'AM' : 'PM'})`;
+                return `${time} (#${index + 1})`;
+              };
+              
+              return (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="text-xs px-2 py-0.5 rounded-full bg-muted/50 text-foreground border-border/50"
+                >
+                  {getDoseLabel(index, reminder.times.length)}
+                </Badge>
+              );
+            })}
           </div>
 
           {/* Next dose */}

@@ -109,9 +109,16 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 <Pill className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
-                  {reminder.medicationName}
-                </h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-bold text-foreground text-lg leading-tight">
+                    {reminder.medicationName}
+                  </h3>
+                  {reminder.times.length > 1 && (
+                    <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border-blue-200">
+                      {reminder.times.length}x daily
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={statusInfo.variant} className="text-xs px-3 py-1 rounded-full font-medium">
                     {statusInfo.label}
@@ -185,15 +192,31 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
 
         {/* Today's Schedule */}
         <div className="space-y-3 mb-5">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" />
-            <span>Today's Schedule</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="w-4 h-4" />
+              <span>Today's Schedule</span>
+            </div>
+            {reminder.times.length > 1 && (
+              <span className="text-xs text-muted-foreground">
+                {reminder.times.length} doses
+              </span>
+            )}
           </div>
           <div className="flex flex-wrap gap-2">
             {reminder.times.map((time, index) => {
               const currentTimeStr = new Date().toTimeString().slice(0, 5);
               const isPast = time < currentTimeStr;
               const isCurrent = Math.abs(new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTimeStr}:00`).getTime()) < 30 * 60 * 1000;
+              
+              const getDoseLabel = (index: number, totalTimes: number) => {
+                if (totalTimes === 1) return '';
+                if (totalTimes === 2) return index === 0 ? 'Morning' : 'Evening';
+                if (totalTimes === 3) return ['Morning', 'Afternoon', 'Evening'][index];
+                return `Dose ${index + 1}`;
+              };
+              
+              const doseLabel = getDoseLabel(index, reminder.times.length);
               
               return (
                 <div
@@ -211,7 +234,12 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                   ) : (
                     <Circle className="w-4 h-4" />
                   )}
-                  <span className="font-medium">{time}</span>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{time}</span>
+                    {doseLabel && (
+                      <span className="text-xs opacity-75">{doseLabel}</span>
+                    )}
+                  </div>
                 </div>
               );
             })}
