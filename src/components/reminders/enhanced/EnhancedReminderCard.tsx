@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/hooks/useTranslation';
+import { getCurrentTimeInTimezone } from '@/utils/timezoneUtils';
+import { useUserTimezone } from '@/hooks/useUserTimezone';
+import { calculateNextDose, formatTimeUntilNext } from '@/utils/nextDoseCalculator';
 
 interface EnhancedReminderCardProps {
   reminder: {
@@ -20,6 +23,7 @@ interface EnhancedReminderCardProps {
     adherenceRate?: number;
     streak?: number;
     lastTaken?: string;
+    daysOfWeek?: number[];
     dosesToday?: { time: string; taken: boolean }[];
   };
   onTap: () => void;
@@ -38,57 +42,38 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
   onMarkTaken
 }) => {
   const { t } = useTranslation();
+  const { timezone } = useUserTimezone();
   const [timeUntilNext, setTimeUntilNext] = useState<string>('');
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(() => getCurrentTimeInTimezone(timezone));
 
   // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
+      setCurrentTime(getCurrentTimeInTimezone(timezone));
     }, 60000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timezone]);
 
-  // Calculate time until next dose
+  // Calculate time until next dose using the new calculator
   useEffect(() => {
-    if (reminder.status === 'active' && reminder.times.length > 0) {
-      const now = new Date();
-      const currentTimeStr = now.toTimeString().slice(0, 5);
+    const calculateTimeUntilNext = () => {
+      if (reminder.times.length === 0) return '';
       
-      // Find next upcoming time
-      let nextTime = null;
-      for (const time of reminder.times) {
-        if (time > currentTimeStr) {
-          nextTime = time;
-          break;
-        }
+      // Use the first time and days of week for calculation
+      const reminderTime = reminder.times[0];
+      const daysOfWeek = reminder.daysOfWeek || [1, 2, 3, 4, 5, 6, 7]; // Default to daily
+      
+      const nextDose = calculateNextDose(reminderTime, daysOfWeek, timezone);
+      
+      if (nextDose) {
+        return formatTimeUntilNext(nextDose.minutesUntil);
       }
       
-      // If no time today, use first time tomorrow
-      if (!nextTime) {
-        nextTime = reminder.times[0];
-      }
-      
-      const [hours, minutes] = nextTime.split(':').map(Number);
-      const nextDose = new Date();
-      nextDose.setHours(hours, minutes, 0, 0);
-      
-      // If the time has passed today, set for tomorrow
-      if (nextDose <= now) {
-        nextDose.setDate(nextDose.getDate() + 1);
-      }
-      
-      const diffMs = nextDose.getTime() - now.getTime();
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      
-      if (diffHours > 0) {
-        setTimeUntilNext(`${diffHours}h ${diffMinutes}m`);
-      } else {
-        setTimeUntilNext(`${diffMinutes}m`);
-      }
-    }
-  }, [reminder.times, reminder.status, currentTime]);
+      return '';
+    };
+
+    setTimeUntilNext(calculateTimeUntilNext());
+  }, [reminder.times, reminder.daysOfWeek, currentTime, timezone]);
 
   const getStatusVariant = (status: 'active' | 'paused') => {
     return status === 'active' 

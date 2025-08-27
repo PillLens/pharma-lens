@@ -19,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
+import { medicationAdherenceService } from '@/services/medicationAdherenceService';
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
@@ -75,36 +76,36 @@ const Reminders: React.FC = () => {
   }, [user]);
 
   // Fetch user medications and real adherence data
-  useEffect(() => {
-    const fetchRealData = async () => {
-      if (!user) return;
+  const fetchRealData = async () => {
+    if (!user) return;
+    
+    try {
+      // Fetch user medications
+      const { data: medications, error: medError } = await supabase
+        .from('user_medications')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+
+      if (medError) throw medError;
+      setUserMedications(medications || []);
+
+      // Fetch real adherence statistics
+      const stats = await medicationAnalyticsService.getOverallStats(user.id);
+      const weeklyData = await medicationAnalyticsService.getWeeklyAdherence(user.id);
       
-      try {
-        // Fetch user medications
-        const { data: medications, error: medError } = await supabase
-          .from('user_medications')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('is_active', true);
+      setRealAdherenceData({
+        adherenceRate: stats.averageAdherence,
+        streak: stats.currentStreak,
+        missedDoses: stats.totalDoses - stats.takenDoses,
+        weeklyAdherence: weeklyData
+      });
+    } catch (error) {
+      console.error('Error fetching real medication data:', error);
+    }
+  };
 
-        if (medError) throw medError;
-        setUserMedications(medications || []);
-
-        // Fetch real adherence statistics
-        const stats = await medicationAnalyticsService.getOverallStats(user.id);
-        const weeklyData = await medicationAnalyticsService.getWeeklyAdherence(user.id);
-        
-        setRealAdherenceData({
-          adherenceRate: stats.averageAdherence,
-          streak: stats.currentStreak,
-          missedDoses: stats.totalDoses - stats.takenDoses,
-          weeklyAdherence: weeklyData
-        });
-      } catch (error) {
-        console.error('Error fetching real medication data:', error);
-      }
-    };
-
+  useEffect(() => {
     fetchRealData();
   }, [user]);
 
@@ -165,6 +166,47 @@ const Reminders: React.FC = () => {
     }
   };
 
+  const handleMarkTaken = async (entryId: string) => {
+    try {
+      // Parse entry ID to get reminder ID and time
+      const [reminderId, reminderTime] = entryId.split('-');
+      const reminder = reminders.find(r => r.id === reminderId);
+      
+      if (!reminder) {
+        toast({
+          title: t('common.error'),
+          description: 'Reminder not found',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      // Record in adherence log
+      const success = await medicationAdherenceService.recordMedicationTaken(
+        reminder.medication_id,
+        new Date().toISOString(), // scheduled time (current time for now)
+        new Date().toISOString(), // actual time
+        'Marked as taken from timeline'
+      );
+
+      if (success) {
+        // Refresh all data
+        await fetchRealData();
+        toast({
+          title: t('toast.doseTaken'),
+          description: t('toast.greatJobStayingOnTrack')
+        });
+      }
+    } catch (error) {
+      console.error('Error marking dose as taken:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to mark dose as taken',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const handleSummaryCardTap = (type: 'active' | 'medications' | 'today') => {
     toast({
       title: t('toast.filter'),
@@ -189,32 +231,63 @@ const Reminders: React.FC = () => {
   const { timezone } = useUserTimezone();
 
   // Create timeline entries from real reminder data with timezone-aware status
-  const timelineEntries = reminders
-    .filter(r => r.is_active)
-    .map(r => ({
-      id: `${r.id}-${r.reminder_time}`,
-      time: r.reminder_time,
-      medication: r.medication?.medication_name || 'Unknown',
-      dosage: r.medication?.dosage || '',
-      status: getCurrentTimeStatus(r.reminder_time, timezone),
-      color: 'primary' as const
-    }))
-    .sort((a, b) => a.time.localeCompare(b.time));
+  const [timelineEntries, setTimelineEntries] = useState<any[]>([]);
+  
+  useEffect(() => {
+    const buildTimelineEntries = async () => {
+      const entries = [];
+      for (const r of reminders.filter(r => r.is_active)) {
+        const status = await getCurrentTimeStatus(r.reminder_time, timezone, r.id);
+        entries.push({
+          id: `${r.id}-${r.reminder_time}`,
+          time: r.reminder_time,
+          medication: r.medication?.medication_name || 'Unknown',
+          dosage: r.medication?.dosage || '',
+          status,
+          color: 'primary' as const
+        });
+      }
+      entries.sort((a, b) => a.time.localeCompare(b.time));
+      setTimelineEntries(entries);
+    };
+    
+    if (reminders.length > 0 && timezone) {
+      buildTimelineEntries();
+    }
+  }, [reminders, timezone, realAdherenceData]);
 
-  function getCurrentTimeStatus(reminderTime: string, timezone: string): 'upcoming' | 'current' | 'taken' | 'missed' | 'overdue' {
+  async function getCurrentTimeStatus(reminderTime: string, timezone: string, reminderId: string): Promise<'upcoming' | 'current' | 'taken' | 'missed' | 'overdue'> {
     try {
       // Use timezone-aware time checking
       const doseCheck = isDoseTime(reminderTime, timezone, 30); // 30 minute window
       
-      // Debug logging
-      console.log(`Checking dose time for ${reminderTime} in timezone ${timezone}:`, doseCheck);
+      // Check actual adherence log for today's dose
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+      
+      const reminder = reminders.find(r => r.id === reminderId);
+      if (reminder) {
+        const { data: adherenceLog } = await supabase
+          .from('medication_adherence_log')
+          .select('*')
+          .eq('user_id', user?.id)
+          .eq('medication_id', reminder.medication_id)
+          .gte('scheduled_time', todayStart.toISOString())
+          .lte('scheduled_time', todayEnd.toISOString())
+          .eq('status', 'taken');
+        
+        // If there's a taken entry for today, mark as taken
+        if (adherenceLog && adherenceLog.length > 0) {
+          return 'taken';
+        }
+      }
       
       if (doseCheck.isCurrent) {
         return 'current';
       } else if (doseCheck.isPast) {
-        // Check actual adherence log for this reminder time
-        // For now, return upcoming as fallback - this should query the adherence log
-        return 'upcoming';
+        return 'overdue';
       } else {
         return 'upcoming';
       }
@@ -261,12 +334,7 @@ const Reminders: React.FC = () => {
               <InteractiveTimelineCard
                 entries={timelineEntries}
                 userTimezone={timezone}
-                onMarkTaken={(entryId) => {
-                  toast({
-                    title: t('toast.doseTaken'),
-                    description: t('toast.greatJobStayingOnTrack')
-                  });
-                }}
+                onMarkTaken={handleMarkTaken}
                 onSnooze={(entryId) => {
                   toast({
                     title: t('toast.reminderSnoozed'),
@@ -298,6 +366,7 @@ const Reminders: React.FC = () => {
                       times: [reminder.reminder_time],
                       status: reminder.is_active ? 'active' : 'paused',
                       nextDose: '', // Calculate based on reminder_time and days_of_week
+                      daysOfWeek: reminder.days_of_week,
                       notes: '',
                        adherenceRate: overallAdherenceRate, // Use real adherence rate
                        streak: longestStreak, // Use real streak
@@ -308,14 +377,33 @@ const Reminders: React.FC = () => {
                     onEdit={() => handleEditReminder(reminder)}
                     onDelete={() => handleDeleteReminder(reminder.id)}
                     onToggleStatus={() => handleToggleReminder(reminder.id)}
-                    onMarkTaken={(time) => {
-                      toast({
-                        title: t('toast.doseTaken'),
-                        description: t('toast.medicationMarkedTaken', { 
-                          medication: reminder.medication?.medication_name, 
-                          time 
-                        })
-                      });
+                    onMarkTaken={async (time) => {
+                      try {
+                        const success = await medicationAdherenceService.recordMedicationTaken(
+                          reminder.medication_id,
+                          new Date().toISOString(),
+                          new Date().toISOString(),
+                          'Marked as taken from reminder card'
+                        );
+                        
+                        if (success) {
+                          await fetchRealData();
+                          toast({
+                            title: t('toast.doseTaken'),
+                            description: t('toast.medicationMarkedTaken', { 
+                              medication: reminder.medication?.medication_name, 
+                              time 
+                            })
+                          });
+                        }
+                      } catch (error) {
+                        console.error('Error marking dose as taken:', error);
+                        toast({
+                          title: t('common.error'),
+                          description: 'Failed to mark dose as taken',
+                          variant: 'destructive'
+                        });
+                      }
                     }}
                   />
                 ))}
