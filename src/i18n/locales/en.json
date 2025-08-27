@@ -1183,5 +1183,31 @@
   "permissions": {
     "viewMedications": "View Medications",
     "editMedications": "Edit Medications"
+  },
+  "settings": {
+    "notifications": {
+      "title": "Notifications",
+      "masterToggle": "Enable Notifications",
+      "masterDescription": "Receive medication reminders and important health alerts",
+      "reminders": "Medication Reminders",
+      "remindersDescription": "Get notified when it's time to take your medication",
+      "missedDose": "Missed Dose Alerts",
+      "missedDoseDescription": "Receive alerts when you miss a scheduled dose",
+      "family": "Family Updates",
+      "familyDescription": "Get notified about family members' medication activities",
+      "product": "Product Alerts",
+      "productDescription": "Receive important safety alerts about your medications",
+      "quietHours": "Quiet Hours",
+      "quietHoursDescription": "Set hours when you won't receive non-urgent notifications",
+      "from": "From",
+      "to": "To",
+      "testNotification": "Send Test Notification",
+      "testSent": "Test sent!",
+      "testFailed": "Test failed",
+      "notificationsNotReady": "Notifications are being set up. Please try again in a moment.",
+      "updated": "Notification preferences updated",
+      "updateError": "Failed to update notification preferences",
+      "quietHoursUpdated": "Quiet hours updated successfully"
+    }
   }
 }

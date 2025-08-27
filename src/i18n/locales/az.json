@@ -662,5 +662,31 @@
   "permissions": {
     "viewMedications": "Dərmanları Gör",
     "editMedications": "Dərmanları Redaktə Et"
+  },
+  "settings": {
+    "notifications": {
+      "title": "Bildirişlər",
+      "masterToggle": "Bildirişləri Aktivləşdir",
+      "masterDescription": "Dərman xatırlatmaları və vacib səhiyyə xəbərdarlıqları alın",
+      "reminders": "Dərman Xatırlatmaları",
+      "remindersDescription": "Dərmanınızı qəbul etmə vaxtı gəldikdə xəbərdar olun",
+      "missedDose": "Buraxılmış Doza Xəbərdarlıqları",
+      "missedDoseDescription": "Planlaşdırılmış dozu buraxdığınız zaman xəbərdarlıq alın",
+      "family": "Ailə Yeniləmələri",
+      "familyDescription": "Ailə üzvlərinin dərman fəaliyyətləri haqqında xəbərdar olun",
+      "product": "Məhsul Xəbərdarlıqları",
+      "productDescription": "Dərmanlarınızla bağlı vacib təhlükəsizlik xəbərdarlıqları alın",
+      "quietHours": "Sakit Saatlar",
+      "quietHoursDescription": "Təcili olmayan bildirişlər almayacağınız saatları təyin edin",
+      "from": "Başlangıc",
+      "to": "Son",
+      "testNotification": "Test Bildirişi Göndər",
+      "testSent": "Test göndərildi!",
+      "testFailed": "Test uğursuz oldu",
+      "notificationsNotReady": "Bildirişlər quraşdırılır. Bir az sonra yenidən cəhd edin.",
+      "updated": "Bildiriş tərcihləri yeniləndi",
+      "updateError": "Bildiriş tərcihləri yenilənə bilmədi",
+      "quietHoursUpdated": "Sakit saatlar uğurla yeniləndi"
+    }
   }
 }
