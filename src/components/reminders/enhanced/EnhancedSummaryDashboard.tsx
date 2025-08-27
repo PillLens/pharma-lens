@@ -10,6 +10,7 @@ interface EnhancedSummaryDashboardProps {
   activeReminders: number;
   medicationsCovered: number;
   todaysDoses: number;
+  completedDoses?: number;
   adherenceRate: number;
   streak: number;
   missedDoses: number;
@@ -26,6 +27,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
   activeReminders,
   medicationsCovered,
   todaysDoses,
+  completedDoses = 0,
   adherenceRate,
   streak,
   missedDoses,
@@ -163,7 +165,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
                       <Target className="w-4 h-4 text-success" />
                       <span className="text-sm text-muted-foreground">{t('reminders.summary.taken')}</span>
                     </div>
-                    <span className="font-semibold text-foreground">{Math.round(todaysDoses * adherenceRate / 100)}/{todaysDoses}</span>
+                    <span className="font-semibold text-foreground">{completedDoses}/{todaysDoses}</span>
                   </div>
                   
                   <div className="flex items-center justify-between">

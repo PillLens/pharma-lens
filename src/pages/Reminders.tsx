@@ -48,6 +48,12 @@ const Reminders: React.FC = () => {
     missedDoses: 0,
     weeklyAdherence: [] as any[]
   });
+  const [todaysAdherence, setTodaysAdherence] = useState({
+    totalToday: 0,
+    completedToday: 0,
+    pendingToday: 0,
+    missedToday: 0
+  });
 
   // Fetch user's timezone from profile
   useEffect(() => {
@@ -101,6 +107,10 @@ const Reminders: React.FC = () => {
         missedDoses: stats.totalDoses - stats.takenDoses,
         weeklyAdherence: weeklyData
       });
+
+      // Fetch today's actual dose adherence status
+      const todayStatus = await scheduledDoseService.getTodaysAdherenceStatus(user.id);
+      setTodaysAdherence(todayStatus);
     } catch (error) {
       console.error('Error fetching real medication data:', error);
     }
@@ -226,7 +236,6 @@ const Reminders: React.FC = () => {
   // Calculate summary stats from real data
   const activeReminders = reminders.filter(r => r.is_active).length;
   const medicationsCovered = new Set(reminders.map(r => r.medication?.medication_name).filter(Boolean)).size;
-  const todaysDoses = reminders.filter(r => r.is_active).length; // Simplified calculation
 
   // Use real adherence data
   const overallAdherenceRate = realAdherenceData.adherenceRate;
@@ -323,7 +332,8 @@ const Reminders: React.FC = () => {
           <EnhancedSummaryDashboard
             activeReminders={activeReminders}
             medicationsCovered={medicationsCovered}
-            todaysDoses={todaysDoses}
+            todaysDoses={todaysAdherence.totalToday}
+            completedDoses={todaysAdherence.completedToday}
             adherenceRate={overallAdherenceRate}
             streak={longestStreak}
             missedDoses={missedDoses}
