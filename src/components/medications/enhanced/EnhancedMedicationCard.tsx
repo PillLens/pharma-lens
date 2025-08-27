@@ -196,43 +196,43 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
       className={`group transition-all duration-300 hover:shadow-lg ${className}`}
       onClick={onClick}
     >
-      <MobileCardHeader className="pb-3">
+      <MobileCardHeader className="pb-1">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
             <div 
-              className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm bg-gradient-to-br from-primary/70 to-primary/50`}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-sm bg-gradient-to-br from-primary/70 to-primary/50`}
             >
-              <Pill className="w-6 h-6 text-primary-foreground" />
+              <Pill className="w-4 h-4 text-primary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <MobileCardTitle className="text-base font-bold truncate mb-1">
+              <MobileCardTitle className="text-sm font-bold truncate mb-0.5">
                 {medication.medication_name}
               </MobileCardTitle>
-              <MobileCardDescription className="text-sm text-muted-foreground">
+              <MobileCardDescription className="text-xs text-muted-foreground">
                 {medication.dosage} • {getFrequencyLabel(medication.frequency)}
               </MobileCardDescription>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-1.5 mt-1">
                 <Badge 
                   variant={medication.is_active ? 'default' : 'secondary'} 
-                  className="text-xs px-2 py-1"
+                  className="text-xs px-1.5 py-0.5"
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
                 {isDueNow && !recentlyTaken && (
-                  <Badge variant="destructive" className="text-xs px-2 py-1">
-                    <Clock className="w-3 h-3 mr-1" />
+                  <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                    <Clock className="w-3 h-3 mr-0.5" />
                     Due Now
                   </Badge>
                 )}
                 {isOverdue && !recentlyTaken && (
-                  <Badge variant="destructive" className="text-xs px-2 py-1 bg-red-100 text-red-800 border-red-300">
-                    <AlertTriangle className="w-3 h-3 mr-1" />
+                  <Badge variant="destructive" className="text-xs px-1.5 py-0.5 bg-red-100 text-red-800 border-red-300">
+                    <AlertTriangle className="w-3 h-3 mr-0.5" />
                     Overdue
                   </Badge>
                 )}
                 {recentlyTaken && (
-                  <Badge variant="secondary" className="text-xs px-2 py-1 bg-success/10 text-success border-success/20">
-                    <CheckCircle className="w-3 h-3 mr-1" />
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5 bg-success/10 text-success border-success/20">
+                    <CheckCircle className="w-3 h-3 mr-0.5" />
                     Taken Today
                   </Badge>
                 )}
@@ -245,9 +245,9 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               <MobileButton
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                className="h-6 w-6 p-0 opacity-60 group-hover:opacity-100 transition-opacity"
               >
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical className="w-3.5 h-3.5" />
               </MobileButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -266,16 +266,16 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         </div>
       </MobileCardHeader>
 
-      <MobileCardContent className="space-y-4">
+      <MobileCardContent className="space-y-2">
         {/* Take Now Button - Show for due medications or always for overdue medications */}
         {medication.is_active && ((isDueNow && !recentlyTaken) || isOverdue) && (
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <Pill className="w-5 h-5 text-primary" />
+          <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <Pill className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-primary">
+                <div className="text-xs font-semibold text-primary">
                   {isDueNow ? "Time to take your dose!" : isOverdue ? "Overdue - Take now!" : "Mark as taken"}
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -334,43 +334,43 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                   });
                 }
               }}
-              className={`h-12 px-6 rounded-2xl ${
+              className={`h-10 px-4 rounded-xl ${
                 isOverdue 
                   ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' 
                   : 'bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80'
-              } text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold`}
+              } text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold text-sm`}
               haptic
             >
-              <CheckCircle className="w-5 h-5 mr-2" />
+              <CheckCircle className="w-4 h-4 mr-1.5" />
               {isOverdue ? 'Take Now (Overdue)' : 'Take Now'}
             </MobileButton>
           </div>
         )}
 
         {/* Compact Stats */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="text-center p-2 rounded-lg bg-muted/30">
-            <div className="text-sm font-bold text-primary">{adherenceRate}%</div>
+        <div className="grid grid-cols-3 gap-1.5">
+          <div className="text-center p-1.5 rounded-lg bg-muted/30">
+            <div className="text-xs font-bold text-primary">{adherenceRate}%</div>
             <div className="text-xs text-muted-foreground">Adherence</div>
           </div>
-          <div className="text-center p-2 rounded-lg bg-muted/30">
-            <div className="text-sm font-bold text-success">{streak}</div>
+          <div className="text-center p-1.5 rounded-lg bg-muted/30">
+            <div className="text-xs font-bold text-success">{streak}</div>
             <div className="text-xs text-muted-foreground">Day Streak</div>
           </div>
-          <div className="text-center p-2 rounded-lg bg-muted/30">
-            <div className={`text-sm font-bold ${inventoryDays <= 7 ? 'text-destructive' : inventoryDays <= 14 ? 'text-warning' : 'text-success'}`}>{inventoryDays}</div>
+          <div className="text-center p-1.5 rounded-lg bg-muted/30">
+            <div className={`text-xs font-bold ${inventoryDays <= 7 ? 'text-destructive' : inventoryDays <= 14 ? 'text-warning' : 'text-success'}`}>{inventoryDays}</div>
             <div className="text-xs text-muted-foreground">Days Left</div>
           </div>
         </div>
 
         {/* Next Dose Info - Only show if medication is active and not due now or overdue */}
         {medication.is_active && !isDueNow && !isOverdue && (
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">Next Dose</span>
+          <div className="flex items-center justify-between p-2 rounded-lg bg-muted/20">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs">Next Dose</span>
             </div>
-            <span className="text-sm font-medium">{nextDoseStatus}</span>
+            <span className="text-xs font-medium">{nextDoseStatus}</span>
           </div>
         )}
 
