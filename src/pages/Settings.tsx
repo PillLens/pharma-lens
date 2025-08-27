@@ -376,7 +376,7 @@ const Settings: React.FC = () => {
       showHeader={true}
       className="bg-background"
     >
-      <div className="pb-24 min-h-screen overflow-y-auto max-h-screen">
+      <div className="overflow-y-auto">
         {/* Profile Header */}
         <div className="px-4 py-6 bg-background border-b border-border/50">
           <div className="flex items-center space-x-4">
