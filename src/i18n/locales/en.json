@@ -692,6 +692,13 @@
     }
   },
   "settings": {
+    "title": "Settings",
+    "account": {
+      "title": "Account"
+    },
+    "preferences": {
+      "title": "Preferences"
+    },
     "profile": {
       "title": "Profile",
       "tapToChange": "Tap to change profile picture",

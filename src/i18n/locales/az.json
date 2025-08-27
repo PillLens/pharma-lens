@@ -303,6 +303,12 @@
   },
   "settings": {
     "title": "Tənzimləmələr",
+    "account": {
+      "title": "Hesab"
+    },
+    "preferences": {
+      "title": "Tərcihlər"
+    },
     "profile": {
       "title": "Profil",
       "name": "Ad",

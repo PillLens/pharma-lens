@@ -923,5 +923,41 @@
    "permissions": {
      "viewMedications": "Просмотр лекарств",
      "editMedications": "Редактирование лекарств"
+   },
+   "settings": {
+     "title": "Настройки",
+     "account": {
+       "title": "Аккаунт"
+     },
+     "preferences": {
+       "title": "Предпочтения"
+     },
+     "profile": {
+       "title": "Профиль",
+       "name": "Имя",
+       "email": "Электронная почта",
+       "phone": "Телефон",
+       "editProfile": "Редактировать профиль",
+       "editProfileDescription": "Обновить личную информацию"
+     },
+     "notifications": {
+       "title": "Уведомления",
+       "enabled": "Включены",
+       "disabled": "Отключены"
+     },
+     "location": {
+       "title": "Местоположение и часовой пояс",
+       "description": "Управление настройками местоположения и часового пояса"
+     },
+     "language": {
+       "language": "Язык"
+     },
+     "security": {
+       "changePassword": "Изменить пароль",
+       "changePasswordDescription": "Обновить пароль аккаунта"
+     },
+     "privacy": {
+       "title": "Конфиденциальность и безопасность"
+     }
    }
  }

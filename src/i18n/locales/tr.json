@@ -551,5 +551,41 @@
   "permissions": {
     "viewMedications": "İlaçları Görüntüle",
     "editMedications": "İlaçları Düzenle"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "account": {
+      "title": "Hesap"
+    },
+    "preferences": {
+      "title": "Tercihler"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Ad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "editProfile": "Profili Düzenle",
+      "editProfileDescription": "Kişisel bilgileri güncelle"
+    },
+    "notifications": {
+      "title": "Bildirimler",
+      "enabled": "Etkin",
+      "disabled": "Devre Dışı"
+    },
+    "location": {
+      "title": "Konum ve Saat Dilimi",
+      "description": "Konum ve saat dilimi ayarlarını yönet"
+    },
+    "language": {
+      "language": "Dil"
+    },
+    "security": {
+      "changePassword": "Şifre Değiştir",
+      "changePasswordDescription": "Hesap şifrenizi güncelleyin"
+    },
+    "privacy": {
+      "title": "Gizlilik ve Güvenlik"
+    }
   }
 }
