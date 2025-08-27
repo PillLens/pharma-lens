@@ -670,11 +670,11 @@ const Settings: React.FC = () => {
 
       {/* Notification Settings Sheet */}
       <Sheet open={showNotificationSettings} onOpenChange={setShowNotificationSettings}>
-        <SheetContent side="bottom" className="h-[80vh]">
+        <SheetContent side="bottom" className="h-[80vh] overflow-hidden flex flex-col">
           <SheetHeader>
             <SheetTitle>{t('settings.notifications.title')}</SheetTitle>
           </SheetHeader>
-          <div className="mt-6">
+          <div className="mt-6 flex-1 overflow-y-auto">
             <NotificationSettings />
           </div>
         </SheetContent>
