@@ -666,6 +666,8 @@
   "settings": {
     "notifications": {
       "title": "Bildirişlər",
+      "enabled": "Aktiv",
+      "disabled": "Qeyri-aktiv",
       "masterToggle": "Bildirişləri Aktivləşdir",
       "masterDescription": "Dərman xatırlatmaları və vacib səhiyyə xəbərdarlıqları alın",
       "reminders": "Dərman Xatırlatmaları",

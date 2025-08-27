@@ -555,6 +555,8 @@
   "settings": {
     "notifications": {
       "title": "Bildirimler",
+      "enabled": "Etkin",
+      "disabled": "Devre Dışı",
       "masterToggle": "Bildirimleri Etkinleştir",
       "masterDescription": "İlaç hatırlatmaları ve önemli sağlık uyarıları alın",
       "reminders": "İlaç Hatırlatmaları",

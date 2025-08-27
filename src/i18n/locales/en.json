@@ -1187,6 +1187,8 @@
   "settings": {
     "notifications": {
       "title": "Notifications",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
       "masterToggle": "Enable Notifications",
       "masterDescription": "Receive medication reminders and important health alerts",
       "reminders": "Medication Reminders",
