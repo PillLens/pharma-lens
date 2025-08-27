@@ -107,19 +107,23 @@ export function DesktopSidebar() {
       <SidebarHeader className="p-4">
         {!isCollapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Pill className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <img 
+              src="/lovable-uploads/5090a6dd-a8b6-456c-85e7-b8e99ea8531c.png" 
+              alt="PillLens" 
+              className="w-8 h-8"
+            />
             <div>
-              <h2 className="font-semibold text-foreground">PharmaLens</h2>
+              <h2 className="font-semibold text-foreground">PillLens</h2>
               <p className="text-xs text-muted-foreground">Medical Assistant</p>
             </div>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mx-auto">
-            <Pill className="w-4 h-4 text-primary-foreground" />
-          </div>
+          <img 
+            src="/lovable-uploads/5090a6dd-a8b6-456c-85e7-b8e99ea8531c.png" 
+            alt="PillLens" 
+            className="w-8 h-8 mx-auto"
+          />
         )}
       </SidebarHeader>
 

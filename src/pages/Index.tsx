@@ -99,9 +99,11 @@ const Index = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-medical">
-                  <Shield className="w-7 h-7 text-primary-foreground" />
-                </div>
+                <img 
+                  src="/lovable-uploads/5090a6dd-a8b6-456c-85e7-b8e99ea8531c.png" 
+                  alt="PillLens" 
+                  className="w-12 h-12"
+                />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse"></div>
               </div>
               <div>
