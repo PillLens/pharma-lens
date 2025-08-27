@@ -551,33 +551,5 @@
   "permissions": {
     "viewMedications": "İlaçları Görüntüle",
     "editMedications": "İlaçları Düzenle"
-  },
-  "settings": {
-    "notifications": {
-      "title": "Bildirimler",
-      "enabled": "Etkin",
-      "disabled": "Devre Dışı",
-      "masterToggle": "Bildirimleri Etkinleştir",
-      "masterDescription": "İlaç hatırlatmaları ve önemli sağlık uyarıları alın",
-      "reminders": "İlaç Hatırlatmaları",
-      "remindersDescription": "İlacınızı alma zamanı geldiğinde bildirim alın",
-      "missedDose": "Kaçırılan Doz Uyarıları",
-      "missedDoseDescription": "Planlanmış dozu kaçırdığınızda uyarı alın",
-      "family": "Aile Güncellemeleri",
-      "familyDescription": "Aile üyelerinin ilaç aktiviteleri hakkında bildirim alın",
-      "product": "Ürün Uyarıları",
-      "productDescription": "İlaçlarınızla ilgili önemli güvenlik uyarıları alın",
-      "quietHours": "Sessiz Saatler",
-      "quietHoursDescription": "Acil olmayan bildirimleri almayacağınız saatleri belirleyin",
-      "from": "Başlangıç",
-      "to": "Bitiş",
-      "testNotification": "Test Bildirimi Gönder",
-      "testSent": "Test gönderildi!",
-      "testFailed": "Test başarısız",
-      "notificationsNotReady": "Bildirimler ayarlanıyor. Lütfen bir dakika sonra tekrar deneyin.",
-      "updated": "Bildirim tercihleri güncellendi",
-      "updateError": "Bildirim tercihleri güncellenemedi",
-      "quietHoursUpdated": "Sessiz saatler başarıyla güncellendi"
-    }
   }
 }
