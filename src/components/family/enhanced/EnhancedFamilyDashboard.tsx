@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useTranslation } from '@/hooks/useTranslation';
 import { familyAnalyticsService, FamilyHealthMetrics, FamilyActivityEvent } from '@/services/familyAnalyticsService';
+import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 interface EnhancedFamilyDashboardProps {
   familyGroups: any[];
@@ -76,74 +77,50 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
   const pendingTasks = healthMetrics?.pendingTasks || 0;
   const careScore = healthMetrics?.careScore || 'N/A';
 
+  // Prepare stats data for QuickStatsGrid
+  const familyStats = [
+    {
+      icon: Users,
+      value: activeMembers,
+      label: t('family.dashboard.familyMembers') || 'Family Members',
+      translationKey: 'family.dashboard.familyMembers',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
+      borderColor: 'border-primary/20'
+    },
+    {
+      icon: TrendingUp,
+      value: `${overallAdherence}%`,
+      label: t('family.dashboard.adherenceRate') || 'Adherence Rate',
+      translationKey: 'family.dashboard.adherenceRate',
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20'
+    },
+    {
+      icon: Clock,
+      value: pendingTasks,
+      label: t('family.dashboard.pendingTasks') || 'Pending Tasks',
+      translationKey: 'family.dashboard.pendingTasks',
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
+      borderColor: 'border-warning/20'
+    },
+    {
+      icon: Shield,
+      value: careScore,
+      label: t('family.dashboard.careScore') || 'Care Score',
+      translationKey: 'family.dashboard.careScore',
+      color: 'text-info',
+      bgColor: 'bg-info/10',
+      borderColor: 'border-info/20'
+    }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Quick Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-0 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.familyMembers')}</p>
-                <p className="text-2xl font-bold text-primary">{activeMembers}</p>
-                <p className="text-xs text-muted-foreground">{t('family.dashboard.ofTotal', { total: totalMembers })}</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-gradient-to-br from-success/5 to-success/10">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.adherenceRate')}</p>
-                <p className="text-2xl font-bold text-success">{overallAdherence}%</p>
-                <p className="text-xs text-success">{t('family.dashboard.thisWeek')}</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-gradient-to-br from-warning/5 to-warning/10">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.pendingTasks')}</p>
-                <p className="text-2xl font-bold text-warning">{pendingTasks}</p>
-                <p className="text-xs text-muted-foreground">{t('family.dashboard.needAttention')}</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-warning" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-gradient-to-br from-blue-500/5 to-blue-500/10">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">{t('family.dashboard.careScore')}</p>
-                <p className="text-2xl font-bold text-blue-600">{careScore}</p>
-                <p className="text-xs text-blue-600">
-                  {careScore === 'A+' || careScore === 'A' ? t('family.dashboard.careScoreExcellent') : 
-                   careScore === 'B+' || careScore === 'B' ? t('family.dashboard.careScoreGood') : 
-                   careScore === 'C' ? t('family.dashboard.careScoreFair') : t('family.dashboard.careScoreNeedsAttention')}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <QuickStatsGrid stats={familyStats} className="mb-6" />
 
       {/* Quick Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
