@@ -576,6 +576,49 @@ export const ScanHistory = () => {
 
   const content = (
     <div className="min-h-screen bg-background">
+      {/* Header with Scan Timeline */}
+      <div className="relative overflow-hidden bg-background">
+        <div className="relative px-4 pt-6 pb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+              <History className="w-6 h-6 text-primary" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-foreground">
+                Scan Timeline
+              </h1>
+              <p className="text-sm text-muted-foreground">Your medication scanning history</p>
+            </div>
+            <Badge 
+              variant="outline" 
+              className="px-3 py-1 text-xs bg-primary/10 text-primary border-primary/30"
+            >
+              {filteredSessions.length} scan{filteredSessions.length !== 1 ? 's' : ''}
+            </Badge>
+          </div>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="bg-success/10 p-3 rounded-xl border border-success/20">
+              <div className="text-lg font-bold text-success">
+                {sessions.filter(s => s.products?.brand_name && s.products.brand_name !== "Unknown Medication").length}
+              </div>
+              <div className="text-xs text-success">Identified</div>
+            </div>
+            <div className="bg-warning/10 p-3 rounded-xl border border-warning/20">
+              <div className="text-lg font-bold text-warning">
+                {sessions.filter(s => s.extractions?.risk_flags?.length > 0).length}
+              </div>
+              <div className="text-xs text-warning">Alerts</div>
+            </div>
+            <div className="bg-info/10 p-3 rounded-xl border border-info/20">
+              <div className="text-lg font-bold text-info">{bookmarkedSessions.size}</div>
+              <div className="text-xs text-info">Saved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Search and filter controls */}
       <div className="px-4 py-4 border-b border-border/50">
         <div className="space-y-3">
