@@ -91,7 +91,7 @@ const EnhancedSummaryDashboard: React.FC<EnhancedSummaryDashboardProps> = ({
               className="rounded-3xl border-0 bg-gradient-to-br from-card to-primary/5 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
               onClick={() => onCardTap?.(stat.id)}
             >
-              <CardContent className="p-4">
+              <CardContent className="p-2">
                 <div className="flex items-start justify-between mb-3">
                   <div className={`w-10 h-10 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center shadow-lg`}>
                     <IconComponent className="w-5 h-5 text-white" />
