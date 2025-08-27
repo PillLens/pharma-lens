@@ -20,9 +20,15 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   }
   return <div className="min-h-screen bg-gradient-surface flex flex-col">
       {/* Premium Mobile Header */}
-      {showHeader && title && <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
-          
-        </header>}
+      {showHeader && title && (
+        <header className="sticky top-0 z-40 medical-surface backdrop-blur-md border-b border-border/50 safe-area-top">
+          <div className="px-6 py-4">
+            <h1 className="text-xl font-bold text-foreground text-center">
+              {title}
+            </h1>
+          </div>
+        </header>
+      )}
 
       {/* Content Area - Let parent handle scrolling */}
       <main className={cn("flex-1 min-h-0", className)}>
