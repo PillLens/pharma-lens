@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Search, Pill, Users, BarChart3, Bell, Star, TrendingUp, Award, CheckCircle, Zap, Eye, Lock, Heart } from "lucide-react";
+import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Star, TrendingUp, Award, CheckCircle, Zap, Eye, Lock, Heart, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -109,28 +109,6 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground font-medium">Smart Medication Assistant</p>
               </div>
             </div>
-            <nav className="hidden md:flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className="gap-2 hover:bg-primary/10">
-                <History className="h-4 w-4" />
-                <TranslatedText translationKey="navigation.history" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/medications")} className="gap-2 hover:bg-primary/10">
-                <Pill className="h-4 w-4" />
-                <TranslatedText translationKey="navigation.medications" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/family")} className="gap-2 hover:bg-primary/10">
-                <Users className="h-4 w-4" />
-                <TranslatedText translationKey="navigation.family" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/reminders")} className="gap-2 hover:bg-primary/10">
-                <Bell className="h-4 w-4" />
-                <TranslatedText translationKey="navigation.reminders" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/security")} className="gap-2 hover:bg-primary/10">
-                <BarChart3 className="h-4 w-4" />
-                <TranslatedText translationKey="navigation.security" />
-              </Button>
-            </nav>
             <div className="flex items-center gap-3">
               <LanguageSelector />
               <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
