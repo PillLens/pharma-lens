@@ -178,6 +178,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const captureImage = async () => {
     try {
+      console.log('CameraCapture: Starting camera capture...');
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -185,6 +186,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         source: CameraSource.Camera,
       });
 
+      console.log('CameraCapture: Camera capture successful, data URL length:', image.dataUrl?.length);
       setCapturedImage(image.dataUrl || null);
       
       if (image.dataUrl) {
@@ -202,6 +204,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const selectFromGallery = async () => {
     try {
+      console.log('CameraCapture: Starting gallery selection...');
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -209,6 +212,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         source: CameraSource.Photos,
       });
 
+      console.log('CameraCapture: Gallery selection successful, data URL length:', image.dataUrl?.length);
       setCapturedImage(image.dataUrl || null);
       
       if (image.dataUrl) {

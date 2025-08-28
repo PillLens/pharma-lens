@@ -21,24 +21,42 @@ export class OCRService {
   async processImage(imageData: string, language: string = 'EN'): Promise<OCRResult> {
     try {
       console.log('OCR Service: Starting processImage with language:', language);
+      console.log('OCR Service: Image data length:', imageData.length);
+      console.log('OCR Service: Image data prefix:', imageData.substring(0, 50));
       
-      // For now, let's bypass OCR and return a mock result to test the rest of the flow
-      console.log('OCR Service: Using fallback mode due to browser security restrictions');
+      // Map UI language codes to OCR language codes
+      const languageMap: Record<string, SupportedLanguage> = {
+        'EN': 'eng',
+        'AZ': 'aze',
+        'RU': 'rus',
+        'TR': 'tur'
+      };
+
+      const ocrLanguage = languageMap[language] || 'eng';
+      console.log('OCR Service: Mapped to OCR language:', ocrLanguage);
       
-      // Extract some basic text from image analysis or return helpful placeholder
-      const mockText = "Sample medication text - OCR temporarily disabled due to browser security";
+      // Use enhanced OCR service
+      console.log('OCR Service: Calling enhanced OCR service...');
+      const result = await enhancedOcrService.processImage(imageData, ocrLanguage);
+      console.log('OCR Service: Enhanced OCR result:', result);
       
       return {
-        text: mockText,
-        confidence: 0.5, // Low confidence to indicate this is a fallback
-        language: language
+        text: result.text,
+        confidence: result.confidence,
+        language: result.language
       };
-      
     } catch (error) {
       console.error('OCR processing failed - detailed error:', error);
-      console.error('OCR processing failed - error message:', error.message);
-      console.error('OCR processing failed - error stack:', error.stack);
-      throw new Error(`Failed to process image with OCR: ${error.message}`);
+      console.error('OCR processing failed - error message:', error?.message);
+      console.error('OCR processing failed - error name:', error?.name);
+      
+      // Return fallback result instead of throwing
+      console.log('OCR Service: Using fallback mode due to error');
+      return {
+        text: "OCR temporarily unavailable - please try camera capture",
+        confidence: 0.1,
+        language: language
+      };
     }
   }
 
