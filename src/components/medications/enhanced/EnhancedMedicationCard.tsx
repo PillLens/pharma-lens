@@ -102,7 +102,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const { data: adherenceData, error: adherenceError } = await supabase
+        const { data: adherenceData, error: adherenceError } = await (supabase as any)
           .from('medication_adherence_log')
           .select('status, scheduled_time, taken_time')
           .eq('user_id' as any, user.id as any)
@@ -120,7 +120,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         // Calculate streak using direct SQL query since RPC function not in types
         let streak = 0;
         try {
-          const { data: streakData } = await supabase
+          const { data: streakData } = await (supabase as any)
             .from('medication_adherence_log')
             .select('scheduled_time, status')
             .eq('user_id' as any, user.id as any)
