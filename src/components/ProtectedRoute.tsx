@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -8,6 +9,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
+  const isMobile = useIsMobile();
 
   if (loading) {
     return (
@@ -17,6 +19,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
+  // Allow desktop access without authentication
+  if (!isMobile) {
+    return <>{children}</>;
+  }
+
+  // Mobile users still require authentication
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
