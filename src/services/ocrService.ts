@@ -20,10 +20,6 @@ export class OCRService {
 
   async processImage(imageData: string, language: string = 'EN'): Promise<OCRResult> {
     try {
-      console.log('OCR Service: Starting processImage with language:', language);
-      console.log('OCR Service: Image data length:', imageData.length);
-      console.log('OCR Service: Image data prefix:', imageData.substring(0, 50));
-      
       // Map UI language codes to OCR language codes
       const languageMap: Record<string, SupportedLanguage> = {
         'EN': 'eng',
@@ -33,12 +29,9 @@ export class OCRService {
       };
 
       const ocrLanguage = languageMap[language] || 'eng';
-      console.log('OCR Service: Mapped to OCR language:', ocrLanguage);
       
       // Use enhanced OCR service
-      console.log('OCR Service: Calling enhanced OCR service...');
       const result = await enhancedOcrService.processImage(imageData, ocrLanguage);
-      console.log('OCR Service: Enhanced OCR result:', result);
       
       return {
         text: result.text,
@@ -46,17 +39,8 @@ export class OCRService {
         language: result.language
       };
     } catch (error) {
-      console.error('OCR processing failed - detailed error:', error);
-      console.error('OCR processing failed - error message:', error?.message);
-      console.error('OCR processing failed - error name:', error?.name);
-      
-      // Return fallback result instead of throwing
-      console.log('OCR Service: Using fallback mode due to error');
-      return {
-        text: "OCR temporarily unavailable - please try camera capture",
-        confidence: 0.1,
-        language: language
-      };
+      console.error('OCR processing failed:', error);
+      throw new Error('Failed to process image with OCR');
     }
   }
 

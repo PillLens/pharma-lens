@@ -23,7 +23,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id' as any, user.id as any)
@@ -59,7 +59,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       await updatePreferences({ enabled: true });
 
       // Mark that we've asked for permission
-      await (supabase as any)
+      await supabase
         .from('profiles')
         .update({ notification_permission_asked: true } as any)
         .eq('id' as any, user.id as any);
@@ -77,7 +77,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
 
     try {
       // Mark that we've asked for permission (even if denied)
-      await (supabase as any)
+      await supabase
         .from('profiles')
         .update({ notification_permission_asked: true } as any)
         .eq('id' as any, user.id as any);

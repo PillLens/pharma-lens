@@ -178,7 +178,6 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const captureImage = async () => {
     try {
-      console.log('CameraCapture: Starting camera capture...');
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -186,7 +185,6 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         source: CameraSource.Camera,
       });
 
-      console.log('CameraCapture: Camera capture successful, data URL length:', image.dataUrl?.length);
       setCapturedImage(image.dataUrl || null);
       
       if (image.dataUrl) {
@@ -204,7 +202,6 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const selectFromGallery = async () => {
     try {
-      console.log('CameraCapture: Starting gallery selection...');
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -212,7 +209,6 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
         source: CameraSource.Photos,
       });
 
-      console.log('CameraCapture: Gallery selection successful, data URL length:', image.dataUrl?.length);
       setCapturedImage(image.dataUrl || null);
       
       if (image.dataUrl) {
@@ -234,14 +230,9 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     let medicationData: any = null;
 
     try {
-      console.log('Starting image processing...');
-      
       // Step 1: Check for barcode
       setProcessingStep("Scanning for barcode...");
-      console.log('Step 1: Starting barcode scan...');
       const barcode = await barcodeService.scanBarcode(imageData);
-      console.log('Barcode scan result:', barcode);
-      
       if (barcode) {
         setBarcodeData(barcode);
         barcodeValue = barcode.code;
@@ -257,12 +248,8 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
       // Step 2: Perform OCR
       setProcessingStep("Extracting text from image...");
-      console.log('Step 2: Starting OCR processing...');
       await ocrService.initialize();
-      console.log('OCR service initialized');
-      
       const ocrResult = await ocrService.processImage(imageData);
-      console.log('OCR processing result:', ocrResult);
       
       setOcrText(ocrResult.text);
       setConfidence(ocrResult.confidence);
@@ -272,26 +259,34 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       const sessionId = await saveSession(barcodeValue);
       const currentSessionId = sessionId;
 
-      // Step 4: Extract medication info if we have OCR text or barcode
-      if (ocrResult.text.trim().length > 10 || barcodeValue) {
+      // Step 4: Extract medication info if we have sufficient text
+      if (ocrResult.text.trim().length > 10) {
         setProcessingStep("Analyzing medication information...");
         medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue, currentSessionId);
         setExtractedData(medicationData);
 
-        // Show success message if we have any data
-        if (medicationData) {
+        // Validate extraction success
+        const hasValidExtraction = validateSafetyThresholds(ocrResult.confidence, medicationData);
+        
+        if (!hasValidExtraction) {
+          // Only clear if extraction completely failed
+          setExtractedData(null);
           toast({
-            title: t('common.success'),
-            description: barcodeValue ? t('scanner.barcodeFound') : t('scanner.medicationFound'),
+            title: t('errors.extractionFailed'),
+            description: t('common.tryAgain'),
+            variant: "destructive",
           });
+        } else {
+          // Only show success toast if confidence is 70% or higher
+          if (ocrResult.confidence >= 0.7) {
+            toast({
+              title: t('common.success'),
+              description: t('scanner.medicationFound'),
+            });
+          }
         }
       } else {
-        // If no text and no barcode, show a helpful message
-        toast({
-          title: t('common.info'),
-          description: "Please try scanning a clearer image of the medication package or barcode",
-          variant: "default",
-        });
+        throw new Error(t('errors.extractionFailed'));
       }
 
       setScanComplete(true);
