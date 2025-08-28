@@ -230,9 +230,14 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
     let medicationData: any = null;
 
     try {
+      console.log('Starting image processing...');
+      
       // Step 1: Check for barcode
       setProcessingStep("Scanning for barcode...");
+      console.log('Step 1: Starting barcode scan...');
       const barcode = await barcodeService.scanBarcode(imageData);
+      console.log('Barcode scan result:', barcode);
+      
       if (barcode) {
         setBarcodeData(barcode);
         barcodeValue = barcode.code;
@@ -248,8 +253,12 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
       // Step 2: Perform OCR
       setProcessingStep("Extracting text from image...");
+      console.log('Step 2: Starting OCR processing...');
       await ocrService.initialize();
+      console.log('OCR service initialized');
+      
       const ocrResult = await ocrService.processImage(imageData);
+      console.log('OCR processing result:', ocrResult);
       
       setOcrText(ocrResult.text);
       setConfidence(ocrResult.confidence);
