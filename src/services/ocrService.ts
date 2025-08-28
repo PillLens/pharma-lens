@@ -1,19 +1,18 @@
-import { createWorker } from 'tesseract.js';
 
-export interface OCRResult {
-  text: string;
-  confidence: number;
-  language?: string;
-}
+import { enhancedOcrService, type OCRResult, type SupportedLanguage } from './enhancedOcrService';
+
+export { OCRResult } from './enhancedOcrService';
 
 export class OCRService {
-  private worker: any = null;
+  private initialized = false;
 
   async initialize() {
-    if (this.worker) return;
+    if (this.initialized) return;
     
     try {
-      this.worker = await createWorker('eng');
+      // Initialize the enhanced service with English by default
+      await enhancedOcrService.initializeLanguage('eng');
+      this.initialized = true;
       console.log('OCR service initialized');
     } catch (error) {
       console.error('Failed to initialize OCR:', error);
@@ -25,13 +24,17 @@ export class OCRService {
     await this.initialize();
     
     try {
-      const { data } = await this.worker.recognize(imageData);
-      
-      return {
-        text: data.text.trim(),
-        confidence: data.confidence / 100, // Convert to 0-1 range
-        language: 'English'
+      // Map language codes to supported languages
+      const languageMap: Record<string, SupportedLanguage> = {
+        'EN': 'eng',
+        'AZ': 'aze',
+        'RU': 'rus',
+        'TR': 'tur'
       };
+      
+      const supportedLang = languageMap[language] || 'eng';
+      
+      return await enhancedOcrService.processImage(imageData, supportedLang);
     } catch (error) {
       console.error('OCR processing failed:', error);
       throw new Error('Failed to process image with OCR');
@@ -39,15 +42,29 @@ export class OCRService {
   }
 
   async processImageMultiLanguage(imageData: string, languages: string[] = ['EN']): Promise<OCRResult[]> {
-    // For now, just use single language processing
-    const result = await this.processImage(imageData, languages[0]);
-    return [result];
+    await this.initialize();
+    
+    try {
+      const languageMap: Record<string, SupportedLanguage> = {
+        'EN': 'eng',
+        'AZ': 'aze',
+        'RU': 'rus',
+        'TR': 'tur'
+      };
+      
+      const supportedLangs = languages.map(lang => languageMap[lang] || 'eng');
+      
+      return await enhancedOcrService.processImageMultiLanguage(imageData, supportedLangs);
+    } catch (error) {
+      console.error('Multi-language OCR processing failed:', error);
+      return [];
+    }
   }
 
   async terminate() {
-    if (this.worker) {
-      await this.worker.terminate();
-      this.worker = null;
+    if (this.initialized) {
+      await enhancedOcrService.terminate();
+      this.initialized = false;
     }
   }
 }
