@@ -100,7 +100,7 @@ const Index = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/5090a6dd-a8b6-456c-85e7-b8e99ea8531c.png" 
+                  src="/lovable-uploads/12aa5b62-d3ba-4fe6-9f71-bdaf796e5a6e.png" 
                   alt="PillLens" 
                   className="w-12 h-12"
                 />
