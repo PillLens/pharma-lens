@@ -11,6 +11,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
+import { unifiedNotificationManager } from "@/services/unifiedNotificationManager";
 import React, { useEffect } from "react";
 
 // Page imports
@@ -32,6 +33,9 @@ const App = () => {
   React.useEffect(() => {
     // Track app startup performance
     performanceMonitoringService.trackPageLoad('app_init');
+    
+    // Initialize notification manager
+    unifiedNotificationManager.initialize().catch(console.error);
   }, []);
 
   return (

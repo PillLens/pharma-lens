@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { LocationPermissionDialog } from './LocationPermissionDialog';
 import { FirstLaunchNotificationSetup } from '../notifications/FirstLaunchNotificationSetup';
+import { MobileNotificationSetup } from '../notifications/MobileNotificationSetup';
 import { useLocationTimezone } from '@/hooks/useLocationTimezone';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsNativeMobile } from '@/hooks/use-mobile';
 
 export const FirstLaunchLocationSetup: React.FC = () => {
   const { user } = useAuth();
+  const isNative = useIsNativeMobile();
   const { timezoneData, loading, isFirstLaunch, requestLocationPermission } = useLocationTimezone();
   const [showDialog, setShowDialog] = useState(false);
 
@@ -37,7 +40,11 @@ export const FirstLaunchLocationSetup: React.FC = () => {
         onDeny={handleDeny}
         loading={false}
       />
-      <FirstLaunchNotificationSetup />
+      {isNative ? (
+        <MobileNotificationSetup />
+      ) : (
+        <FirstLaunchNotificationSetup />
+      )}
     </>
   );
 };

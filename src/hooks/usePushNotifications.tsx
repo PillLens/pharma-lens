@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { oneSignalService } from '@/services/oneSignalService';
+import { unifiedNotificationManager } from '@/services/unifiedNotificationManager';
 import { environmentService } from '@/services/environmentService';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -80,9 +80,9 @@ export const usePushNotifications = () => {
       
       const updatedPreferences = { ...preferences, ...newPreferences };
       
-      // Update OneSignal preferences
+      // Update notification manager preferences
       if (environmentService.isFeatureEnabled('push-notifications')) {
-        await oneSignalService.updateNotificationPreferences(updatedPreferences);
+        await unifiedNotificationManager.updatePreferences(updatedPreferences);
       }
 
       // Update database
@@ -111,7 +111,7 @@ export const usePushNotifications = () => {
       return false;
     }
 
-    return oneSignalService.sendTestNotification();
+    return unifiedNotificationManager.sendTestNotification();
   };
 
   const sendCaregiverPoke = async (toUserId: string, groupId: string, medId?: string): Promise<boolean> => {
@@ -145,6 +145,6 @@ export const usePushNotifications = () => {
     updatePreferences,
     sendTestNotification,
     sendCaregiverPoke,
-    isOneSignalReady: oneSignalService.isServiceInitialized(),
+    isOneSignalReady: unifiedNotificationManager.isServiceInitialized(),
   };
 };
