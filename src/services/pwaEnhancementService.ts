@@ -114,8 +114,9 @@ export class PWAEnhancementService {
    * Enhance scrolling behavior for mobile
    */
   private enhanceScrolling() {
-    // Add momentum scrolling for iOS
-    document.documentElement.style.webkitOverflowScrolling = 'touch';
+    // Add momentum scrolling for iOS with proper TypeScript handling
+    const docStyle = document.documentElement.style as any;
+    docStyle.webkitOverflowScrolling = 'touch';
     
     // Prevent overscroll on mobile
     document.body.addEventListener('touchmove', (e) => {

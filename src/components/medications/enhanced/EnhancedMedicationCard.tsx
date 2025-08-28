@@ -117,22 +117,21 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         const takenDoses = adherenceData?.filter(d => d.status === 'taken').length || 0;
         const adherenceRate = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 100;
 
-        // Use database function to calculate accurate streak
+        // Calculate streak using direct SQL query since RPC function not in types
         let streak = 0;
         try {
-          const { data: streakResult } = await supabase
-            .rpc('calculate_adherence_streak', {
-              p_user_id: user.id,
-              p_medication_id: medication.id
-            });
-          streak = streakResult || 0;
-        } catch (error) {
-          console.error('Error calculating streak:', error);
-          // Fallback calculation
-          if (adherenceData && adherenceData.length > 0) {
+          const { data: streakData } = await supabase
+            .from('medication_adherence_log')
+            .select('scheduled_time, status')
+            .eq('user_id', user.id)
+            .eq('medication_id', medication.id)
+            .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
+            .order('scheduled_time', { ascending: false });
+
+          if (streakData && streakData.length > 0) {
             const dailyTaken = new Map();
             
-            adherenceData.forEach(log => {
+            streakData.forEach(log => {
               const date = new Date(log.scheduled_time).toDateString();
               if (!dailyTaken.has(date)) {
                 dailyTaken.set(date, { taken: 0, total: 0 });
@@ -156,6 +155,9 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               }
             }
           }
+        } catch (error) {
+          console.error('Error calculating streak:', error);
+          streak = 0;
         }
 
         // Calculate inventory days based on start/end dates

@@ -3,6 +3,12 @@ import App from './App.tsx'
 import './index.css'
 import './i18n' // Initialize i18n
 import { environmentService } from './services/environmentService'
+import { pwaEnhancementService } from './services/pwaEnhancementService'
+import { mobileOptimizationService } from './services/mobileOptimizationService'
+
+// Initialize PWA enhancements and mobile optimizations
+pwaEnhancementService.init()
+mobileOptimizationService.init()
 
 // Initialize OneSignal if enabled and ensure user registration
 const initializeOneSignal = async () => {

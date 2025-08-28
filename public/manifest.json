@@ -77,30 +77,25 @@
   ],
   "shortcuts": [
     {
-      "name": "Scan Medication",
-      "short_name": "Scan",
-      "description": "Quick barcode scan",
-      "url": "/?action=scan",
-      "icons": [
-        {
-          "src": "/icon-scan-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "name": "Add Medication",
+      "short_name": "Add Med",
+      "description": "Quickly add a new medication",
+      "url": "/medications?action=add",
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "My Medications", 
-      "short_name": "Medications",
-      "description": "View medication list",
-      "url": "/medications",
-      "icons": [
-        {
-          "src": "/icon-pills-96x96.png",
-          "sizes": "96x96", 
-          "type": "image/png"
-        }
-      ]
+      "name": "View Reminders",
+      "short_name": "Reminders",
+      "description": "Check your medication reminders",
+      "url": "/reminders",
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Family Care",
+      "short_name": "Family",
+      "description": "Manage family medications",
+      "url": "/family",
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [

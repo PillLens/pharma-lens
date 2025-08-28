@@ -1801,6 +1801,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_adherence_streak: {
+        Args: { p_medication_id: string; p_user_id: string }
+        Returns: number
+      }
       can_invite_to_group: {
         Args: { group_uuid: string; user_uuid: string }
         Returns: boolean

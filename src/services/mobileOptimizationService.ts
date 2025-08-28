@@ -215,9 +215,12 @@ export class MobileOptimizationService {
    * Optimize scrolling for mobile
    */
   private optimizeScrolling() {
-    // Add momentum scrolling
-    document.body.style.webkitOverflowScrolling = 'touch';
-    document.body.style.overflowScrolling = 'touch';
+    // Add momentum scrolling with proper TypeScript handling
+    const docStyle = document.body.style as any;
+    docStyle.webkitOverflowScrolling = 'touch';
+    if ('overflowScrolling' in docStyle) {
+      docStyle.overflowScrolling = 'touch';
+    }
 
     // Prevent scroll chaining
     const scrollAreas = document.querySelectorAll('.scroll-area');
