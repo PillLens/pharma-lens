@@ -94,11 +94,15 @@
     @apply border-border;
   }
   
-  body {
+  html, body {
     @apply bg-background text-foreground;
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background)) !important;
+  }
+
+  #root {
     background-color: hsl(var(--background)) !important;
   }
 
@@ -127,6 +131,7 @@
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       scroll-behavior: smooth;
+      background-color: hsl(var(--background)) !important;
     }
   }
 
