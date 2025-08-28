@@ -254,9 +254,9 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light to-accent p-4">
       <MobileCard className="w-full max-w-md shadow-elevated">
         <div className="p-6">
-            <div className="text-center mb-6">
-            <div className="w-16 h-16 mb-4">
-              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16" />
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 mx-auto mb-4">
+              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16 rounded-xl" />
             </div>
              <h2 className="text-xl font-semibold">
                <TranslatedText translationKey="authPage.welcomeMessage" />
