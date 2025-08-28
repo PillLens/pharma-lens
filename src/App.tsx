@@ -18,6 +18,8 @@ import Reminders from "./pages/Reminders";
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import React, { useEffect } from "react";
@@ -41,6 +43,8 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/" element={
                   <ProtectedRoute>
                     <AppLayout>

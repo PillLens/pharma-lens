@@ -255,11 +255,8 @@ export default function Auth() {
       <MobileCard className="w-full max-w-md shadow-elevated">
         <div className="p-6">
             <div className="text-center mb-6">
-            <div className="flex items-center justify-center mb-4">
-              <Stethoscope className="h-8 w-8 text-primary mr-2" />
-              <h1 className="text-2xl font-bold text-primary">
-                <TranslatedText translationKey="app.title" />
-              </h1>
+            <div className="w-16 h-16 mb-4">
+              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16" />
             </div>
              <h2 className="text-xl font-semibold">
                <TranslatedText translationKey="authPage.welcomeMessage" />

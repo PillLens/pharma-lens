@@ -10,7 +10,8 @@ import {
   Settings, 
   Shield,
   LogOut,
-  User
+  User,
+  FileText
 } from 'lucide-react';
 import {
   Sidebar,
@@ -82,6 +83,21 @@ const navigationItems = [
   },
 ];
 
+const legalItems = [
+  {
+    icon: Shield,
+    labelKey: 'Privacy Policy',
+    href: '/privacy-policy',
+    category: 'legal'
+  },
+  {
+    icon: FileText,
+    labelKey: 'Terms of Service',
+    href: '/terms-of-service',
+    category: 'legal'
+  },
+];
+
 export function DesktopSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
@@ -108,7 +124,7 @@ export function DesktopSidebar() {
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <img 
-              src="/lovable-uploads/c9e64f93-6fad-47ff-bf26-8ba747a10804.png" 
+              src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" 
               alt="PillLens" 
               className="w-8 h-8"
             />
@@ -120,7 +136,7 @@ export function DesktopSidebar() {
         )}
         {isCollapsed && (
           <img 
-            src="/lovable-uploads/c9e64f93-6fad-47ff-bf26-8ba747a10804.png" 
+            src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" 
             alt="PillLens" 
             className="w-8 h-8 mx-auto"
           />
@@ -174,6 +190,24 @@ export function DesktopSidebar() {
                     <NavLink to={item.href} className={getNavClasses(item.href)}>
                       <item.icon className="w-4 h-4" />
                       {!isCollapsed && <TranslatedText translationKey={item.labelKey} />}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>{!isCollapsed ? 'Legal' : ''}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {legalItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.href} className={getNavClasses(item.href)}>
+                      <item.icon className="w-4 h-4" />
+                      {!isCollapsed && <span className="text-sm">{item.labelKey}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
