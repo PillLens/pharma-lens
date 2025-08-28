@@ -26,7 +26,7 @@ i18n
   .init({
     resources,
     fallbackLng: ['EN', 'en', 'en-US'],
-    debug: true, // Enable debug to see what's happening
+    debug: false, // Disable debug logging for production
     
     interpolation: {
       escapeValue: false,
@@ -37,10 +37,8 @@ i18n
       caches: ['localStorage'],
       lookupLocalStorage: 'selectedLanguage',
       convertDetectedLanguage: (lng) => {
-        console.log('Detected browser language:', lng);
         // Convert any English variant to our base English
         if (lng.startsWith('en')) {
-          console.log('Converting to EN');
           return 'EN';
         }
         return lng;
@@ -52,12 +50,6 @@ i18n
     },
   });
 
-// Debug logging
 console.log('i18n initialized with resources:', Object.keys(resources));
-console.log('Final language after init:', i18n.language);
-console.log('Available languages:', i18n.languages);
-console.log('EN authPage translations:', resources.EN?.translation?.authPage);
-console.log('Testing direct key access:', i18n.t('authPage.dataEncryption'));
-console.log('All authPage keys:', Object.keys(resources.EN?.translation?.authPage || {}));
 
 export default i18n;
