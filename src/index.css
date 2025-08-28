@@ -179,10 +179,6 @@
       background-color: hsl(var(--background)) !important;
     }
     
-    .bottom-nav {
-      background-color: hsl(var(--background))/95 !important;
-    }
-    
     /* Ensure proper safe area handling in PWA mode */
     .main-scroll {
       padding-bottom: calc(var(--nav-h) + var(--gap) + env(safe-area-inset-bottom, 0px));
