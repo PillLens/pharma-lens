@@ -4,6 +4,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block'
 };
 
 interface DrugInteraction {
@@ -17,31 +20,63 @@ interface DrugInteraction {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { medications } = await req.json();
-
-    if (!medications || medications.length < 2) {
-      return new Response(
-        JSON.stringify({
-          interactions: [],
-          source: 'none',
-          lastUpdated: new Date().toISOString()
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        }
-      );
+    // Validate request size and content type
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 1024 * 10) { // 10KB limit
+      throw new Error('Request body too large');
     }
 
-    // In a real implementation, you would call external APIs here
-    // For now, we'll return mock data based on common interactions
-    const interactions = await checkCommonInteractions(medications);
+    const contentType = req.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Content-Type must be application/json');
+    }
+
+    const body = await req.json();
+    const { medications } = body;
+
+    // Input validation
+    if (!medications || !Array.isArray(medications)) {
+      throw new Error('medications must be an array');
+    }
+
+    if (medications.length === 0) {
+      return new Response(JSON.stringify({ interactions: [] }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (medications.length > 20) { // Reasonable limit
+      throw new Error('Too many medications (max 20)');
+    }
+
+    // Sanitize medication names
+    const sanitizedMedications = medications
+      .filter(med => typeof med === 'string' && med.trim().length > 0)
+      .map(med => med.trim().substring(0, 100)) // Limit length
+      .filter(med => /^[a-zA-Z0-9\s\-\.]+$/.test(med)); // Allow only safe characters
+
+    if (sanitizedMedications.length === 0) {
+      return new Response(JSON.stringify({ interactions: [] }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (sanitizedMedications.length < 2) {
+      return new Response(JSON.stringify({ interactions: [] }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const interactions = await checkCommonInteractions(sanitizedMedications);
+    
+    console.log(`Found ${interactions.length} interactions for ${sanitizedMedications.length} medications`);
 
     return new Response(
       JSON.stringify({
@@ -56,13 +91,18 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      }
-    );
+    console.error('Drug interaction check error:', error.message);
+    
+    const status = error.message.includes('too large') || error.message.includes('Too many') ? 413 : 400;
+    const message = error.message.includes('medications must be') || 
+                    error.message.includes('Content-Type') ||
+                    error.message.includes('Too many') ||
+                    error.message.includes('too large') ? error.message : 'Invalid request';
+    
+    return new Response(JSON.stringify({ error: message }), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 });
 
