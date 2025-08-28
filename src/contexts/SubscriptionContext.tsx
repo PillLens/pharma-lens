@@ -92,38 +92,57 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   useEffect(() => {
     if (!user?.id) return;
 
-    const channel = supabase
-      .channel('subscription-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'subscriptions',
-          filter: `user_id=eq.${user.id}`
-        },
-        () => {
-          // Subscription changed, refresh entitlements
-          setTimeout(refreshEntitlements, 1000); // Small delay to ensure webhook processing
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
-          filter: `id=eq.${user.id}`
-        },
-        () => {
-          // Profile updated (trial status, plan, etc.)
-          setTimeout(refreshEntitlements, 1000);
-        }
-      )
-      .subscribe();
+    // Skip real-time subscriptions in development/sandbox environments
+    // to avoid WebSocket connection issues
+    if (window.location.hostname.includes('sandbox.lovable.dev') || 
+        window.location.hostname === 'localhost') {
+      return;
+    }
+
+    let channel: any;
+    
+    try {
+      channel = supabase
+        .channel('subscription-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'subscriptions',
+            filter: `user_id=eq.${user.id}`
+          },
+          () => {
+            // Subscription changed, refresh entitlements
+            setTimeout(refreshEntitlements, 1000); // Small delay to ensure webhook processing
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${user.id}`
+          },
+          () => {
+            // Profile updated (trial status, plan, etc.)
+            setTimeout(refreshEntitlements, 1000);
+          }
+        )
+        .subscribe();
+    } catch (error) {
+      console.warn('Real-time subscription failed, continuing without it:', error);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch (error) {
+          console.warn('Error removing channel:', error);
+        }
+      }
     };
   }, [user?.id]);
 
