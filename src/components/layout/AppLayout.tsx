@@ -32,7 +32,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Desktop Header */}
-          <header className="sticky top-0 z-40 h-14 border-b border-border bg-background/95 backdrop-blur-sm px-4 flex items-center">
+          <header className="sticky top-0 z-40 h-14 border-b border-border bg-background/95 backdrop-blur-sm px-4 flex items-center" style={{ backgroundColor: 'hsl(var(--background))' }}>
             <SidebarTrigger className="h-8 w-8" />
           </header>
 
