@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Pill, Bell, LayoutDashboard } from 'lucide-react';
@@ -44,7 +45,7 @@ const MobileTabNavigation: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed left-0 right-0 z-50 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 shadow-lg will-change-transform" style={{ bottom: '0', height: 'var(--bottom-nav-h, 64px)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <nav className="fixed left-0 right-0 z-50 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 shadow-lg will-change-transform" style={{ bottom: 'env(safe-area-inset-bottom)', height: 'var(--bottom-nav-h, 64px)' }}>
         {/* Modern Navigation with Labels */}
         <div className="px-2 py-2 h-full">
           <div className="flex items-center justify-around max-w-md mx-auto h-full">
