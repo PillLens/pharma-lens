@@ -31,7 +31,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
       )}
 
       {/* Content Area - Optimized spacing for mobile */}
-      <main className={cn("flex-1 min-h-0 overflow-y-auto", className)} data-scrollable style={{ paddingBottom: 'calc(var(--bottom-nav-h, 64px) + 48px + env(safe-area-inset-bottom))' }}>
+      <main className={cn("flex-1 min-h-0 overflow-y-auto", className)} data-scrollable style={{ paddingBottom: 'calc(var(--bottom-nav-h, 64px) + 48px)' }}>
         <div className="min-h-full">
           {children}
         </div>

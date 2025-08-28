@@ -189,7 +189,7 @@ export const MobileFamilyManagement: React.FC = () => {
   return (
     <GestureNavigationWrapper className="min-h-screen bg-background">
       <PullToRefreshWrapper onRefresh={loadFamilyData}>
-        <div className="pb-24 space-y-6">
+        <div className="space-y-6">
           {/* Pending Invitations */}
           {pendingInvitations.length > 0 && (
             <div className="px-4 pt-4">
