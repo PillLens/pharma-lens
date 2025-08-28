@@ -40,12 +40,19 @@ export class EnhancedOCRService {
   };
 
   async initializeLanguage(language: SupportedLanguage): Promise<void> {
-    if (this.loadedLanguages.has(language)) return;
+    console.log('Enhanced OCR: initializeLanguage called for:', language);
+    
+    if (this.loadedLanguages.has(language)) {
+      console.log('Enhanced OCR: Language already loaded:', language);
+      return;
+    }
     
     try {
+      console.log('Enhanced OCR: Creating worker for language:', language);
       const worker = await createWorker(language);
       const config = this.languageConfig[language];
       
+      console.log('Enhanced OCR: Setting parameters for worker...');
       await worker.setParameters({
         tessedit_char_whitelist: config.charWhitelist,
         tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
@@ -57,33 +64,51 @@ export class EnhancedOCRService {
       console.log(`OCR language ${config.name} initialized successfully`);
     } catch (error) {
       console.error(`Failed to initialize OCR for ${language}:`, error);
-      throw new Error(`Failed to initialize OCR for ${language}`);
+      console.error('Error details:', error.message, error.stack);
+      throw new Error(`Failed to initialize OCR for ${language}: ${error.message}`);
     }
   }
 
   async processImage(imageData: string, language: SupportedLanguage = 'eng'): Promise<OCRResult> {
-    await this.initializeLanguage(language);
-    const worker = this.workers.get(language);
+    console.log('Enhanced OCR: Starting processImage with language:', language);
     
-    if (!worker) {
-      throw new Error(`Worker not initialized for language: ${language}`);
-    }
-
     try {
+      console.log('Enhanced OCR: Initializing language...');
+      await this.initializeLanguage(language);
+      console.log('Enhanced OCR: Language initialized successfully');
+      
+      const worker = this.workers.get(language);
+      
+      if (!worker) {
+        console.error('Enhanced OCR: Worker not found for language:', language);
+        throw new Error(`Worker not initialized for language: ${language}`);
+      }
+      
+      console.log('Enhanced OCR: Worker found, preprocessing image...');
+      
       // Preprocess the image for better OCR results
       const processedImage = await this.preprocessImage(imageData, language);
+      console.log('Enhanced OCR: Image preprocessed successfully');
       
       // Perform OCR on the preprocessed image
+      console.log('Enhanced OCR: Starting recognition...');
       const { data } = await worker.recognize(processedImage.canvas);
+      console.log('Enhanced OCR: Recognition completed. Text length:', data.text?.length, 'Confidence:', data.confidence);
       
-      return {
+      const result = {
         text: data.text.trim(),
         confidence: data.confidence / 100, // Convert to 0-1 range
         language: this.languageConfig[language].name
       };
+      
+      console.log('Enhanced OCR: Final result:', result);
+      return result;
+      
     } catch (error) {
-      console.error('Enhanced OCR processing failed:', error);
-      throw new Error('Failed to process image with enhanced OCR');
+      console.error('Enhanced OCR processing failed - detailed error:', error);
+      console.error('Enhanced OCR processing failed - error message:', error.message);
+      console.error('Enhanced OCR processing failed - error stack:', error.stack);
+      throw new Error(`Failed to process image with enhanced OCR: ${error.message}`);
     }
   }
 

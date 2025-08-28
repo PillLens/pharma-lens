@@ -20,6 +20,8 @@ export class OCRService {
 
   async processImage(imageData: string, language: string = 'EN'): Promise<OCRResult> {
     try {
+      console.log('OCR Service: Starting processImage with language:', language);
+      
       // Map UI language codes to OCR language codes
       const languageMap: Record<string, SupportedLanguage> = {
         'EN': 'eng',
@@ -29,9 +31,12 @@ export class OCRService {
       };
 
       const ocrLanguage = languageMap[language] || 'eng';
+      console.log('OCR Service: Mapped to OCR language:', ocrLanguage);
       
       // Use enhanced OCR service
+      console.log('OCR Service: Calling enhanced OCR service...');
       const result = await enhancedOcrService.processImage(imageData, ocrLanguage);
+      console.log('OCR Service: Enhanced OCR result:', result);
       
       return {
         text: result.text,
@@ -39,8 +44,10 @@ export class OCRService {
         language: result.language
       };
     } catch (error) {
-      console.error('OCR processing failed:', error);
-      throw new Error('Failed to process image with OCR');
+      console.error('OCR processing failed - detailed error:', error);
+      console.error('OCR processing failed - error message:', error.message);
+      console.error('OCR processing failed - error stack:', error.stack);
+      throw new Error(`Failed to process image with OCR: ${error.message}`);
     }
   }
 
