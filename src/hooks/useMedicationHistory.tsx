@@ -30,10 +30,10 @@ export const useMedicationHistory = () => {
 
     try {
       // Direct table access with type assertion
-      const { data, error } = await supabase
-        .from('user_medications' as any)
+      const { data, error } = await (supabase as any)
+        .from('user_medications')
         .select('*')
-      .eq('user_id' as any, user.id as any)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -110,11 +110,11 @@ export const useMedicationHistory = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('user_medications' as any)
-      .update(updates as any)
-      .eq('id' as any, id as any)
-      .eq('user_id' as any, user.id as any)
+      const { data, error } = await (supabase as any)
+        .from('user_medications')
+        .update(updates)
+        .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
 
@@ -154,11 +154,11 @@ export const useMedicationHistory = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from('user_medications' as any)
+      const { error } = await (supabase as any)
+        .from('user_medications')
         .delete()
-        .eq('id' as any, id as any)
-        .eq('user_id' as any, user.id as any);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) {
         console.error('Error removing medication:', error);

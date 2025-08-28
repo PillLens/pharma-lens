@@ -40,10 +40,10 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const lookupProductByBarcode = async (barcode: string) => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('products')
         .select('*')
-        .eq('barcode' as any, barcode as any)
+        .eq('barcode', barcode)
         .single();
 
       if (error && error.code !== 'PGRST116') { // Not found is OK

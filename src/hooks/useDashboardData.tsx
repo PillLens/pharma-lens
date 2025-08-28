@@ -57,7 +57,7 @@ export const useDashboardData = () => {
       setLoading(true);
 
       // Fetch scan history
-      const { data: sessions, error: sessionsError } = await supabase
+      const { data: sessions, error: sessionsError } = await (supabase as any)
         .from('sessions')
         .select(`
           id,
@@ -76,7 +76,7 @@ export const useDashboardData = () => {
       if (sessionsError) throw sessionsError;
 
       // Fetch reminders
-      const { data: reminders, error: remindersError } = await supabase
+      const { data: reminders, error: remindersError } = await (supabase as any)
         .from('medication_reminders')
         .select(`
           *,
@@ -86,7 +86,7 @@ export const useDashboardData = () => {
             frequency
           )
         `)
-        .eq('user_id' as any, user.id as any);
+        .eq('user_id', user.id);
 
       if (remindersError) throw remindersError;
 
@@ -122,10 +122,10 @@ export const useDashboardData = () => {
           const endOfDay = new Date(today);
           endOfDay.setHours(23, 59, 59, 999);
           
-          const { data: todaysAdherenceData } = await supabase
+          const { data: todaysAdherenceData } = await (supabase as any)
             .from('medication_adherence_log')
             .select('status')
-            .eq('user_id' as any, user.id as any)
+            .eq('user_id', user.id)
             .gte('scheduled_time', startOfDay.toISOString())
             .lte('scheduled_time', endOfDay.toISOString());
           
@@ -151,7 +151,7 @@ export const useDashboardData = () => {
       }
 
       // Fetch family groups
-      const { data: familyGroups, error: familyError } = await supabase
+      const { data: familyGroups, error: familyError } = await (supabase as any)
         .from('family_members')
         .select(`
           family_group_id,
@@ -173,10 +173,10 @@ export const useDashboardData = () => {
       // Calculate streak from adherence log
       const calculateStreak = async () => {
         try {
-          const { data: recentAdherence, error } = await supabase
+          const { data: recentAdherence, error } = await (supabase as any)
             .from('medication_adherence_log')
             .select('*')
-            .eq('user_id' as any, user.id as any)
+            .eq('user_id', user.id)
             .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
             .order('scheduled_time', { ascending: false });
 

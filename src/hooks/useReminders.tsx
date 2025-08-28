@@ -38,7 +38,7 @@ export const useReminders = () => {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('medication_reminders')
         .select(`
           *,
@@ -48,7 +48,7 @@ export const useReminders = () => {
             frequency
           )
         `)
-        .eq('user_id' as any, user.id as any)
+        .eq('user_id', user.id)
         .order('reminder_time', { ascending: true });
 
       if (error) throw error;
@@ -77,7 +77,7 @@ export const useReminders = () => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('medication_reminders')
         .insert([{
           user_id: user.id,
@@ -90,7 +90,7 @@ export const useReminders = () => {
             led: true
           },
           is_active: true
-        } as any])
+        }])
         .select()
         .single();
 
@@ -107,11 +107,11 @@ export const useReminders = () => {
 
   const updateReminder = async (id: string, updates: Partial<MedicationReminder>) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('medication_reminders')
-        .update(updates as any)
-        .eq('id' as any, id as any)
-        .eq('user_id' as any, user?.id as any);
+        .update(updates)
+        .eq('id', id)
+        .eq('user_id', user?.id);
 
       if (error) throw error;
 
@@ -126,11 +126,11 @@ export const useReminders = () => {
 
   const deleteReminder = async (id: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('medication_reminders')
         .delete()
-        .eq('id' as any, id as any)
-        .eq('user_id' as any, user?.id as any);
+        .eq('id', id)
+        .eq('user_id', user?.id);
 
       if (error) throw error;
 

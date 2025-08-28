@@ -42,10 +42,10 @@ export const usePushNotifications = () => {
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .select('notification_preferences')
-      .eq('id' as any, user.id as any)
+        .eq('id', user.id)
         .single();
 
       if (error) throw error;
@@ -86,12 +86,12 @@ export const usePushNotifications = () => {
       }
 
       // Update database
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('profiles')
         .update({
-          notification_preferences: updatedPreferences as any
-        } as any)
-        .eq('id' as any, user.id as any);
+          notification_preferences: updatedPreferences
+        })
+        .eq('id', user.id);
 
       if (error) throw error;
 
