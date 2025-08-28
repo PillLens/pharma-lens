@@ -25,6 +25,7 @@ import { getNextDoseTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useReminders } from '@/hooks/useReminders';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
+import { scheduledDoseService } from '@/services/scheduledDoseService';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -249,27 +250,34 @@ const MedicationManager: React.FC = () => {
     if (!user) return;
 
     try {
-      // Log the adherence in the database
-      const { error } = await supabase
-        .from('medication_adherence_log')
-        .insert([{
-          user_id: user.id,
-          medication_id: medicationId,
-          scheduled_time: new Date().toISOString(),
-          taken_time: new Date().toISOString(),
-          status: 'taken',
-          reported_by: user.id
-        }]);
+      // Use the scheduled dose service to properly record the dose
+      // This prevents duplicate entries and uses proper time calculation
+      const medication = medications.find(m => m.id === medicationId);
+      if (!medication) return;
 
-      if (error) throw error;
+      // Get the current reminder time for this medication
+      // For now, use current time in HH:MM format as a fallback
+      const now = new Date();
+      const reminderTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      
+      const success = await scheduledDoseService.markScheduledDoseAsTaken(
+        user.id,
+        medicationId,
+        reminderTime,
+        'Marked via Take Now button'
+      );
 
-      toast.success('Medication marked as taken! 🎉', {
-        description: 'Dose logged successfully in your health record',
-        duration: 3000,
-      });
+      if (success) {
+        toast.success('Medication marked as taken! 🎉', {
+          description: 'Dose logged successfully in your health record',
+          duration: 3000,
+        });
 
-      // Refresh medications to update stats
-      refetch();
+        // Refresh medications to update stats
+        refetch();
+      } else {
+        throw new Error('Failed to record dose');
+      }
     } catch (error) {
       console.error('Error marking medication as taken:', error);
       toast.error('Failed to log medication dose');
@@ -281,21 +289,22 @@ const MedicationManager: React.FC = () => {
       if (!user || dueMedications.length === 0) return;
       
       try {
-        // Mark all due medications as taken
-        const adherenceLogs = dueMedications.map(medication => ({
-          user_id: user.id,
-          medication_id: medication.id,
-          scheduled_time: new Date().toISOString(),
-          taken_time: new Date().toISOString(),
-          status: 'taken',
-          reported_by: user.id
-        }));
+        // Mark all due medications as taken using the service
+        const results = await Promise.all(
+          dueMedications.map(medication => {
+            const now = new Date();
+            const reminderTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            return scheduledDoseService.markScheduledDoseAsTaken(
+              user.id,
+              medication.id,
+              reminderTime,
+              'Marked via Mark All Taken'
+            );
+          })
+        );
 
-        const { error } = await supabase
-          .from('medication_adherence_log')
-          .insert(adherenceLogs);
-
-        if (error) throw error;
+        const successCount = results.filter(Boolean).length;
+        if (successCount === 0) throw new Error('No doses were recorded successfully');
 
         toast.success(`${dueMedications.length} medications marked as taken! 🎉`, {
           description: 'All doses logged successfully in your health record',

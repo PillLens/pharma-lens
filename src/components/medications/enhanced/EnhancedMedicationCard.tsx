@@ -371,52 +371,24 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               onClick={async (e) => {
                 e.stopPropagation();
                 
-                // Record dose as taken in database
-                if (user) {
-                  try {
-                    const now = new Date();
-                    await supabase
-                      .from('medication_adherence_log')
-                      .insert({
-                        user_id: user.id,
-                        medication_id: medication.id,
-                        scheduled_time: now.toISOString(),
-                        taken_time: now.toISOString(),
-                        status: 'taken',
-                        notes: 'Marked via Take Now button'
-                      });
-                    
-                     // Immediately update state
-                     setRecentlyTaken(true);
-                     setManuallyMarkedTaken(true);
-                     console.log('Take Now clicked - updating state');
-                    
-                    // Show success toast
-                    toast({
-                      title: "Dose recorded",
-                      description: `${medication.medication_name} marked as taken`,
-                    });
-                    
-                    // Call parent callback if provided
-                    if (onMarkTaken) {
-                      onMarkTaken();
-                    }
-                  } catch (error) {
-                    console.error('Error recording dose:', error);
-                    toast({
-                      title: "Error",
-                      description: "Failed to record dose. Please try again.",
-                      variant: "destructive",
-                    });
-                  }
+                // Use the parent callback to handle dose recording
+                // This prevents double database insertions
+                if (onMarkTaken) {
+                  // Immediately update UI state for better UX
+                  setRecentlyTaken(true);
+                  setManuallyMarkedTaken(true);
+                  console.log('Take Now clicked - updating state');
+                  
+                  // Call parent callback which handles the actual database operation
+                  onMarkTaken();
                 } else {
                   toast({
-                    title: "Error", 
-                    description: "Please log in to record doses",
+                    title: "Error",
+                    description: "Unable to record dose. Please try again.",
                     variant: "destructive",
                   });
                 }
-              }}
+              }
               className={`h-10 px-4 rounded-xl ${
                 isOverdue 
                   ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' 
