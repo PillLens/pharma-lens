@@ -58,13 +58,16 @@ export const isDoseTime = (
 };
 
 /**
- * Get next dose time for different frequencies
+ * Get next dose time for different frequencies (LEGACY - Use medicationTimingService instead)
+ * This is kept for backward compatibility but should be replaced with medicationTimingService
  */
 export const getNextDoseTime = (
   frequency: string, 
   timezone: string,
   recentlyTaken: boolean = false
 ): { isDue: boolean; nextTime: string; isOverdue: boolean } => {
+  console.warn('Using legacy getNextDoseTime - consider using medicationTimingService instead');
+  
   const now = getCurrentTimeInTimezone(timezone);
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();

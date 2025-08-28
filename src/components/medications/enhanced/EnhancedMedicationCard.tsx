@@ -11,8 +11,10 @@ import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { getNextDoseTime } from '@/utils/timezoneUtils';
+import { getBrowserTimezone } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
+import { medicationTimingService } from '@/services/medicationTimingService';
+import { scheduledDoseService } from '@/services/scheduledDoseService';
 
 interface EnhancedMedicationCardProps {
   medication: UserMedication;
@@ -38,111 +40,49 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
   const { timezone } = useUserTimezone();
   const [recentlyTaken, setRecentlyTaken] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [manuallyMarkedTaken, setManuallyMarkedTaken] = useState(false);
+  const [timingInfo, setTimingInfo] = useState({
+    isDue: false,
+    nextTime: '',
+    isOverdue: false,
+    currentReminderTime: undefined as string | undefined
+  });
 
-  // Check if medication was taken recently
+  // Check medication timing using real reminders
   useEffect(() => {
-    const checkRecentDose = async () => {
+    const checkMedicationTiming = async () => {
       if (!user) {
         setLoading(false);
         return;
       }
       
       try {
-        const now = new Date();
-        const startOfDay = new Date(now);
-        startOfDay.setHours(0, 0, 0, 0);
+        const timezone = getBrowserTimezone();
         
-        console.log('Checking recent dose for medication:', medication.medication_name);
-        
-        // Check for doses taken today for this medication
-        const { data, error } = await supabase
-          .from('medication_adherence_log')
-          .select('taken_time, scheduled_time')
-          .eq('user_id', user.id)
-          .eq('medication_id', medication.id)
-          .eq('status', 'taken')
-          .gte('taken_time', startOfDay.toISOString())
-          .order('taken_time', { ascending: false });
+        // Use the new timing service to get accurate information
+        const [timingResult, recentDoseResult] = await Promise.all([
+          medicationTimingService.getNextDoseTime(medication.id, user.id, timezone, recentlyTaken),
+          medicationTimingService.checkRecentDose(medication.id, user.id, timezone)
+        ]);
 
-        if (error) {
-          console.error('Error checking recent doses:', error);
-          setLoading(false);
-          return;
-        }
+        setTimingInfo({
+          isDue: timingResult.isDue,
+          nextTime: timingResult.nextTime,
+          isOverdue: timingResult.isOverdue,
+          currentReminderTime: timingResult.currentReminderTime
+        });
 
-        console.log('Recent doses found:', data?.length || 0);
-
-        // Check if a dose was taken in the current time window
-        const hour = now.getHours();
-        let takenInCurrentWindow = false;
-
-        if (data && data.length > 0) {
-          for (const dose of data) {
-            const takenTime = new Date(dose.taken_time);
-            const takenHour = takenTime.getHours();
-            
-            switch (medication.frequency) {
-              case 'once_daily':
-                // If taken any time today
-                takenInCurrentWindow = true;
-                break;
-              case 'twice_daily':
-                // Morning window (6-14) or Evening window (18-23)
-                if (hour >= 6 && hour < 14) {
-                  // Current time is morning - check if morning dose was taken
-                  if (takenHour >= 6 && takenHour < 14) {
-                    takenInCurrentWindow = true;
-                    break;
-                  }
-                } else if (hour >= 18 && hour <= 23) {
-                  // Current time is evening - check if evening dose was taken
-                  if (takenHour >= 18 && takenHour <= 23) {
-                    takenInCurrentWindow = true;
-                    break;
-                  }
-                }
-                break;
-              case 'three_times_daily':
-                // Morning (6-12), Afternoon (12-18), Evening (18-23)
-                if (hour >= 6 && hour < 12) {
-                  // Morning window
-                  if (takenHour >= 6 && takenHour < 12) {
-                    takenInCurrentWindow = true;
-                    break;
-                  }
-                } else if (hour >= 12 && hour < 18) {
-                  // Afternoon window  
-                  if (takenHour >= 12 && takenHour < 18) {
-                    takenInCurrentWindow = true;
-                    break;
-                  }
-                } else if (hour >= 18 && hour <= 23) {
-                  // Evening window
-                  if (takenHour >= 18 && takenHour <= 23) {
-                    takenInCurrentWindow = true;
-                    break;
-                  }
-                }
-                break;
-            }
-          }
-        }
-
-        console.log('Taken in current window:', takenInCurrentWindow);
-        // Don't override manual state changes
-        if (!manuallyMarkedTaken) {
-          setRecentlyTaken(takenInCurrentWindow);
-        }
+        setRecentlyTaken(recentDoseResult.recentlyTaken);
         setLoading(false);
+
+        console.log('Medication:', medication.medication_name, 'isDue:', timingResult.isDue, 'isOverdue:', timingResult.isOverdue, 'nextTime:', timingResult.nextTime, 'timezone:', timezone);
       } catch (error) {
-        console.error('Error checking recent doses:', error);
+        console.error('Error checking medication timing:', error);
         setLoading(false);
       }
     };
 
-    checkRecentDose();
-  }, [user, medication, manuallyMarkedTaken]);
+    checkMedicationTiming();
+  }, [user, medication, recentlyTaken]);
 
   // Real data state for medication statistics
   const [medicationStats, setMedicationStats] = useState({
@@ -244,13 +184,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
     fetchMedicationStats();
   }, [user, medication.id, medication.start_date, medication.end_date]);
   
-  // Calculate if medication is currently due using proper timezone
-  const doseStatus = getNextDoseTime(medication.frequency, timezone, recentlyTaken);
-  const isDueNow = doseStatus.isDue;
-  const nextDoseStatus = doseStatus.nextTime;
-  const isOverdue = doseStatus.isOverdue;
-  
-  console.log('Medication:', medication.medication_name, 'isDue:', isDueNow, 'isOverdue:', isOverdue, 'nextTime:', nextDoseStatus, 'timezone:', timezone);
+  // Use timing info from the new service
+  const isDue = timingInfo.isDue;
+  const isOverdue = timingInfo.isOverdue;
+  const nextDoseText = timingInfo.nextTime;
 
   const getFrequencyLabel = (frequency: string) => {
     const frequencyMap: Record<string, string> = {
@@ -275,7 +212,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
   return (
     <MobileCard 
-      variant={isDueNow ? 'warning' : isOverdue ? 'emergency' : 'default'} 
+      variant={isDue ? 'warning' : isOverdue ? 'emergency' : 'default'} 
       className={`group transition-all duration-300 hover:shadow-lg ${className}`}
       onClick={onClick}
     >
@@ -301,7 +238,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                 >
                   {medication.is_active ? 'Active' : 'Paused'}
                 </Badge>
-                {isDueNow && !recentlyTaken && (
+                {isDue && !recentlyTaken && (
                   <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
                     <Clock className="w-3 h-3 mr-0.5" />
                     Due Now
@@ -351,7 +288,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
       <MobileCardContent className="space-y-2">
         {/* Take Now Button - Show for due medications or always for overdue medications */}
-        {medication.is_active && ((isDueNow && !recentlyTaken) || isOverdue) && (
+        {medication.is_active && ((isDue && !recentlyTaken) || isOverdue) && (
           <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 shadow-md">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
@@ -359,10 +296,10 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               </div>
               <div>
                 <div className="text-xs font-semibold text-primary">
-                  {isDueNow ? "Time to take your dose!" : isOverdue ? "Overdue - Take now!" : "Mark as taken"}
+                  {isDue ? "Time to take your dose!" : isOverdue ? "Overdue - Take now!" : "Mark as taken"}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {nextDoseStatus}
+                  {nextDoseText}
                 </div>
               </div>
             </div>
@@ -371,20 +308,62 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
               onClick={async (e) => {
                 e.stopPropagation();
                 
-                // Use the parent callback to handle dose recording
-                // This prevents double database insertions
-                if (onMarkTaken) {
-                  // Immediately update UI state for better UX
-                  setRecentlyTaken(true);
-                  setManuallyMarkedTaken(true);
-                  console.log('Take Now clicked - updating state');
+                try {
+                  if (!timingInfo.currentReminderTime) {
+                    toast({
+                      title: "Error",
+                      description: "No active reminder found for this time",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
                   
-                  // Call parent callback which handles the actual database operation
-                  onMarkTaken();
-                } else {
+                  const success = await scheduledDoseService.markScheduledDoseAsTaken(
+                    user?.id || '', 
+                    medication.id, 
+                    timingInfo.currentReminderTime,
+                    'Marked via Take Now button'
+                  );
+                  
+                  if (success) {
+                    // Immediately update state and trigger re-fetch
+                    setRecentlyTaken(true);
+                    onMarkTaken?.();
+                    
+                    // Re-fetch timing info after a short delay to ensure database is updated
+                    setTimeout(async () => {
+                      const timezone = getBrowserTimezone();
+                      const [newTimingResult, newRecentDoseResult] = await Promise.all([
+                        medicationTimingService.getNextDoseTime(medication.id, user?.id || '', timezone, true),
+                        medicationTimingService.checkRecentDose(medication.id, user?.id || '', timezone)
+                      ]);
+                      
+                      setTimingInfo({
+                        isDue: newTimingResult.isDue,
+                        nextTime: newTimingResult.nextTime,
+                        isOverdue: newTimingResult.isOverdue,
+                        currentReminderTime: newTimingResult.currentReminderTime
+                      });
+                      
+                      setRecentlyTaken(newRecentDoseResult.recentlyTaken);
+                    }, 500);
+                    
+                    toast({
+                      title: "Dose recorded",
+                      description: `Marked ${medication.medication_name} as taken`,
+                    });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: "Failed to record dose. Please try again.",
+                      variant: "destructive",
+                    });
+                  }
+                } catch (error) {
+                  console.error('Error marking dose as taken:', error);
                   toast({
                     title: "Error",
-                    description: "Unable to record dose. Please try again.",
+                    description: "Failed to record dose. Please try again.",
                     variant: "destructive",
                   });
                 }
@@ -428,13 +407,13 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         </div>
 
         {/* Next Dose Info - Only show if medication is active and not due now or overdue */}
-        {medication.is_active && !isDueNow && !isOverdue && (
+        {medication.is_active && !isDue && !isOverdue && (
           <div className="flex items-center justify-between p-2 rounded-lg bg-muted/20">
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-xs">Next Dose</span>
             </div>
-            <span className="text-xs font-medium">{nextDoseStatus}</span>
+            <span className="text-xs font-medium">{nextDoseText}</span>
           </div>
         )}
 
