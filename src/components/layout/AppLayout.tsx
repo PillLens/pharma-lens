@@ -14,7 +14,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <main className="flex-1 min-h-0">
+        <main className="flex-1 min-h-0 overflow-y-auto" data-scrollable>
           <div className="pb-32 min-h-full">
             {children}
           </div>
@@ -36,7 +36,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-hidden">
+          <main className="flex-1 overflow-y-auto" data-scrollable>
             {children}
           </main>
         </div>

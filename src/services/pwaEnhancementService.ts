@@ -118,15 +118,22 @@ export class PWAEnhancementService {
     const docStyle = document.documentElement.style as any;
     docStyle.webkitOverflowScrolling = 'touch';
     
-    // Prevent overscroll on mobile
+    // Smart overscroll prevention - only prevent bouncing at document edges
     document.body.addEventListener('touchmove', (e) => {
-      if ((e.target as Element).closest('.scroll-area')) {
-        return; // Allow scrolling in designated areas
+      const target = e.target as Element;
+      
+      // Allow scrolling in designated scroll areas
+      if (target.closest('.scroll-area, [data-scrollable], main, .overflow-y-auto, .overflow-auto')) {
+        return;
       }
       
-      const element = e.target as Element;
-      const scrollable = element.closest('[data-scrollable]');
-      if (!scrollable) {
+      // Only prevent overscroll at the very edges of the document
+      if (document.body.scrollTop === 0 && e.touches[0].clientY > e.touches[0].clientY) {
+        e.preventDefault();
+      }
+      
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      if (document.body.scrollTop >= maxScroll && e.touches[0].clientY < e.touches[0].clientY) {
         e.preventDefault();
       }
     }, { passive: false });
