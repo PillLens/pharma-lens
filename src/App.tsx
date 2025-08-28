@@ -8,6 +8,12 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
+import { SecurityDashboard } from "@/components/SecurityDashboard";
+import { performanceMonitoringService } from "@/services/performanceMonitoringService";
+import React, { useEffect } from "react";
+
+// Page imports
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import { ScanHistory } from "./pages/ScanHistory";
@@ -15,14 +21,10 @@ import MedicationManager from "./pages/MedicationManager";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Reminders from "./pages/Reminders";
-import { SecurityDashboard } from "@/components/SecurityDashboard";
 import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocationSetup';
-import { performanceMonitoringService } from "@/services/performanceMonitoringService";
-import React, { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
