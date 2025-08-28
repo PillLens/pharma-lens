@@ -117,32 +117,43 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         const takenDoses = adherenceData?.filter(d => d.status === 'taken').length || 0;
         const adherenceRate = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 100;
 
-        // Calculate streak (consecutive days with doses taken)
+        // Use database function to calculate accurate streak
         let streak = 0;
-        if (adherenceData && adherenceData.length > 0) {
-          const dailyTaken = new Map();
-          
-          adherenceData.forEach(log => {
-            const date = new Date(log.scheduled_time).toDateString();
-            if (!dailyTaken.has(date)) {
-              dailyTaken.set(date, { taken: 0, total: 0 });
-            }
-            dailyTaken.get(date).total++;
-            if (log.status === 'taken') {
-              dailyTaken.get(date).taken++;
-            }
-          });
+        try {
+          const { data: streakResult } = await supabase
+            .rpc('calculate_adherence_streak', {
+              p_user_id: user.id,
+              p_medication_id: medication.id
+            });
+          streak = streakResult || 0;
+        } catch (error) {
+          console.error('Error calculating streak:', error);
+          // Fallback calculation
+          if (adherenceData && adherenceData.length > 0) {
+            const dailyTaken = new Map();
+            
+            adherenceData.forEach(log => {
+              const date = new Date(log.scheduled_time).toDateString();
+              if (!dailyTaken.has(date)) {
+                dailyTaken.set(date, { taken: 0, total: 0 });
+              }
+              dailyTaken.get(date).total++;
+              if (log.status === 'taken') {
+                dailyTaken.get(date).taken++;
+              }
+            });
 
-          // Count consecutive days from today backwards
-          const sortedDates = Array.from(dailyTaken.keys())
-            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-          
-          for (const date of sortedDates) {
-            const dayData = dailyTaken.get(date);
-            if (dayData.taken >= dayData.total && dayData.total > 0) {
-              streak++;
-            } else {
-              break;
+            // Count consecutive days from today backwards
+            const sortedDates = Array.from(dailyTaken.keys())
+              .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+            
+            for (const date of sortedDates) {
+              const dayData = dailyTaken.get(date);
+              if (dayData.taken >= dayData.total && dayData.total > 0) {
+                streak++;
+              } else {
+                break;
+              }
             }
           }
         }

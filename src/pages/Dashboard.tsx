@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
   return (
     <ProfessionalMobileLayout showHeader={false}>
       <PullToRefreshWrapper onRefresh={handleRefresh}>
-        <div className="min-h-screen bg-background pb-20">
+        <div className="min-h-screen bg-background" data-scrollable>
           {/* Enhanced Header with Glassmorphism */}
           <div className="relative overflow-hidden">
             <div className="absolute inset-0 bg-background" />

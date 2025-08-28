@@ -30,9 +30,9 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
         </header>
       )}
 
-      {/* Content Area - Let parent handle scrolling */}
-      <main className={cn("flex-1 min-h-0", className)}>
-        <div className="pb-32 min-h-full">
+      {/* Content Area - Optimized spacing for mobile */}
+      <main className={cn("flex-1 min-h-0 overflow-y-auto", className)}>
+        <div className="pb-24 min-h-full">
           {children}
         </div>
       </main>
