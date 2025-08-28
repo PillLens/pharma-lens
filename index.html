@@ -2,20 +2,98 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    
+    <!-- Favicons and App Icons -->
     <link rel="icon" href="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Primary SEO Meta Tags -->
     <title>PillLens — Scan, Track & Manage Your Medications Easily</title>
+    <meta name="title" content="PillLens — Smart Medication Management & Reminders">
     <meta name="description" content="PillLens helps you stay on top of your health. Scan pill barcodes, identify medications instantly, set smart reminders, and share schedules with family or caregivers. Never miss a dose again with PillLens." />
-    <meta name="author" content="Lovable" />
+    <meta name="keywords" content="medication management, pill reminder, medicine tracker, barcode scanner, health app, medication schedule, family health, caregivers, drug interaction, pill identification">
+    <meta name="author" content="PillLens Team" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://pilllens.com/" />
+    
+    <!-- Language and Internationalization -->
+    <meta name="language" content="en">
+    <link rel="alternate" hreflang="en" href="https://pilllens.com/?lang=en" />
+    <link rel="alternate" hreflang="ru" href="https://pilllens.com/?lang=ru" />
+    <link rel="alternate" hreflang="az" href="https://pilllens.com/?lang=az" />
+    <link rel="alternate" hreflang="tr" href="https://pilllens.com/?lang=tr" />
+    <link rel="alternate" hreflang="x-default" href="https://pilllens.com/" />
 
-    <meta property="og:title" content="PillLens — Scan, Track & Manage Your Medications Easily" />
-    <meta property="og:description" content="PillLens helps you stay on top of your health. Scan pill barcodes, identify medications instantly, set smart reminders, and share schedules with family or caregivers. Never miss a dose again with PillLens." />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://pilllens.com/" />
+    <meta property="og:title" content="PillLens — Scan, Track & Manage Your Medications Easily" />
+    <meta property="og:description" content="PillLens helps you stay on top of your health. Scan pill barcodes, identify medications instantly, set smart reminders, and share schedules with family or caregivers." />
+    <meta property="og:image" content="https://pilllens.com/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" />
+    <meta property="og:image:alt" content="PillLens - Smart Medication Management App" />
+    <meta property="og:site_name" content="PillLens" />
+    <meta property="og:locale" content="en_US" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pilllens.com/" />
+    <meta property="twitter:title" content="PillLens — Scan, Track & Manage Your Medications Easily" />
+    <meta property="twitter:description" content="PillLens helps you stay on top of your health. Scan pill barcodes, identify medications instantly, set smart reminders, and share schedules with family or caregivers." />
+    <meta property="twitter:image" content="https://pilllens.com/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" />
+    <meta name="twitter:image:alt" content="PillLens - Smart Medication Management App" />
+    <meta name="twitter:site" content="@pilllens" />
+    <meta name="twitter:creator" content="@pilllens" />
+    
+    <!-- Medical/Healthcare Specific -->
+    <meta name="medical-disclaimer" content="This app is for informational purposes only and does not replace professional medical advice. Always consult with healthcare professionals for medical decisions." />
+    <meta name="health-category" content="medication-management, health-tracking, medical-reminders" />
+    <meta name="audience" content="patients, caregivers, healthcare-consumers" />
+    <meta name="classification" content="healthcare, medical-app, medication-tracker" />
+    
+    <!-- Mobile and PWA -->
+    <meta name="theme-color" content="#0891b2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="PillLens" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Search Engine Verification (Replace with your actual codes) -->
+    <meta name="google-site-verification" content="your-google-verification-code" />
+    <meta name="msvalidate.01" content="your-bing-verification-code" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://bquxkkaipevuakmqqilk.supabase.co">
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PillLens",
+      "description": "Scan, track, and manage your medications easily with smart reminders and family sharing",
+      "url": "https://pilllens.com",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "PillLens",
+        "url": "https://pilllens.com"
+      }
+    }
+    </script>
   </head>
 
   <body>

@@ -1,8 +1,13 @@
+User-agent: *
+Allow: /
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +15,22 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+Sitemap: https://pilllens.com/sitemap.xml
+
+# Healthcare content guidelines
 User-agent: *
-Allow: /
+Crawl-delay: 1
+
+# Block sensitive areas
+Disallow: /api/private/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /user-uploads/
+Disallow: /temp/
+
+# Allow important healthcare content
+Allow: /medications
+Allow: /reminders  
+Allow: /scanner
+Allow: /privacy-policy
+Allow: /terms-of-service

@@ -12,6 +12,8 @@ import { FirstLaunchLocationSetup } from '@/components/location/FirstLaunchLocat
 import { SecurityDashboard } from "@/components/SecurityDashboard";
 import { performanceMonitoringService } from "@/services/performanceMonitoringService";
 import { unifiedNotificationManager } from "@/services/unifiedNotificationManager";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { GoogleSearchConsole } from "@/components/seo/GoogleSearchConsole";
 import React, { useEffect } from "react";
 
 // Page imports
@@ -47,6 +49,11 @@ const App = () => {
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              {/* Global SEO Components */}
+              <GoogleSearchConsole />
+              <StructuredData type="organization" />
+              <StructuredData type="webapp" />
+              
               <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
