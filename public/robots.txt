@@ -15,7 +15,7 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-Sitemap: https://pilllens.com/sitemap.xml
+Sitemap: https://YOUR_DOMAIN_HERE/sitemap.xml
 
 # Healthcare content guidelines
 User-agent: *
