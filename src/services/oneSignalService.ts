@@ -76,24 +76,32 @@ export class OneSignalService {
 
       return new Promise<boolean>((resolve) => {
         OneSignal.push(() => {
-          // Get user ID
-          OneSignal.getUserId((playerId: string) => {
-            if (playerId) {
-              this.playerId = playerId;
-              
-              // Set external user ID
-              OneSignal.setExternalUserId(userId);
-              
-              // Store player ID in database
-              this.storePlayerIdInDatabase(userId, playerId).then(() => {
-                console.log('User registered with OneSignal:', playerId);
-                resolve(true);
-              }).catch(() => {
+          // First request permission
+          OneSignal.showNativePrompt().then(() => {
+            // Then get user ID
+            OneSignal.getUserId((playerId: string) => {
+              if (playerId) {
+                this.playerId = playerId;
+                
+                // Set external user ID for better user identification
+                OneSignal.setExternalUserId(userId);
+                
+                // Store player ID in database
+                this.storePlayerIdInDatabase(userId, playerId).then(() => {
+                  console.log('User registered with OneSignal successfully:', playerId);
+                  resolve(true);
+                }).catch((error) => {
+                  console.error('Failed to store player ID:', error);
+                  resolve(false);
+                });
+              } else {
+                console.warn('No OneSignal player ID received');
                 resolve(false);
-              });
-            } else {
-              resolve(false);
-            }
+              }
+            });
+          }).catch((error) => {
+            console.error('User denied notification permission:', error);
+            resolve(false);
           });
         });
       });

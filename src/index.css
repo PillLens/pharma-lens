@@ -98,6 +98,7 @@
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background)) !important;
   }
 
   /* Mobile scrollbar and overflow optimizations */

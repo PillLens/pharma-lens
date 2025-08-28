@@ -418,7 +418,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
       title={t('scanner.medicationFound')}
       height="lg"
     >
-      <div className="px-4 pt-4 space-y-4">
+      <div className="px-4 pt-4 pb-8 space-y-4 overflow-y-auto scrollbar-hide smooth-scroll max-h-[70vh]">
         {renderContent()}
       </div>
     </BottomSheet>
@@ -428,7 +428,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('scanner.medicationFound')}</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+        <div className="flex-1 overflow-y-auto scrollbar-hide smooth-scroll pr-2 space-y-4">
           {renderContent()}
         </div>
       </DialogContent>
