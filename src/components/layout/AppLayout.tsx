@@ -14,8 +14,8 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="flex-1 min-h-0 overflow-y-auto" data-scrollable style={{ paddingBottom: 'calc(var(--bottom-nav-h, 64px) + env(safe-area-inset-bottom) + 48px)' }}>
+      <div className="min-h-screen bg-background flex flex-col" style={{ minHeight: '100dvh' }}>
+        <main className="flex-1 min-h-0 overflow-y-auto main-scroll remove-last-margin" data-scrollable>
           <div className="min-h-full">
             {children}
           </div>

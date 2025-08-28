@@ -3,12 +3,14 @@ import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileTabNavigation from './MobileTabNavigation';
 import { cn } from '@/lib/utils';
+
 interface ProfessionalMobileLayoutProps {
   children: React.ReactNode;
   title?: string;
   showHeader?: boolean;
   className?: string;
 }
+
 const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   children,
   title,
@@ -16,10 +18,13 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   className
 }) => {
   const isMobile = useIsMobile();
+
   if (!isMobile) {
     return <div className={className}>{children}</div>;
   }
-  return <div className="min-h-screen bg-background flex flex-col">
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col" style={{ minHeight: '100dvh' }}>
       {/* Premium Mobile Header */}
       {showHeader && title && (
         <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top">
@@ -32,7 +37,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
       )}
 
       {/* Content Area - Optimized spacing for mobile */}
-      <main className={cn("flex-1 min-h-0 overflow-y-auto", className)} data-scrollable style={{ paddingBottom: 'calc(var(--bottom-nav-h, 64px) + env(safe-area-inset-bottom) + 48px)' }}>
+      <main className={cn("flex-1 min-h-0 overflow-y-auto main-scroll remove-last-margin", className)} data-scrollable>
         <div className="min-h-full">
           {children}
         </div>
@@ -40,6 +45,8 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
 
       {/* Enhanced Bottom Navigation */}
       <MobileTabNavigation />
-    </div>;
+    </div>
+  );
 };
+
 export default ProfessionalMobileLayout;
