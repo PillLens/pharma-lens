@@ -45,7 +45,6 @@
     /* Medical theme colors */
     --medical-primary: 201 96% 32%;
     --medical-secondary: 199 89% 48%;
-    --primary-light: 199 89% 48%;
     --primary-dark: 201 76% 28%;
     --primary-glow: 199 95% 55%;
     --secondary-light: 210 30% 98%;
@@ -119,11 +118,11 @@
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: hsl(var(--background)) !important;
+    background-color: white !important;
   }
 
   #root {
-    background-color: hsl(var(--background)) !important;
+    background-color: white !important;
   }
 
   /* Mobile scrollbar and overflow optimizations */
