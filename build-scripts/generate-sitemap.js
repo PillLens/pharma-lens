@@ -6,15 +6,9 @@ const supportedLanguages = ['en', 'ru', 'az', 'tr'];
 
 const routes = [
   { path: '/', priority: 1.0, changefreq: 'daily' },
-  { path: '/auth', priority: 0.8, changefreq: 'monthly' },
-  { path: '/dashboard', priority: 0.9, changefreq: 'daily' },
-  { path: '/medications', priority: 0.9, changefreq: 'daily' },
-  { path: '/reminders', priority: 0.8, changefreq: 'daily' },
-  { path: '/family', priority: 0.8, changefreq: 'weekly' },
-  { path: '/scan-history', priority: 0.7, changefreq: 'weekly' },
-  { path: '/settings', priority: 0.6, changefreq: 'monthly' },
-  { path: '/privacy-policy', priority: 0.5, changefreq: 'yearly' },
-  { path: '/terms-of-service', priority: 0.5, changefreq: 'yearly' }
+  { path: '/auth', priority: 0.9, changefreq: 'monthly' },
+  { path: '/privacy-policy', priority: 0.7, changefreq: 'yearly' },
+  { path: '/terms-of-service', priority: 0.7, changefreq: 'yearly' }
 ];
 
 function generateSitemap() {

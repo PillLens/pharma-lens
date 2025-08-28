@@ -2,103 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://YOUR_DOMAIN_HERE/</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
+    <loc>https://pilllens.com/</loc>
+    <lastmod>2025-08-28T12:00:00.000Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pilllens.com/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://pilllens.com/?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/?lang=az" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/?lang=tr" />
   </url>
   <url>
-    <loc>https://YOUR_DOMAIN_HERE/auth</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
+    <loc>https://pilllens.com/auth</loc>
+    <lastmod>2025-08-28T12:00:00.000Z</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/auth?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/auth?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/auth?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/auth?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/dashboard</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/dashboard?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/dashboard?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/dashboard?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/dashboard?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pilllens.com/auth?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://pilllens.com/auth?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/auth?lang=az" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/auth?lang=tr" />
   </url>
   <url>
-    <loc>https://YOUR_DOMAIN_HERE/medications</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/medications?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/medications?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/medications?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/medications?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/reminders</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/reminders?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/reminders?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/reminders?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/reminders?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/family</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/family?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/family?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/family?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/family?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/scan-history</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://pilllens.com/privacy-policy</loc>
+    <lastmod>2025-08-28T12:00:00.000Z</lastmod>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/scan-history?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/scan-history?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/scan-history?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/scan-history?lang=tr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://pilllens.com/privacy-policy?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://pilllens.com/privacy-policy?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/privacy-policy?lang=az" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/privacy-policy?lang=tr" />
   </url>
   <url>
-    <loc>https://YOUR_DOMAIN_HERE/settings</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/settings?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/settings?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/settings?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/settings?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/privacy-policy</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
+    <loc>https://pilllens.com/terms-of-service</loc>
+    <lastmod>2025-08-28T12:00:00.000Z</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/privacy-policy?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/privacy-policy?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/privacy-policy?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/privacy-policy?lang=tr" />
-  </url>
-  <url>
-    <loc>https://YOUR_DOMAIN_HERE/terms-of-service</loc>
-    <lastmod>2024-08-28T00:00:00+00:00</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://YOUR_DOMAIN_HERE/terms-of-service?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://YOUR_DOMAIN_HERE/terms-of-service?lang=ru" />
-    <xhtml:link rel="alternate" hreflang="az" href="https://YOUR_DOMAIN_HERE/terms-of-service?lang=az" />
-    <xhtml:link rel="alternate" hreflang="tr" href="https://YOUR_DOMAIN_HERE/terms-of-service?lang=tr" />
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pilllens.com/terms-of-service?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://pilllens.com/terms-of-service?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/terms-of-service?lang=az" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/terms-of-service?lang=tr" />
   </url>
 </urlset>

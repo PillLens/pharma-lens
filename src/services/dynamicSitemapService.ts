@@ -13,16 +13,9 @@ export class DynamicSitemapService {
     
     const routes = [
       { path: '/', priority: 1.0, changefreq: 'daily' },
-      { path: '/auth', priority: 0.8, changefreq: 'monthly' },
-      { path: '/dashboard', priority: 0.9, changefreq: 'daily' },
-      { path: '/medications', priority: 0.9, changefreq: 'daily' },
-      { path: '/reminders', priority: 0.8, changefreq: 'daily' },
-      { path: '/family', priority: 0.8, changefreq: 'weekly' },
-      { path: '/scan-history', priority: 0.7, changefreq: 'weekly' },
-      { path: '/history', priority: 0.7, changefreq: 'weekly' },
-      { path: '/settings', priority: 0.6, changefreq: 'monthly' },
-      { path: '/privacy-policy', priority: 0.5, changefreq: 'yearly' },
-      { path: '/terms-of-service', priority: 0.5, changefreq: 'yearly' }
+      { path: '/auth', priority: 0.9, changefreq: 'monthly' },
+      { path: '/privacy-policy', priority: 0.7, changefreq: 'yearly' },
+      { path: '/terms-of-service', priority: 0.7, changefreq: 'yearly' }
     ];
 
     const urlEntries = routes.map(route => {
@@ -79,10 +72,8 @@ Disallow: /*.json$
 Disallow: /user-uploads/
 Disallow: /temp/
 
-# Allow important healthcare content
-Allow: /medications
-Allow: /reminders  
-Allow: /scanner
+# Allow important public content
+Allow: /auth
 Allow: /privacy-policy
 Allow: /terms-of-service`;
   }

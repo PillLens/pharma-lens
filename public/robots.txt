@@ -28,9 +28,7 @@ Disallow: /*.json$
 Disallow: /user-uploads/
 Disallow: /temp/
 
-# Allow important healthcare content
-Allow: /medications
-Allow: /reminders  
-Allow: /scanner
+# Allow important public content
+Allow: /auth
 Allow: /privacy-policy
 Allow: /terms-of-service
