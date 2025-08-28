@@ -20,90 +20,72 @@ import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, Mobil
 import { MobileButton } from "@/components/ui/mobile/MobileButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDashboard from "@/components/mobile/MobileDashboard";
-
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showScanResult, setShowScanResult] = useState(false);
   const [scanResultData, setScanResultData] = useState(null);
-  const { user, signOut } = useAuth();
-  const { t, language } = useTranslation();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    t,
+    language
+  } = useTranslation();
   const commonT = useCommonTranslations();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-
   const handleSignOut = async () => {
     try {
       await signOut();
       toast({
         title: t('common.success'),
-        description: t('auth.signOutSuccess'),
+        description: t('auth.signOutSuccess')
       });
     } catch (error) {
       toast({
         title: t('common.error'),
         description: t('common.tryAgain'),
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleScanResult = (medicationData: any) => {
     setScanResultData(medicationData);
     setShowCamera(false);
     setShowScanResult(true);
   };
-  
-  const features = [
-    {
-      icon: Shield,
-      title: t('features.safetyFirst'),
-      description: t('features.safetyDescription')
-    },
-    {
-      icon: Globe2,
-      title: t('features.multiLanguage'),
-      description: t('features.languageDescription')
-    },
-    {
-      icon: Clock,
-      title: t('features.instantResults'),
-      description: t('features.resultsDescription')
-    },
-    {
-      icon: BookOpen,
-      title: t('features.evidenceBased'),
-      description: t('features.evidenceDescription')
-    }
-  ];
-
+  const features = [{
+    icon: Shield,
+    title: t('features.safetyFirst'),
+    description: t('features.safetyDescription')
+  }, {
+    icon: Globe2,
+    title: t('features.multiLanguage'),
+    description: t('features.languageDescription')
+  }, {
+    icon: Clock,
+    title: t('features.instantResults'),
+    description: t('features.resultsDescription')
+  }, {
+    icon: BookOpen,
+    title: t('features.evidenceBased'),
+    description: t('features.evidenceDescription')
+  }];
   if (showCamera) {
-    return (
-      <CameraCapture 
-        onClose={() => setShowCamera(false)}
-        onScanResult={handleScanResult}
-        language={language}
-      />
-    );
+    return <CameraCapture onClose={() => setShowCamera(false)} onScanResult={handleScanResult} language={language} />;
   }
-
   if (showHistory) {
     return <ScanHistory />;
   }
-
-  const content = (
-    <div className={`${!isMobile ? 'min-h-screen bg-background' : ''}`}>
+  const content = <div className={`${!isMobile ? 'min-h-screen bg-background' : ''}`}>
       {/* Desktop Header */}
-      {!isMobile && (
-        <header className="sticky top-0 z-50 px-6 py-4 bg-background/95 backdrop-blur-md border-b border-border/50">
+      {!isMobile && <header className="sticky top-0 z-50 px-6 py-4 bg-background/95 backdrop-blur-md border-b border-border/50">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <img 
-                  src="/lovable-uploads/a3d21615-f7b2-4a37-8576-adf0857786e0.png" 
-                  alt="PillLens" 
-                  className="w-12 h-12"
-                />
+                <img src="/lovable-uploads/12aa5b62-d3ba-4fe6-9f71-bdaf796e5a6e.png" alt="PillLens" className="w-12 h-12" />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse"></div>
               </div>
               <div>
@@ -111,22 +93,14 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground font-medium">Smart Medication Assistant</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <LanguageSelector />
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
-                <LogOut className="h-4 w-4" />
-                <TranslatedText translationKey="auth.signOut" />
-              </Button>
-            </div>
+            
           </div>
-        </header>
-      )}
+        </header>}
 
       {/* Main Content */}
       <main className={`${!isMobile ? 'max-w-7xl mx-auto px-6 py-12' : 'px-4 py-6'}`}>
         {/* Desktop Hero Section */}
-        {!isMobile && (
-          <section className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        {!isMobile && <section className="grid lg:grid-cols-2 gap-12 items-center mb-20">
             {/* Left Column - Content */}
             <div className="space-y-8">
               <div className="space-y-6">
@@ -170,21 +144,12 @@ const Index = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-4">
-                <Button 
-                  size="lg"
-                  onClick={() => setShowCamera(true)}
-                  className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground shadow-medical hover:shadow-floating transition-all duration-300 px-8"
-                >
+                <Button size="lg" onClick={() => setShowCamera(true)} className="bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-primary-foreground shadow-medical hover:shadow-floating transition-all duration-300 px-8">
                   <Camera className="w-5 h-5 mr-2" />
                   <TranslatedText translationKey="scanner.scanMedication" fallback="Start Scanning" />
                 </Button>
                 
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  onClick={() => setShowHistory(true)}
-                  className="border-primary/20 hover:bg-primary/5 px-8"
-                >
+                <Button variant="outline" size="lg" onClick={() => setShowHistory(true)} className="border-primary/20 hover:bg-primary/5 px-8">
                   <History className="w-5 h-5 mr-2" />
                   <TranslatedText translationKey="navigation.history" fallback="View History" />
                 </Button>
@@ -211,11 +176,7 @@ const Index = () => {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-background to-muted/30">
                 <div className="aspect-[4/3] relative overflow-hidden">
-                  <img 
-                    src={heroImage} 
-                    alt="Medical OCR scanning interface"
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={heroImage} alt="Medical OCR scanning interface" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>
                 </div>
                 
@@ -234,12 +195,10 @@ const Index = () => {
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Mobile Hero Section */}
-        {isMobile && (
-          <div className="text-center mb-8">
+        {isMobile && <div className="text-center mb-8">
             <Badge className="mb-4 bg-primary-light text-primary border-primary/20">
               <TranslatedText translationKey="hero.badge" fallback="Privacy-First • Safety-Focused" />
             </Badge>
@@ -253,30 +212,21 @@ const Index = () => {
             <p className="text-base text-muted-foreground mb-8">
               <TranslatedText translationKey="hero.description" fallback="Scan any pill box, barcode, or leaflet to get safe, evidence-based details — what it is, how to take it, and important warnings" />
             </p>
-          </div>
-        )}
+          </div>}
 
         {/* Enhanced Features Section */}
         <section className={`${!isMobile ? 'mb-20' : 'mb-8'}`}>
-          {!isMobile && (
-            <div className="text-center mb-12">
+          {!isMobile && <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Why Choose PillLens?
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                 Advanced AI-powered medication analysis with medical-grade accuracy and privacy protection
               </p>
-            </div>
-          )}
+            </div>}
 
           <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
-            {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className={`group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-medical ${
-                  !isMobile ? 'p-8 hover:-translate-y-2' : 'p-6'
-                }`}
-              >
+            {features.map((feature, index) => <Card key={index} className={`group relative overflow-hidden border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-medical ${!isMobile ? 'p-8 hover:-translate-y-2' : 'p-6'}`}>
                 <div className={`${isMobile ? 'text-center' : 'text-left'}`}>
                   {/* Icon */}
                   <div className={`relative mb-6 ${isMobile ? 'mx-auto' : ''}`}>
@@ -284,9 +234,7 @@ const Index = () => {
                       <feature.icon className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'} text-primary`} />
                     </div>
                     
-                    {!isMobile && (
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-primary-light/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
-                    )}
+                    {!isMobile && <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-primary-light/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>}
                   </div>
 
                   {/* Content */}
@@ -298,18 +246,14 @@ const Index = () => {
                   </p>
 
                   {/* Hover Effect */}
-                  {!isMobile && (
-                    <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-primary to-primary-light transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                  )}
+                  {!isMobile && <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-primary to-primary-light transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>}
                 </div>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </section>
 
         {/* How It Works Section - Desktop Only */}
-        {!isMobile && (
-          <section className="mb-20">
+        {!isMobile && <section className="mb-20">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 How It Works
@@ -320,34 +264,27 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  step: "01",
-                  icon: Camera,
-                  title: "Capture",
-                  description: "Take a photo of your medication box, bottle, or leaflet using your camera",
-                  color: "primary"
-                },
-                {
-                  step: "02", 
-                  icon: Eye,
-                  title: "Analyze", 
-                  description: "Our AI extracts and analyzes medication information with medical-grade accuracy",
-                  color: "info"
-                },
-                {
-                  step: "03",
-                  icon: Heart,
-                  title: "Understand",
-                  description: "Get comprehensive information about usage, side effects, and interactions",
-                  color: "success"
-                }
-              ].map((step, index) => (
-                <div key={index} className="relative text-center group">
+              {[{
+            step: "01",
+            icon: Camera,
+            title: "Capture",
+            description: "Take a photo of your medication box, bottle, or leaflet using your camera",
+            color: "primary"
+          }, {
+            step: "02",
+            icon: Eye,
+            title: "Analyze",
+            description: "Our AI extracts and analyzes medication information with medical-grade accuracy",
+            color: "info"
+          }, {
+            step: "03",
+            icon: Heart,
+            title: "Understand",
+            description: "Get comprehensive information about usage, side effects, and interactions",
+            color: "success"
+          }].map((step, index) => <div key={index} className="relative text-center group">
                   {/* Connector Line */}
-                  {index < 2 && (
-                    <div className="hidden md:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-border to-transparent transform translate-x-1/2 z-0"></div>
-                  )}
+                  {index < 2 && <div className="hidden md:block absolute top-16 left-1/2 w-full h-0.5 bg-gradient-to-r from-border to-transparent transform translate-x-1/2 z-0"></div>}
                   
                   {/* Step Content */}
                   <div className="relative z-10 bg-background">
@@ -369,61 +306,66 @@ const Index = () => {
                       {step.description}
                     </p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* Trust & Safety Section */}
         <section className={`${!isMobile ? 'mb-20' : 'mb-8'}`}>
-          {!isMobile && (
-            <>
+          {!isMobile && <>
               {/* Trust Stats */}
               <div className="grid md:grid-cols-4 gap-6 mb-12">
-                {[
-                  { icon: TrendingUp, value: "99.2%", label: "Accuracy Rate", color: "success" },
-                  { icon: Users, value: "15K+", label: "Trust Users", color: "primary" },
-                  { icon: Shield, value: "100%", label: "Privacy Protected", color: "info" },
-                  { icon: Zap, value: "<3s", label: "Scan Speed", color: "warning" }
-                ].map((stat, index) => (
-                  <Card key={index} className="text-center p-6 border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-medical">
+                {[{
+              icon: TrendingUp,
+              value: "99.2%",
+              label: "Accuracy Rate",
+              color: "success"
+            }, {
+              icon: Users,
+              value: "15K+",
+              label: "Trust Users",
+              color: "primary"
+            }, {
+              icon: Shield,
+              value: "100%",
+              label: "Privacy Protected",
+              color: "info"
+            }, {
+              icon: Zap,
+              value: "<3s",
+              label: "Scan Speed",
+              color: "warning"
+            }].map((stat, index) => <Card key={index} className="text-center p-6 border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-medical">
                     <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-${stat.color}/10 to-${stat.color}-light/20 flex items-center justify-center`}>
                       <stat.icon className={`w-6 h-6 text-${stat.color}`} />
                     </div>
                     <div className={`text-3xl font-bold text-${stat.color} mb-2`}>{stat.value}</div>
                     <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
 
               {/* Testimonials */}
               <div className="grid md:grid-cols-3 gap-8 mb-12">
-                {[
-                  {
-                    quote: "PillLens has revolutionized how I manage my family's medications. The accuracy is incredible.",
-                    author: "Dr. Sarah Chen",
-                    role: "Family Physician",
-                    rating: 5
-                  },
-                  {
-                    quote: "As a pharmacist, I recommend PillLens to patients who need reliable medication information.",
-                    author: "Mark Rodriguez",
-                    role: "Licensed Pharmacist",
-                    rating: 5
-                  },
-                  {
-                    quote: "The privacy features give me confidence. My medical information stays secure.",
-                    author: "Emily Watson",
-                    role: "Healthcare Administrator", 
-                    rating: 5
-                  }
-                ].map((testimonial, index) => (
-                  <Card key={index} className="p-6 border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-medical">
+                {[{
+              quote: "PillLens has revolutionized how I manage my family's medications. The accuracy is incredible.",
+              author: "Dr. Sarah Chen",
+              role: "Family Physician",
+              rating: 5
+            }, {
+              quote: "As a pharmacist, I recommend PillLens to patients who need reliable medication information.",
+              author: "Mark Rodriguez",
+              role: "Licensed Pharmacist",
+              rating: 5
+            }, {
+              quote: "The privacy features give me confidence. My medical information stays secure.",
+              author: "Emily Watson",
+              role: "Healthcare Administrator",
+              rating: 5
+            }].map((testimonial, index) => <Card key={index} className="p-6 border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-medical">
                     <div className="flex items-center gap-1 mb-4">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-warning fill-warning" />
-                      ))}
+                      {Array.from({
+                  length: testimonial.rating
+                }).map((_, i) => <Star key={i} className="w-4 h-4 text-warning fill-warning" />)}
                     </div>
                     <blockquote className="text-muted-foreground mb-4 leading-relaxed">
                       "{testimonial.quote}"
@@ -432,11 +374,9 @@ const Index = () => {
                       <div className="font-semibold text-foreground">{testimonial.author}</div>
                       <div className="text-sm text-muted-foreground">{testimonial.role}</div>
                     </div>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
-            </>
-          )}
+            </>}
 
           {/* Safety Notice */}
           <Card className={`border-warning/40 ${!isMobile ? 'p-8' : 'p-6'} bg-gradient-to-r from-warning/5 to-warning-light/10 shadow-warning`}>
@@ -452,8 +392,7 @@ const Index = () => {
                   <TranslatedText translationKey="safety.disclaimer" fallback="PillLens provides information extracted from official medication labels and leaflets. This is not medical advice. Always consult your healthcare provider or pharmacist for personalized medical guidance and treatment decisions." />
                 </p>
                 
-                {!isMobile && (
-                  <div className="flex items-center gap-6 mt-6 pt-6 border-t border-warning/20">
+                {!isMobile && <div className="flex items-center gap-6 mt-6 pt-6 border-t border-warning/20">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-success" />
                       <span className="text-sm font-medium text-foreground">HIPAA Compliant</span>
@@ -466,8 +405,7 @@ const Index = () => {
                       <CheckCircle className="w-5 h-5 text-success" />
                       <span className="text-sm font-medium text-foreground">Medical Grade Security</span>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </Card>
@@ -475,48 +413,25 @@ const Index = () => {
       </main>
 
       {/* Floating Action Button for Mobile */}
-      {isMobile && (
-        <FloatingActionButton onClick={() => setShowCamera(true)} />
-      )}
+      {isMobile && <FloatingActionButton onClick={() => setShowCamera(true)} />}
 
       {/* Scan Result Dialog */}
-      {scanResultData && (
-        <ScanResultDialog
-          open={showScanResult}
-          onClose={() => {
-            setShowScanResult(false);
-            setScanResultData(null);
-          }}
-          medicationData={scanResultData}
-        />
-      )}
-    </div>
-  );
-
+      {scanResultData && <ScanResultDialog open={showScanResult} onClose={() => {
+      setShowScanResult(false);
+      setScanResultData(null);
+    }} medicationData={scanResultData} />}
+    </div>;
   if (isMobile) {
-    return (
-      <ProfessionalMobileLayout title={t('app.title', 'PillLens')} showHeader={false}>
-        <MobileDashboard 
-          onScanPress={() => setShowCamera(true)}
-          language={language}
-        />
+    return <ProfessionalMobileLayout title={t('app.title', 'PillLens')} showHeader={false}>
+        <MobileDashboard onScanPress={() => setShowCamera(true)} language={language} />
         
         {/* Scan Result Dialog */}
-        {scanResultData && (
-          <ScanResultDialog
-            open={showScanResult}
-            onClose={() => {
-              setShowScanResult(false);
-              setScanResultData(null);
-            }}
-            medicationData={scanResultData}
-          />
-        )}
-      </ProfessionalMobileLayout>
-    );
+        {scanResultData && <ScanResultDialog open={showScanResult} onClose={() => {
+        setShowScanResult(false);
+        setScanResultData(null);
+      }} medicationData={scanResultData} />}
+      </ProfessionalMobileLayout>;
   }
-
   return content;
 };
-
 export default Index;
