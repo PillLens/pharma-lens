@@ -684,6 +684,36 @@ export type Database = {
           },
         ]
       }
+      interaction_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          request_count: number | null
+          updated_at: string | null
+          user_id: string
+          window_end: string | null
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          request_count?: number | null
+          updated_at?: string | null
+          user_id: string
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          request_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+          window_end?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       labels: {
         Row: {
           checksum: string | null
@@ -842,6 +872,44 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medication_interaction_audit: {
+        Row: {
+          accessed_at: string | null
+          id: string
+          interaction_id: string | null
+          ip_address: unknown | null
+          query_details: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          id?: string
+          interaction_id?: string | null
+          ip_address?: unknown | null
+          query_details?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accessed_at?: string | null
+          id?: string
+          interaction_id?: string | null
+          ip_address?: unknown | null
+          query_details?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_interaction_audit_interaction_id_fkey"
+            columns: ["interaction_id"]
+            isOneToOne: false
+            referencedRelation: "medication_interactions"
             referencedColumns: ["id"]
           },
         ]
@@ -1737,6 +1805,10 @@ export type Database = {
         Args: { group_uuid: string; user_uuid: string }
         Returns: boolean
       }
+      check_interaction_rate_limit: {
+        Args: { limit_per_hour?: number; user_uuid: string }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           p_endpoint: string
@@ -1750,9 +1822,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_interaction_rate_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       find_user_by_email: {
         Args: { user_email: string }
         Returns: string
+      }
+      get_drug_interactions: {
+        Args: { medication_a_id_param: string; medication_b_id_param: string }
+        Returns: {
+          description: string
+          evidence_level: string
+          id: string
+          interaction_type: string
+          management_advice: string
+          severity_score: number
+        }[]
       }
       get_family_member_profile: {
         Args: { member_user_id: string }

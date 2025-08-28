@@ -180,10 +180,12 @@ class DatabaseService {
 
   async getMedicationInteractions(medicationAId: string, medicationBId: string): Promise<any[]> {
     try {
+      // Use the secure function for drug interaction queries
       const { data, error } = await supabase
-        .from('medication_interactions')
-        .select('*')
-        .or(`and(medication_a_id.eq.${medicationAId},medication_b_id.eq.${medicationBId}),and(medication_a_id.eq.${medicationBId},medication_b_id.eq.${medicationAId})`);
+        .rpc('get_drug_interactions', {
+          medication_a_id_param: medicationAId,
+          medication_b_id_param: medicationBId
+        });
 
       if (error) throw error;
       return data || [];

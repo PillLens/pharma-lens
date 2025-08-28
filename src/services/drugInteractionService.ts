@@ -74,39 +74,31 @@ class DrugInteractionService {
           const medId1 = productIds[i];
           const medId2 = productIds[j];
           
-          // Query the database for interactions using actual medication IDs
+          // Query the database for interactions using the secure function
           const { data, error } = await supabase
-            .from('medication_interactions')
-            .select(`
-              id,
-              interaction_type,
-              description,
-              severity_score,
-              management_advice,
-              evidence_level,
-              medication_a_id,
-              medication_b_id
-            `)
-            .or(`and(medication_a_id.eq.${medId1},medication_b_id.eq.${medId2}),and(medication_a_id.eq.${medId2},medication_b_id.eq.${medId1})`);
+            .rpc('get_drug_interactions', {
+              medication_a_id_param: medId1,
+              medication_b_id_param: medId2
+            });
 
           if (error) {
-            console.error('Error querying interactions:', error);
+            console.error('Failed to fetch interactions:', error);
             continue;
           }
 
           if (data && data.length > 0) {
-            for (const interaction of data) {
+            data.forEach(interaction => {
               interactions.push({
                 id: interaction.id,
-                drugA: medications[i],
-                drugB: medications[j],
+                drugA: medId1,
+                drugB: medId2,
                 severity: this.mapSeverity(interaction.severity_score),
                 description: interaction.description,
                 management: interaction.management_advice || 'Consult with healthcare provider',
                 evidenceLevel: interaction.evidence_level || 'moderate',
                 source: 'local_database'
               });
-            }
+            });
           }
         }
       }
@@ -173,40 +165,22 @@ class DrugInteractionService {
     ];
 
     try {
-      const { error } = await supabase
-        .from('medication_interactions')
-        .upsert(commonInteractions, { onConflict: 'medication_a_id,medication_b_id' });
-
-      if (error) throw error;
-      
-      console.log('Successfully populated drug interactions database');
+      // Note: This function is disabled in production as it requires admin access
+      // to modify the medication_interactions table for security reasons
+      console.warn('Drug interaction population is disabled for security. Use admin tools to populate data.');
     } catch (error) {
       console.error('Failed to populate interactions:', error);
       throw error;
     }
   }
 
-  // Get interaction details by ID
+  // Get interaction details by ID - disabled for security
   async getInteractionDetails(interactionId: string): Promise<DrugInteraction | null> {
     try {
-      const { data, error } = await supabase
-        .from('medication_interactions')
-        .select('*')
-        .eq('id', interactionId)
-        .single();
-
-      if (error) throw error;
-
-      return {
-        id: data.id,
-        drugA: data.medication_a_id,
-        drugB: data.medication_b_id,
-        severity: this.mapSeverity(data.severity_score),
-        description: data.description,
-        management: data.management_advice || 'Consult healthcare provider',
-        evidenceLevel: data.evidence_level || 'Clinical',
-        source: 'database'
-      };
+      // Note: Direct access to interaction details by ID is disabled for security
+      // Use the checkInteractions method with specific medication IDs instead
+      console.warn('Direct interaction lookup by ID is disabled for security');
+      return null;
     } catch (error) {
       console.error('Failed to get interaction details:', error);
       return null;
