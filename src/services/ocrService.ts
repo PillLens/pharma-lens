@@ -1,7 +1,7 @@
 
 import { enhancedOcrService, type OCRResult, type SupportedLanguage } from './enhancedOcrService';
 
-export { OCRResult } from './enhancedOcrService';
+export type { OCRResult } from './enhancedOcrService';
 
 export class OCRService {
   private initialized = false;
