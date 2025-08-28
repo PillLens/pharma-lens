@@ -100,7 +100,7 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
           
           if (reminderResult) {
             successfulReminders++;
-            console.log('Successfully created reminder:', (reminderResult as any)?.id);
+            console.log('Successfully created reminder:', reminderResult.id);
           } else {
             console.error('Failed to create reminder for time:', time);
           }

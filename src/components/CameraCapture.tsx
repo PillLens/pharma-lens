@@ -40,7 +40,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const lookupProductByBarcode = async (barcode: string) => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('products')
         .select('*')
         .eq('barcode', barcode)
@@ -81,13 +81,13 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
           language,
           region: getRegionFromLanguage(language),
           images: capturedImage ? [capturedImage] : [],
-        } as any)
+        })
         .select()
         .single();
 
       if (sessionError) throw sessionError;
 
-      const newSessionId = (sessionData as any)?.id;
+      const newSessionId = sessionData.id;
       setSessionId(newSessionId);
 
       // Save extraction data if available
@@ -99,7 +99,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
             extracted_json: extractionData,
             quality_score: extractionData.confidence_score || 0,
             risk_flags: calculateRiskFlags(extractionData),
-          } as any);
+          });
 
         if (extractionError) {
           console.error('Error saving extraction:', extractionError);

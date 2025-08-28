@@ -38,7 +38,7 @@ export const useReminders = () => {
     try {
       setLoading(true);
       
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('medication_reminders')
         .select(`
           *,
@@ -53,13 +53,15 @@ export const useReminders = () => {
 
       if (error) throw error;
 
-      const remindersWithMedications = (data as any)?.map((reminder: any) => ({
-        ...(reminder as any),
-        medication: (reminder as any).user_medications || null,
-        enabledFeatures: (reminder as any).notification_settings || { sound: true, vibration: true, led: true }
-      })) || [];
+      const remindersWithMedication = data.map(reminder => ({
+        ...reminder,
+        medication: reminder.user_medications,
+        notification_settings: typeof reminder.notification_settings === 'object' 
+          ? reminder.notification_settings as { sound: boolean; vibration: boolean; led: boolean; }
+          : { sound: true, vibration: true, led: true }
+      }));
 
-      setReminders(remindersWithMedications);
+      setReminders(remindersWithMedication);
     } catch (error) {
       console.error('Error fetching reminders:', error);
       toast.error('Failed to load reminders');
@@ -77,7 +79,7 @@ export const useReminders = () => {
     if (!user) return null;
 
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('medication_reminders')
         .insert([{
           user_id: user.id,
@@ -107,7 +109,7 @@ export const useReminders = () => {
 
   const updateReminder = async (id: string, updates: Partial<MedicationReminder>) => {
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('medication_reminders')
         .update(updates)
         .eq('id', id)
@@ -126,7 +128,7 @@ export const useReminders = () => {
 
   const deleteReminder = async (id: string) => {
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('medication_reminders')
         .delete()
         .eq('id', id)

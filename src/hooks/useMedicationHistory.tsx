@@ -30,8 +30,8 @@ export const useMedicationHistory = () => {
 
     try {
       // Direct table access with type assertion
-      const { data, error } = await (supabase as any)
-        .from('user_medications')
+      const { data, error } = await supabase
+        .from('user_medications' as any)
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -72,7 +72,7 @@ export const useMedicationHistory = () => {
         .insert([{
           ...medication,
           user_id: user.id
-        } as any])
+        }])
         .select()
         .single();
 
@@ -110,8 +110,8 @@ export const useMedicationHistory = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await (supabase as any)
-        .from('user_medications')
+      const { data, error } = await supabase
+        .from('user_medications' as any)
         .update(updates)
         .eq('id', id)
         .eq('user_id', user.id)
@@ -154,8 +154,8 @@ export const useMedicationHistory = () => {
     if (!user) return;
 
     try {
-      const { error } = await (supabase as any)
-        .from('user_medications')
+      const { error } = await supabase
+        .from('user_medications' as any)
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);

@@ -32,21 +32,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Handle OneSignal user registration/cleanup
         if (environmentService.isFeatureEnabled('push-notifications')) {
           setTimeout(() => {
-            try {
-              if (session?.user && oneSignalService.isServiceInitialized()) {
-                // Register user with OneSignal after login
-                oneSignalService.registerUser(session.user.id).catch(error => {
-                  console.error('Failed to register user with OneSignal:', error);
-                });
-              } else if (!session?.user) {
-                // Cleanup OneSignal on logout
-                oneSignalService.cleanup().catch(error => {
-                  console.error('Failed to cleanup OneSignal:', error);
-                });
-              }
-            } catch (error) {
-              console.error('OneSignal operation error:', error);
-              // Don't throw - continue with auth process
+            if (session?.user && oneSignalService.isServiceInitialized()) {
+              // Register user with OneSignal after login
+              oneSignalService.registerUser(session.user.id).catch(error => {
+                console.error('Failed to register user with OneSignal:', error);
+              });
+            } else if (!session?.user) {
+              // Cleanup OneSignal on logout
+              oneSignalService.cleanup().catch(error => {
+                console.error('Failed to cleanup OneSignal:', error);
+              });
             }
           }, 0);
         }
@@ -62,15 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Register existing user with OneSignal if service is ready
       if (session?.user && environmentService.isFeatureEnabled('push-notifications')) {
         setTimeout(() => {
-          try {
-            if (oneSignalService.isServiceInitialized()) {
-              oneSignalService.registerUser(session.user.id).catch(error => {
-                console.error('Failed to register existing user with OneSignal:', error);
-              });
-            }
-          } catch (error) {
-            console.error('OneSignal registration error:', error);
-            // Don't throw - continue with app initialization
+          if (oneSignalService.isServiceInitialized()) {
+            oneSignalService.registerUser(session.user.id).catch(error => {
+              console.error('Failed to register existing user with OneSignal:', error);
+            });
           }
         }, 1000); // Give OneSignal time to initialize
       }

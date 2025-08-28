@@ -24,11 +24,11 @@ export const useUserTimezone = () => {
         const { data } = await supabase
           .from('profiles')
           .select('timezone')
-          .eq('id' as any, user.id as any)
+          .eq('id', user.id)
           .single();
 
-        if ((data as any)?.timezone) {
-          setTimezone((data as any).timezone);
+        if (data?.timezone) {
+          setTimezone(data.timezone);
         } else {
           // Fallback to browser timezone
           const browserTimezone = getBrowserTimezone();
@@ -37,8 +37,8 @@ export const useUserTimezone = () => {
           // Update user's profile with browser timezone
           await supabase
             .from('profiles')
-            .update({ timezone: browserTimezone } as any)
-            .eq('id' as any, user.id as any);
+            .update({ timezone: browserTimezone })
+            .eq('id', user.id);
         }
       } catch (error) {
         console.warn('Failed to fetch user timezone:', error);

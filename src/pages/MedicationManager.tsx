@@ -152,7 +152,7 @@ const MedicationManager: React.FC = () => {
           : 100;
 
         // Calculate streak from real adherence data
-        const { data: recentAdherence } = await (supabase as any)
+        const { data: recentAdherence } = await supabase
           .from('medication_adherence_log')
           .select('scheduled_time, status')
           .eq('user_id', user.id)
@@ -169,7 +169,7 @@ const MedicationManager: React.FC = () => {
               dailyTaken.set(date, { taken: 0, total: 0 });
             }
             dailyTaken.get(date).total++;
-            if ((log as any).status === 'taken') {
+            if (log.status === 'taken') {
               dailyTaken.get(date).taken++;
             }
           });

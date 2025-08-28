@@ -92,62 +92,38 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   useEffect(() => {
     if (!user?.id) return;
 
-    let channel: any;
-    
-    // Add error handling for WebSocket connections in PWA mode
-    const setupSubscription = async () => {
-      try {
-        channel = supabase
-          .channel('subscription-changes')
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'subscriptions',
-              filter: `user_id=eq.${user.id}`
-            },
-            () => {
-              // Subscription changed, refresh entitlements
-              setTimeout(refreshEntitlements, 1000); // Small delay to ensure webhook processing
-            }
-          )
-          .on(
-            'postgres_changes',
-            {
-              event: 'UPDATE',
-              schema: 'public',
-              table: 'profiles',
-              filter: `id=eq.${user.id}`
-            },
-            () => {
-              // Profile updated (trial status, plan, etc.)
-              setTimeout(refreshEntitlements, 1000);
-            }
-          )
-          .subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-              console.log('Successfully subscribed to subscription changes');
-            } else if (status === 'CHANNEL_ERROR') {
-              console.warn('Failed to subscribe to subscription changes - continuing without real-time updates');
-            }
-          });
-      } catch (error) {
-        console.warn('WebSocket subscription failed, continuing without real-time updates:', error);
-        // Don't throw - the app should work without real-time subscriptions
-      }
-    };
-
-    setupSubscription();
+    const channel = supabase
+      .channel('subscription-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'subscriptions',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          // Subscription changed, refresh entitlements
+          setTimeout(refreshEntitlements, 1000); // Small delay to ensure webhook processing
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        () => {
+          // Profile updated (trial status, plan, etc.)
+          setTimeout(refreshEntitlements, 1000);
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (channel) {
-        try {
-          supabase.removeChannel(channel);
-        } catch (error) {
-          console.warn('Error removing subscription channel:', error);
-        }
-      }
+      supabase.removeChannel(channel);
     };
   }, [user?.id]);
 

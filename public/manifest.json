@@ -2,7 +2,7 @@
   "name": "PillLens - Smart Medication Manager",
   "short_name": "PillLens",
   "description": "Smart medication management with barcode scanning and safety alerts",
-  "theme_color": "#ffffff",
+  "theme_color": "#2563eb",
   "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
@@ -27,31 +27,25 @@
   ],
   "icons": [
     {
-      "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png",
-      "sizes": "192x192",
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
-      "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png",
-      "sizes": "512x512",
-      "type": "image/png", 
-      "purpose": "maskable"
-    },
-    {
-      "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png",
+      "src": "/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
@@ -63,21 +57,21 @@
       "short_name": "Add Med",
       "description": "Quickly add a new medication",
       "url": "/medications?action=add",
-      "icons": [{ "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png", "sizes": "192x192" }]
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "View Reminders",
       "short_name": "Reminders",
       "description": "Check your medication reminders",
       "url": "/reminders",
-      "icons": [{ "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png", "sizes": "192x192" }]
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Family Care",
       "short_name": "Family",
       "description": "Manage family medications",
       "url": "/family",
-      "icons": [{ "src": "/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png", "sizes": "192x192" }]
+      "icons": [{ "src": "android-chrome-192x192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [

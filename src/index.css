@@ -169,22 +169,6 @@
     height: var(--safe);
   }
 
-  /* PWA and Standalone mode optimizations */
-  @media (display-mode: standalone) {
-    body {
-      background-color: hsl(var(--background)) !important;
-    }
-    
-    #root {
-      background-color: hsl(var(--background)) !important;
-    }
-    
-    /* Ensure proper safe area handling in PWA mode */
-    .main-scroll {
-      padding-bottom: calc(var(--nav-h) + var(--gap) + env(safe-area-inset-bottom, 0px));
-    }
-  }
-
   /* Mobile navigation spacing classes */
   .main-scroll {
     padding-bottom: calc(var(--nav-h) + var(--gap));

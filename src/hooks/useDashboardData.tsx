@@ -57,7 +57,7 @@ export const useDashboardData = () => {
       setLoading(true);
 
       // Fetch scan history
-      const { data: sessions, error: sessionsError } = await (supabase as any)
+      const { data: sessions, error: sessionsError } = await supabase
         .from('sessions')
         .select(`
           id,
@@ -69,14 +69,14 @@ export const useDashboardData = () => {
           extractions (extracted_json, quality_score, risk_flags),
           products (brand_name, generic_name, strength, form)
         `)
-        .eq('user_id' as any, user.id as any)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (sessionsError) throw sessionsError;
 
       // Fetch reminders
-      const { data: reminders, error: remindersError } = await (supabase as any)
+      const { data: reminders, error: remindersError } = await supabase
         .from('medication_reminders')
         .select(`
           *,
@@ -92,11 +92,11 @@ export const useDashboardData = () => {
 
       // Calculate stats first
       const activeMedications = medications.filter(m => m.is_active);
-      const activeReminders = (reminders as any)?.filter((r: any) => r.is_active) || [];
+      const activeReminders = reminders?.filter(r => r.is_active) || [];
       
       // Get today's scheduled reminders based on active reminders and current day
       const currentDayOfWeek = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const todaysReminders = activeReminders.filter((reminder: any) => 
+      const todaysReminders = activeReminders.filter(reminder => 
         reminder.days_of_week.includes(currentDayOfWeek === 0 ? 7 : currentDayOfWeek) // Convert Sunday (0) to 7
       );
 
@@ -122,14 +122,14 @@ export const useDashboardData = () => {
           const endOfDay = new Date(today);
           endOfDay.setHours(23, 59, 59, 999);
           
-          const { data: todaysAdherenceData } = await (supabase as any)
+          const { data: todaysAdherenceData } = await supabase
             .from('medication_adherence_log')
             .select('status')
             .eq('user_id', user.id)
             .gte('scheduled_time', startOfDay.toISOString())
             .lte('scheduled_time', endOfDay.toISOString());
           
-          const takenToday = (todaysAdherenceData as any)?.filter((a: any) => a.status === 'taken').length || 0;
+          const takenToday = todaysAdherenceData?.filter(a => a.status === 'taken').length || 0;
           
           todaysAdherence = {
             totalToday: totalDosesToday,
@@ -151,15 +151,15 @@ export const useDashboardData = () => {
       }
 
       // Fetch family groups
-      const { data: familyGroups, error: familyError } = await (supabase as any)
+      const { data: familyGroups, error: familyError } = await supabase
         .from('family_members')
         .select(`
           family_group_id,
           family_groups (name, creator_id),
           user_id
         `)
-        .eq('user_id' as any, user.id as any)
-        .eq('invitation_status' as any, 'accepted' as any);
+        .eq('user_id', user.id)
+        .eq('invitation_status', 'accepted');
 
       if (familyError) throw familyError;
 
@@ -173,7 +173,7 @@ export const useDashboardData = () => {
       // Calculate streak from adherence log
       const calculateStreak = async () => {
         try {
-          const { data: recentAdherence, error } = await (supabase as any)
+          const { data: recentAdherence, error } = await supabase
             .from('medication_adherence_log')
             .select('*')
             .eq('user_id', user.id)
@@ -186,13 +186,13 @@ export const useDashboardData = () => {
           const dailyTaken = new Map();
           
           // Group by date and check if all doses were taken each day
-          (recentAdherence as any)?.forEach((log: any) => {
+          recentAdherence?.forEach(log => {
             const date = new Date(log.scheduled_time).toDateString();
             if (!dailyTaken.has(date)) {
               dailyTaken.set(date, { taken: 0, total: 0 });
             }
             dailyTaken.get(date).total++;
-            if ((log as any).status === 'taken') {
+            if (log.status === 'taken') {
               dailyTaken.get(date).taken++;
             }
           });
@@ -224,19 +224,19 @@ export const useDashboardData = () => {
       let nextReminder;
       
       // Sort today's reminders by time
-      const todaysRemindersSorted = [...todaysReminders].sort((a: any, b: any) => {
+      const todaysRemindersSorted = [...todaysReminders].sort((a, b) => {
         const [aHours, aMinutes] = a.reminder_time.split(':').map(Number);
         const [bHours, bMinutes] = b.reminder_time.split(':').map(Number);
         return (aHours * 60 + aMinutes) - (bHours * 60 + bMinutes);
       });
       
       for (const reminder of todaysRemindersSorted) {
-        const reminderTime = (reminder as any).reminder_time;
+        const reminderTime = reminder.reminder_time;
         const [hours, minutes] = reminderTime.split(':').map(Number);
         const reminderMinutes = hours * 60 + minutes;
         
         if (reminderMinutes > currentTime) {
-          const medication = medications.find(m => m.id === (reminder as any).medication_id);
+          const medication = medications.find(m => m.id === reminder.medication_id);
           nextReminder = {
             medication: medication?.medication_name || 'Unknown',
             time: reminderTime
@@ -270,7 +270,7 @@ export const useDashboardData = () => {
           missedToday: missedToday
         },
         family: {
-          groups: new Set((familyGroups as any)?.map((fg: any) => fg.family_group_id)).size || 0,
+          groups: new Set(familyGroups?.map(fg => fg.family_group_id)).size || 0,
           members: familyGroups?.length || 0
         }
       });
