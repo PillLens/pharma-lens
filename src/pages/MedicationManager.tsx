@@ -481,18 +481,18 @@ const MedicationManager: React.FC = () => {
               )}
               
               <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="today" className="gap-2">
-                  <Clock className="w-4 h-4" />
-                  Today ({dueMedications.length})
+              <TabsList className="grid w-full grid-cols-3 mb-4 h-auto">
+                <TabsTrigger value="today" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
+                  <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="text-xs sm:text-sm">Today ({dueMedications.length})</span>
                 </TabsTrigger>
-                <TabsTrigger value="all" className="gap-2">
-                  <Pill className="w-4 h-4" />
-                  All ({medications.length})
+                <TabsTrigger value="all" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
+                  <Pill className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="text-xs sm:text-sm">All ({medications.length})</span>
                 </TabsTrigger>
-                <TabsTrigger value="insights" className="gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  Insights
+                <TabsTrigger value="insights" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
+                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="text-xs sm:text-sm">Insights</span>
                 </TabsTrigger>
               </TabsList>
 
