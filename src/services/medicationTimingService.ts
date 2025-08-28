@@ -211,19 +211,22 @@ export class MedicationTimingService {
       const currentTime = format(now, 'HH:mm');
       const currentDayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
 
-      // Get today's start
+      // Get today's start and end
       const startOfDay = new Date(now);
       startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999);
 
-      // Check doses taken today
+      // Check doses taken today - look at scheduled_time instead of taken_time for better matching
       const { data: doses } = await supabase
         .from('medication_adherence_log')
         .select('taken_time, scheduled_time')
         .eq('user_id', userId)
         .eq('medication_id', medicationId)
         .eq('status', 'taken')
-        .gte('taken_time', startOfDay.toISOString())
-        .order('taken_time', { ascending: false });
+        .gte('scheduled_time', startOfDay.toISOString())
+        .lte('scheduled_time', endOfDay.toISOString())
+        .order('scheduled_time', { ascending: false });
 
       if (!doses || doses.length === 0) {
         return { recentlyTaken: false };
@@ -238,15 +241,19 @@ export class MedicationTimingService {
       for (const reminder of todaysReminders) {
         const windowInfo = this.isInDoseWindow(currentTime, reminder.reminder_time, 30);
         
+        // If we're in a reminder window, check for taken doses
         if (windowInfo.isDue || windowInfo.isOverdue) {
-          // Check if there's a dose taken for this reminder time window
           const reminderDate = this.parseTimeToday(reminder.reminder_time, timezone);
-          const windowStart = new Date(reminderDate.getTime() - 30 * 60 * 1000);
-          const windowEnd = new Date(reminderDate.getTime() + 30 * 60 * 1000);
+          
+          // Create a wider window for matching (±60 minutes)
+          const windowStart = new Date(reminderDate.getTime() - 60 * 60 * 1000);
+          const windowEnd = new Date(reminderDate.getTime() + 60 * 60 * 1000);
 
           for (const dose of doses) {
             const scheduledTime = new Date(dose.scheduled_time);
+            // Check if scheduled time matches this reminder window
             if (scheduledTime >= windowStart && scheduledTime <= windowEnd) {
+              console.log(`Found matching dose for ${reminder.reminder_time}:`, dose);
               return { 
                 recentlyTaken: true, 
                 takenTime: dose.taken_time 

@@ -112,28 +112,29 @@ export const useDashboardData = () => {
         if (todaysAdherence.totalToday === 0 && todaysReminders.length > 0) {
           console.log('No scheduled doses found, falling back to reminder calculation');
           
-          // Calculate total doses based on reminder frequency for today
-          let totalDosesToday = 0;
-          todaysReminders.forEach(reminder => {
-            const medication = medications.find(m => m.id === reminder.medication_id);
-            if (medication?.frequency) {
-              // Parse frequency to determine doses per day (e.g., "twice a day" = 2, "once a day" = 1)
-              const frequencyMatch = medication.frequency.match(/(\d+)/);
-              const dosesPerDay = frequencyMatch ? parseInt(frequencyMatch[1]) : 1;
-              totalDosesToday += dosesPerDay;
-            } else {
-              totalDosesToday += 1; // Default to 1 dose if frequency is unknown
-            }
-          });
+          // Calculate based on actual reminders scheduled for today
+          const totalDosesToday = todaysReminders.length;
           
-          // For now, simulate some completed doses for demonstration
-          // In a real scenario, you'd query the medication_adherence_log
-          const simulatedCompleted = Math.min(Math.floor(totalDosesToday * 0.5), totalDosesToday);
+          // Query actual adherence data for today
+          const today = new Date();
+          const startOfDay = new Date(today);
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date(today);
+          endOfDay.setHours(23, 59, 59, 999);
+          
+          const { data: todaysAdherenceData } = await supabase
+            .from('medication_adherence_log')
+            .select('status')
+            .eq('user_id', user.id)
+            .gte('scheduled_time', startOfDay.toISOString())
+            .lte('scheduled_time', endOfDay.toISOString());
+          
+          const takenToday = todaysAdherenceData?.filter(a => a.status === 'taken').length || 0;
           
           todaysAdherence = {
             totalToday: totalDosesToday,
-            completedToday: simulatedCompleted,
-            pendingToday: totalDosesToday - simulatedCompleted,
+            completedToday: takenToday,
+            pendingToday: totalDosesToday - takenToday,
             missedToday: 0
           };
         }

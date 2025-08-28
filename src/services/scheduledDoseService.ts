@@ -73,7 +73,7 @@ export class ScheduledDoseService {
   }
 
   /**
-   * Mark a scheduled dose as taken
+   * Mark a scheduled dose as taken with correct timing
    */
   async markScheduledDoseAsTaken(
     userId: string,
@@ -87,38 +87,41 @@ export class ScheduledDoseService {
       const scheduledTime = new Date(today);
       scheduledTime.setHours(hours, minutes, 0, 0);
 
-      // First, try to find and update an existing scheduled entry
-      const { data: scheduledEntry } = await supabase
+      // Check for existing entries within a wider time window to prevent duplicates
+      const windowStart = new Date(scheduledTime.getTime() - 60 * 60 * 1000); // 1 hour before
+      const windowEnd = new Date(scheduledTime.getTime() + 60 * 60 * 1000);   // 1 hour after
+
+      const { data: existingEntry } = await supabase
         .from('medication_adherence_log')
-        .select('id')
+        .select('id, status')
         .eq('user_id', userId)
         .eq('medication_id', medicationId)
-        .eq('scheduled_time', scheduledTime.toISOString())
-        .eq('status', 'scheduled')
+        .gte('scheduled_time', windowStart.toISOString())
+        .lte('scheduled_time', windowEnd.toISOString())
         .maybeSingle();
 
-      if (scheduledEntry) {
-        // Update existing scheduled entry to taken
+      if (existingEntry) {
+        // Update existing entry to taken status
         const { error } = await supabase
           .from('medication_adherence_log')
           .update({
             status: 'taken',
-            taken_time: new Date().toISOString(),
+            taken_time: scheduledTime.toISOString(), // Use scheduled time, not current time
             notes: notes || 'Marked via Take Now button',
             reported_by: userId
           })
-          .eq('id', scheduledEntry.id);
+          .eq('id', existingEntry.id);
 
         return !error;
       } else {
-        // Create new entry if no scheduled entry exists (fallback)
+        // Create new entry with proper timing
         const { error } = await supabase
           .from('medication_adherence_log')
           .insert({
             user_id: userId,
             medication_id: medicationId,
             scheduled_time: scheduledTime.toISOString(),
-            taken_time: new Date().toISOString(),
+            taken_time: scheduledTime.toISOString(), // Use scheduled time for consistency
             status: 'taken',
             notes: notes || 'Marked via Take Now button'
           });

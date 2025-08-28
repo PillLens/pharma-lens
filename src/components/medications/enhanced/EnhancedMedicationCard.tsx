@@ -330,23 +330,28 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
                     setRecentlyTaken(true);
                     onMarkTaken?.();
                     
-                    // Re-fetch timing info after a short delay to ensure database is updated
-                    setTimeout(async () => {
-                      const timezone = getBrowserTimezone();
-                      const [newTimingResult, newRecentDoseResult] = await Promise.all([
-                        medicationTimingService.getNextDoseTime(medication.id, user?.id || '', timezone, true),
-                        medicationTimingService.checkRecentDose(medication.id, user?.id || '', timezone)
-                      ]);
-                      
-                      setTimingInfo({
-                        isDue: newTimingResult.isDue,
-                        nextTime: newTimingResult.nextTime,
-                        isOverdue: newTimingResult.isOverdue,
-                        currentReminderTime: newTimingResult.currentReminderTime
-                      });
-                      
-                      setRecentlyTaken(newRecentDoseResult.recentlyTaken);
-                    }, 500);
+                    // Immediately re-fetch timing info to update UI state
+                    const timezone = getBrowserTimezone();
+                    const [newTimingResult, newRecentDoseResult] = await Promise.all([
+                      medicationTimingService.getNextDoseTime(medication.id, user?.id || '', timezone, true),
+                      medicationTimingService.checkRecentDose(medication.id, user?.id || '', timezone)
+                    ]);
+                    
+                    setTimingInfo({
+                      isDue: newTimingResult.isDue,
+                      nextTime: newTimingResult.nextTime,
+                      isOverdue: newTimingResult.isOverdue,
+                      currentReminderTime: newTimingResult.currentReminderTime
+                    });
+                    
+                    setRecentlyTaken(newRecentDoseResult.recentlyTaken);
+                    
+                    console.log('Updated timing after taking dose:', {
+                      isDue: newTimingResult.isDue,
+                      isOverdue: newTimingResult.isOverdue,
+                      recentlyTaken: newRecentDoseResult.recentlyTaken,
+                      nextTime: newTimingResult.nextTime
+                    });
                     
                     toast({
                       title: "Dose recorded",
