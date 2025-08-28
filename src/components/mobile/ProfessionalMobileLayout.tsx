@@ -24,7 +24,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   }
 
   return (
-    <div className="bg-background flex flex-col" style={{ minHeight: '100dvh' }}>
+    <div className="min-h-screen bg-background flex flex-col" style={{ minHeight: '100dvh' }}>
       {/* Premium Mobile Header */}
       {showHeader && title && (
         <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top">
