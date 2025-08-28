@@ -588,11 +588,11 @@ const MedicationManager: React.FC = () => {
 
                 {/* All caught up message */}
                 {dueMedications.length === 0 && overdueMedications.length === 0 && (
-                  <MobileCard className="bg-background border">
-                    <MobileCardContent className="p-8 text-center">
-                      <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">All caught up!</h3>
-                      <p className="text-muted-foreground">No medications due right now. Great job staying on track!</p>
+                  <MobileCard className="bg-background border max-w-sm mx-auto">
+                    <MobileCardContent className="p-4 text-center">
+                      <CheckCircle className="w-10 h-10 text-success mx-auto mb-3" />
+                      <h3 className="text-base font-semibold text-foreground mb-1">All caught up!</h3>
+                      <p className="text-sm text-muted-foreground">No medications due right now. Great job staying on track!</p>
                     </MobileCardContent>
                   </MobileCard>
                 )}
