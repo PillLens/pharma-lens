@@ -164,85 +164,86 @@ export default function Auth() {
             </div>
 
             {/* Ultra-Compact Form */}
-            <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-2 flex-1">
-              <div className="space-y-1">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t('authPage.emailPlaceholder')}
-                  className="w-full h-11 px-4 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-1 relative">
-                <div className="relative">
+            <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-3 flex-1 flex flex-col">
+              <div className="space-y-3">
+                <div className="space-y-1">
                   <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
-                    className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('authPage.emailPlaceholder')}
+                    className="w-full h-11 px-4 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
                     required
-                    minLength={6}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
                 </div>
-                {activeTab === 'signup' && (
-                  <p className="text-xs text-muted-foreground px-1 mt-1">
-                    {t('authPage.passwordRequirements')}
-                  </p>
+                
+                <div className="space-y-1 relative">
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
+                      className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {activeTab === 'signup' && (
+                    <p className="text-xs text-muted-foreground px-1 mt-1">
+                      {t('authPage.passwordRequirements')}
+                    </p>
+                  )}
+                </div>
+                
+                {error && (
+                  <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/10 p-2">
+                    <AlertDescription className="font-medium text-center text-xs">{error}</AlertDescription>
+                  </Alert>
                 )}
               </div>
               
-              {error && (
-                <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/10 p-2">
-                  <AlertDescription className="font-medium text-center text-xs">{error}</AlertDescription>
-                </Alert>
-              )}
+              {/* Form Action Section */}
+              <div className="mt-auto pt-4 space-y-3">
+                {/* Compact Primary Action Button */}
+                <MobileButton
+                  type="submit"
+                  variant="medical"
+                  size="lg"
+                  className="w-full h-12 text-sm font-bold rounded-xl shadow-glow medical-button"
+                  disabled={isLoading}
+                  loading={isLoading}
+                  haptic
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {isLoading ? (
+                      <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signingIn' : 'authPage.creatingAccount'} />
+                    ) : (
+                      <>
+                        <TranslatedText translationKey={activeTab === 'signin' ? 'auth.signIn' : 'auth.signUp'} />
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </span>
+                </MobileButton>
+
+                {/* Minimal Security Indicator */}
+                <div className="flex items-center justify-center gap-2 opacity-70 pb-6">
+                  <Shield className="w-3 h-3 text-primary" />
+                  <span className="text-xs text-primary">
+                    Secure
+                  </span>
+                  <div className="w-1.5 h-1.5 bg-success rounded-full" />
+                </div>
+              </div>
             </form>
-          </div>
-        </div>
-
-        {/* Minimal Bottom Area - 12% */}
-        <div className="relative z-10 flex-none px-6 pb-6 pt-2 space-y-2">
-          {/* Compact Primary Action Button */}
-          <MobileButton
-            type="submit"
-            variant="medical"
-            size="lg"
-            className="w-full h-12 text-sm font-bold rounded-xl shadow-glow medical-button"
-            disabled={isLoading}
-            loading={isLoading}
-            haptic
-            onClick={activeTab === 'signin' ? handleSignIn : handleSignUp}
-          >
-            <span className="flex items-center justify-center gap-2">
-              {isLoading ? (
-                <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signingIn' : 'authPage.creatingAccount'} />
-              ) : (
-                <>
-                  <TranslatedText translationKey={activeTab === 'signin' ? 'auth.signIn' : 'auth.signUp'} />
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </span>
-          </MobileButton>
-
-          {/* Minimal Security Indicator */}
-          <div className="flex items-center justify-center gap-2 opacity-70">
-            <Shield className="w-3 h-3 text-primary" />
-            <span className="text-xs text-primary">
-              Secure
-            </span>
-            <div className="w-1.5 h-1.5 bg-success rounded-full" />
           </div>
         </div>
       </div>
