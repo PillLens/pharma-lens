@@ -59,10 +59,8 @@
     --destructive-light: 0 75% 70%;
     --destructive-glow: 0 65% 75%;
 
-    /* Fixed mobile navigation variables */
-    --nav-h: 64px;
-    --gap: 48px;
-    --safe: env(safe-area-inset-bottom, 0px);
+    /* Mobile navigation variables - Strategy A */
+    --bottom-nav-h: 64px;
     --touch-target: 44px;
   }
 
@@ -124,7 +122,7 @@
     #root {
       overflow-y: auto;
       overflow-x: hidden;
-      height: 100dvh;
+      min-height: 100dvh;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       scroll-behavior: smooth;
@@ -137,23 +135,15 @@
     min-width: var(--touch-target);
   }
 
-  .safe-area-bottom {
-    padding-bottom: var(--safe);
-  }
-
-  .h-safe-area-inset-bottom {
-    height: var(--safe);
-  }
-
-  /* Mobile navigation spacing classes */
+  /* Mobile navigation spacing classes - Strategy A */
   .main-scroll {
-    padding-bottom: calc(var(--nav-h) + var(--gap));
+    padding-bottom: calc(var(--bottom-nav-h, 64px) + 48px);
   }
 
   .bottom-nav {
     position: fixed;
-    bottom: var(--safe);
-    height: var(--nav-h);
+    bottom: env(safe-area-inset-bottom);
+    height: var(--bottom-nav-h, 64px);
   }
 
   /* Enhanced mobile navigation styles */
