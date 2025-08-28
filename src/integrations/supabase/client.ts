@@ -16,6 +16,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   },
   realtime: {
     // Disable WebSocket in PWA mode if it causes security issues
-    transport: typeof window !== 'undefined' && window.location.protocol === 'https:' && !window.navigator.standalone ? 'websocket' : 'sse'
+    transport: (typeof window !== 'undefined' && window.location.protocol === 'https:' && 
+      !(window as any).navigator?.standalone ? 'websocket' : 'sse') as any
   }
 });

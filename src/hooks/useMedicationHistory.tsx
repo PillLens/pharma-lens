@@ -33,7 +33,7 @@ export const useMedicationHistory = () => {
       const { data, error } = await supabase
         .from('user_medications' as any)
         .select('*')
-        .eq('user_id', user.id)
+      .eq('user_id' as any, user.id as any)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -72,7 +72,7 @@ export const useMedicationHistory = () => {
         .insert([{
           ...medication,
           user_id: user.id
-        }])
+        } as any])
         .select()
         .single();
 
@@ -112,9 +112,9 @@ export const useMedicationHistory = () => {
     try {
       const { data, error } = await supabase
         .from('user_medications' as any)
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
+      .update(updates as any)
+      .eq('id' as any, id as any)
+      .eq('user_id' as any, user.id as any)
         .select()
         .single();
 
@@ -157,8 +157,8 @@ export const useMedicationHistory = () => {
       const { error } = await supabase
         .from('user_medications' as any)
         .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
+        .eq('id' as any, id as any)
+        .eq('user_id' as any, user.id as any);
 
       if (error) {
         console.error('Error removing medication:', error);

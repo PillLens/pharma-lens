@@ -69,7 +69,7 @@ export const useDashboardData = () => {
           extractions (extracted_json, quality_score, risk_flags),
           products (brand_name, generic_name, strength, form)
         `)
-        .eq('user_id', user.id)
+        .eq('user_id' as any, user.id as any)
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -86,17 +86,17 @@ export const useDashboardData = () => {
             frequency
           )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id' as any, user.id as any);
 
       if (remindersError) throw remindersError;
 
       // Calculate stats first
       const activeMedications = medications.filter(m => m.is_active);
-      const activeReminders = reminders?.filter(r => r.is_active) || [];
+      const activeReminders = (reminders as any)?.filter((r: any) => r.is_active) || [];
       
       // Get today's scheduled reminders based on active reminders and current day
       const currentDayOfWeek = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const todaysReminders = activeReminders.filter(reminder => 
+      const todaysReminders = activeReminders.filter((reminder: any) => 
         reminder.days_of_week.includes(currentDayOfWeek === 0 ? 7 : currentDayOfWeek) // Convert Sunday (0) to 7
       );
 
@@ -125,11 +125,11 @@ export const useDashboardData = () => {
           const { data: todaysAdherenceData } = await supabase
             .from('medication_adherence_log')
             .select('status')
-            .eq('user_id', user.id)
+            .eq('user_id' as any, user.id as any)
             .gte('scheduled_time', startOfDay.toISOString())
             .lte('scheduled_time', endOfDay.toISOString());
           
-          const takenToday = todaysAdherenceData?.filter(a => a.status === 'taken').length || 0;
+          const takenToday = (todaysAdherenceData as any)?.filter((a: any) => a.status === 'taken').length || 0;
           
           todaysAdherence = {
             totalToday: totalDosesToday,
@@ -158,8 +158,8 @@ export const useDashboardData = () => {
           family_groups (name, creator_id),
           user_id
         `)
-        .eq('user_id', user.id)
-        .eq('invitation_status', 'accepted');
+        .eq('user_id' as any, user.id as any)
+        .eq('invitation_status' as any, 'accepted' as any);
 
       if (familyError) throw familyError;
 
@@ -176,7 +176,7 @@ export const useDashboardData = () => {
           const { data: recentAdherence, error } = await supabase
             .from('medication_adherence_log')
             .select('*')
-            .eq('user_id', user.id)
+            .eq('user_id' as any, user.id as any)
             .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
             .order('scheduled_time', { ascending: false });
 
@@ -186,13 +186,13 @@ export const useDashboardData = () => {
           const dailyTaken = new Map();
           
           // Group by date and check if all doses were taken each day
-          recentAdherence?.forEach(log => {
+          (recentAdherence as any)?.forEach((log: any) => {
             const date = new Date(log.scheduled_time).toDateString();
             if (!dailyTaken.has(date)) {
               dailyTaken.set(date, { taken: 0, total: 0 });
             }
             dailyTaken.get(date).total++;
-            if (log.status === 'taken') {
+            if ((log as any).status === 'taken') {
               dailyTaken.get(date).taken++;
             }
           });
@@ -224,19 +224,19 @@ export const useDashboardData = () => {
       let nextReminder;
       
       // Sort today's reminders by time
-      const todaysRemindersSorted = [...todaysReminders].sort((a, b) => {
+      const todaysRemindersSorted = [...todaysReminders].sort((a: any, b: any) => {
         const [aHours, aMinutes] = a.reminder_time.split(':').map(Number);
         const [bHours, bMinutes] = b.reminder_time.split(':').map(Number);
         return (aHours * 60 + aMinutes) - (bHours * 60 + bMinutes);
       });
       
       for (const reminder of todaysRemindersSorted) {
-        const reminderTime = reminder.reminder_time;
+        const reminderTime = (reminder as any).reminder_time;
         const [hours, minutes] = reminderTime.split(':').map(Number);
         const reminderMinutes = hours * 60 + minutes;
         
         if (reminderMinutes > currentTime) {
-          const medication = medications.find(m => m.id === reminder.medication_id);
+          const medication = medications.find(m => m.id === (reminder as any).medication_id);
           nextReminder = {
             medication: medication?.medication_name || 'Unknown',
             time: reminderTime
@@ -270,7 +270,7 @@ export const useDashboardData = () => {
           missedToday: missedToday
         },
         family: {
-          groups: new Set(familyGroups?.map(fg => fg.family_group_id)).size || 0,
+          groups: new Set((familyGroups as any)?.map((fg: any) => fg.family_group_id)).size || 0,
           members: familyGroups?.length || 0
         }
       });

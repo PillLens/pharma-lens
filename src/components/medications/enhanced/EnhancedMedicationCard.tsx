@@ -105,8 +105,8 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
         const { data: adherenceData, error: adherenceError } = await supabase
           .from('medication_adherence_log')
           .select('status, scheduled_time, taken_time')
-          .eq('user_id', user.id)
-          .eq('medication_id', medication.id)
+          .eq('user_id' as any, user.id as any)
+          .eq('medication_id' as any, medication.id as any)
           .gte('scheduled_time', sevenDaysAgo.toISOString())
           .order('scheduled_time', { ascending: false });
 
@@ -114,7 +114,7 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
 
         // Calculate adherence rate
         const totalDoses = adherenceData?.length || 0;
-        const takenDoses = adherenceData?.filter(d => d.status === 'taken').length || 0;
+        const takenDoses = (adherenceData as any)?.filter((d: any) => d.status === 'taken').length || 0;
         const adherenceRate = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 100;
 
         // Calculate streak using direct SQL query since RPC function not in types
@@ -123,21 +123,21 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
           const { data: streakData } = await supabase
             .from('medication_adherence_log')
             .select('scheduled_time, status')
-            .eq('user_id', user.id)
-            .eq('medication_id', medication.id)
+            .eq('user_id' as any, user.id as any)
+            .eq('medication_id' as any, medication.id as any)
             .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
             .order('scheduled_time', { ascending: false });
 
           if (streakData && streakData.length > 0) {
             const dailyTaken = new Map();
             
-            streakData.forEach(log => {
+            (streakData as any)?.forEach((log: any) => {
               const date = new Date(log.scheduled_time).toDateString();
               if (!dailyTaken.has(date)) {
                 dailyTaken.set(date, { taken: 0, total: 0 });
               }
               dailyTaken.get(date).total++;
-              if (log.status === 'taken') {
+              if ((log as any).status === 'taken') {
                 dailyTaken.get(date).taken++;
               }
             });

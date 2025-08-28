@@ -45,23 +45,23 @@ export const usePushNotifications = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('notification_preferences')
-        .eq('id', user.id)
+      .eq('id' as any, user.id as any)
         .single();
 
       if (error) throw error;
 
-      if (data?.notification_preferences) {
-        const dbPreferences = data.notification_preferences as any;
-        // Ensure all required fields exist with defaults
+    if (data) {
+      const prefs = (data as any).notification_preferences;
+      const emergencyOnly = prefs?.emergency_only || false;
         setPreferences({
-          enabled: dbPreferences.enabled ?? true,
-          reminders: dbPreferences.reminders ?? true,
-          missedDose: dbPreferences.missedDose ?? true,
-          family: dbPreferences.family ?? true,
-          product: dbPreferences.product ?? false,
+          enabled: prefs.enabled ?? true,
+          reminders: prefs.reminders ?? true,
+          missedDose: prefs.missedDose ?? true,
+          family: prefs.family ?? true,
+          product: prefs.product ?? false,
           quietHours: {
-            start: dbPreferences.quietHours?.start ?? '22:00',
-            end: dbPreferences.quietHours?.end ?? '07:00'
+            start: prefs.quietHours?.start ?? '22:00',
+            end: prefs.quietHours?.end ?? '07:00'
           }
         });
       }
@@ -90,8 +90,8 @@ export const usePushNotifications = () => {
         .from('profiles')
         .update({
           notification_preferences: updatedPreferences as any
-        })
-        .eq('id', user.id);
+        } as any)
+        .eq('id' as any, user.id as any);
 
       if (error) throw error;
 

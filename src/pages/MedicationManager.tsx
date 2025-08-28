@@ -155,7 +155,7 @@ const MedicationManager: React.FC = () => {
         const { data: recentAdherence } = await supabase
           .from('medication_adherence_log')
           .select('scheduled_time, status')
-          .eq('user_id', user.id)
+          .eq('user_id' as any, user.id as any)
           .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
           .order('scheduled_time', { ascending: false });
 
@@ -169,7 +169,7 @@ const MedicationManager: React.FC = () => {
               dailyTaken.set(date, { taken: 0, total: 0 });
             }
             dailyTaken.get(date).total++;
-            if (log.status === 'taken') {
+            if ((log as any).status === 'taken') {
               dailyTaken.get(date).taken++;
             }
           });

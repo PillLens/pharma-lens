@@ -31,7 +31,7 @@ export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = (
         const { data, error } = await supabase
           .from('profiles')
           .select('notification_permission_asked')
-          .eq('id', user.id)
+          .eq('id' as any, user.id as any)
           .single();
 
         if (error) throw error;
@@ -71,7 +71,7 @@ export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = (
         await supabase
           .from('profiles')
           .update({ notification_permission_asked: true } as any)
-          .eq('id', user.id);
+          .eq('id' as any, user.id as any);
       } else {
         localStorage.setItem('notification_permission_asked', 'true');
       }
@@ -92,7 +92,7 @@ export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = (
         await supabase
           .from('profiles')
           .update({ notification_permission_asked: true } as any)
-          .eq('id', user.id);
+          .eq('id' as any, user.id as any);
       } else {
         localStorage.setItem('notification_permission_asked', 'true');
       }

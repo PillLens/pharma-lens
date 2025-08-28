@@ -26,7 +26,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id' as any, user.id as any)
         .single();
 
       if (error) throw error;
@@ -62,7 +62,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       await supabase
         .from('profiles')
         .update({ notification_permission_asked: true } as any)
-        .eq('id', user.id);
+        .eq('id' as any, user.id as any);
 
       setShowDialog(false);
     } catch (error) {
@@ -80,7 +80,7 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
       await supabase
         .from('profiles')
         .update({ notification_permission_asked: true } as any)
-        .eq('id', user.id);
+        .eq('id' as any, user.id as any);
 
       // Ensure notifications are disabled
       await updatePreferences({ enabled: false });

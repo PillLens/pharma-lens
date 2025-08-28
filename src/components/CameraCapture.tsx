@@ -43,7 +43,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('barcode', barcode)
+        .eq('barcode' as any, barcode as any)
         .single();
 
       if (error && error.code !== 'PGRST116') { // Not found is OK
@@ -81,13 +81,13 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
           language,
           region: getRegionFromLanguage(language),
           images: capturedImage ? [capturedImage] : [],
-        })
+        } as any)
         .select()
         .single();
 
       if (sessionError) throw sessionError;
 
-      const newSessionId = sessionData.id;
+      const newSessionId = (sessionData as any)?.id;
       setSessionId(newSessionId);
 
       // Save extraction data if available
@@ -99,7 +99,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
             extracted_json: extractionData,
             quality_score: extractionData.confidence_score || 0,
             risk_flags: calculateRiskFlags(extractionData),
-          });
+          } as any);
 
         if (extractionError) {
           console.error('Error saving extraction:', extractionError);
