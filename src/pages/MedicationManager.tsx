@@ -77,14 +77,25 @@ const MedicationManager: React.FC = () => {
 
       for (const medication of activeMedications) {
         try {
-          // Use the proper timing service instead of legacy utility
-          const timingInfo = await import('@/services/medicationTimingService').then(
-            module => module.medicationTimingService.getNextDoseTime(
-              medication.id, 
-              user.id, 
-              timezone,
-              false // Don't assume recently taken
-            )
+          // Check if medication was recently taken first
+          const recentDoseCheck = await medicationTimingService.checkRecentDose(
+            medication.id, 
+            user.id, 
+            timezone
+          );
+
+          // If recently taken, skip adding to due/overdue lists
+          if (recentDoseCheck.recentlyTaken) {
+            console.log(`${medication.medication_name} was recently taken, skipping due/overdue check`);
+            continue;
+          }
+
+          // Get timing info only if not recently taken
+          const timingInfo = await medicationTimingService.getNextDoseTime(
+            medication.id, 
+            user.id, 
+            timezone,
+            false // We already checked for recent doses above
           );
 
           // Only add to due if actually due right now (not overdue)
