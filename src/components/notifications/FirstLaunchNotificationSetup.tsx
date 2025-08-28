@@ -25,9 +25,12 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('notification_permission_asked')
         .eq('id', user.id)
-        .single();
+        .single() as {
+          data: { notification_permission_asked?: boolean } | null;
+          error: any;
+        };
 
       if (error) throw error;
 

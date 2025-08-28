@@ -108,7 +108,14 @@ const EnhancedMedicationCard: React.FC<EnhancedMedicationCardProps> = ({
           .eq('user_id', user.id)
           .eq('medication_id', medication.id)
           .gte('scheduled_time', sevenDaysAgo.toISOString())
-          .order('scheduled_time', { ascending: false });
+          .order('scheduled_time', { ascending: false }) as {
+            data: Array<{
+              status: string;
+              scheduled_time: string;
+              taken_time: string | null;
+            }> | null;
+            error: any;
+          };
 
         if (adherenceError) throw adherenceError;
 
