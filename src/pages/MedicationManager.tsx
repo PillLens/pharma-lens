@@ -26,6 +26,8 @@ import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useReminders } from '@/hooks/useReminders';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
+import { getBrowserTimezone } from '@/utils/timezoneUtils';
+import { medicationTimingService } from '@/services/medicationTimingService';
 
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
@@ -346,20 +348,31 @@ const MedicationManager: React.FC = () => {
     if (!user) return;
 
     try {
-      // Use the scheduled dose service to properly record the dose
-      // This prevents duplicate entries and uses proper time calculation
+      // Get the medication and its timing info
       const medication = medications.find(m => m.id === medicationId);
       if (!medication) return;
 
-      // Get the current reminder time for this medication
-      // For now, use current time in HH:MM format as a fallback
-      const now = new Date();
-      const reminderTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      // Get the current reminder time for this medication using the timing service
+      const timezone = getBrowserTimezone();
+      const timingResult = await medicationTimingService.getNextDoseTime(medication.id, user.id, timezone, true);
+      
+      let reminderTimeToUse = '';
+      
+      if (timingResult.currentReminderTime) {
+        // Use the actual scheduled reminder time that's due/overdue
+        reminderTimeToUse = timingResult.currentReminderTime;
+        console.log('Using scheduled reminder time:', reminderTimeToUse, 'for medication:', medication.medication_name);
+      } else {
+        // Fallback: use current time if no specific reminder found
+        const now = new Date();
+        reminderTimeToUse = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        console.log('Fallback to current time:', reminderTimeToUse, 'for medication:', medication.medication_name);
+      }
       
       const success = await scheduledDoseService.markScheduledDoseAsTaken(
         user.id,
         medicationId,
-        reminderTime,
+        reminderTimeToUse,
         'Marked via Take Now button'
       );
 
@@ -369,7 +382,7 @@ const MedicationManager: React.FC = () => {
           duration: 3000,
         });
 
-        // Refresh medications to update stats
+        // Refresh medications to update stats and clear overdue status
         refetch();
       } else {
         throw new Error('Failed to record dose');
@@ -385,15 +398,24 @@ const MedicationManager: React.FC = () => {
       if (!user || dueMedications.length === 0) return;
       
       try {
-        // Mark all due medications as taken using the service
+        // Mark all due medications as taken using their actual scheduled times
         const results = await Promise.all(
-          dueMedications.map(medication => {
-            const now = new Date();
-            const reminderTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+          dueMedications.map(async medication => {
+            const timezone = getBrowserTimezone();
+            const timingResult = await medicationTimingService.getNextDoseTime(medication.id, user.id, timezone, true);
+            
+            let reminderTimeToUse = '';
+            if (timingResult.currentReminderTime) {
+              reminderTimeToUse = timingResult.currentReminderTime;
+            } else {
+              const now = new Date();
+              reminderTimeToUse = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            }
+            
             return scheduledDoseService.markScheduledDoseAsTaken(
               user.id,
               medication.id,
-              reminderTime,
+              reminderTimeToUse,
               'Marked via Mark All Taken'
             );
           })
