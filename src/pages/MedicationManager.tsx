@@ -57,24 +57,57 @@ const MedicationManager: React.FC = () => {
   const activeMedications = medications.filter(m => m.is_active);
   const inactiveMedications = medications.filter(m => !m.is_active);
   
-  // Get medications that are actually due right now (not overdue or upcoming)
-  const getDueMedications = () => {
-    return activeMedications.filter(med => {
-      const doseStatus = getNextDoseTime(med.frequency, timezone);
-      return doseStatus.isDue; // Only medications that are actually due now
-    });
-  };
+  // Get medications using real timing service instead of legacy function
+  const [dueMedications, setDueMedications] = useState<UserMedication[]>([]);
+  const [overdueMedications, setOverdueMedications] = useState<UserMedication[]>([]);
 
-  // Get overdue medications  
-  const getOverdueMedications = () => {
-    return activeMedications.filter(med => {
-      const doseStatus = getNextDoseTime(med.frequency, timezone);
-      return doseStatus.isOverdue; // Only medications that are overdue
-    });
-  };
+  // Update due/overdue medications using real timing service
+  useEffect(() => {
+    const updateMedicationTimings = async () => {
+      if (!user || !activeMedications.length) {
+        setDueMedications([]);
+        setOverdueMedications([]);
+        return;
+      }
 
-  const dueMedications = getDueMedications();
-  const overdueMedications = getOverdueMedications();
+      const due: UserMedication[] = [];
+      const overdue: UserMedication[] = [];
+
+      for (const medication of activeMedications) {
+        try {
+          // Use the proper timing service instead of legacy utility
+          const timingInfo = await import('@/services/medicationTimingService').then(
+            module => module.medicationTimingService.getNextDoseTime(
+              medication.id, 
+              user.id, 
+              timezone,
+              false // Don't assume recently taken
+            )
+          );
+
+          // Only add to due if actually due right now (not overdue)
+          if (timingInfo.isDue && !timingInfo.isOverdue) {
+            due.push(medication);
+          }
+          // Only add to overdue if actually overdue
+          else if (timingInfo.isOverdue) {
+            overdue.push(medication);
+          }
+        } catch (error) {
+          console.error(`Error checking timing for ${medication.medication_name}:`, error);
+        }
+      }
+
+      setDueMedications(due);
+      setOverdueMedications(overdue);
+    };
+
+    updateMedicationTimings();
+    
+    // Update every minute to keep timing accurate
+    const interval = setInterval(updateMedicationTimings, 60000);
+    return () => clearInterval(interval);
+  }, [user, activeMedications, timezone]);
   const expiredMedications = medications.filter(m => {
     if (!m.end_date) return false;
     return new Date(m.end_date) < new Date();
@@ -83,26 +116,89 @@ const MedicationManager: React.FC = () => {
   // All medications that need attention (due + overdue)
   const medicationsNeedingAttention = [...dueMedications, ...overdueMedications];
 
-  // Generate stable stats
-  const generateStableStats = () => {
-    if (medications.length === 0) return { adherence: 0, streak: 0, interactions: 0, refillsNeeded: 0 };
-    const seed = medications.map(m => m.id).join('');
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      const char = seed.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    const baseHash = Math.abs(hash);
-    return {
-      adherence: 92 + (baseHash % 8), // 92-99%
-      streak: 5 + (baseHash % 20), // 5-24 days
-      interactions: baseHash % 3, // 0-2 interactions
-      refillsNeeded: Math.floor(baseHash % 4) // 0-3 refills needed
-    };
-  };
+  // Real stats from actual adherence data
+  const [realStats, setRealStats] = useState({
+    adherence: 0,
+    streak: 0,
+    interactions: 0,
+    refillsNeeded: 0
+  });
 
-  const stats = generateStableStats();
+  // Fetch real statistics
+  useEffect(() => {
+    const fetchRealStats = async () => {
+      if (!user || medications.length === 0) return;
+
+      try {
+        // Get today's adherence status
+        const todaysAdherence = await scheduledDoseService.getTodaysAdherenceStatus(user.id);
+        
+        // Calculate adherence rate from today's data
+        const adherenceRate = todaysAdherence.totalToday > 0 
+          ? Math.round((todaysAdherence.completedToday / todaysAdherence.totalToday) * 100) 
+          : 100;
+
+        // Calculate streak from real adherence data
+        const { data: recentAdherence } = await supabase
+          .from('medication_adherence_log')
+          .select('scheduled_time, status')
+          .eq('user_id', user.id)
+          .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+          .order('scheduled_time', { ascending: false });
+
+        let streak = 0;
+        if (recentAdherence && recentAdherence.length > 0) {
+          const dailyTaken = new Map();
+          
+          recentAdherence.forEach(log => {
+            const date = new Date(log.scheduled_time).toDateString();
+            if (!dailyTaken.has(date)) {
+              dailyTaken.set(date, { taken: 0, total: 0 });
+            }
+            dailyTaken.get(date).total++;
+            if (log.status === 'taken') {
+              dailyTaken.get(date).taken++;
+            }
+          });
+
+          const sortedDates = Array.from(dailyTaken.keys())
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+          
+          for (const date of sortedDates) {
+            const dayData = dailyTaken.get(date);
+            if (dayData.taken >= dayData.total && dayData.total > 0) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+        }
+
+        // Get refills needed count
+        const expiredMeds = medications.filter(m => {
+          if (!m.end_date) return false;
+          const endDate = new Date(m.end_date);
+          const today = new Date();
+          const diffTime = endDate.getTime() - today.getTime();
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          return diffDays <= 7; // Within 7 days of expiry
+        }).length;
+
+        setRealStats({
+          adherence: adherenceRate,
+          streak: streak,
+          interactions: 0, // Would need real interaction checking
+          refillsNeeded: expiredMeds
+        });
+
+      } catch (error) {
+        console.error('Error fetching real stats:', error);
+        // Keep existing values on error
+      }
+    };
+
+    fetchRealStats();
+  }, [user, medications]);
 
   // Filter medications based on current filter
   const getFilteredMedications = () => {
@@ -382,7 +478,7 @@ const MedicationManager: React.FC = () => {
                     },
                     {
                       icon: TrendingUp,
-                      value: `${stats.adherence}%`,
+                      value: `${realStats.adherence}%`,
                       label: "Adherence",
                       color: 'text-success',
                       bgColor: 'bg-success/10',
@@ -390,7 +486,7 @@ const MedicationManager: React.FC = () => {
                     },
                     {
                       icon: Zap,
-                      value: stats.streak,
+                      value: realStats.streak,
                       label: "Day Streak",
                       color: 'text-warning',
                       bgColor: 'bg-warning/10',
@@ -398,7 +494,7 @@ const MedicationManager: React.FC = () => {
                     },
                     {
                       icon: Calendar,
-                      value: stats.refillsNeeded,
+                      value: realStats.refillsNeeded,
                       label: "Refills Due",
                       color: 'text-info',
                       bgColor: 'bg-info/10',
@@ -579,12 +675,12 @@ const MedicationManager: React.FC = () => {
                   <MobileCardContent className="space-y-6">
                     <div className="grid grid-cols-2 gap-6">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-success mb-1">{stats.adherence}%</div>
+                        <div className="text-3xl font-bold text-success mb-1">{realStats.adherence}%</div>
                         <div className="text-sm text-muted-foreground">This Month</div>
-                        <Progress value={stats.adherence} className="h-2 mt-2" />
+                        <Progress value={realStats.adherence} className="h-2 mt-2" />
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-primary mb-1">{stats.streak}</div>
+                        <div className="text-3xl font-bold text-primary mb-1">{realStats.streak}</div>
                         <div className="text-sm text-muted-foreground">Day Streak</div>
                         <div className="flex items-center justify-center mt-2">
                           <Zap className="w-4 h-4 text-warning mr-1" />
@@ -604,12 +700,12 @@ const MedicationManager: React.FC = () => {
                     </MobileCardTitle>
                   </MobileCardHeader>
                   <MobileCardContent className="space-y-4">
-                    {stats.interactions > 0 ? (
+                    {realStats.interactions > 0 ? (
                       <div className="flex items-center justify-between p-4 rounded-xl bg-warning/10 border border-warning/20">
                         <div className="flex items-center gap-3">
                           <AlertTriangle className="w-5 h-5 text-warning" />
                           <div>
-                            <div className="font-medium text-foreground">{stats.interactions} Potential Interactions</div>
+                            <div className="font-medium text-foreground">{realStats.interactions} Potential Interactions</div>
                             <div className="text-sm text-warning">Review with your pharmacist</div>
                           </div>
                         </div>
@@ -630,7 +726,7 @@ const MedicationManager: React.FC = () => {
                 </MobileCard>
 
                 {/* Refill Tracking */}
-                {stats.refillsNeeded > 0 && (
+                {realStats.refillsNeeded > 0 && (
                   <MobileCard>
                     <MobileCardHeader>
                       <MobileCardTitle className="flex items-center gap-2">
@@ -639,7 +735,7 @@ const MedicationManager: React.FC = () => {
                       </MobileCardTitle>
                     </MobileCardHeader>
                     <MobileCardContent className="space-y-3">
-                      {activeMedications.slice(0, stats.refillsNeeded).map((medication) => (
+                      {activeMedications.slice(0, realStats.refillsNeeded).map((medication) => (
                         <div key={medication.id} className="flex items-center justify-between p-3 rounded-xl bg-info/10 border border-info/20">
                           <div className="flex items-center gap-3">
                             <Pill className="w-5 h-5 text-info" />
