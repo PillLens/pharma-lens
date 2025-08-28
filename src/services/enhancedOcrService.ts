@@ -1,5 +1,17 @@
 import { createWorker, PSM } from 'tesseract.js';
 
+// Configure tesseract.js for browser security
+const workerConfig = {
+  workerPath: 'https://unpkg.com/tesseract.js@5.1.1/dist/worker.min.js',
+  langPath: 'https://tessdata.projectnaptha.com/4.0.0_fast',
+  corePath: 'https://unpkg.com/tesseract.js-core@5.1.0/tesseract-core-simd.wasm.js',
+  logger: (m: any) => {
+    if (m.status === 'recognizing text') {
+      console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+    }
+  }
+};
+
 export interface OCRResult {
   text: string;
   confidence: number;
@@ -49,7 +61,7 @@ export class EnhancedOCRService {
     
     try {
       console.log('Enhanced OCR: Creating worker for language:', language);
-      const worker = await createWorker(language);
+      const worker = await createWorker(language, 1, workerConfig);
       const config = this.languageConfig[language];
       
       console.log('Enhanced OCR: Setting parameters for worker...');
