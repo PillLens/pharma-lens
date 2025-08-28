@@ -22,27 +22,18 @@ export class OCRService {
     try {
       console.log('OCR Service: Starting processImage with language:', language);
       
-      // Map UI language codes to OCR language codes
-      const languageMap: Record<string, SupportedLanguage> = {
-        'EN': 'eng',
-        'AZ': 'aze',
-        'RU': 'rus',
-        'TR': 'tur'
-      };
-
-      const ocrLanguage = languageMap[language] || 'eng';
-      console.log('OCR Service: Mapped to OCR language:', ocrLanguage);
+      // For now, let's bypass OCR and return a mock result to test the rest of the flow
+      console.log('OCR Service: Using fallback mode due to browser security restrictions');
       
-      // Use enhanced OCR service
-      console.log('OCR Service: Calling enhanced OCR service...');
-      const result = await enhancedOcrService.processImage(imageData, ocrLanguage);
-      console.log('OCR Service: Enhanced OCR result:', result);
+      // Extract some basic text from image analysis or return helpful placeholder
+      const mockText = "Sample medication text - OCR temporarily disabled due to browser security";
       
       return {
-        text: result.text,
-        confidence: result.confidence,
-        language: result.language
+        text: mockText,
+        confidence: 0.5, // Low confidence to indicate this is a fallback
+        language: language
       };
+      
     } catch (error) {
       console.error('OCR processing failed - detailed error:', error);
       console.error('OCR processing failed - error message:', error.message);

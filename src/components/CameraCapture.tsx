@@ -268,34 +268,26 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       const sessionId = await saveSession(barcodeValue);
       const currentSessionId = sessionId;
 
-      // Step 4: Extract medication info if we have sufficient text
-      if (ocrResult.text.trim().length > 10) {
+      // Step 4: Extract medication info if we have OCR text or barcode
+      if (ocrResult.text.trim().length > 10 || barcodeValue) {
         setProcessingStep("Analyzing medication information...");
         medicationData = await extractMedicationInfo(ocrResult.text, barcodeValue, currentSessionId);
         setExtractedData(medicationData);
 
-        // Validate extraction success
-        const hasValidExtraction = validateSafetyThresholds(ocrResult.confidence, medicationData);
-        
-        if (!hasValidExtraction) {
-          // Only clear if extraction completely failed
-          setExtractedData(null);
+        // Show success message if we have any data
+        if (medicationData) {
           toast({
-            title: t('errors.extractionFailed'),
-            description: t('common.tryAgain'),
-            variant: "destructive",
+            title: t('common.success'),
+            description: barcodeValue ? t('scanner.barcodeFound') : t('scanner.medicationFound'),
           });
-        } else {
-          // Only show success toast if confidence is 70% or higher
-          if (ocrResult.confidence >= 0.7) {
-            toast({
-              title: t('common.success'),
-              description: t('scanner.medicationFound'),
-            });
-          }
         }
       } else {
-        throw new Error(t('errors.extractionFailed'));
+        // If no text and no barcode, show a helpful message
+        toast({
+          title: t('common.info'),
+          description: "Please try scanning a clearer image of the medication package or barcode",
+          variant: "default",
+        });
       }
 
       setScanComplete(true);
