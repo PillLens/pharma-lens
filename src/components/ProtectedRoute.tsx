@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
@@ -10,6 +10,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -19,12 +20,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Allow desktop access without authentication
+  // Desktop logic: only allow home page without authentication
   if (!isMobile) {
+    if (!user && location.pathname !== '/') {
+      return <Navigate to="/auth" replace />;
+    }
     return <>{children}</>;
   }
 
-  // Mobile users still require authentication
+  // Mobile users still require authentication for all pages
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
