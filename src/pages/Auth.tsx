@@ -99,9 +99,9 @@ export default function Auth() {
         {/* Ultra-Compact Header - 10% */}
         <div className="relative z-10 flex-none px-6 pt-8 pb-2">
           <div className="text-center space-y-2">
-            {/* Minimized App Icon */}
-            <div className="w-12 h-12 mx-auto medical-surface rounded-xl flex items-center justify-center shadow-soft">
-              <Stethoscope className="w-6 h-6 text-primary" />
+            {/* PillLens Logo */}
+            <div className="w-12 h-12 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
+              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-12 h-12 object-cover" />
             </div>
             
             {/* Minimized Title */}
