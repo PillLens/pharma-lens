@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { DesktopSidebar } from './DesktopSidebar';
@@ -15,7 +16,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen bg-background flex flex-col" style={{ minHeight: '100dvh' }}>
         <main className="flex-1 min-h-0 overflow-y-auto main-scroll remove-last-margin" data-scrollable>
-          <div className="min-h-full px-4 py-4">
+          <div className="min-h-full">
             {children}
           </div>
         </main>

@@ -59,9 +59,9 @@
     --destructive-light: 0 75% 70%;
     --destructive-glow: 0 65% 75%;
 
-    /* Optimized mobile navigation variables */
+    /* Fixed mobile navigation variables */
     --nav-h: 64px;
-    --gap: 24px; /* Reduced from 48px to 24px */
+    --gap: 48px;
     --safe: env(safe-area-inset-bottom, 0px);
     --touch-target: 44px;
   }
