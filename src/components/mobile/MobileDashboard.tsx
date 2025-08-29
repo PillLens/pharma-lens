@@ -10,29 +10,28 @@ import RecentScansCarousel from './RecentScansCarousel';
 import QuickActionCards from './QuickActionCards';
 import TodaysOverview from './TodaysOverview';
 import EnhancedFAB from './DraggableEnhancedFAB';
-
 interface MobileDashboardProps {
   onScanPress: () => void;
   language: string;
 }
-
-const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language }) => {
+const MobileDashboard: React.FC<MobileDashboardProps> = ({
+  onScanPress,
+  language
+}) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [showFABMenu, setShowFABMenu] = useState(false);
-
   const handleEmergencyAccess = () => {
     // Quick access to critical medications
     navigate('/medications?filter=critical');
   };
-
   const handleVoiceSearch = () => {
     // Voice search functionality (Phase 3)
     console.log('Voice search activated');
   };
-
-  return (
-    <>
+  return <>
       {/* Welcome Header */}
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-center justify-between mb-1">
@@ -58,13 +57,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language
 
       {/* Central Scan Button */}
       <div className="px-4 py-6">
-        <MobileButton
-          size="xl"
-          variant="scan"
-          onClick={onScanPress}
-          className="w-full h-20 text-lg font-semibold relative overflow-hidden group"
-          haptic
-        >
+        <MobileButton size="xl" variant="scan" onClick={onScanPress} className="w-full h-20 text-lg font-semibold relative overflow-hidden group" haptic>
           <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary-glow to-primary opacity-90 group-active:opacity-100 transition-opacity" />
           <div className="relative z-10 flex items-center justify-center gap-3">
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
@@ -91,19 +84,10 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ onScanPress, language
       </div>
 
       {/* Extra bottom spacing for navigation */}
-      <div className="h-8" />
+      
 
       {/* Enhanced FAB */}
-      <EnhancedFAB 
-        onScanPress={onScanPress}
-        onVoicePress={handleVoiceSearch}
-        onEmergencyPress={handleEmergencyAccess}
-        isMenuOpen={showFABMenu}
-        onMenuToggle={() => setShowFABMenu(!showFABMenu)}
-        routeKey="dashboard"
-      />
-    </>
-  );
+      <EnhancedFAB onScanPress={onScanPress} onVoicePress={handleVoiceSearch} onEmergencyPress={handleEmergencyAccess} isMenuOpen={showFABMenu} onMenuToggle={() => setShowFABMenu(!showFABMenu)} routeKey="dashboard" />
+    </>;
 };
-
 export default MobileDashboard;
