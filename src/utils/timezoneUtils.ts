@@ -211,3 +211,18 @@ export const getNextDoseTime = (
 export const formatTimeInTimezone = (date: Date, timezone: string, formatStr: string = 'HH:mm'): string => {
   return formatInTimeZone(date, timezone, formatStr);
 };
+
+/**
+ * Creates a consistent scheduled time for medication reminders
+ * This ensures all functions use identical time construction
+ */
+export const createScheduledTime = (reminderTime: string, timezone: string = 'UTC'): Date => {
+  const today = new Date();
+  const [hours, minutes] = reminderTime.split(':').map(Number);
+  
+  // Use consistent time construction method across all functions
+  const scheduledTime = new Date(today);
+  scheduledTime.setHours(hours, minutes, 0, 0);
+  
+  return scheduledTime;
+};

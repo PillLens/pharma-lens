@@ -16,7 +16,7 @@ import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayo
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime } from '@/utils/timezoneUtils';
+import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime, createScheduledTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 import { medicationAdherenceService } from '@/services/medicationAdherenceService';
@@ -281,12 +281,8 @@ const Reminders: React.FC = () => {
       
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
-        // Build the exact scheduled datetime for this specific reminder time today
-        const today = new Date();
-        const [hours, minutes, seconds] = reminderTime.split(':').map(Number);
-        
-        // Create the scheduled time for today in the user's timezone
-        const scheduledDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes, seconds || 0);
+        // Use consistent time construction method
+        const scheduledDateTime = createScheduledTime(reminderTime);
         
         // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
         const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before

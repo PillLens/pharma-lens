@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { createScheduledTime } from '@/utils/timezoneUtils';
 
 export class ScheduledDoseService {
   /**
@@ -38,9 +39,7 @@ export class ScheduledDoseService {
       for (const reminder of reminders) {
         // Check if this reminder should fire today
         if (reminder.days_of_week.includes(currentDayOfWeek)) {
-          const [hours, minutes] = reminder.reminder_time.split(':').map(Number);
-          const scheduledTime = new Date(today);
-          scheduledTime.setHours(hours, minutes, 0, 0);
+          const scheduledTime = createScheduledTime(reminder.reminder_time);
 
           // Check if this scheduled dose already exists
           const { data: existing } = await supabase
@@ -82,10 +81,7 @@ export class ScheduledDoseService {
     notes?: string
   ): Promise<boolean> {
     try {
-      const today = new Date();
-      const [hours, minutes] = reminderTime.split(':').map(Number);
-      const scheduledTime = new Date(today);
-      scheduledTime.setHours(hours, minutes, 0, 0);
+      const scheduledTime = createScheduledTime(reminderTime);
 
       // First, try to find the exact scheduled time entry
       const { data: exactEntry } = await supabase
@@ -160,10 +156,7 @@ export class ScheduledDoseService {
       // If it's a unique constraint error, try to update instead
       if (error.message?.includes('duplicate key') || error.message?.includes('unique constraint')) {
         try {
-          const today = new Date();
-          const [hours, minutes] = reminderTime.split(':').map(Number);
-          const scheduledTime = new Date(today);
-          scheduledTime.setHours(hours, minutes, 0, 0);
+          const scheduledTime = createScheduledTime(reminderTime);
 
           const { error: updateError } = await supabase
             .from('medication_adherence_log')
