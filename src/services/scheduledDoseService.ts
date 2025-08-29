@@ -82,15 +82,19 @@ export class ScheduledDoseService {
   ): Promise<boolean> {
     try {
       const scheduledTime = createScheduledTime(reminderTime);
+      
+      console.log(`[DEBUG] Marking dose as taken - reminderTime: ${reminderTime}, scheduledTime: ${scheduledTime.toISOString()}`);
 
-      // First, try to find the exact scheduled time entry
+      // ONLY try to find the exact scheduled time entry - no nearby search
       const { data: exactEntry } = await supabase
         .from('medication_adherence_log')
-        .select('id, status')
+        .select('id, status, scheduled_time')
         .eq('user_id', userId)
         .eq('medication_id', medicationId)
         .eq('scheduled_time', scheduledTime.toISOString())
         .maybeSingle();
+
+      console.log(`[DEBUG] Found exact entry:`, exactEntry);
 
       if (exactEntry) {
         // Update existing exact entry to taken status
@@ -98,57 +102,31 @@ export class ScheduledDoseService {
           .from('medication_adherence_log')
           .update({
             status: 'taken',
-            taken_time: scheduledTime.toISOString(),
+            taken_time: new Date().toISOString(), // Use current time as taken time
             notes: notes || 'Marked via Take Now button',
             reported_by: userId
           })
           .eq('id', exactEntry.id);
 
+        console.log(`[DEBUG] Updated existing entry, error:`, error);
         return !error;
       }
 
-      // If no exact entry, check within a smaller time window (30 minutes)
-      const windowStart = new Date(scheduledTime.getTime() - 30 * 60 * 1000);
-      const windowEnd = new Date(scheduledTime.getTime() + 30 * 60 * 1000);
-
-      const { data: nearbyEntry } = await supabase
-        .from('medication_adherence_log')
-        .select('id, status, scheduled_time')
-        .eq('user_id', userId)
-        .eq('medication_id', medicationId)
-        .gte('scheduled_time', windowStart.toISOString())
-        .lte('scheduled_time', windowEnd.toISOString())
-        .maybeSingle();
-
-      if (nearbyEntry) {
-        // Update nearby entry to taken status
-        const { error } = await supabase
-          .from('medication_adherence_log')
-          .update({
-            status: 'taken',
-            taken_time: scheduledTime.toISOString(),
-            notes: notes || 'Marked via Take Now button',
-            reported_by: userId
-          })
-          .eq('id', nearbyEntry.id);
-
-        return !error;
-      }
-
-      // No existing entry found, use upsert to handle potential duplicates
+      // No exact entry found, create a new one with upsert
       const { error } = await supabase
         .from('medication_adherence_log')
         .upsert({
           user_id: userId,
           medication_id: medicationId,
           scheduled_time: scheduledTime.toISOString(),
-          taken_time: scheduledTime.toISOString(),
+          taken_time: new Date().toISOString(), // Use current time as taken time
           status: 'taken',
           notes: notes || 'Marked via Take Now button'
         }, {
           onConflict: 'user_id,medication_id,scheduled_time'
         });
 
+      console.log(`[DEBUG] Created new entry, error:`, error);
       return !error;
     } catch (error) {
       console.error('Error marking dose as taken:', error);

@@ -221,8 +221,11 @@ export const createScheduledTime = (reminderTime: string, timezone: string = 'UT
   const [hours, minutes] = reminderTime.split(':').map(Number);
   
   // Use consistent time construction method across all functions
+  // Always set seconds and milliseconds to 0 for consistency
   const scheduledTime = new Date(today);
   scheduledTime.setHours(hours, minutes, 0, 0);
+  
+  console.log(`[DEBUG] createScheduledTime - input: ${reminderTime}, output: ${scheduledTime.toISOString()}`);
   
   return scheduledTime;
 };
