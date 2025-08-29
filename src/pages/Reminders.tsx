@@ -281,24 +281,21 @@ const Reminders: React.FC = () => {
       
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
-        // Use consistent time construction method
+        // Use consistent time construction method - EXACT time matching only
         const scheduledDateTime = createScheduledTime(reminderTime);
         
-        // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
-        const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before
-        const timeEnd = new Date(scheduledDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
-        
+        // Check adherence log for this EXACT scheduled time only - no time windows
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user?.id)
           .eq('medication_id', reminder.medication_id)
-          .gte('scheduled_time', timeStart.toISOString())
-          .lte('scheduled_time', timeEnd.toISOString())
+          .eq('scheduled_time', scheduledDateTime.toISOString())
           .eq('status', 'taken');
         
-        // If there's a taken entry for this specific time slot, mark as taken
+        // If there's a taken entry for this exact time, mark as taken
         if (adherenceLog && adherenceLog.length > 0) {
+          console.log(`[DEBUG] Found taken dose for ${reminderTime}:`, adherenceLog[0]);
           return 'taken';
         }
       }

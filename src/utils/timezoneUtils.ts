@@ -214,16 +214,19 @@ export const formatTimeInTimezone = (date: Date, timezone: string, formatStr: st
 
 /**
  * Creates a consistent scheduled time for medication reminders
- * This ensures all functions use identical time construction
+ * Always creates the same UTC time for the same reminder time on the same day
  */
 export const createScheduledTime = (reminderTime: string, timezone: string = 'UTC'): Date => {
-  const today = new Date();
   const [hours, minutes] = reminderTime.split(':').map(Number);
   
-  // Use consistent time construction method across all functions
-  // Always set seconds and milliseconds to 0 for consistency
-  const scheduledTime = new Date(today);
-  scheduledTime.setHours(hours, minutes, 0, 0);
+  // Create a date for today in UTC, then set the exact time
+  const today = new Date();
+  const year = today.getUTCFullYear();
+  const month = today.getUTCMonth();
+  const date = today.getUTCDate();
+  
+  // Create consistent UTC time - same reminder time always creates same UTC timestamp for same day
+  const scheduledTime = new Date(Date.UTC(year, month, date, hours, minutes, 0, 0));
   
   console.log(`[DEBUG] createScheduledTime - input: ${reminderTime}, output: ${scheduledTime.toISOString()}`);
   
