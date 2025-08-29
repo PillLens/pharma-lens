@@ -29,6 +29,99 @@ import { scheduledDoseService } from '@/services/scheduledDoseService';
 import { getBrowserTimezone } from '@/utils/timezoneUtils';
 import { medicationTimingService } from '@/services/medicationTimingService';
 
+// Component for upcoming medication cards that uses real reminder times
+const UpcomingMedicationCard: React.FC<{
+  medication: UserMedication;
+  user: any;
+  timezone: string;
+}> = ({ medication, user, timezone }) => {
+  const [nextDoseInfo, setNextDoseInfo] = useState<{ time: string; status: string } | null>(null);
+
+  useEffect(() => {
+    const fetchNextDose = async () => {
+      if (!user) return;
+      
+      try {
+        const timingResult = await medicationTimingService.getNextDoseTime(
+          medication.id, 
+          user.id, 
+          timezone,
+          false
+        );
+        
+        console.log(`[DEBUG] Upcoming dose info for ${medication.medication_name}:`, timingResult);
+        
+        if (timingResult.nextTime && timingResult.nextTime !== 'No reminder set') {
+          setNextDoseInfo({
+            time: timingResult.nextTime.replace('Next: ', ''),
+            status: 'Scheduled'
+          });
+        } else {
+          setNextDoseInfo({
+            time: 'No reminder set',
+            status: 'Not scheduled'
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching next dose:', error);
+        setNextDoseInfo({
+          time: 'Error loading',
+          status: 'Error'
+        });
+      }
+    };
+
+    fetchNextDose();
+  }, [medication.id, user, timezone]);
+
+  if (!nextDoseInfo) {
+    return (
+      <MobileCard className="bg-muted/30">
+        <MobileCardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Pill className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <div className="font-medium text-foreground">{medication.medication_name}</div>
+                <div className="text-sm text-muted-foreground">{medication.dosage}</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-medium">Loading...</div>
+            </div>
+          </div>
+        </MobileCardContent>
+      </MobileCard>
+    );
+  }
+
+  return (
+    <MobileCard className="bg-muted/30">
+      <MobileCardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Pill className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <div className="font-medium text-foreground">{medication.medication_name}</div>
+              <div className="text-sm text-muted-foreground">{medication.dosage}</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-sm font-medium">{nextDoseInfo.time}</div>
+            <Badge variant="secondary" className="text-xs">
+              {nextDoseInfo.status}
+            </Badge>
+          </div>
+        </div>
+      </MobileCardContent>
+    </MobileCard>
+  );
+};
+
 const MedicationManager: React.FC = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
@@ -603,30 +696,14 @@ const MedicationManager: React.FC = () => {
                     <h3 className="text-lg font-semibold text-foreground">Upcoming Today</h3>
                     <div className="space-y-3">
                       {activeMedications.filter(m => !medicationsNeedingAttention.includes(m)).slice(0, 3).map((medication) => {
-                        const doseStatus = getNextDoseTime(medication.frequency, timezone);
                         
                         return (
-                        <MobileCard key={medication.id} className="bg-muted/30">
-                          <MobileCardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                                  <Pill className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                  <div className="font-medium text-foreground">{medication.medication_name}</div>
-                                  <div className="text-sm text-muted-foreground">{medication.dosage}</div>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-sm font-medium">{doseStatus.nextTime.replace('Next: ', '')}</div>
-                                <Badge variant="secondary" className="text-xs">
-                                  Scheduled
-                                </Badge>
-                              </div>
-                            </div>
-                          </MobileCardContent>
-                        </MobileCard>
+                        <UpcomingMedicationCard 
+                          key={medication.id} 
+                          medication={medication} 
+                          user={user}
+                          timezone={timezone}
+                        />
                         );
                       })}
                     </div>
