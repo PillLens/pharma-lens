@@ -90,14 +90,14 @@ export default function Auth() {
 
   if (isMobile) {
     return (
-      <div className="h-screen bg-background relative overflow-hidden flex flex-col">
+      <div className="min-h-screen min-h-dvh bg-background relative overflow-hidden flex flex-col">
         {/* Background Elements */}
         <div className="fixed inset-0 medical-gradient opacity-30" />
         <div className="fixed -top-20 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
         <div className="fixed -bottom-20 -left-20 w-80 h-80 bg-primary-light/5 rounded-full blur-3xl" />
         
-        {/* Ultra-Compact Header - 10% */}
-        <div className="relative z-10 flex-none px-6 pt-8 pb-2">
+        {/* Ultra-Compact Header */}
+        <div className="relative z-10 flex-none px-6 pt-6 pb-2">
           <div className="text-center space-y-2">
             {/* PillLens Logo */}
             <div className="w-12 h-12 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
@@ -111,139 +111,141 @@ export default function Auth() {
           </div>
         </div>
 
-        {/* Main Form Area - 65% */}
-        <div className="relative z-10 flex-1 px-6 flex flex-col">
-          {/* Compact Segmented Control */}
-          <div className="mb-4">
-            <div className="medical-surface p-1 rounded-xl shadow-soft border border-border/20">
-              <div className="grid grid-cols-2 gap-1">
-                <button
-                  onClick={() => setActiveTab('signin')}
-                  className={`h-10 rounded-lg font-semibold text-sm transition-all ${
-                    activeTab === 'signin'
-                      ? 'bg-primary text-primary-foreground shadow-medical'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <TranslatedText translationKey="auth.signIn" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('signup')}
-                  className={`h-10 rounded-lg font-semibold text-sm transition-all ${
-                    activeTab === 'signup'
-                      ? 'bg-primary text-primary-foreground shadow-medical'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <TranslatedText translationKey="auth.signUp" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Ultra-Compact Form Content */}
-          <div className="flex-1 space-y-3">
-            {/* Compact Google Sign In */}
-            <GoogleSignInButton 
-              onClick={handleGoogleSignIn}
-              loading={isGoogleLoading}
-              variant={activeTab === 'signin' ? 'sign-in' : 'sign-up'}
-              className="w-full h-12 text-sm font-semibold rounded-xl shadow-soft"
-            />
-            
-            {/* Enhanced Divider */}
-            <div className="relative py-2">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gradient-to-r from-transparent via-primary/20 to-transparent" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-4 bg-gradient-to-r from-background via-primary/5 to-background text-muted-foreground text-xs font-medium rounded-full border border-primary/10 shadow-soft">
-                  <TranslatedText translationKey="auth.orContinueWith" />
-                </span>
-              </div>
-            </div>
-
-            {/* Ultra-Compact Form */}
-            <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-3 flex-1 flex flex-col">
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t('authPage.emailPlaceholder')}
-                    className="w-full h-11 px-4 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
-                    required
-                  />
+        {/* Centered Form Container */}
+        <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-4">
+          <div className="w-full max-w-sm space-y-4">
+            {/* Compact Segmented Control */}
+            <div className="mb-4">
+              <div className="medical-surface p-1 rounded-xl shadow-soft border border-border/20">
+                <div className="grid grid-cols-2 gap-1">
+                  <button
+                    onClick={() => setActiveTab('signin')}
+                    className={`h-10 rounded-lg font-semibold text-sm transition-all ${
+                      activeTab === 'signin'
+                        ? 'bg-primary text-primary-foreground shadow-medical'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <TranslatedText translationKey="auth.signIn" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('signup')}
+                    className={`h-10 rounded-lg font-semibold text-sm transition-all ${
+                      activeTab === 'signup'
+                        ? 'bg-primary text-primary-foreground shadow-medical'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <TranslatedText translationKey="auth.signUp" />
+                  </button>
                 </div>
-                
-                <div className="space-y-1 relative">
-                  <div className="relative">
+              </div>
+            </div>
+
+            {/* Ultra-Compact Form Content */}
+            <div className="space-y-3">
+              {/* Compact Google Sign In */}
+              <GoogleSignInButton 
+                onClick={handleGoogleSignIn}
+                loading={isGoogleLoading}
+                variant={activeTab === 'signin' ? 'sign-in' : 'sign-up'}
+                className="w-full h-12 text-sm font-semibold rounded-xl shadow-soft"
+              />
+              
+              {/* Enhanced Divider */}
+              <div className="relative py-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="px-4 bg-gradient-to-r from-background via-primary/5 to-background text-muted-foreground text-xs font-medium rounded-full border border-primary/10 shadow-soft">
+                    <TranslatedText translationKey="auth.orContinueWith" />
+                  </span>
+                </div>
+              </div>
+
+              {/* Ultra-Compact Form */}
+              <form onSubmit={activeTab === 'signin' ? handleSignIn : handleSignUp} className="space-y-3">
+                <div className="space-y-3">
+                  <div className="space-y-1">
                     <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
-                      className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder={t('authPage.emailPlaceholder')}
+                      className="w-full h-11 px-4 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
                       required
-                      minLength={6}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
                   </div>
-                  {activeTab === 'signup' && (
-                    <p className="text-xs text-muted-foreground px-1 mt-1">
-                      {t('authPage.passwordRequirements')}
-                    </p>
+                  
+                  <div className="space-y-1 relative">
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder={activeTab === 'signin' ? t('authPage.passwordPlaceholder') : t('authPage.createPasswordPlaceholder')}
+                        className="w-full h-11 px-4 pr-12 text-base rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none placeholder:text-muted-foreground"
+                        required
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    {activeTab === 'signup' && (
+                      <p className="text-xs text-muted-foreground px-1 mt-1">
+                        {t('authPage.passwordRequirements')}
+                      </p>
+                    )}
+                  </div>
+                  
+                  {error && (
+                    <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/10 p-2">
+                      <AlertDescription className="font-medium text-center text-xs">{error}</AlertDescription>
+                    </Alert>
                   )}
                 </div>
                 
-                {error && (
-                  <Alert variant="destructive" className="rounded-xl border-destructive/30 bg-destructive/10 p-2">
-                    <AlertDescription className="font-medium text-center text-xs">{error}</AlertDescription>
-                  </Alert>
-                )}
-              </div>
-              
-              {/* Form Action Section */}
-              <div className="mt-auto pt-4 space-y-3">
-                {/* Compact Primary Action Button */}
-                <MobileButton
-                  type="submit"
-                  variant="medical"
-                  size="lg"
-                  className="w-full h-12 text-sm font-bold rounded-xl shadow-glow medical-button"
-                  disabled={isLoading}
-                  loading={isLoading}
-                  haptic
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    {isLoading ? (
-                      <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signingIn' : 'authPage.creatingAccount'} />
-                    ) : (
-                      <>
-                        <TranslatedText translationKey={activeTab === 'signin' ? 'auth.signIn' : 'auth.signUp'} />
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </span>
-                </MobileButton>
+                {/* Form Action Section */}
+                <div className="pt-4 space-y-3">
+                  {/* Compact Primary Action Button */}
+                  <MobileButton
+                    type="submit"
+                    variant="medical"
+                    size="lg"
+                    className="w-full h-12 text-sm font-bold rounded-xl shadow-glow medical-button"
+                    disabled={isLoading}
+                    loading={isLoading}
+                    haptic
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      {isLoading ? (
+                        <TranslatedText translationKey={activeTab === 'signin' ? 'authPage.signingIn' : 'authPage.creatingAccount'} />
+                      ) : (
+                        <>
+                          <TranslatedText translationKey={activeTab === 'signin' ? 'auth.signIn' : 'auth.signUp'} />
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </span>
+                  </MobileButton>
 
-                {/* Minimal Security Indicator */}
-                <div className="flex items-center justify-center gap-2 opacity-70 pb-6">
-                  <Shield className="w-3 h-3 text-primary" />
-                  <span className="text-xs text-primary">
-                    Secure
-                  </span>
-                  <div className="w-1.5 h-1.5 bg-success rounded-full" />
+                  {/* Minimal Security Indicator */}
+                  <div className="flex items-center justify-center gap-2 opacity-70">
+                    <Shield className="w-3 h-3 text-primary" />
+                    <span className="text-xs text-primary">
+                      Secure
+                    </span>
+                    <div className="w-1.5 h-1.5 bg-success rounded-full" />
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
