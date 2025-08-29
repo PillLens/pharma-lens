@@ -45,7 +45,7 @@ const MobileTabNavigation: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 shadow-lg will-change-transform bottom-nav">
+      <nav className="fixed left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 shadow-lg will-change-transform bottom-nav safe-area-bottom safe-area-x content-rounded">
         {/* Modern Navigation with Labels */}
         <div className="px-2 py-2 h-full">
           <div className="flex items-center justify-around max-w-md mx-auto h-full">

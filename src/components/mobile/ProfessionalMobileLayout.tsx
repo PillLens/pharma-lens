@@ -24,10 +24,10 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" style={{ minHeight: '100dvh', backgroundColor: 'hsl(var(--background))' }}>
-      {/* Premium Mobile Header */}
+    <div className="edge-to-edge min-h-screen bg-background flex flex-col device-rounded" style={{ minHeight: '100dvh', backgroundColor: 'hsl(var(--background))' }}>
+      {/* Premium Mobile Header with safe area */}
         {showHeader && title && (
-          <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top" style={{ backgroundColor: 'white' }}>
+          <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top safe-area-x" style={{ backgroundColor: 'white' }}>
           <div className="px-6 py-4">
             <h1 className="text-xl font-bold text-foreground text-center">
               {title}
@@ -36,8 +36,8 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
         </header>
       )}
 
-      {/* Content Area - Optimized spacing for mobile */}
-      <main className={cn("flex-1 min-h-0 overflow-y-auto main-scroll remove-last-margin", className)} data-scrollable>
+      {/* Content Area - Optimized spacing for mobile with safe areas */}
+      <main className={cn("flex-1 min-h-0 overflow-y-auto main-scroll remove-last-margin safe-area-x", className)} data-scrollable>
         <div className="min-h-full">
           {children}
         </div>
