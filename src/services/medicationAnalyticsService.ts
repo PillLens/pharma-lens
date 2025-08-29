@@ -283,54 +283,23 @@ class MedicationAnalyticsService {
     }
   }
 
-  // Calculate overall statistics - filter out invalid entries
+  // Calculate overall statistics
   async getOverallStats(userId: string) {
     try {
       const { data: adherenceLog, error } = await supabase
         .from('medication_adherence_log')
-        .select('status, scheduled_time, medication_id')
+        .select('status, scheduled_time')
         .eq('user_id', userId)
         .order('scheduled_time', { ascending: false });
 
       if (error) throw error;
 
-      // Get active reminders to validate which entries are legitimate
-      const { data: reminders } = await supabase
-        .from('medication_reminders')
-        .select('reminder_time, medication_id')
-        .eq('user_id', userId)
-        .eq('is_active', true);
-
-      // Create a set of valid reminder times for validation
-      const validReminderTimes = new Set();
-      reminders?.forEach(r => {
-        // Create the expected scheduled time format for this reminder
-        const scheduledTime = new Date();
-        const [hours, minutes] = r.reminder_time.split(':').map(Number);
-        scheduledTime.setUTCHours(hours, minutes, 0, 0);
-        
-        // Add all possible dates (last 30 days) for this reminder time
-        for (let i = 0; i < 30; i++) {
-          const testDate = new Date(scheduledTime);
-          testDate.setUTCDate(testDate.getUTCDate() - i);
-          validReminderTimes.add(`${r.medication_id}-${testDate.toISOString()}`);
-        }
-      });
-
-      // Filter adherence log to only include entries that match actual reminders
-      const validLogs = adherenceLog?.filter(log => {
-        const key = `${log.medication_id}-${log.scheduled_time}`;
-        return validReminderTimes.has(key);
-      }) || [];
-
-      console.log(`[DEBUG] Analytics - Total logs: ${adherenceLog?.length}, Valid logs: ${validLogs.length}`);
-
-      const totalDoses = validLogs.length;
-      const takenDoses = validLogs.filter(log => log.status === 'taken').length;
+      const totalDoses = adherenceLog?.length || 0;
+      const takenDoses = adherenceLog?.filter(log => log.status === 'taken').length || 0;
       const averageAdherence = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 0;
       
       // Calculate real streak based on consecutive days with all doses taken
-      const currentStreak = this.calculateStreakFromLogs(validLogs);
+      const currentStreak = this.calculateStreakFromLogs(adherenceLog || []);
 
       return {
         averageAdherence,
