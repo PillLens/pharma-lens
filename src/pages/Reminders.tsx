@@ -279,24 +279,29 @@ const Reminders: React.FC = () => {
       // Use timezone-aware time checking
       const doseCheck = isDoseTime(reminderTime, timezone, 30); // 30 minute window
       
-      // Check actual adherence log for today's dose
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date();
-      todayEnd.setHours(23, 59, 59, 999);
-      
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
+        // Build the exact scheduled datetime for this specific reminder time today
+        const today = new Date();
+        const [hours, minutes, seconds] = reminderTime.split(':').map(Number);
+        
+        // Create the scheduled time for today in the user's timezone
+        const scheduledDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes, seconds || 0);
+        
+        // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
+        const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before
+        const timeEnd = new Date(scheduledDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
+        
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user?.id)
           .eq('medication_id', reminder.medication_id)
-          .gte('scheduled_time', todayStart.toISOString())
-          .lte('scheduled_time', todayEnd.toISOString())
+          .gte('scheduled_time', timeStart.toISOString())
+          .lte('scheduled_time', timeEnd.toISOString())
           .eq('status', 'taken');
         
-        // If there's a taken entry for today, mark as taken
+        // If there's a taken entry for this specific time slot, mark as taken
         if (adherenceLog && adherenceLog.length > 0) {
           return 'taken';
         }
