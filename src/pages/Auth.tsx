@@ -96,24 +96,21 @@ export default function Auth() {
         <div className="fixed -top-20 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
         <div className="fixed -bottom-20 -left-20 w-80 h-80 bg-primary-light/5 rounded-full blur-3xl" />
         
-        {/* Ultra-Compact Header */}
-        <div className="relative z-10 flex-none px-6 pt-6 pb-2">
-          <div className="text-center space-y-2">
-            {/* PillLens Logo */}
-            <div className="w-12 h-12 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
-              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-12 h-12 object-cover" />
-            </div>
-            
-            {/* Minimized Title */}
-            <h1 className="text-xl font-bold text-foreground">
-              <TranslatedText translationKey="app.title" />
-            </h1>
-          </div>
-        </div>
-
         {/* Centered Form Container */}
-        <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-4">
-          <div className="w-full max-w-sm space-y-4">
+        <div className="relative z-10 flex-1 flex items-center justify-center px-6 py-8">
+          <div className="w-full max-w-sm space-y-6">
+            {/* Logo and Title - Now centered */}
+            <div className="text-center space-y-3">
+              {/* PillLens Logo */}
+              <div className="w-16 h-16 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
+                <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16 object-cover" />
+              </div>
+              
+              {/* Title */}
+              <h1 className="text-2xl font-bold text-foreground">
+                <TranslatedText translationKey="app.title" />
+              </h1>
+            </div>
             {/* Compact Segmented Control */}
             <div className="mb-4">
               <div className="medical-surface p-1 rounded-xl shadow-soft border border-border/20">
