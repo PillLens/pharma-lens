@@ -160,7 +160,7 @@ export class ScheduledDoseService {
   }
 
   /**
-   * Get today's adherence status for dashboard
+   * Get today's adherence status for dashboard with proper duplicate filtering
    */
   async getTodaysAdherenceStatus(userId: string) {
     try {
@@ -169,28 +169,43 @@ export class ScheduledDoseService {
 
       const today = new Date();
       const startOfDay = new Date(today);
-      startOfDay.setHours(0, 0, 0, 0);
+      startOfDay.setUTCHours(0, 0, 0, 0);
       const endOfDay = new Date(today);
-      endOfDay.setHours(23, 59, 59, 999);
+      endOfDay.setUTCHours(23, 59, 59, 999);
 
       const { data: adherenceData } = await supabase
         .from('medication_adherence_log')
-        .select('status, scheduled_time')
+        .select('status, scheduled_time, medication_id')
         .eq('user_id', userId)
         .gte('scheduled_time', startOfDay.toISOString())
         .lte('scheduled_time', endOfDay.toISOString());
 
-      const scheduled = adherenceData?.filter(a => a.status === 'scheduled').length || 0;
-      const taken = adherenceData?.filter(a => a.status === 'taken').length || 0;
-      const missed = adherenceData?.filter(a => a.status === 'missed').length || 0;
+      // Filter to only count unique medication/scheduled_time combinations
+      const uniqueEntries = new Map();
+      adherenceData?.forEach(entry => {
+        const key = `${entry.medication_id}-${entry.scheduled_time}`;
+        if (!uniqueEntries.has(key) || entry.status === 'taken') {
+          // Keep the entry if it's the first one or if it's a 'taken' status (prioritize taken over scheduled)
+          uniqueEntries.set(key, entry);
+        }
+      });
+
+      const uniqueData = Array.from(uniqueEntries.values());
+      
+      const scheduled = uniqueData.filter(a => a.status === 'scheduled').length;
+      const taken = uniqueData.filter(a => a.status === 'taken').length;
+      const missed = uniqueData.filter(a => a.status === 'missed').length;
       const total = scheduled + taken + missed;
 
-      return {
+      const result = {
         totalToday: total,
         completedToday: taken,
         missedToday: missed,
         pendingToday: scheduled
       };
+
+      console.log(`Todays adherence from service:`, result);
+      return result;
     } catch (error) {
       console.error('Error getting adherence status:', error);
       return {
