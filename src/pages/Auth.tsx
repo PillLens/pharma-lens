@@ -103,7 +103,7 @@ export default function Auth() {
             <div className="text-center space-y-3">
               {/* PillLens Logo */}
               <div className="w-16 h-16 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
-                <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16 object-cover" />
+                <img src="/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png" alt="PillLens" className="w-16 h-16 object-cover" />
               </div>
               
               {/* Title */}
@@ -256,7 +256,7 @@ export default function Auth() {
         <div className="p-6">
           <div className="text-center mb-6">
             <div className="w-16 h-16 mx-auto mb-4">
-              <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-16 h-16 rounded-xl" />
+              <img src="/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png" alt="PillLens" className="w-16 h-16 rounded-xl" />
             </div>
              <h2 className="text-xl font-semibold">
                <TranslatedText translationKey="authPage.welcomeMessage" />

@@ -124,7 +124,7 @@ export function DesktopSidebar() {
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <img 
-              src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" 
+              src="/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png" 
               alt="PillLens" 
               className="w-8 h-8"
             />
@@ -136,7 +136,7 @@ export function DesktopSidebar() {
         )}
         {isCollapsed && (
           <img 
-            src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" 
+            src="/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png" 
             alt="PillLens" 
             className="w-8 h-8 mx-auto"
           />

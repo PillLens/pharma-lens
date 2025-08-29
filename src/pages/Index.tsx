@@ -85,7 +85,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <img src="/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png" alt="PillLens" className="w-12 h-12" />
+                <img src="/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png" alt="PillLens" className="w-12 h-12" />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse"></div>
               </div>
               <div>
