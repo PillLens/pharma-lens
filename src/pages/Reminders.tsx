@@ -249,8 +249,8 @@ const Reminders: React.FC = () => {
 
   const { timezone } = useUserTimezone();
 
+  // Create timeline entries from real reminder data with timezone-aware status
   const [timelineEntries, setTimelineEntries] = useState<any[]>([]);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   useEffect(() => {
     const buildTimelineEntries = async () => {
@@ -273,69 +273,42 @@ const Reminders: React.FC = () => {
     if (reminders.length > 0 && timezone) {
       buildTimelineEntries();
     }
-  }, [reminders, timezone, realAdherenceData, refreshTrigger]);
+  }, [reminders, timezone, realAdherenceData]);
 
   async function getCurrentTimeStatus(reminderTime: string, timezone: string, reminderId: string): Promise<'upcoming' | 'current' | 'taken' | 'missed' | 'overdue'> {
     try {
-      console.log(`[DEBUG] Checking status for reminder ${reminderId} at time ${reminderTime}`);
-      
       // Use timezone-aware time checking
       const doseCheck = isDoseTime(reminderTime, timezone, 30); // 30 minute window
       
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
-        // Create timezone-aware date boundaries for today
-        const todayStart = getCurrentTimeInTimezone(timezone);
-        todayStart.setHours(0, 0, 0, 0);
-        const todayEnd = new Date(todayStart);
-        todayEnd.setHours(23, 59, 59, 999);
+        // Use consistent time construction method
+        const scheduledDateTime = createScheduledTime(reminderTime);
         
-        console.log(`[DEBUG] Searching adherence log from ${todayStart.toISOString()} to ${todayEnd.toISOString()}`);
+        // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
+        const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before
+        const timeEnd = new Date(scheduledDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
         
-        // Check adherence log for this specific medication today
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user?.id)
           .eq('medication_id', reminder.medication_id)
-          .gte('scheduled_time', todayStart.toISOString())
-          .lte('scheduled_time', todayEnd.toISOString())
+          .gte('scheduled_time', timeStart.toISOString())
+          .lte('scheduled_time', timeEnd.toISOString())
           .eq('status', 'taken');
         
-        console.log(`[DEBUG] Found ${adherenceLog?.length || 0} taken doses:`, adherenceLog);
-        
-        // Check if any taken dose matches this reminder time  
-        const isTaken = adherenceLog?.some(log => {
-          // Convert UTC scheduled time to local timezone for comparison
-          const scheduledDate = new Date(log.scheduled_time);
-          const localTimeStr = scheduledDate.toLocaleTimeString('en-GB', { 
-            timeZone: timezone,
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-          console.log(`[DEBUG] Comparing log time ${localTimeStr} with reminder time ${reminderTime}`);
-          const matches = localTimeStr === reminderTime;
-          if (matches) {
-            console.log(`[DEBUG] MATCH FOUND! Dose at ${reminderTime} was taken at ${log.taken_time}`);
-          }
-          return matches;
-        }) || false;
-        
-        if (isTaken) {
-          console.log(`[DEBUG] Returning 'taken' status for ${reminderTime}`);
+        // If there's a taken entry for this specific time slot, mark as taken
+        if (adherenceLog && adherenceLog.length > 0) {
           return 'taken';
         }
       }
       
       if (doseCheck.isCurrent) {
-        console.log(`[DEBUG] Returning 'current' status for ${reminderTime}`);
         return 'current';
       } else if (doseCheck.isPast) {
-        console.log(`[DEBUG] Returning 'overdue' status for ${reminderTime}`);
         return 'overdue';
       } else {
-        console.log(`[DEBUG] Returning 'upcoming' status for ${reminderTime}`);
         return 'upcoming';
       }
     } catch (error) {
@@ -405,7 +378,6 @@ const Reminders: React.FC = () => {
                 timezone={timezone}
                 overallAdherenceRate={overallAdherenceRate}
                 longestStreak={longestStreak}
-                refreshTrigger={refreshTrigger}
                 onReminderTap={handleReminderTap}
                 onEditReminder={handleEditReminder}
                 onDeleteReminder={handleDeleteReminder}
@@ -423,8 +395,6 @@ const Reminders: React.FC = () => {
                     
                     if (success) {
                       await fetchRealData();
-                      // Force timeline refresh
-                      setRefreshTrigger(prev => prev + 1);
                       const medication = reminders.find(r => r.medication_id === medicationId)?.medication;
                       toast({
                         title: t('toast.doseTaken'),
@@ -494,13 +464,11 @@ const RemindersByMedication: React.FC<{
   onDeleteReminder: (id: string) => void;
   onToggleReminder: (id: string) => void;
   onMarkTaken: (medicationId: string, time: string) => Promise<void>;
-  refreshTrigger?: number;
 }> = ({
   reminders,
   timezone,
   overallAdherenceRate,
   longestStreak,
-  refreshTrigger = 0,
   onReminderTap,
   onEditReminder,
   onDeleteReminder,
@@ -536,20 +504,14 @@ const RemindersByMedication: React.FC<{
           // Get all times for this medication
           const allTimes = medicationReminders.map(r => r.reminder_time);
           
-          // Create timezone-aware date boundaries for today
-          const todayStart = getCurrentTimeInTimezone(timezone);
-          todayStart.setHours(0, 0, 0, 0);
-          const todayEnd = new Date(todayStart);
-          todayEnd.setHours(23, 59, 59, 999);
-          
           // Query adherence log for today's doses
           const { data: adherenceLog, error } = await supabase
             .from('medication_adherence_log')
             .select('*')
             .eq('user_id', user.id)
             .eq('medication_id', medicationId)
-            .gte('scheduled_time', todayStart.toISOString())
-            .lte('scheduled_time', todayEnd.toISOString())
+            .gte('scheduled_time', `${today}T00:00:00`)
+            .lt('scheduled_time', `${today}T23:59:59`)
             .eq('status', 'taken');
 
           if (error) throw error;
@@ -557,16 +519,8 @@ const RemindersByMedication: React.FC<{
           // Create dose status array
           const doseStatus = allTimes.map(time => {
             const taken = adherenceLog?.some(log => {
-              // Convert UTC scheduled time to local timezone for comparison
-              const scheduledDate = new Date(log.scheduled_time);
-              // Convert to local timezone using date-fns format with timezone offset
-              const localTimeStr = scheduledDate.toLocaleTimeString('en-GB', { 
-                timeZone: timezone,
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-              });
-              return localTimeStr === time;
+              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
+              return logTime === time;
             }) || false;
             
             return { time, taken };
@@ -585,7 +539,7 @@ const RemindersByMedication: React.FC<{
     };
 
     fetchDoseStatus();
-  }, [reminders, user, timezone, refreshTrigger]);
+  }, [reminders, user, timezone]);
 
   return (
     <div className="space-y-3">
