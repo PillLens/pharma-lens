@@ -34,7 +34,8 @@ const UpcomingMedicationCard: React.FC<{
   medication: UserMedication;
   user: any;
   timezone: string;
-}> = ({ medication, user, timezone }) => {
+  refreshKey?: number;
+}> = ({ medication, user, timezone, refreshKey }) => {
   const [nextDoseInfo, setNextDoseInfo] = useState<{ time: string; status: string } | null>(null);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const UpcomingMedicationCard: React.FC<{
     };
 
     fetchNextDose();
-  }, [medication.id, user, timezone]);
+  }, [medication.id, user, timezone, refreshKey]);
 
   if (!nextDoseInfo) {
     return (
@@ -150,6 +151,7 @@ const MedicationManager: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all' | 'insights'>('today');
   const [filter, setFilter] = useState<'all' | 'active' | 'due' | 'expired'>('all');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Enhanced medication management logic
   const activeMedications = medications.filter(m => m.is_active);
@@ -491,6 +493,8 @@ const MedicationManager: React.FC = () => {
 
         // Refresh medications to update stats and clear overdue status
         refetch();
+        // Trigger refresh of upcoming dose times
+        setRefreshKey(prev => prev + 1);
       } else {
         throw new Error('Failed to record dose');
       }
@@ -717,6 +721,7 @@ const MedicationManager: React.FC = () => {
                           medication={medication} 
                           user={user}
                           timezone={timezone}
+                          refreshKey={refreshKey}
                         />
                         );
                       })}
