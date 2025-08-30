@@ -504,14 +504,20 @@ const RemindersByMedication: React.FC<{
           // Get all times for this medication
           const allTimes = medicationReminders.map(r => r.reminder_time);
           
+          // Create timezone-aware date boundaries for today
+          const todayStart = getCurrentTimeInTimezone(timezone);
+          todayStart.setHours(0, 0, 0, 0);
+          const todayEnd = new Date(todayStart);
+          todayEnd.setHours(23, 59, 59, 999);
+          
           // Query adherence log for today's doses
           const { data: adherenceLog, error } = await supabase
             .from('medication_adherence_log')
             .select('*')
             .eq('user_id', user.id)
             .eq('medication_id', medicationId)
-            .gte('scheduled_time', `${today}T00:00:00`)
-            .lt('scheduled_time', `${today}T23:59:59`)
+            .gte('scheduled_time', todayStart.toISOString())
+            .lte('scheduled_time', todayEnd.toISOString())
             .eq('status', 'taken');
 
           if (error) throw error;
@@ -519,8 +525,16 @@ const RemindersByMedication: React.FC<{
           // Create dose status array
           const doseStatus = allTimes.map(time => {
             const taken = adherenceLog?.some(log => {
-              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
-              return logTime === time;
+              // Convert UTC scheduled time to local timezone for comparison
+              const scheduledDate = new Date(log.scheduled_time);
+              // Convert to local timezone using date-fns format with timezone offset
+              const localTimeStr = scheduledDate.toLocaleTimeString('en-GB', { 
+                timeZone: timezone,
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              return localTimeStr === time;
             }) || false;
             
             return { time, taken };
