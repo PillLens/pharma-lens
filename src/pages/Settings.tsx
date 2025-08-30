@@ -443,33 +443,25 @@ const Settings: React.FC = () => {
               }
               rightElement={
                 <button
-                  className={`
-                    relative inline-flex items-center h-6 w-12 rounded-full px-0.5 transition-all duration-300 ease-in-out
-                    ${profileData.notification_preferences.enabled 
-                      ? 'bg-primary hover:bg-primary/90' 
-                      : 'bg-muted hover:bg-muted/80'
-                    }
-                  `}
+                  className={cn(
+                    "relative inline-flex items-center h-5 w-9 rounded-full transition-all duration-200 ease-in-out touch-manipulation",
+                    profileData.notification_preferences.enabled 
+                      ? "bg-primary" 
+                      : "bg-muted"
+                  )}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleNotificationChange('enabled', !profileData.notification_preferences.enabled);
                   }}
                 >
                   <div
-                    className={`
-                      flex items-center justify-center w-5 h-5 rounded-full transition-all duration-300 ease-in-out transform
-                      ${profileData.notification_preferences.enabled 
-                        ? 'translate-x-6 bg-white text-primary' 
-                        : 'translate-x-0 bg-white text-muted-foreground'
-                      }
-                    `}
-                  >
-                    {profileData.notification_preferences.enabled ? (
-                      <Bell className="w-2.5 h-2.5" />
-                    ) : (
-                      <BellOff className="w-2.5 h-2.5" />
+                    className={cn(
+                      "flex items-center justify-center w-4 h-4 rounded-full bg-background transition-all duration-200 ease-in-out transform",
+                      profileData.notification_preferences.enabled 
+                        ? "translate-x-4" 
+                        : "translate-x-0"
                     )}
-                  </div>
+                  />
                 </button>
               }
               onClick={() => setShowNotificationSettings(true)}
