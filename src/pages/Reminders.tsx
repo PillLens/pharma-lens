@@ -277,6 +277,8 @@ const Reminders: React.FC = () => {
 
   async function getCurrentTimeStatus(reminderTime: string, timezone: string, reminderId: string): Promise<'upcoming' | 'current' | 'taken' | 'missed' | 'overdue'> {
     try {
+      console.log(`[DEBUG] Checking status for reminder ${reminderId} at time ${reminderTime}`);
+      
       // Use timezone-aware time checking
       const doseCheck = isDoseTime(reminderTime, timezone, 30); // 30 minute window
       
@@ -288,6 +290,8 @@ const Reminders: React.FC = () => {
         const todayEnd = new Date(todayStart);
         todayEnd.setHours(23, 59, 59, 999);
         
+        console.log(`[DEBUG] Searching adherence log from ${todayStart.toISOString()} to ${todayEnd.toISOString()}`);
+        
         // Check adherence log for this specific medication today
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
@@ -298,7 +302,9 @@ const Reminders: React.FC = () => {
           .lte('scheduled_time', todayEnd.toISOString())
           .eq('status', 'taken');
         
-        // Check if any taken dose matches this reminder time
+        console.log(`[DEBUG] Found ${adherenceLog?.length || 0} taken doses:`, adherenceLog);
+        
+        // Check if any taken dose matches this reminder time  
         const isTaken = adherenceLog?.some(log => {
           // Convert UTC scheduled time to local timezone for comparison
           const scheduledDate = new Date(log.scheduled_time);
@@ -308,19 +314,28 @@ const Reminders: React.FC = () => {
             hour: '2-digit',
             minute: '2-digit'
           });
-          return localTimeStr === reminderTime;
+          console.log(`[DEBUG] Comparing log time ${localTimeStr} with reminder time ${reminderTime}`);
+          const matches = localTimeStr === reminderTime;
+          if (matches) {
+            console.log(`[DEBUG] MATCH FOUND! Dose at ${reminderTime} was taken at ${log.taken_time}`);
+          }
+          return matches;
         }) || false;
         
         if (isTaken) {
+          console.log(`[DEBUG] Returning 'taken' status for ${reminderTime}`);
           return 'taken';
         }
       }
       
       if (doseCheck.isCurrent) {
+        console.log(`[DEBUG] Returning 'current' status for ${reminderTime}`);
         return 'current';
       } else if (doseCheck.isPast) {
+        console.log(`[DEBUG] Returning 'overdue' status for ${reminderTime}`);
         return 'overdue';
       } else {
+        console.log(`[DEBUG] Returning 'upcoming' status for ${reminderTime}`);
         return 'upcoming';
       }
     } catch (error) {
