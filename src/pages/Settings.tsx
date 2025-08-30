@@ -22,7 +22,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { PillToggle } from '@/components/ui/pill-toggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -443,12 +442,35 @@ const Settings: React.FC = () => {
                 : t('settings.notifications.disabled')
               }
               rightElement={
-                <PillToggle
-                  checked={profileData.notification_preferences.enabled}
-                  onCheckedChange={(checked) => handleNotificationChange('enabled', checked)}
-                  icon={<BellOff />}
-                  checkedIcon={<Bell />}
-                />
+                <button
+                  className={`
+                    relative inline-flex items-center h-6 w-12 rounded-full px-0.5 transition-all duration-300 ease-in-out
+                    ${profileData.notification_preferences.enabled 
+                      ? 'bg-primary hover:bg-primary/90' 
+                      : 'bg-muted hover:bg-muted/80'
+                    }
+                  `}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNotificationChange('enabled', !profileData.notification_preferences.enabled);
+                  }}
+                >
+                  <div
+                    className={`
+                      flex items-center justify-center w-5 h-5 rounded-full transition-all duration-300 ease-in-out transform
+                      ${profileData.notification_preferences.enabled 
+                        ? 'translate-x-6 bg-white text-primary' 
+                        : 'translate-x-0 bg-white text-muted-foreground'
+                      }
+                    `}
+                  >
+                    {profileData.notification_preferences.enabled ? (
+                      <Bell className="w-2.5 h-2.5" />
+                    ) : (
+                      <BellOff className="w-2.5 h-2.5" />
+                    )}
+                  </div>
+                </button>
               }
               onClick={() => setShowNotificationSettings(true)}
             />
