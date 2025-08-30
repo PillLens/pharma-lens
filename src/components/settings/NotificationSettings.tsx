@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Clock, Send, Check, Pill } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
+import { PillToggle } from '@/components/ui/pill-toggle';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -130,10 +130,12 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
               <TranslatedText translationKey="settings.notifications.masterDescription" />
             </p>
           </div>
-          <Switch
+          <PillToggle
             checked={preferences.enabled}
             onCheckedChange={(value) => handleToggleChange('enabled', value)}
             disabled={loading || !isOneSignalReady}
+            icon={<Bell />}
+            checkedIcon={<Bell />}
           />
         </div>
 
@@ -154,10 +156,12 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
                     <TranslatedText translationKey="settings.notifications.remindersDescription" />
                   </p>
                 </div>
-                <Switch
+                <PillToggle
                   checked={preferences.reminders}
                   onCheckedChange={(value) => handleToggleChange('reminders', value)}
                   disabled={loading || !preferences.enabled}
+                  icon={<Pill />}
+                  checkedIcon={<Pill />}
                 />
               </div>
             </div>
@@ -176,10 +180,12 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
                     <TranslatedText translationKey="settings.notifications.missedDoseDescription" />
                   </p>
                 </div>
-                <Switch
+                <PillToggle
                   checked={preferences.missedDose}
                   onCheckedChange={(value) => handleToggleChange('missedDose', value)}
                   disabled={loading || !preferences.enabled}
+                  icon={<Clock />}
+                  checkedIcon={<Clock />}
                 />
               </div>
             </div>
@@ -198,10 +204,12 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
                     <TranslatedText translationKey="settings.notifications.familyDescription" />
                   </p>
                 </div>
-                <Switch
+                <PillToggle
                   checked={preferences.family}
                   onCheckedChange={(value) => handleToggleChange('family', value)}
                   disabled={loading || !preferences.enabled}
+                  icon={<Bell />}
+                  checkedIcon={<Bell />}
                 />
               </div>
             </div>
@@ -220,10 +228,12 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
                     <TranslatedText translationKey="settings.notifications.productDescription" />
                   </p>
                 </div>
-                <Switch
+                <PillToggle
                   checked={preferences.product}
                   onCheckedChange={(value) => handleToggleChange('product', value)}
                   disabled={loading || !preferences.enabled}
+                  icon={<span>⚠️</span>}
+                  checkedIcon={<span>⚠️</span>}
                 />
               </div>
             </div>
