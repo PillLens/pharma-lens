@@ -162,8 +162,8 @@ const UpcomingMedicationCard: React.FC<{
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Pill className="w-4 h-4 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-foreground text-sm truncate">{medication.medication_name}</div>
+            <div className="flex-1">
+              <div className="font-medium text-foreground text-sm leading-tight">{medication.medication_name}</div>
               <div className="text-xs text-muted-foreground">{medication.dosage}</div>
             </div>
           </div>
