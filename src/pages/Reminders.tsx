@@ -282,24 +282,36 @@ const Reminders: React.FC = () => {
       
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
-        // Use consistent time construction method
-        const scheduledDateTime = createScheduledTime(reminderTime);
+        // Create timezone-aware date boundaries for today
+        const todayStart = getCurrentTimeInTimezone(timezone);
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date(todayStart);
+        todayEnd.setHours(23, 59, 59, 999);
         
-        // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
-        const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before
-        const timeEnd = new Date(scheduledDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
-        
+        // Check adherence log for this specific medication today
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user?.id)
           .eq('medication_id', reminder.medication_id)
-          .gte('scheduled_time', timeStart.toISOString())
-          .lte('scheduled_time', timeEnd.toISOString())
+          .gte('scheduled_time', todayStart.toISOString())
+          .lte('scheduled_time', todayEnd.toISOString())
           .eq('status', 'taken');
         
-        // If there's a taken entry for this specific time slot, mark as taken
-        if (adherenceLog && adherenceLog.length > 0) {
+        // Check if any taken dose matches this reminder time
+        const isTaken = adherenceLog?.some(log => {
+          // Convert UTC scheduled time to local timezone for comparison
+          const scheduledDate = new Date(log.scheduled_time);
+          const localTimeStr = scheduledDate.toLocaleTimeString('en-GB', { 
+            timeZone: timezone,
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          return localTimeStr === reminderTime;
+        }) || false;
+        
+        if (isTaken) {
           return 'taken';
         }
       }
