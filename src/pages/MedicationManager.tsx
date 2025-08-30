@@ -98,21 +98,24 @@ const UpcomingMedicationCard: React.FC<{
   }
 
   return (
-    <MobileCard className="bg-muted/30">
+    <MobileCard className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 shadow-sm">
       <MobileCardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Pill className="w-5 h-5 text-primary" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shadow-sm">
+              <Pill className="w-6 h-6 text-primary" />
             </div>
-            <div>
-              <div className="font-medium text-foreground">{medication.medication_name}</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-foreground text-base truncate">{medication.medication_name}</div>
               <div className="text-sm text-muted-foreground">{medication.dosage}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-sm font-medium">{nextDoseInfo.time}</div>
-            <Badge variant="secondary" className="text-xs">
+          <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 ml-auto">
+            <div className="font-semibold text-primary text-base">{nextDoseInfo.time}</div>
+            <Badge 
+              variant={nextDoseInfo.status === 'Scheduled' ? 'default' : 'secondary'} 
+              className="text-xs px-2 py-1 rounded-full"
+            >
               {nextDoseInfo.status}
             </Badge>
           </div>
@@ -565,7 +568,7 @@ const MedicationManager: React.FC = () => {
     <ProfessionalMobileLayout title={t('medications.management')} showHeader={true}>
       <div className="min-h-screen bg-background">
         {/* Main Content with Tabs */}
-        <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {!loading && medications.length > 0 ? (
             <div className="space-y-4">
               {/* Show explanation card for first-time users or when no reminders exist */}
@@ -574,18 +577,29 @@ const MedicationManager: React.FC = () => {
               )}
               
               <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-4 h-auto">
-                <TabsTrigger value="today" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
-                  <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="text-xs sm:text-sm">Today ({dueMedications.length})</span>
+              <TabsList className="grid w-full grid-cols-3 mb-6 h-12 sm:h-auto bg-muted/50 rounded-2xl p-1">
+                <TabsTrigger 
+                  value="today" 
+                  className="gap-2 px-3 py-2 flex items-center justify-center rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm font-medium">Today</span>
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5 ml-1">{dueMedications.length}</Badge>
                 </TabsTrigger>
-                <TabsTrigger value="all" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
-                  <Pill className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="text-xs sm:text-sm">All ({medications.length})</span>
+                <TabsTrigger 
+                  value="all" 
+                  className="gap-2 px-3 py-2 flex items-center justify-center rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <Pill className="w-4 h-4" />
+                  <span className="text-sm font-medium">All</span>
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5 ml-1">{medications.length}</Badge>
                 </TabsTrigger>
-                <TabsTrigger value="insights" className="gap-1 px-2 py-2 flex-col sm:flex-row sm:gap-2 sm:px-3">
-                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="text-xs sm:text-sm">Insights</span>
+                <TabsTrigger 
+                  value="insights" 
+                  className="gap-2 px-3 py-2 flex items-center justify-center rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-medium">Stats</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -714,12 +728,12 @@ const MedicationManager: React.FC = () => {
               {/* All Medications Tab */}
               <TabsContent value="all" className="space-y-6">
                 {/* Filter Bar */}
-                <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2 px-1">
                   <MobileButton
                     size="sm"
                     variant={filter === 'all' ? 'default' : 'outline'}
                     onClick={() => setFilter('all')}
-                    className="rounded-xl whitespace-nowrap"
+                    className="rounded-full whitespace-nowrap min-w-fit px-4 h-9"
                   >
                     All ({medications.length})
                   </MobileButton>
@@ -727,7 +741,7 @@ const MedicationManager: React.FC = () => {
                     size="sm"
                     variant={filter === 'active' ? 'default' : 'outline'}
                     onClick={() => setFilter('active')}
-                    className="rounded-xl whitespace-nowrap"
+                    className="rounded-full whitespace-nowrap min-w-fit px-4 h-9"
                   >
                     Active ({activeMedications.length})
                   </MobileButton>
@@ -735,7 +749,7 @@ const MedicationManager: React.FC = () => {
                     size="sm"
                     variant={filter === 'due' ? 'default' : 'outline'}
                     onClick={() => setFilter('due')}
-                    className="rounded-xl whitespace-nowrap"
+                    className="rounded-full whitespace-nowrap min-w-fit px-4 h-9"
                   >
                     Due ({medicationsNeedingAttention.length})
                   </MobileButton>
@@ -744,7 +758,7 @@ const MedicationManager: React.FC = () => {
                       size="sm"
                       variant={filter === 'expired' ? 'default' : 'outline'}
                       onClick={() => setFilter('expired')}
-                      className="rounded-xl whitespace-nowrap"
+                      className="rounded-full whitespace-nowrap min-w-fit px-4 h-9"
                     >
                       Expired ({expiredMedications.length})
                     </MobileButton>
