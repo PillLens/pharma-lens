@@ -249,8 +249,8 @@ const Reminders: React.FC = () => {
 
   const { timezone } = useUserTimezone();
 
-  // Create timeline entries from real reminder data with timezone-aware status
   const [timelineEntries, setTimelineEntries] = useState<any[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   useEffect(() => {
     const buildTimelineEntries = async () => {
@@ -273,7 +273,7 @@ const Reminders: React.FC = () => {
     if (reminders.length > 0 && timezone) {
       buildTimelineEntries();
     }
-  }, [reminders, timezone, realAdherenceData]);
+  }, [reminders, timezone, realAdherenceData, refreshTrigger]);
 
   async function getCurrentTimeStatus(reminderTime: string, timezone: string, reminderId: string): Promise<'upcoming' | 'current' | 'taken' | 'missed' | 'overdue'> {
     try {
@@ -390,6 +390,7 @@ const Reminders: React.FC = () => {
                 timezone={timezone}
                 overallAdherenceRate={overallAdherenceRate}
                 longestStreak={longestStreak}
+                refreshTrigger={refreshTrigger}
                 onReminderTap={handleReminderTap}
                 onEditReminder={handleEditReminder}
                 onDeleteReminder={handleDeleteReminder}
@@ -407,6 +408,8 @@ const Reminders: React.FC = () => {
                     
                     if (success) {
                       await fetchRealData();
+                      // Force timeline refresh
+                      setRefreshTrigger(prev => prev + 1);
                       const medication = reminders.find(r => r.medication_id === medicationId)?.medication;
                       toast({
                         title: t('toast.doseTaken'),
@@ -476,11 +479,13 @@ const RemindersByMedication: React.FC<{
   onDeleteReminder: (id: string) => void;
   onToggleReminder: (id: string) => void;
   onMarkTaken: (medicationId: string, time: string) => Promise<void>;
+  refreshTrigger?: number;
 }> = ({
   reminders,
   timezone,
   overallAdherenceRate,
   longestStreak,
+  refreshTrigger = 0,
   onReminderTap,
   onEditReminder,
   onDeleteReminder,
@@ -565,7 +570,7 @@ const RemindersByMedication: React.FC<{
     };
 
     fetchDoseStatus();
-  }, [reminders, user, timezone]);
+  }, [reminders, user, timezone, refreshTrigger]);
 
   return (
     <div className="space-y-3">
