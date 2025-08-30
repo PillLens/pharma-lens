@@ -43,23 +43,79 @@ const UpcomingMedicationCard: React.FC<{
       if (!user) return;
       
       try {
-        const timingResult = await medicationTimingService.getNextDoseTime(
-          medication.id, 
-          user.id, 
-          timezone,
-          false
-        );
-        
-        console.log(`[DEBUG] Upcoming dose info for ${medication.medication_name}:`, timingResult);
-        
-        if (timingResult.nextTime && timingResult.nextTime !== 'No reminder set') {
+        // Fetch reminders directly from the database
+        const { data: reminders, error } = await supabase
+          .from('medication_reminders')
+          .select('reminder_time, days_of_week')
+          .eq('medication_id', medication.id)
+          .eq('user_id', user.id)
+          .eq('is_active', true);
+
+        if (error) throw error;
+
+        if (!reminders || reminders.length === 0) {
           setNextDoseInfo({
-            time: timingResult.nextTime.replace('Next: ', ''),
+            time: 'No reminder set',
+            status: 'Not scheduled'
+          });
+          return;
+        }
+
+        // Calculate next reminder time
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+
+        let nextReminder = null;
+        let minDaysUntil = 8; // Maximum days in a week + 1
+
+        for (const reminder of reminders) {
+          const [hours, minutes] = reminder.reminder_time.split(':').map(Number);
+          const reminderTimeInMinutes = hours * 60 + minutes;
+
+          // Check each day of the week for this reminder
+          for (const dayOfWeek of reminder.days_of_week) {
+            const adjustedDay = dayOfWeek === 7 ? 0 : dayOfWeek; // Convert Sunday from 7 to 0
+            let daysUntil = (adjustedDay - currentDay + 7) % 7;
+
+            // If it's the same day, check if reminder time has passed
+            if (daysUntil === 0 && reminderTimeInMinutes <= currentTime) {
+              daysUntil = 7; // Move to next week
+            }
+
+            if (daysUntil < minDaysUntil) {
+              minDaysUntil = daysUntil;
+              nextReminder = {
+                time: reminder.reminder_time,
+                daysUntil
+              };
+            }
+          }
+        }
+
+        if (nextReminder) {
+          const [hours, minutes] = nextReminder.time.split(':').map(Number);
+          const nextDate = new Date(now);
+          nextDate.setDate(nextDate.getDate() + nextReminder.daysUntil);
+          nextDate.setHours(hours, minutes, 0, 0);
+
+          let timeString;
+          if (nextReminder.daysUntil === 0) {
+            timeString = `Today at ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          } else if (nextReminder.daysUntil === 1) {
+            timeString = `Tomorrow at ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          } else {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            timeString = `${days[nextDate.getDay()]} at ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+          }
+
+          setNextDoseInfo({
+            time: timeString,
             status: 'Scheduled'
           });
         } else {
           setNextDoseInfo({
-            time: 'No reminder set',
+            time: 'No upcoming dose',
             status: 'Not scheduled'
           });
         }
