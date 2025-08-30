@@ -185,23 +185,23 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
 
         {/* Medication details */}
         <div className="space-y-4 mb-5">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Dosage & Frequency</span>
-            <div className="text-right">
-              <div className="font-semibold text-foreground">{reminder.dosage}</div>
-              <div className="text-muted-foreground text-xs">{reminder.frequency}</div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
+            <span className="text-muted-foreground font-medium">Dosage & Frequency</span>
+            <div className="text-left sm:text-right">
+              <div className="font-semibold text-foreground text-base">{reminder.dosage}</div>
+              <div className="text-muted-foreground text-sm">{reminder.frequency}</div>
             </div>
           </div>
 
           {/* Adherence Progress */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
+              <span className="text-muted-foreground flex items-center gap-2 font-medium">
                 <Target className="w-4 h-4" />
                 Adherence Rate
               </span>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">{adherenceRate}%</span>
+                <span className="font-semibold text-foreground text-base">{adherenceRate}%</span>
                 <TrendingUp className="w-3 h-3 text-success" />
               </div>
             </div>
