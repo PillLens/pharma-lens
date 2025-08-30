@@ -282,38 +282,24 @@ const Reminders: React.FC = () => {
       
       const reminder = reminders.find(r => r.id === reminderId);
       if (reminder) {
-        // Check adherence log for today's doses using timezone-aware comparison
-        const today = format(getCurrentTimeInTimezone(timezone), 'yyyy-MM-dd');
+        // Use consistent time construction method
+        const scheduledDateTime = createScheduledTime(reminderTime);
+        
+        // Check adherence log for this specific scheduled time (with some tolerance for exact time matching)
+        const timeStart = new Date(scheduledDateTime.getTime() - 30 * 60 * 1000); // 30 minutes before
+        const timeEnd = new Date(scheduledDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
         
         const { data: adherenceLog } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user?.id)
           .eq('medication_id', reminder.medication_id)
-          .gte('scheduled_time', `${today}T00:00:00`)
-          .lt('scheduled_time', `${today}T23:59:59`)
+          .gte('scheduled_time', timeStart.toISOString())
+          .lte('scheduled_time', timeEnd.toISOString())
           .eq('status', 'taken');
         
-        // Check if this specific reminder time has been taken today
-        const taken = adherenceLog?.some(log => {
-          // Convert UTC scheduled_time to local time for comparison
-          const logDate = new Date(log.scheduled_time);
-          const logTime = logDate.toLocaleTimeString('en-GB', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            timeZone: timezone,
-            hour12: false 
-          });
-          
-          // Compare with reminder time (remove seconds if present)
-          const reminderTimeFormatted = reminderTime.length > 5 ? reminderTime.slice(0, 5) : reminderTime;
-          
-          console.log(`Timeline comparing logged time ${logTime} with reminder time ${reminderTimeFormatted}`);
-          return logTime === reminderTimeFormatted;
-        }) || false;
-        
         // If there's a taken entry for this specific time slot, mark as taken
-        if (taken) {
+        if (adherenceLog && adherenceLog.length > 0) {
           return 'taken';
         }
       }
@@ -533,20 +519,8 @@ const RemindersByMedication: React.FC<{
           // Create dose status array
           const doseStatus = allTimes.map(time => {
             const taken = adherenceLog?.some(log => {
-              // Convert UTC scheduled_time to local time for comparison
-              const logDate = new Date(log.scheduled_time);
-              const logTime = logDate.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                timeZone: timezone,
-                hour12: false 
-              });
-              
-              // Compare with reminder time (remove seconds if present)
-              const reminderTime = time.length > 5 ? time.slice(0, 5) : time;
-              
-              console.log(`Comparing logged time ${logTime} with reminder time ${reminderTime} for medication ${medicationId}`);
-              return logTime === reminderTime;
+              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
+              return logTime === time;
             }) || false;
             
             return { time, taken };
@@ -565,77 +539,7 @@ const RemindersByMedication: React.FC<{
     };
 
     fetchDoseStatus();
-  }, [reminders, user, timezone, groupedReminders]);
-
-  // Refresh dose status periodically to catch updates from other parts of the app
-  useEffect(() => {
-    if (!user) return;
-    
-    const refreshInterval = setInterval(() => {
-      // Re-fetch dose status every 30 seconds
-      const fetchDoseStatus = async () => {
-        if (!user) return;
-        
-        const statusMap: {[key: string]: {time: string; taken: boolean}[]} = {};
-        
-        for (const medicationId of Object.keys(groupedReminders)) {
-          try {
-            const medicationReminders = groupedReminders[medicationId];
-            const today = format(getCurrentTimeInTimezone(timezone), 'yyyy-MM-dd');
-            
-            // Get all times for this medication
-            const allTimes = medicationReminders.map(r => r.reminder_time);
-            
-            // Query adherence log for today's doses
-            const { data: adherenceLog, error } = await supabase
-              .from('medication_adherence_log')
-              .select('*')
-              .eq('user_id', user.id)
-              .eq('medication_id', medicationId)
-              .gte('scheduled_time', `${today}T00:00:00`)
-              .lt('scheduled_time', `${today}T23:59:59`)
-              .eq('status', 'taken');
-
-            if (error) throw error;
-
-            // Create dose status array
-            const doseStatus = allTimes.map(time => {
-              const taken = adherenceLog?.some(log => {
-                // Convert UTC scheduled_time to local time for comparison
-                const logDate = new Date(log.scheduled_time);
-                const logTime = logDate.toLocaleTimeString('en-GB', { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  timeZone: timezone,
-                  hour12: false 
-                });
-                
-                // Compare with reminder time (remove seconds if present)
-                const reminderTime = time.length > 5 ? time.slice(0, 5) : time;
-                
-                return logTime === reminderTime;
-              }) || false;
-              
-              return { time, taken };
-            });
-
-            statusMap[medicationId] = doseStatus;
-          } catch (error) {
-            console.error(`Error fetching dose status for medication ${medicationId}:`, error);
-            // Fallback: mark all doses as not taken
-            const medicationReminders = groupedReminders[medicationId];
-            statusMap[medicationId] = medicationReminders.map(r => ({ time: r.reminder_time, taken: false }));
-          }
-        }
-        
-        setMedicationDoseStatus(statusMap);
-      };
-      
-      fetchDoseStatus();
-    }, 30000); // Refresh every 30 seconds
-
-    return () => clearInterval(refreshInterval);
-  }, [user, timezone, groupedReminders]);
+  }, [reminders, user, timezone]);
 
   return (
     <div className="space-y-3">
