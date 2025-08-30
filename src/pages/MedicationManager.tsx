@@ -155,7 +155,7 @@ const UpcomingMedicationCard: React.FC<{
   }
 
   return (
-    <MobileCard className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 shadow-sm">
+    <MobileCard className="bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/30 shadow-lg shadow-primary/10 backdrop-blur-sm">
       <MobileCardContent className="p-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
