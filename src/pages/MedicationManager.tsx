@@ -98,68 +98,28 @@ const UpcomingMedicationCard: React.FC<{
   }
 
   return (
-    <MobileCard className="group relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
-      {/* Modern gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      {/* Glassmorphism effect */}
-      <div className="absolute inset-0 backdrop-blur-[1px] bg-white/5" />
-      
-      <MobileCardContent className="relative p-5">
-        <div className="flex items-center gap-4">
-          {/* Enhanced pill icon with modern design */}
-          <div className="relative">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/25">
-              <Pill className="w-7 h-7 text-white drop-shadow-sm" />
+    <MobileCard className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 shadow-sm">
+      <MobileCardContent className="p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shadow-sm">
+              <Pill className="w-6 h-6 text-primary" />
             </div>
-            {/* Status indicator dot */}
-            <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${
-              nextDoseInfo.status === 'Scheduled' 
-                ? 'bg-success shadow-success/50' 
-                : 'bg-muted shadow-muted/50'
-            } shadow-lg`} />
-          </div>
-          
-          <div className="flex-1 min-w-0 space-y-1">
-            {/* Medication name with modern typography */}
-            <h3 className="font-bold text-foreground text-lg leading-tight truncate tracking-tight">
-              {medication.medication_name}
-            </h3>
-            
-            {/* Dosage with subtle styling */}
-            <p className="text-muted-foreground text-sm font-medium">
-              {medication.dosage}
-            </p>
-            
-            {/* Next dose info with modern design */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-primary font-semibold text-sm">
-                  {nextDoseInfo.time}
-                </span>
-              </div>
-              
-              <Badge 
-                variant={nextDoseInfo.status === 'Scheduled' ? 'default' : 'secondary'} 
-                className="text-xs px-2.5 py-1 rounded-full font-medium shadow-sm"
-              >
-                {nextDoseInfo.status}
-              </Badge>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-foreground text-base truncate">{medication.medication_name}</div>
+              <div className="text-sm text-muted-foreground">{medication.dosage}</div>
             </div>
           </div>
-          
-          {/* Action indicator */}
-          <div className="flex flex-col items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <ArrowRight className="w-4 h-4 text-primary" />
-            </div>
-            <div className="w-1 h-1 rounded-full bg-primary/40" />
+          <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 ml-auto">
+            <div className="font-semibold text-primary text-base">{nextDoseInfo.time}</div>
+            <Badge 
+              variant={nextDoseInfo.status === 'Scheduled' ? 'default' : 'secondary'} 
+              className="text-xs px-2 py-1 rounded-full"
+            >
+              {nextDoseInfo.status}
+            </Badge>
           </div>
         </div>
-        
-        {/* Modern bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       </MobileCardContent>
     </MobileCard>
   );

@@ -134,7 +134,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                   </h3>
                   {reminder.times.length > 1 && (
                     <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border-blue-200">
-                      {reminder.times.length}x {t('reminders.timing.daily')}
+                      {reminder.times.length}x daily
                     </Badge>
                   )}
                 </div>
@@ -144,7 +144,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                   </Badge>
                   {streak > 0 && (
                     <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-success/10 text-success border-success/20">
-                      🔥 {streak} {t('reminders.timing.days')}
+                      🔥 {streak} days
                     </Badge>
                   )}
                 </div>
@@ -186,7 +186,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
         {/* Medication details */}
         <div className="space-y-4 mb-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
-            <span className="text-muted-foreground font-medium">{t('reminders.details.dosageAndFrequency')}</span>
+            <span className="text-muted-foreground font-medium">Dosage & Frequency</span>
             <div className="text-left sm:text-right">
               <div className="font-semibold text-foreground text-base">{reminder.dosage}</div>
               <div className="text-muted-foreground text-sm">{reminder.frequency}</div>
@@ -198,7 +198,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
               <span className="text-muted-foreground flex items-center gap-2 font-medium">
                 <Target className="w-4 h-4" />
-                {t('reminders.details.adherenceRate')}
+                Adherence Rate
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-foreground text-base">{adherenceRate}%</span>
@@ -214,11 +214,11 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="w-4 h-4" />
-              <span>{t('reminders.details.todaysSchedule')}</span>
+              <span>Today's Schedule</span>
             </div>
             {reminder.times.length > 1 && (
               <span className="text-xs text-muted-foreground">
-                {reminder.times.length} {t('reminders.details.doses')}
+                {reminder.times.length} doses
               </span>
             )}
           </div>
@@ -238,9 +238,9 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
               
               const getDoseLabel = (index: number, totalTimes: number) => {
                 if (totalTimes === 1) return '';
-                if (totalTimes === 2) return index === 0 ? t('reminders.timing.morning') : t('reminders.timing.evening');
-                if (totalTimes === 3) return [t('reminders.timing.morning'), t('reminders.timing.afternoon'), t('reminders.timing.evening')][index];
-                return `${t('reminders.timing.dose')} ${index + 1}`;
+                if (totalTimes === 2) return index === 0 ? 'Morning' : 'Evening';
+                if (totalTimes === 3) return ['Morning', 'Afternoon', 'Evening'][index];
+                return `Dose ${index + 1}`;
               };
               
               const doseLabel = getDoseLabel(index, reminder.times.length);
@@ -282,7 +282,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                         onMarkTaken(time);
                       }}
                     >
-                      {t('reminders.actions.takeNow')}
+                      Take Now
                     </Button>
                   )}
                 </div>
@@ -299,13 +299,13 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 <Timer className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <div className="text-sm font-medium text-foreground">{t('reminders.timing.nextDoseIn')}</div>
-                <div className="text-xs text-muted-foreground">{t('reminders.timing.stayOnTrack')}</div>
+                <div className="text-sm font-medium text-foreground">Next dose in</div>
+                <div className="text-xs text-muted-foreground">Stay on track!</div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-lg font-bold text-primary">{timeUntilNext}</div>
-              <div className="text-xs text-muted-foreground">{t('reminders.timing.remaining')}</div>
+              <div className="text-xs text-muted-foreground">remaining</div>
             </div>
           </div>
         )}
@@ -315,7 +315,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
           <div className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 text-muted-foreground">
             <Bell className="w-5 h-5" />
             <div className="text-sm">
-              {t('reminders.status.pausedMessage')}
+              Reminder paused - tap to reactivate
             </div>
           </div>
         )}
