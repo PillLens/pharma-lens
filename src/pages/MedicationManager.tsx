@@ -74,26 +74,22 @@ const UpcomingMedicationCard: React.FC<{
     fetchNextDose();
   }, [medication.id, user, timezone]);
 
-  const isDue = nextDoseInfo?.status === 'Scheduled' && nextDoseInfo?.time !== 'No reminder set';
-  const isError = nextDoseInfo?.status === 'Error';
-
   if (!nextDoseInfo) {
     return (
-      <MobileCard variant="glass" className="border-0 shadow-soft backdrop-blur-md bg-gradient-to-br from-background/80 to-muted/30">
-        <MobileCardContent className="p-5">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary-light/30 flex items-center justify-center shadow-medical backdrop-blur-sm border border-primary/10">
-                <Pill className="w-7 h-7 text-primary animate-pulse" />
+      <MobileCard className="bg-muted/30">
+        <MobileCardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Pill className="w-5 h-5 text-primary" />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-muted rounded-full border-2 border-background animate-pulse" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="h-5 bg-muted/50 rounded-lg animate-pulse mb-2" />
-              <div className="h-4 bg-muted/30 rounded-md animate-pulse w-3/4" />
+              <div>
+                <div className="font-medium text-foreground">{medication.medication_name}</div>
+                <div className="text-sm text-muted-foreground">{medication.dosage}</div>
+              </div>
             </div>
             <div className="text-right">
-              <div className="h-4 bg-primary/20 rounded-full w-20 animate-pulse" />
+              <div className="text-sm font-medium">Loading...</div>
             </div>
           </div>
         </MobileCardContent>
@@ -102,75 +98,26 @@ const UpcomingMedicationCard: React.FC<{
   }
 
   return (
-    <MobileCard 
-      variant="glass" 
-      className={`
-        border-0 shadow-elevated backdrop-blur-md transform-gpu transition-all duration-300 hover:shadow-glow hover:scale-[1.02]
-        ${isDue ? 'bg-gradient-to-br from-success/5 to-success-light/10 border border-success/20' : 
-          isError ? 'bg-gradient-to-br from-warning/5 to-warning-light/10 border border-warning/20' :
-          'bg-gradient-to-br from-background/90 to-muted/20 border border-primary/10'}
-      `}
-    >
-      <MobileCardContent className="p-5">
-        <div className="flex items-center gap-4">
-          {/* Enhanced pill icon with status indicator */}
-          <div className="relative touch-target">
-            <div className={`
-              w-16 h-16 rounded-2xl flex items-center justify-center shadow-medical backdrop-blur-sm border-2 transition-all duration-300
-              ${isDue ? 'bg-gradient-to-br from-success/20 to-success-glow/30 border-success/20 shadow-success' :
-                isError ? 'bg-gradient-to-br from-warning/20 to-warning-glow/30 border-warning/20 shadow-warning' :
-                'bg-gradient-to-br from-primary/20 to-primary-glow/30 border-primary/20'}
-            `}>
-              <Pill className={`
-                w-8 h-8 transition-all duration-300
-                ${isDue ? 'text-success animate-medical-pulse' :
-                  isError ? 'text-warning' : 'text-primary'}
-              `} />
+    <MobileCard className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 shadow-sm">
+      <MobileCardContent className="p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shadow-sm">
+              <Pill className="w-6 h-6 text-primary" />
             </div>
-            {/* Status indicator dot */}
-            <div className={`
-              absolute -top-1 -right-1 w-5 h-5 rounded-full border-3 border-background shadow-soft flex items-center justify-center
-              ${isDue ? 'bg-success animate-medical-pulse' :
-                isError ? 'bg-warning' : 'bg-muted'}
-            `}>
-              {isDue && <div className="w-2 h-2 bg-background rounded-full" />}
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-foreground text-base truncate">{medication.medication_name}</div>
+              <div className="text-sm text-muted-foreground">{medication.dosage}</div>
             </div>
           </div>
-
-          {/* Medication info with enhanced typography */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-foreground text-lg leading-tight truncate mb-1">
-              {medication.medication_name}
-            </h3>
-            <p className="text-sm text-muted-foreground font-medium">
-              {medication.dosage}
-            </p>
-          </div>
-
-          {/* Time and status with modern design */}
-          <div className="flex flex-col items-end gap-2">
-            <div className={`
-              px-3 py-1.5 rounded-full text-sm font-semibold backdrop-blur-sm border transition-all duration-300
-              ${isDue ? 'bg-success/10 text-success border-success/20 shadow-success animate-medical-pulse' :
-                isError ? 'bg-warning/10 text-warning border-warning/20' :
-                'bg-primary/10 text-primary border-primary/20'}
-            `}>
-              {nextDoseInfo.time}
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant={isDue ? 'default' : isError ? 'destructive' : 'secondary'}
-                className={`
-                  text-xs px-3 py-1 rounded-full font-medium shadow-soft border-0
-                  ${isDue ? 'bg-success text-success-foreground' :
-                    isError ? 'bg-warning text-warning-foreground' :
-                    'bg-muted text-muted-foreground'}
-                `}
-              >
-                {nextDoseInfo.status}
-              </Badge>
-              <ArrowRight className="w-4 h-4 text-muted-foreground/60 transition-transform duration-200 hover:translate-x-0.5" />
-            </div>
+          <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 ml-auto">
+            <div className="font-semibold text-primary text-base">{nextDoseInfo.time}</div>
+            <Badge 
+              variant={nextDoseInfo.status === 'Scheduled' ? 'default' : 'secondary'} 
+              className="text-xs px-2 py-1 rounded-full"
+            >
+              {nextDoseInfo.status}
+            </Badge>
           </div>
         </div>
       </MobileCardContent>
