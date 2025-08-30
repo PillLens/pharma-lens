@@ -6,6 +6,7 @@ import {
   CreditCard, 
   Phone, 
   Bell, 
+  BellOff,
   MapPin, 
   Download, 
   Trash2, 
@@ -442,16 +443,35 @@ const Settings: React.FC = () => {
                 : t('settings.notifications.disabled')
               }
               rightElement={
-                <Button
-                  variant={profileData.notification_preferences.enabled ? "default" : "outline"}
-                  size="sm"
+                <button
+                  className={`
+                    relative inline-flex items-center h-8 w-16 rounded-full px-1 transition-all duration-300 ease-in-out
+                    ${profileData.notification_preferences.enabled 
+                      ? 'bg-primary hover:bg-primary/90' 
+                      : 'bg-muted hover:bg-muted/80'
+                    }
+                  `}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleNotificationChange('enabled', !profileData.notification_preferences.enabled);
                   }}
                 >
-                  {profileData.notification_preferences.enabled ? t('common.enabled') : t('common.disabled')}
-                </Button>
+                  <div
+                    className={`
+                      flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 ease-in-out transform
+                      ${profileData.notification_preferences.enabled 
+                        ? 'translate-x-8 bg-white text-primary' 
+                        : 'translate-x-0 bg-white text-muted-foreground'
+                      }
+                    `}
+                  >
+                    {profileData.notification_preferences.enabled ? (
+                      <Bell className="w-3 h-3" />
+                    ) : (
+                      <BellOff className="w-3 h-3" />
+                    )}
+                  </div>
+                </button>
               }
               onClick={() => setShowNotificationSettings(true)}
             />
