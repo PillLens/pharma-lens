@@ -21,6 +21,7 @@ import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 import { medicationAdherenceService } from '@/services/medicationAdherenceService';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
+import { format } from 'date-fns';
 
 const Reminders: React.FC = () => {
   const { t } = useTranslation();
@@ -370,66 +371,47 @@ const Reminders: React.FC = () => {
             {reminders.length === 0 ? (
               <RemindersEmptyState onAddReminder={() => setShowAddReminder(true)} />
             ) : (
-              <div className="space-y-3">
-                <h2 className="font-medium text-foreground flex items-center gap-2 mb-4">
-                  <Bell className="w-4 h-4" />
-                  {t('reminders.timeline.yourReminders')} ({reminders.length})
-                </h2>
-                {reminders.map(reminder => (
-                  <EnhancedReminderCard
-                    key={reminder.id}
-                    reminder={{
-                      id: reminder.id,
-                      medicationName: reminder.medication?.medication_name || 'Unknown',
-                      dosage: reminder.medication?.dosage || '',
-                      frequency: reminder.medication?.frequency || '',
-                      times: [reminder.reminder_time],
-                      status: reminder.is_active ? 'active' : 'paused',
-                      nextDose: '', // Calculate based on reminder_time and days_of_week
-                      daysOfWeek: reminder.days_of_week,
-                      notes: '',
-                       adherenceRate: overallAdherenceRate, // Use real adherence rate
-                       streak: longestStreak, // Use real streak
-                       lastTaken: '', // Could be calculated from adherence log
-                      dosesToday: [] // Calculate from reminder_time and days_of_week
-                    }}
-                    onTap={() => handleReminderTap(reminder)}
-                    onEdit={() => handleEditReminder(reminder)}
-                    onDelete={() => handleDeleteReminder(reminder.id)}
-                    onToggleStatus={() => handleToggleReminder(reminder.id)}
-                    onMarkTaken={async (time) => {
-                      try {
-                        if (!user) return;
-                        
-                        const success = await scheduledDoseService.markScheduledDoseAsTaken(
-                          user.id,
-                          reminder.medication_id,
-                          time,
-                          'Marked as taken from reminder card'
-                        );
-                        
-                        if (success) {
-                          await fetchRealData();
-                          toast({
-                            title: t('toast.doseTaken'),
-                            description: t('toast.medicationMarkedTaken', { 
-                              medication: reminder.medication?.medication_name, 
-                              time 
-                            })
-                          });
-                        }
-                      } catch (error) {
-                        console.error('Error marking dose as taken:', error);
-                        toast({
-                          title: t('common.error'),
-                          description: 'Failed to mark dose as taken',
-                          variant: 'destructive'
-                        });
-                      }
-                    }}
-                  />
-                ))}
-              </div>
+              <RemindersByMedication 
+                reminders={reminders}
+                timezone={timezone}
+                overallAdherenceRate={overallAdherenceRate}
+                longestStreak={longestStreak}
+                onReminderTap={handleReminderTap}
+                onEditReminder={handleEditReminder}
+                onDeleteReminder={handleDeleteReminder}
+                onToggleReminder={handleToggleReminder}
+                onMarkTaken={async (medicationId: string, time: string) => {
+                  try {
+                    if (!user) return;
+                    
+                    const success = await scheduledDoseService.markScheduledDoseAsTaken(
+                      user.id,
+                      medicationId,
+                      time,
+                      'Marked as taken from reminder card'
+                    );
+                    
+                    if (success) {
+                      await fetchRealData();
+                      const medication = reminders.find(r => r.medication_id === medicationId)?.medication;
+                      toast({
+                        title: t('toast.doseTaken'),
+                        description: t('toast.medicationMarkedTaken', { 
+                          medication: medication?.medication_name || 'Medication', 
+                          time 
+                        })
+                      });
+                    }
+                  } catch (error) {
+                    console.error('Error marking dose as taken:', error);
+                    toast({
+                      title: t('common.error'),
+                      description: 'Failed to mark dose as taken',
+                      variant: 'destructive'
+                    });
+                  }
+                }}
+              />
             )}
           </div>
         </div>
@@ -466,6 +448,147 @@ const Reminders: React.FC = () => {
         }}
       />
     </ProfessionalMobileLayout>
+  );
+};
+
+// Component to group reminders by medication and handle dose status
+const RemindersByMedication: React.FC<{
+  reminders: ReminderWithMedication[];
+  timezone: string;
+  overallAdherenceRate: number;
+  longestStreak: number;
+  onReminderTap: (reminder: ReminderWithMedication) => void;
+  onEditReminder: (reminder: ReminderWithMedication) => void;
+  onDeleteReminder: (id: string) => void;
+  onToggleReminder: (id: string) => void;
+  onMarkTaken: (medicationId: string, time: string) => Promise<void>;
+}> = ({
+  reminders,
+  timezone,
+  overallAdherenceRate,
+  longestStreak,
+  onReminderTap,
+  onEditReminder,
+  onDeleteReminder,
+  onToggleReminder,
+  onMarkTaken
+}) => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [medicationDoseStatus, setMedicationDoseStatus] = useState<{[key: string]: {time: string; taken: boolean}[]}>({});
+
+  // Group reminders by medication
+  const groupedReminders = reminders.reduce((acc, reminder) => {
+    const medicationId = reminder.medication_id;
+    if (!acc[medicationId]) {
+      acc[medicationId] = [];
+    }
+    acc[medicationId].push(reminder);
+    return acc;
+  }, {} as {[key: string]: ReminderWithMedication[]});
+
+  // Fetch today's dose status for each medication
+  useEffect(() => {
+    const fetchDoseStatus = async () => {
+      if (!user) return;
+      
+      const statusMap: {[key: string]: {time: string; taken: boolean}[]} = {};
+      
+      for (const medicationId of Object.keys(groupedReminders)) {
+        try {
+          const medicationReminders = groupedReminders[medicationId];
+          const today = format(getCurrentTimeInTimezone(timezone), 'yyyy-MM-dd');
+          
+          // Get all times for this medication
+          const allTimes = medicationReminders.map(r => r.reminder_time);
+          
+          // Query adherence log for today's doses
+          const { data: adherenceLog, error } = await supabase
+            .from('medication_adherence_log')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('medication_id', medicationId)
+            .gte('scheduled_time', `${today}T00:00:00`)
+            .lt('scheduled_time', `${today}T23:59:59`)
+            .eq('status', 'taken');
+
+          if (error) throw error;
+
+          // Create dose status array
+          const doseStatus = allTimes.map(time => {
+            const taken = adherenceLog?.some(log => {
+              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
+              return logTime === time;
+            }) || false;
+            
+            return { time, taken };
+          });
+
+          statusMap[medicationId] = doseStatus;
+        } catch (error) {
+          console.error(`Error fetching dose status for medication ${medicationId}:`, error);
+          // Fallback: mark all doses as not taken
+          const medicationReminders = groupedReminders[medicationId];
+          statusMap[medicationId] = medicationReminders.map(r => ({ time: r.reminder_time, taken: false }));
+        }
+      }
+      
+      setMedicationDoseStatus(statusMap);
+    };
+
+    fetchDoseStatus();
+  }, [reminders, user, timezone]);
+
+  return (
+    <div className="space-y-3">
+      <h2 className="font-medium text-foreground flex items-center gap-2 mb-4">
+        <Bell className="w-4 h-4" />
+        {t('reminders.timeline.yourReminders')} ({Object.keys(groupedReminders).length})
+      </h2>
+      {Object.entries(groupedReminders).map(([medicationId, medicationReminders]) => {
+        const firstReminder = medicationReminders[0];
+        const allTimes = medicationReminders.map(r => r.reminder_time).sort();
+        const daysOfWeek = firstReminder.days_of_week;
+        const isActive = medicationReminders.some(r => r.is_active);
+        const dosesToday = medicationDoseStatus[medicationId] || [];
+        
+        return (
+          <EnhancedReminderCard
+            key={medicationId}
+            reminder={{
+              id: firstReminder.id,
+              medicationName: firstReminder.medication?.medication_name || 'Unknown',
+              dosage: firstReminder.medication?.dosage || '',
+              frequency: firstReminder.medication?.frequency || '',
+              times: allTimes,
+              status: isActive ? 'active' : 'paused',
+              nextDose: '',
+              daysOfWeek: daysOfWeek,
+              notes: '',
+              adherenceRate: overallAdherenceRate,
+              streak: longestStreak,
+              lastTaken: '',
+              dosesToday: dosesToday
+            }}
+            onTap={() => onReminderTap(firstReminder)}
+            onEdit={() => onEditReminder(firstReminder)}
+            onDelete={() => onDeleteReminder(firstReminder.id)}
+            onToggleStatus={() => onToggleReminder(firstReminder.id)}
+            onMarkTaken={async (time: string) => {
+              await onMarkTaken(medicationId, time);
+              // Refresh dose status after marking taken
+              const updatedStatus = dosesToday.map(dose => 
+                dose.time === time ? { ...dose, taken: true } : dose
+              );
+              setMedicationDoseStatus(prev => ({
+                ...prev,
+                [medicationId]: updatedStatus
+              }));
+            }}
+          />
+        );
+      })}
+    </div>
   );
 };
 

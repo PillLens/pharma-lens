@@ -59,11 +59,30 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
     const calculateTimeUntilNext = () => {
       if (reminder.times.length === 0) return '';
       
-      // Use the first time and days of week for calculation
-      const reminderTime = reminder.times[0];
-      const daysOfWeek = reminder.daysOfWeek || [1, 2, 3, 4, 5, 6, 7]; // Default to daily
+      // Find the next untaken dose
+      const currentTimeStr = new Date().toTimeString().slice(0, 5);
+      const dosesToday = reminder.dosesToday || [];
       
-      const nextDose = calculateNextDose(reminderTime, daysOfWeek, timezone);
+      // Find next untaken dose today
+      const nextUntakenToday = reminder.times.find(time => {
+        const doseStatus = dosesToday.find(d => d.time === time);
+        const isNotTaken = !doseStatus?.taken;
+        const isInFuture = time > currentTimeStr;
+        return isNotTaken && isInFuture;
+      });
+      
+      if (nextUntakenToday) {
+        // Calculate time until next untaken dose today
+        const nextDose = calculateNextDose(nextUntakenToday, reminder.daysOfWeek || [1, 2, 3, 4, 5, 6, 7], timezone);
+        if (nextDose) {
+          return formatTimeUntilNext(nextDose.minutesUntil);
+        }
+      }
+      
+      // If no untaken doses today, find next dose tomorrow
+      const firstTimeToday = reminder.times[0];
+      const daysOfWeek = reminder.daysOfWeek || [1, 2, 3, 4, 5, 6, 7];
+      const nextDose = calculateNextDose(firstTimeToday, daysOfWeek, timezone);
       
       if (nextDose) {
         return formatTimeUntilNext(nextDose.minutesUntil);
@@ -73,7 +92,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
     };
 
     setTimeUntilNext(calculateTimeUntilNext());
-  }, [reminder.times, reminder.daysOfWeek, currentTime, timezone]);
+  }, [reminder.times, reminder.daysOfWeek, reminder.dosesToday, currentTime, timezone]);
 
   const getStatusVariant = (status: 'active' | 'paused') => {
     return status === 'active' 
@@ -206,8 +225,16 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
           <div className="flex flex-wrap gap-2">
             {reminder.times.map((time, index) => {
               const currentTimeStr = new Date().toTimeString().slice(0, 5);
+              const dosesToday = reminder.dosesToday || [];
+              const doseStatus = dosesToday.find(d => d.time === time);
+              const isTaken = doseStatus?.taken || false;
               const isPast = time < currentTimeStr;
               const isCurrent = Math.abs(new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTimeStr}:00`).getTime()) < 30 * 60 * 1000;
+              
+              // Skip showing doses that have been taken
+              if (isTaken) {
+                return null;
+              }
               
               const getDoseLabel = (index: number, totalTimes: number) => {
                 if (totalTimes === 1) return '';
@@ -225,12 +252,17 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                     isCurrent 
                       ? 'bg-primary text-primary-foreground shadow-md animate-pulse' 
                       : isPast 
-                        ? 'bg-success/10 text-success border border-success/20' 
+                        ? 'bg-warning/10 text-warning border border-warning/20' 
                         : 'bg-muted/50 text-foreground border border-border/50'
                   }`}
+                  onClick={() => {
+                    if (onMarkTaken && (isCurrent || isPast)) {
+                      onMarkTaken(time);
+                    }
+                  }}
                 >
-                  {isPast ? (
-                    <CheckCircle2 className="w-4 h-4" />
+                  {isCurrent || isPast ? (
+                    <Circle className="w-4 h-4" />
                   ) : (
                     <Circle className="w-4 h-4" />
                   )}
@@ -240,9 +272,22 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                       <span className="text-xs opacity-75">{doseLabel}</span>
                     )}
                   </div>
+                  {(isCurrent || isPast) && onMarkTaken && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="ml-auto h-6 px-2 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onMarkTaken(time);
+                      }}
+                    >
+                      Take Now
+                    </Button>
+                  )}
                 </div>
               );
-            })}
+            }).filter(Boolean)}
           </div>
         </div>
 
