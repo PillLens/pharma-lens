@@ -340,11 +340,13 @@ const Reminders: React.FC = () => {
             streak={longestStreak}
             missedDoses={missedDoses}
             weeklyAdherence={weeklyAdherence}
-            todaySchedule={timelineEntries.map(entry => ({
-              time: entry.time,
-              medication: entry.medication,
-              status: entry.status
-            }))}
+            todaySchedule={timelineEntries
+              .filter(entry => entry.status !== 'taken') // Filter out taken doses
+              .map(entry => ({
+                time: entry.time,
+                medication: entry.medication,
+                status: entry.status
+              }))}
             onCardTap={handleSummaryCardTap}
           />
           </div>
