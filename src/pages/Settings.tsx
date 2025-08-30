@@ -442,10 +442,16 @@ const Settings: React.FC = () => {
                 : t('settings.notifications.disabled')
               }
               rightElement={
-                <Switch
-                  checked={profileData.notification_preferences.enabled}
-                  onCheckedChange={(enabled) => handleNotificationChange('enabled', enabled)}
-                />
+                <Button
+                  variant={profileData.notification_preferences.enabled ? "default" : "outline"}
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNotificationChange('enabled', !profileData.notification_preferences.enabled);
+                  }}
+                >
+                  {profileData.notification_preferences.enabled ? t('common.enabled') : t('common.disabled')}
+                </Button>
               }
               onClick={() => setShowNotificationSettings(true)}
             />
