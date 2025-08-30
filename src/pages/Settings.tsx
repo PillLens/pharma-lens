@@ -6,7 +6,6 @@ import {
   CreditCard, 
   Phone, 
   Bell, 
-  BellOff,
   MapPin, 
   Download, 
   Trash2, 
@@ -20,6 +19,7 @@ import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayo
 import { TranslatedText } from '@/components/TranslatedText';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -442,35 +442,16 @@ const Settings: React.FC = () => {
                 : t('settings.notifications.disabled')
               }
               rightElement={
-                <button
-                  className={`
-                    relative inline-flex items-center h-6 w-12 rounded-full px-0.5 transition-all duration-300 ease-in-out
-                    ${profileData.notification_preferences.enabled 
-                      ? 'bg-primary hover:bg-primary/90' 
-                      : 'bg-muted hover:bg-muted/80'
-                    }
-                  `}
+                <Button
+                  variant={profileData.notification_preferences.enabled ? "default" : "outline"}
+                  size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleNotificationChange('enabled', !profileData.notification_preferences.enabled);
                   }}
                 >
-                  <div
-                    className={`
-                      flex items-center justify-center w-5 h-5 rounded-full transition-all duration-300 ease-in-out transform
-                      ${profileData.notification_preferences.enabled 
-                        ? 'translate-x-6 bg-white text-primary' 
-                        : 'translate-x-0 bg-white text-muted-foreground'
-                      }
-                    `}
-                  >
-                    {profileData.notification_preferences.enabled ? (
-                      <Bell className="w-2.5 h-2.5" />
-                    ) : (
-                      <BellOff className="w-2.5 h-2.5" />
-                    )}
-                  </div>
-                </button>
+                  {profileData.notification_preferences.enabled ? t('common.enabled') : t('common.disabled')}
+                </Button>
               }
               onClick={() => setShowNotificationSettings(true)}
             />

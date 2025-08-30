@@ -121,8 +121,8 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Master Toggle */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
             <Label className="text-base font-medium">
               <TranslatedText translationKey="settings.notifications.masterToggle" />
             </Label>
@@ -130,32 +130,30 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
               <TranslatedText translationKey="settings.notifications.masterDescription" />
             </p>
           </div>
-          <div className="flex-shrink-0 pt-1">
-            <Switch
-              checked={preferences.enabled}
-              onCheckedChange={(value) => handleToggleChange('enabled', value)}
-              disabled={loading || !isOneSignalReady}
-            />
-          </div>
+          <Switch
+            checked={preferences.enabled}
+            onCheckedChange={(value) => handleToggleChange('enabled', value)}
+            disabled={loading || !isOneSignalReady}
+          />
         </div>
 
         <Separator />
 
         {/* Individual notification types */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           {/* Medication Reminders */}
-          <div className="flex items-start gap-4">
-            <Pill className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
-            <div className="flex items-start justify-between gap-4 flex-1">
-              <div className="flex-1 space-y-1">
-                <Label className="font-medium">
-                  <TranslatedText translationKey="settings.notifications.reminders" />
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  <TranslatedText translationKey="settings.notifications.remindersDescription" />
-                </p>
-              </div>
-              <div className="flex-shrink-0 pt-1">
+          <div className="flex items-start gap-3">
+            <Pill className="h-5 w-5 mt-0.5 text-primary" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="font-medium">
+                    <TranslatedText translationKey="settings.notifications.reminders" />
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    <TranslatedText translationKey="settings.notifications.remindersDescription" />
+                  </p>
+                </div>
                 <Switch
                   checked={preferences.reminders}
                   onCheckedChange={(value) => handleToggleChange('reminders', value)}
@@ -166,18 +164,18 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
           </div>
 
           {/* Missed Dose Alerts */}
-          <div className="flex items-start gap-4">
-            <Clock className="h-5 w-5 mt-1 text-orange-500 flex-shrink-0" />
-            <div className="flex items-start justify-between gap-4 flex-1">
-              <div className="flex-1 space-y-1">
-                <Label className="font-medium">
-                  <TranslatedText translationKey="settings.notifications.missedDose" />
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  <TranslatedText translationKey="settings.notifications.missedDoseDescription" />
-                </p>
-              </div>
-              <div className="flex-shrink-0 pt-1">
+          <div className="flex items-start gap-3">
+            <Clock className="h-5 w-5 mt-0.5 text-orange-500" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="font-medium">
+                    <TranslatedText translationKey="settings.notifications.missedDose" />
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    <TranslatedText translationKey="settings.notifications.missedDoseDescription" />
+                  </p>
+                </div>
                 <Switch
                   checked={preferences.missedDose}
                   onCheckedChange={(value) => handleToggleChange('missedDose', value)}
@@ -188,18 +186,18 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
           </div>
 
           {/* Family Updates */}
-          <div className="flex items-start gap-4">
-            <Bell className="h-5 w-5 mt-1 text-blue-500 flex-shrink-0" />
-            <div className="flex items-start justify-between gap-4 flex-1">
-              <div className="flex-1 space-y-1">
-                <Label className="font-medium">
-                  <TranslatedText translationKey="settings.notifications.family" />
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  <TranslatedText translationKey="settings.notifications.familyDescription" />
-                </p>
-              </div>
-              <div className="flex-shrink-0 pt-1">
+          <div className="flex items-start gap-3">
+            <Bell className="h-5 w-5 mt-0.5 text-blue-500" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="font-medium">
+                    <TranslatedText translationKey="settings.notifications.family" />
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    <TranslatedText translationKey="settings.notifications.familyDescription" />
+                  </p>
+                </div>
                 <Switch
                   checked={preferences.family}
                   onCheckedChange={(value) => handleToggleChange('family', value)}
@@ -210,18 +208,18 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ clas
           </div>
 
           {/* Product Alerts */}
-          <div className="flex items-start gap-4">
-            <div className="h-5 w-5 mt-1 text-red-500 flex-shrink-0">⚠️</div>
-            <div className="flex items-start justify-between gap-4 flex-1">
-              <div className="flex-1 space-y-1">
-                <Label className="font-medium">
-                  <TranslatedText translationKey="settings.notifications.product" />
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  <TranslatedText translationKey="settings.notifications.productDescription" />
-                </p>
-              </div>
-              <div className="flex-shrink-0 pt-1">
+          <div className="flex items-start gap-3">
+            <div className="h-5 w-5 mt-0.5 text-red-500">⚠️</div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="font-medium">
+                    <TranslatedText translationKey="settings.notifications.product" />
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    <TranslatedText translationKey="settings.notifications.productDescription" />
+                  </p>
+                </div>
                 <Switch
                   checked={preferences.product}
                   onCheckedChange={(value) => handleToggleChange('product', value)}
