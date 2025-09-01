@@ -205,16 +205,19 @@ const Reminders: React.FC = () => {
       );
 
       if (success) {
-        // Refresh all data with proper sequencing
+        // Comprehensive data refresh to ensure UI consistency
         await Promise.all([
           fetchRealData(),
           fetchReminders()
         ]);
         
-        // Additional refresh after delay for database consistency
+        // Force additional refresh after delay for database consistency
         setTimeout(async () => {
-          await fetchRealData();
-        }, 500);
+          await Promise.all([
+            fetchRealData(),
+            fetchReminders()
+          ]);
+        }, 1000);
         
         toast({
           title: t('toast.doseTaken'),
@@ -404,7 +407,20 @@ const Reminders: React.FC = () => {
                     );
                     
                     if (success) {
-                      await fetchRealData();
+                      // Immediate comprehensive refresh
+                      await Promise.all([
+                        fetchRealData(),
+                        fetchReminders()
+                      ]);
+                      
+                      // Force additional refresh for consistency
+                      setTimeout(async () => {
+                        await Promise.all([
+                          fetchRealData(),
+                          fetchReminders()
+                        ]);
+                      }, 1000);
+                      
                       const medication = reminders.find(r => r.medication_id === medicationId)?.medication;
                       toast({
                         title: t('toast.doseTaken'),
@@ -588,14 +604,16 @@ const RemindersByMedication: React.FC<{
             onToggleStatus={() => onToggleReminder(firstReminder.id)}
             onMarkTaken={async (time: string) => {
               await onMarkTaken(medicationId, time);
-              // Refresh dose status after marking taken
-              const updatedStatus = dosesToday.map(dose => 
-                dose.time === time ? { ...dose, taken: true } : dose
-              );
-              setMedicationDoseStatus(prev => ({
-                ...prev,
-                [medicationId]: updatedStatus
-              }));
+              // Refresh dose status after marking taken - moved outside callback
+              setTimeout(() => {
+                const updatedStatus = dosesToday.map(dose => 
+                  dose.time === time ? { ...dose, taken: true } : dose
+                );
+                setMedicationDoseStatus(prev => ({
+                  ...prev,
+                  [medicationId]: updatedStatus
+                }));
+              }, 100);
             }}
           />
         );

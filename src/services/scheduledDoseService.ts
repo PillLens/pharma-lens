@@ -72,7 +72,7 @@ export class ScheduledDoseService {
   }
 
   /**
-   * Mark a scheduled dose as taken with correct timing
+   * Mark a scheduled dose as taken with correct timing - Fixed to prevent duplicates
    */
   async markScheduledDoseAsTaken(
     userId: string,
@@ -81,80 +81,71 @@ export class ScheduledDoseService {
     notes?: string
   ): Promise<boolean> {
     try {
-      const scheduledTime = createScheduledTime(reminderTime);
-      
-      console.log(`[DEBUG] Marking dose as taken - reminderTime: ${reminderTime}, scheduledTime: ${scheduledTime.toISOString()}`);
+      // Find the scheduled dose for today based on the reminder time
+      const today = new Date();
+      const startOfDay = new Date(today);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(today);
+      endOfDay.setHours(23, 59, 59, 999);
 
-      // ONLY try to find the exact scheduled time entry - no nearby search
-      const { data: exactEntry } = await supabase
+      // Look for the scheduled dose entry for this reminder time today
+      const { data: scheduledDoses } = await supabase
         .from('medication_adherence_log')
         .select('id, status, scheduled_time')
         .eq('user_id', userId)
         .eq('medication_id', medicationId)
-        .eq('scheduled_time', scheduledTime.toISOString())
-        .maybeSingle();
+        .gte('scheduled_time', startOfDay.toISOString())
+        .lte('scheduled_time', endOfDay.toISOString())
+        .eq('status', 'scheduled');
 
-      console.log(`[DEBUG] Found exact entry:`, exactEntry);
+      // Find the dose that matches this reminder time
+      let targetDose = null;
+      if (scheduledDoses) {
+        for (const dose of scheduledDoses) {
+          const doseTime = new Date(dose.scheduled_time);
+          const doseTimeStr = `${doseTime.getHours().toString().padStart(2, '0')}:${doseTime.getMinutes().toString().padStart(2, '0')}`;
+          if (doseTimeStr === reminderTime) {
+            targetDose = dose;
+            break;
+          }
+        }
+      }
 
-      if (exactEntry) {
-        // Update existing exact entry to taken status
+      if (targetDose) {
+        // Update the existing scheduled dose to mark it as taken
         const { error } = await supabase
           .from('medication_adherence_log')
           .update({
             status: 'taken',
-            taken_time: new Date().toISOString(), // Use current time as taken time
+            taken_time: new Date().toISOString(), // Record actual time taken
             notes: notes || 'Marked via Take Now button',
             reported_by: userId
           })
-          .eq('id', exactEntry.id);
+          .eq('id', targetDose.id);
 
-        console.log(`[DEBUG] Updated existing entry, error:`, error);
+        console.log(`[DEBUG] Updated existing scheduled dose ${targetDose.id}, error:`, error);
         return !error;
       }
 
-      // No exact entry found, create a new one with upsert
+      // If no scheduled dose found, create a new one (shouldn't normally happen)
+      console.log(`[DEBUG] No scheduled dose found for ${reminderTime}, creating new entry`);
+      const scheduledTime = createScheduledTime(reminderTime);
+      
       const { error } = await supabase
         .from('medication_adherence_log')
-        .upsert({
+        .insert({
           user_id: userId,
           medication_id: medicationId,
           scheduled_time: scheduledTime.toISOString(),
-          taken_time: new Date().toISOString(), // Use current time as taken time
+          taken_time: new Date().toISOString(),
           status: 'taken',
           notes: notes || 'Marked via Take Now button'
-        }, {
-          onConflict: 'user_id,medication_id,scheduled_time'
         });
 
       console.log(`[DEBUG] Created new entry, error:`, error);
       return !error;
     } catch (error) {
       console.error('Error marking dose as taken:', error);
-      
-      // If it's a unique constraint error, try to update instead
-      if (error.message?.includes('duplicate key') || error.message?.includes('unique constraint')) {
-        try {
-          const scheduledTime = createScheduledTime(reminderTime);
-
-          const { error: updateError } = await supabase
-            .from('medication_adherence_log')
-            .update({
-              status: 'taken',
-              taken_time: new Date().toISOString(), // Fix: Use current time, not scheduled time
-              notes: notes || 'Marked via Take Now button',
-              reported_by: userId
-            })
-            .eq('user_id', userId)
-            .eq('medication_id', medicationId)
-            .eq('scheduled_time', scheduledTime.toISOString());
-
-          return !updateError;
-        } catch (retryError) {
-          console.error('Retry update failed:', retryError);
-          return false;
-        }
-      }
-      
       return false;
     }
   }
