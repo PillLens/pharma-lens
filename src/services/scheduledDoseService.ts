@@ -87,7 +87,7 @@ export class ScheduledDoseService {
       const endOfDay = new Date(today);
       endOfDay.setHours(23, 59, 59, 999);
 
-      // Look for any existing dose entry for this reminder time today
+      // Look for any existing dose entry for this medication today
       const { data: existingDoses } = await supabase
         .from('medication_adherence_log')
         .select('id, status, scheduled_time, taken_time')
@@ -96,15 +96,19 @@ export class ScheduledDoseService {
         .gte('scheduled_time', startOfDay.toISOString())
         .lte('scheduled_time', endOfDay.toISOString());
 
-      console.log(`[DEBUG] Found ${existingDoses?.length || 0} existing doses for today`);
+      console.log(`[DEBUG] Found ${existingDoses?.length || 0} existing doses for medication ${medicationId}:`, existingDoses);
 
-      // Find the dose that matches this reminder time
+      // Find the dose that matches this reminder time (more flexible matching)
       let targetDose = null;
       if (existingDoses) {
         for (const dose of existingDoses) {
           const doseTime = new Date(dose.scheduled_time);
-          const doseTimeStr = `${doseTime.getHours().toString().padStart(2, '0')}:${doseTime.getMinutes().toString().padStart(2, '0')}:00`;
-          if (doseTimeStr === reminderTime || doseTimeStr.substring(0, 5) === reminderTime) {
+          const doseTimeStr = `${doseTime.getHours().toString().padStart(2, '0')}:${doseTime.getMinutes().toString().padStart(2, '0')}`;
+          const reminderTimeShort = reminderTime.substring(0, 5); // Get HH:MM part
+          
+          console.log(`[DEBUG] Comparing dose time ${doseTimeStr} with reminder time ${reminderTimeShort}`);
+          
+          if (doseTimeStr === reminderTimeShort) {
             targetDose = dose;
             break;
           }
@@ -112,19 +116,24 @@ export class ScheduledDoseService {
       }
 
       if (targetDose) {
-        // Update the existing dose to mark it as taken
-        const { error } = await supabase
-          .from('medication_adherence_log')
-          .update({
-            status: 'taken',
-            taken_time: new Date().toISOString(), // Record actual time taken
-            notes: notes || 'Marked via Take Now button',
-            reported_by: userId
-          })
-          .eq('id', targetDose.id);
+        // Update the existing dose to mark it as taken (only if not already taken)
+        if (targetDose.status !== 'taken') {
+          const { error } = await supabase
+            .from('medication_adherence_log')
+            .update({
+              status: 'taken',
+              taken_time: new Date().toISOString(),
+              notes: notes || 'Marked via Take Now button',
+              reported_by: userId
+            })
+            .eq('id', targetDose.id);
 
-        console.log(`[DEBUG] Updated existing dose ${targetDose.id}, error:`, error);
-        return !error;
+          console.log(`[DEBUG] Updated existing dose ${targetDose.id} from ${targetDose.status} to taken, error:`, error);
+          return !error;
+        } else {
+          console.log(`[DEBUG] Dose ${targetDose.id} already marked as taken`);
+          return true;
+        }
       }
 
       // If no dose found, create a new one with the scheduled time
