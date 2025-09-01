@@ -514,7 +514,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
     >
       <div className="flex flex-col h-full">
         {/* Step Indicator */}
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2">
             {formSections.map((section, index) => (
               <div key={index} className="flex items-center">
