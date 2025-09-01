@@ -140,7 +140,7 @@ export class ScheduledDoseService {
             .from('medication_adherence_log')
             .update({
               status: 'taken',
-              taken_time: scheduledTime.toISOString(),
+              taken_time: new Date().toISOString(), // Fix: Use current time, not scheduled time
               notes: notes || 'Marked via Take Now button',
               reported_by: userId
             })
@@ -160,7 +160,7 @@ export class ScheduledDoseService {
   }
 
   /**
-   * Get today's adherence status for dashboard
+   * Get today's adherence status for dashboard - Fixed to prevent duplicate counting
    */
   async getTodaysAdherenceStatus(userId: string) {
     try {
@@ -175,14 +175,37 @@ export class ScheduledDoseService {
 
       const { data: adherenceData } = await supabase
         .from('medication_adherence_log')
-        .select('status, scheduled_time')
+        .select('medication_id, scheduled_time, status')
         .eq('user_id', userId)
         .gte('scheduled_time', startOfDay.toISOString())
-        .lte('scheduled_time', endOfDay.toISOString());
+        .lte('scheduled_time', endOfDay.toISOString())
+        .order('medication_id, scheduled_time, status');
 
-      const scheduled = adherenceData?.filter(a => a.status === 'scheduled').length || 0;
-      const taken = adherenceData?.filter(a => a.status === 'taken').length || 0;
-      const missed = adherenceData?.filter(a => a.status === 'missed').length || 0;
+      if (!adherenceData) {
+        return {
+          totalToday: 0,
+          completedToday: 0,
+          missedToday: 0,
+          pendingToday: 0
+        };
+      }
+
+      // Group by medication_id + scheduled_time to eliminate duplicates
+      const uniqueDoses = new Map();
+      adherenceData.forEach(entry => {
+        const key = `${entry.medication_id}-${entry.scheduled_time}`;
+        const existing = uniqueDoses.get(key);
+        
+        // Prioritize 'taken' status over 'scheduled' status to avoid double counting
+        if (!existing || (entry.status === 'taken' && existing.status !== 'taken')) {
+          uniqueDoses.set(key, entry);
+        }
+      });
+
+      const uniqueEntries = Array.from(uniqueDoses.values());
+      const scheduled = uniqueEntries.filter(a => a.status === 'scheduled').length;
+      const taken = uniqueEntries.filter(a => a.status === 'taken').length;
+      const missed = uniqueEntries.filter(a => a.status === 'missed').length;
       const total = scheduled + taken + missed;
 
       return {

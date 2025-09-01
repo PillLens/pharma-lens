@@ -32,7 +32,8 @@ const Reminders: React.FC = () => {
     addReminder, 
     updateReminder, 
     deleteReminder, 
-    toggleReminderStatus 
+    toggleReminderStatus,
+    refetch: fetchReminders
   } = useReminders();
 
   // State management
@@ -204,8 +205,17 @@ const Reminders: React.FC = () => {
       );
 
       if (success) {
-        // Refresh all data
-        await fetchRealData();
+        // Refresh all data with proper sequencing
+        await Promise.all([
+          fetchRealData(),
+          fetchReminders()
+        ]);
+        
+        // Additional refresh after delay for database consistency
+        setTimeout(async () => {
+          await fetchRealData();
+        }, 500);
+        
         toast({
           title: t('toast.doseTaken'),
           description: t('toast.greatJobStayingOnTrack')
