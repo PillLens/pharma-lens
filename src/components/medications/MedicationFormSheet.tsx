@@ -542,12 +542,12 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide p-6">
+        <div className="flex-1 overflow-y-auto scrollbar-hide p-6 pb-2">
           {renderStepContent()}
         </div>
 
         {/* Navigation */}
-        <div className="p-6 border-t border-border safe-area-bottom">
+        <div className="p-4 pb-6 border-t border-border bg-background/95 backdrop-blur-sm sticky bottom-0">
           <div className="flex gap-3">
             {currentStep > 0 && (
               <Button
