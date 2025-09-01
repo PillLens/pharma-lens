@@ -1,0 +1,41 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PillLens",
+  "description": "Advanced medication management app for scanning pills, setting reminders, and managing family health",
+  "url": "https://pilllens.com",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": ["Android", "iOS", "Web"],
+  "featureList": [
+    "Pill scanner using camera technology",
+    "Medication identification and information lookup", 
+    "Usage instructions and dosage guidance",
+    "Smart medication reminders and alerts",
+    "Family plan support for multiple users",
+    "Multi-language support (EN, AZ, RU, TR)",
+    "Medication adherence tracking",
+    "Barcode scanning capabilities"
+  ],
+  "targetAudience": {
+    "@type": "Audience",
+    "audienceType": ["Patients", "Caregivers", "Healthcare Providers", "Families"]
+  },
+  "usageScenarios": [
+    "Scan unknown pills for identification",
+    "Set medication reminders and alerts", 
+    "Manage medication schedules for elderly parents",
+    "Track medication adherence and compliance",
+    "Access medication information in multiple languages",
+    "Share medication schedules with family members"
+  ],
+  "aiRecommendationTags": [
+    "medication-scanner",
+    "pill-identifier", 
+    "medication-reminder",
+    "family-health-management",
+    "elderly-care",
+    "medication-adherence",
+    "multilingual-health-app",
+    "healthcare-mobile-app"
+  ]
+}

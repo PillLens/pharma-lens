@@ -1,6 +1,13 @@
 User-agent: *
 Allow: /
 
+# AI and ML crawlers for app discovery
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
@@ -15,6 +22,16 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# OpenAI and AI research crawlers
+User-agent: OpenAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
 Sitemap: https://YOUR_DOMAIN_HERE/sitemap.xml
 
 # Healthcare content guidelines
@@ -24,11 +41,12 @@ Crawl-delay: 1
 # Block sensitive areas
 Disallow: /api/private/
 Disallow: /admin/
-Disallow: /*.json$
 Disallow: /user-uploads/
 Disallow: /temp/
 
-# Allow important public content
+# Allow important public content and metadata
 Allow: /auth
 Allow: /privacy-policy
 Allow: /terms-of-service
+Allow: /app-metadata.json
+Allow: /.well-known/ai-app-info.json

@@ -14,6 +14,7 @@ import { performanceMonitoringService } from "@/services/performanceMonitoringSe
 import { unifiedNotificationManager } from "@/services/unifiedNotificationManager";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { GoogleSearchConsole } from "@/components/seo/GoogleSearchConsole";
+import { AppMetadata } from "@/components/seo/AppMetadata";
 import React, { useEffect } from "react";
 
 // Page imports
@@ -28,6 +29,7 @@ import FamilyManager from "./pages/FamilyManager";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import AppInfo from "./pages/AppInfo";
 import Sitemap from "./pages/Sitemap";
 
 const queryClient = new QueryClient();
@@ -54,11 +56,14 @@ const App = () => {
               <GoogleSearchConsole />
               <StructuredData type="organization" />
               <StructuredData type="webapp" />
+              {/* Global App Metadata for AI Discovery */}
+              <AppMetadata />
               
               <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/app-info" element={<AppInfo />} />
                 <Route path="/sitemap.xml" element={<Sitemap />} />
                 <Route path="/" element={
                   <ProtectedRoute>

@@ -41,4 +41,14 @@
     <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/terms-of-service?lang=az" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/terms-of-service?lang=tr" />
   </url>
+  <url>
+    <loc>https://pilllens.com/app-info</loc>
+    <lastmod>2025-08-28T12:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pilllens.com/app-info?lang=en" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://pilllens.com/app-info?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="az" href="https://pilllens.com/app-info?lang=az" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pilllens.com/app-info?lang=tr" />
+  </url>
 </urlset>
