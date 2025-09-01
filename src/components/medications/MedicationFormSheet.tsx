@@ -547,7 +547,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         </div>
 
         {/* Navigation */}
-        <div className="p-4 pb-8 border-t border-border bg-background/95 backdrop-blur-sm sticky bottom-0">
+        <div className="p-4 pb-6 border-t border-border bg-background/95 backdrop-blur-sm sticky bottom-20 mb-4">
           <div className="flex gap-3">
             {currentStep > 0 && (
               <Button
