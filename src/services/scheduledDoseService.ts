@@ -203,15 +203,22 @@ export class ScheduledDoseService {
 
       // Group by medication_id + scheduled_time to eliminate duplicates
       const uniqueDoses = new Map();
+      
+      console.log(`[DEBUG] Raw adherence data for today:`, adherenceData);
+      
       adherenceData.forEach(entry => {
         const key = `${entry.medication_id}-${entry.scheduled_time}`;
         const existing = uniqueDoses.get(key);
         
-        // Prioritize 'taken' status over 'scheduled' status
-        if (!existing || (entry.status === 'taken' && existing.status !== 'taken')) {
+        // Only keep the entry with highest priority: taken > missed > scheduled
+        if (!existing || 
+            (entry.status === 'taken' && existing.status !== 'taken') ||
+            (entry.status === 'missed' && existing.status === 'scheduled')) {
           uniqueDoses.set(key, entry);
         }
       });
+      
+      console.log(`[DEBUG] Unique doses after deduplication:`, Array.from(uniqueDoses.values()));
 
       const uniqueEntries = Array.from(uniqueDoses.values());
       const taken = uniqueEntries.filter(a => a.status === 'taken').length;
