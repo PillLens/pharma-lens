@@ -542,11 +542,12 @@ const RemindersByMedication: React.FC<{
 
           if (error) throw error;
 
-          // Create dose status array
+          // Create dose status array with more flexible time matching
           const doseStatus = allTimes.map(time => {
             const taken = adherenceLog?.some(log => {
-              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
-              return logTime === time;
+              const logTime = format(new Date(log.scheduled_time), 'HH:mm:ss');
+              const reminderTime = time.length === 5 ? `${time}:00` : time;
+              return logTime === reminderTime || logTime.substring(0, 5) === time;
             }) || false;
             
             return { time, taken };

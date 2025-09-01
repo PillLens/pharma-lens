@@ -3,19 +3,10 @@ import { createScheduledTime } from '@/utils/timezoneUtils';
 
 export class ScheduledDoseService {
   /**
-   * Generate scheduled doses for today based on active reminders
+   * Generate scheduled doses for today based on active reminders - Fixed duplicate prevention
    */
   async generateTodaysScheduledDoses(userId: string): Promise<void> {
     try {
-      // Get user's timezone
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('timezone')
-        .eq('id', userId)
-        .single();
-
-      const timezone = profile?.timezone || 'UTC';
-      
       // Get active reminders
       const { data: reminders } = await supabase
         .from('medication_reminders')
@@ -28,11 +19,23 @@ export class ScheduledDoseService {
       const today = new Date();
       const currentDayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); // Convert Sunday (0) to 7
       
-      // Get today's date boundaries in user's timezone
+      // Get today's date boundaries 
       const startOfDay = new Date(today);
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(today);
       endOfDay.setHours(23, 59, 59, 999);
+
+      // Get existing entries for today to avoid duplicates
+      const { data: existingEntries } = await supabase
+        .from('medication_adherence_log')
+        .select('medication_id, scheduled_time')
+        .eq('user_id', userId)
+        .gte('scheduled_time', startOfDay.toISOString())
+        .lte('scheduled_time', endOfDay.toISOString());
+
+      const existingKeys = new Set(
+        existingEntries?.map(entry => `${entry.medication_id}-${entry.scheduled_time}`) || []
+      );
 
       const scheduledEntries = [];
 
@@ -40,17 +43,10 @@ export class ScheduledDoseService {
         // Check if this reminder should fire today
         if (reminder.days_of_week.includes(currentDayOfWeek)) {
           const scheduledTime = createScheduledTime(reminder.reminder_time);
+          const entryKey = `${reminder.medication_id}-${scheduledTime.toISOString()}`;
 
-          // Check if this scheduled dose already exists
-          const { data: existing } = await supabase
-            .from('medication_adherence_log')
-            .select('id')
-            .eq('user_id', userId)
-            .eq('medication_id', reminder.medication_id)
-            .eq('scheduled_time', scheduledTime.toISOString())
-            .maybeSingle();
-
-          if (!existing) {
+          // Only add if not already exists
+          if (!existingKeys.has(entryKey)) {
             scheduledEntries.push({
               user_id: userId,
               medication_id: reminder.medication_id,
@@ -161,7 +157,7 @@ export class ScheduledDoseService {
   }
 
   /**
-   * Get today's adherence status for dashboard - Fixed to prevent duplicate counting
+   * Get today's adherence status for dashboard - Fixed counting based on active reminders
    */
   async getTodaysAdherenceStatus(userId: string) {
     try {
@@ -169,11 +165,25 @@ export class ScheduledDoseService {
       await this.generateTodaysScheduledDoses(userId);
 
       const today = new Date();
+      const currentDayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
       const startOfDay = new Date(today);
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(today);
       endOfDay.setHours(23, 59, 59, 999);
 
+      // Get active reminders for today to know expected doses
+      const { data: activeReminders } = await supabase
+        .from('medication_reminders')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+
+      // Calculate expected doses for today based on active reminders
+      const expectedToday = activeReminders?.filter(r => 
+        r.days_of_week.includes(currentDayOfWeek)
+      ).length || 0;
+
+      // Get actual adherence data for today
       const { data: adherenceData } = await supabase
         .from('medication_adherence_log')
         .select('medication_id, scheduled_time, status')
@@ -184,10 +194,10 @@ export class ScheduledDoseService {
 
       if (!adherenceData) {
         return {
-          totalToday: 0,
+          totalToday: expectedToday,
           completedToday: 0,
           missedToday: 0,
-          pendingToday: 0
+          pendingToday: expectedToday
         };
       }
 
@@ -197,23 +207,23 @@ export class ScheduledDoseService {
         const key = `${entry.medication_id}-${entry.scheduled_time}`;
         const existing = uniqueDoses.get(key);
         
-        // Prioritize 'taken' status over 'scheduled' status to avoid double counting
+        // Prioritize 'taken' status over 'scheduled' status
         if (!existing || (entry.status === 'taken' && existing.status !== 'taken')) {
           uniqueDoses.set(key, entry);
         }
       });
 
       const uniqueEntries = Array.from(uniqueDoses.values());
-      const scheduled = uniqueEntries.filter(a => a.status === 'scheduled').length;
       const taken = uniqueEntries.filter(a => a.status === 'taken').length;
+      const scheduled = uniqueEntries.filter(a => a.status === 'scheduled').length;
       const missed = uniqueEntries.filter(a => a.status === 'missed').length;
-      const total = scheduled + taken + missed;
 
+      // Use expected doses as the total, not the sum of database entries
       return {
-        totalToday: total,
+        totalToday: expectedToday,
         completedToday: taken,
         missedToday: missed,
-        pendingToday: scheduled
+        pendingToday: expectedToday - taken - missed
       };
     } catch (error) {
       console.error('Error getting adherence status:', error);
