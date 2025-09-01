@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { DesktopSidebar } from './DesktopSidebar';
 import MobileTabNavigation from '../mobile/MobileTabNavigation';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -11,6 +12,9 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
+  
+  // Ensure scroll-to-top on route changes
+  useScrollToTop();
 
   if (isMobile) {
     return (
