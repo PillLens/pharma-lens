@@ -25,14 +25,17 @@ export class ScheduledDoseService {
       const endOfDay = new Date(today);
       endOfDay.setHours(23, 59, 59, 999);
 
-      // Get existing entries for today to avoid duplicates
+      // Get existing entries for today to avoid duplicates - check both scheduled and taken
       const { data: existingEntries } = await supabase
         .from('medication_adherence_log')
-        .select('medication_id, scheduled_time')
+        .select('medication_id, scheduled_time, status')
         .eq('user_id', userId)
         .gte('scheduled_time', startOfDay.toISOString())
         .lte('scheduled_time', endOfDay.toISOString());
 
+      console.log(`[DEBUG] Existing entries for today:`, existingEntries);
+
+      // Create a set of existing keys with exact scheduled times
       const existingKeys = new Set(
         existingEntries?.map(entry => `${entry.medication_id}-${entry.scheduled_time}`) || []
       );
@@ -45,6 +48,9 @@ export class ScheduledDoseService {
           const scheduledTime = createScheduledTime(reminder.reminder_time);
           const entryKey = `${reminder.medication_id}-${scheduledTime.toISOString()}`;
 
+          console.log(`[DEBUG] Checking reminder ${reminder.reminder_time} -> ${scheduledTime.toISOString()}, key: ${entryKey}`);
+          console.log(`[DEBUG] Existing keys:`, Array.from(existingKeys));
+
           // Only add if not already exists
           if (!existingKeys.has(entryKey)) {
             scheduledEntries.push({
@@ -53,14 +59,25 @@ export class ScheduledDoseService {
               scheduled_time: scheduledTime.toISOString(),
               status: 'scheduled'
             });
+            console.log(`[DEBUG] Adding new scheduled entry for ${reminder.reminder_time}`);
+          } else {
+            console.log(`[DEBUG] Entry already exists for ${reminder.reminder_time}`);
           }
         }
       }
 
+      console.log(`[DEBUG] Scheduled entries to insert:`, scheduledEntries);
+
       if (scheduledEntries.length > 0) {
-        await supabase
+        const { error } = await supabase
           .from('medication_adherence_log')
           .insert(scheduledEntries);
+        
+        if (error) {
+          console.error('[ERROR] Failed to insert scheduled entries:', error);
+        } else {
+          console.log(`[DEBUG] Successfully inserted ${scheduledEntries.length} scheduled entries`);
+        }
       }
     } catch (error) {
       console.error('Error generating scheduled doses:', error);
@@ -166,11 +183,97 @@ export class ScheduledDoseService {
   }
 
   /**
+   * Clean up duplicate adherence entries that are within 1 minute of each other
+   */
+  async cleanupDuplicateEntries(userId: string): Promise<void> {
+    try {
+      const today = new Date();
+      const startOfDay = new Date(today);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(today);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      // Get all adherence entries for today
+      const { data: allEntries } = await supabase
+        .from('medication_adherence_log')
+        .select('id, medication_id, scheduled_time, status, taken_time')
+        .eq('user_id', userId)
+        .gte('scheduled_time', startOfDay.toISOString())
+        .lte('scheduled_time', endOfDay.toISOString())
+        .order('medication_id, scheduled_time');
+
+      if (!allEntries || allEntries.length === 0) return;
+
+      console.log(`[DEBUG] All entries before cleanup:`, allEntries);
+
+      const groupedByMedication = new Map();
+      
+      // Group entries by medication
+      allEntries.forEach(entry => {
+        if (!groupedByMedication.has(entry.medication_id)) {
+          groupedByMedication.set(entry.medication_id, []);
+        }
+        groupedByMedication.get(entry.medication_id).push(entry);
+      });
+
+      const entriesToDelete = [];
+
+      // Check for duplicates within each medication group
+      for (const [medicationId, entries] of groupedByMedication) {
+        for (let i = 0; i < entries.length; i++) {
+          for (let j = i + 1; j < entries.length; j++) {
+            const entry1 = entries[i];
+            const entry2 = entries[j];
+            
+            const time1 = new Date(entry1.scheduled_time);
+            const time2 = new Date(entry2.scheduled_time);
+            
+            // If entries are within 1 minute of each other
+            const timeDiff = Math.abs(time1.getTime() - time2.getTime());
+            if (timeDiff <= 60000) { // 1 minute in milliseconds
+              // Keep the entry with 'taken' status, or the later one if both have same status
+              const entryToDelete = entry1.status === 'taken' ? entry2 : 
+                                   entry2.status === 'taken' ? entry1 :
+                                   (time1 > time2 ? entry1 : entry2);
+              
+              if (!entriesToDelete.some(e => e.id === entryToDelete.id)) {
+                entriesToDelete.push(entryToDelete);
+              }
+            }
+          }
+        }
+      }
+
+      console.log(`[DEBUG] Entries to delete:`, entriesToDelete);
+
+      // Delete duplicate entries
+      if (entriesToDelete.length > 0) {
+        const deleteIds = entriesToDelete.map(e => e.id);
+        const { error } = await supabase
+          .from('medication_adherence_log')
+          .delete()
+          .in('id', deleteIds);
+
+        if (error) {
+          console.error('[ERROR] Failed to delete duplicate entries:', error);
+        } else {
+          console.log(`[DEBUG] Successfully deleted ${deleteIds.length} duplicate entries`);
+        }
+      }
+    } catch (error) {
+      console.error('Error cleaning up duplicate entries:', error);
+    }
+  }
+
+  /**
    * Get today's adherence status for dashboard - Fixed counting based on active reminders
    */
   async getTodaysAdherenceStatus(userId: string) {
     try {
-      // First ensure today's scheduled doses are generated
+      // First clean up any duplicate entries
+      await this.cleanupDuplicateEntries(userId);
+      
+      // Then ensure today's scheduled doses are generated
       await this.generateTodaysScheduledDoses(userId);
 
       const today = new Date();
