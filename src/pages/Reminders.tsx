@@ -531,6 +531,9 @@ const RemindersByMedication: React.FC<{
           // Get all times for this medication
           const allTimes = medicationReminders.map(r => r.reminder_time);
           
+          console.log(`Fetching adherence for medication ${medicationId} on ${today}`);
+          console.log('All times for this medication:', allTimes);
+          
           // Query adherence log for today's doses
           const { data: adherenceLog, error } = await supabase
             .from('medication_adherence_log')
@@ -541,23 +544,49 @@ const RemindersByMedication: React.FC<{
             .lt('scheduled_time', `${today}T23:59:59`)
             .eq('status', 'taken');
 
-          if (error) throw error;
+          if (error) {
+            console.error('Error fetching adherence log:', error);
+            throw error;
+          }
+
+          console.log('Adherence log entries found:', adherenceLog);
 
           // Create dose status array with more flexible time matching
           const doseStatus = allTimes.map(time => {
+            console.log(`Checking time ${time} for taken status...`);
+            
             const taken = adherenceLog?.some(log => {
-              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
-              const reminderTime = time.length === 5 ? time : `${time.substring(0, 5)}`;
+              const logDate = new Date(log.scheduled_time);
               
-              // Try multiple matching approaches for better accuracy
-              return logTime === reminderTime || 
-                     logTime === time ||
-                     logTime.substring(0, 5) === reminderTime.substring(0, 5);
+              // Extract time in multiple formats for comparison
+              const logHours = logDate.getHours().toString().padStart(2, '0');
+              const logMinutes = logDate.getMinutes().toString().padStart(2, '0');
+              const logTimeHHMM = `${logHours}:${logMinutes}`;
+              const logTimeHHMMSS = `${logHours}:${logMinutes}:${logDate.getSeconds().toString().padStart(2, '0')}`;
+              
+              // Normalize reminder time to HH:mm format
+              const reminderTimeHHMM = time.includes(':') ? time.substring(0, 5) : time;
+              
+              console.log(`  Comparing reminder time "${reminderTimeHHMM}" with log time "${logTimeHHMM}" (full: ${logTimeHHMMSS})`);
+              console.log(`  Log entry scheduled_time:`, log.scheduled_time);
+              
+              // Match on HH:mm format (most reliable)
+              const matches = logTimeHHMM === reminderTimeHHMM || 
+                             logTimeHHMMSS === time ||
+                             logTimeHHMM === time;
+              
+              if (matches) {
+                console.log(`  ✓ Match found! Log entry:`, log);
+              }
+              
+              return matches;
             }) || false;
             
+            console.log(`  Final result for ${time}: taken = ${taken}`);
             return { time, taken };
           });
 
+          console.log(`Dose status for medication ${medicationId}:`, doseStatus);
           statusMap[medicationId] = doseStatus;
         } catch (error) {
           console.error(`Error fetching dose status for medication ${medicationId}:`, error);

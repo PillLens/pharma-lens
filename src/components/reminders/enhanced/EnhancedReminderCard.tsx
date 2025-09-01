@@ -231,8 +231,18 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
               const isPast = time < currentTimeStr;
               const isCurrent = Math.abs(new Date(`1970-01-01T${time}:00`).getTime() - new Date(`1970-01-01T${currentTimeStr}:00`).getTime()) < 30 * 60 * 1000;
               
+              console.log(`Rendering dose ${time} for ${reminder.medicationName}:`, {
+                dosesToday,
+                doseStatus, 
+                isTaken,
+                isPast,
+                isCurrent,
+                currentTimeStr
+              });
+              
               // Skip showing doses that have been taken
               if (isTaken) {
+                console.log(`Skipping dose ${time} because isTaken = ${isTaken}, doseStatus:`, doseStatus);
                 return null;
               }
               
