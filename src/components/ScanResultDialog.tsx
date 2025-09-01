@@ -118,6 +118,9 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
           : t('toast.medicationAdded'),
       });
 
+      // Trigger global data refresh event for instant UI updates
+      window.dispatchEvent(new CustomEvent('medicationDataChanged'));
+
       onClose();
     } catch (error) {
       console.error('Error adding medication from scan:', error);

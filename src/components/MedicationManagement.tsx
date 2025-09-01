@@ -61,6 +61,9 @@ const MedicationManagement: React.FC = () => {
       if (result) {
         setIsAddDialogOpen(false);
         resetForm();
+        
+        // Trigger global data refresh event for instant UI updates
+        window.dispatchEvent(new CustomEvent('medicationDataChanged'));
       }
     }
   };

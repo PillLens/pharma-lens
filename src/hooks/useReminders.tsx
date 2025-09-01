@@ -79,6 +79,26 @@ export const useReminders = () => {
     if (!user) return null;
 
     try {
+      // Optimistic update - add to local state first
+      const optimisticReminder = {
+        id: `temp-${Date.now()}`,
+        user_id: user.id,
+        medication_id: reminderData.medication_id,
+        reminder_time: reminderData.reminder_time,
+        days_of_week: reminderData.days_of_week,
+        notification_settings: reminderData.notification_settings || {
+          sound: true,
+          vibration: true,
+          led: true
+        },
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Add optimistic reminder to state immediately
+      setReminders(prev => [optimisticReminder, ...prev]);
+
       const { data, error } = await supabase
         .from('medication_reminders')
         .insert([{
@@ -98,11 +118,25 @@ export const useReminders = () => {
 
       if (error) throw error;
 
-      await fetchReminders(); // Refresh the list
+      // Replace optimistic update with real data
+      setReminders(prev => prev.map(r => 
+        r.id === optimisticReminder.id ? {
+          ...data,
+          medication: undefined,
+          notification_settings: typeof data.notification_settings === 'object' 
+            ? data.notification_settings as { sound: boolean; vibration: boolean; led: boolean; }
+            : { sound: true, vibration: true, led: true }
+        } as ReminderWithMedication : r
+      ));
+      
       return data;
     } catch (error) {
       console.error('Error adding reminder:', error);
       toast.error('Failed to add reminder');
+      
+      // Remove optimistic update on error
+      setReminders(prev => prev.filter(r => !r.id.startsWith('temp-')));
+      
       return null;
     }
   };
@@ -165,6 +199,17 @@ export const useReminders = () => {
 
   useEffect(() => {
     fetchReminders();
+    
+    // Listen for medication data changes from other components
+    const handleMedicationDataChange = () => {
+      fetchReminders();
+    };
+    
+    window.addEventListener('medicationDataChanged', handleMedicationDataChange);
+    
+    return () => {
+      window.removeEventListener('medicationDataChanged', handleMedicationDataChange);
+    };
   }, [user]);
 
   return {

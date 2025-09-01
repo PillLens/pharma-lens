@@ -440,6 +440,10 @@ const MedicationManager: React.FC = () => {
       }
       
       setIsAddSheetOpen(false);
+      
+      // Trigger global data refresh event for instant UI updates
+      window.dispatchEvent(new CustomEvent('medicationDataChanged'));
+      
     } catch (error) {
       console.error('Error adding medication:', error);
       toast.error('Failed to add medication');

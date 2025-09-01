@@ -285,6 +285,17 @@ export const useDashboardData = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    
+    // Listen for medication data changes from other components
+    const handleMedicationDataChange = () => {
+      fetchDashboardData();
+    };
+    
+    window.addEventListener('medicationDataChanged', handleMedicationDataChange);
+    
+    return () => {
+      window.removeEventListener('medicationDataChanged', handleMedicationDataChange);
+    };
   }, [user, medications, medicationsLoading]);
 
   return {
