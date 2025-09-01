@@ -520,6 +520,7 @@ const RemindersByMedication: React.FC<{
     const fetchDoseStatus = async () => {
       if (!user) return;
       
+      console.log('Fetching dose status for medications...');
       const statusMap: {[key: string]: {time: string; taken: boolean}[]} = {};
       
       for (const medicationId of Object.keys(groupedReminders)) {
@@ -545,9 +546,13 @@ const RemindersByMedication: React.FC<{
           // Create dose status array with more flexible time matching
           const doseStatus = allTimes.map(time => {
             const taken = adherenceLog?.some(log => {
-              const logTime = format(new Date(log.scheduled_time), 'HH:mm:ss');
-              const reminderTime = time.length === 5 ? `${time}:00` : time;
-              return logTime === reminderTime || logTime.substring(0, 5) === time;
+              const logTime = format(new Date(log.scheduled_time), 'HH:mm');
+              const reminderTime = time.length === 5 ? time : `${time.substring(0, 5)}`;
+              
+              // Try multiple matching approaches for better accuracy
+              return logTime === reminderTime || 
+                     logTime === time ||
+                     logTime.substring(0, 5) === reminderTime.substring(0, 5);
             }) || false;
             
             return { time, taken };
@@ -566,6 +571,18 @@ const RemindersByMedication: React.FC<{
     };
 
     fetchDoseStatus();
+    
+    // Also listen for medication data changes to refresh dose status
+    const handleMedicationDataChange = () => {
+      console.log('Medication data changed, refreshing dose status...');
+      setTimeout(() => fetchDoseStatus(), 500);
+    };
+    
+    window.addEventListener('medicationDataChanged', handleMedicationDataChange);
+    
+    return () => {
+      window.removeEventListener('medicationDataChanged', handleMedicationDataChange);
+    };
   }, [reminders, user, timezone]);
 
   return (
@@ -604,17 +621,20 @@ const RemindersByMedication: React.FC<{
             onDelete={() => onDeleteReminder(firstReminder.id)}
             onToggleStatus={() => onToggleReminder(firstReminder.id)}
             onMarkTaken={async (time: string) => {
-              await onMarkTaken(medicationId, time);
-              // Refresh dose status after marking taken - moved outside callback
-              setTimeout(() => {
-                const updatedStatus = dosesToday.map(dose => 
+              // Immediately update local state for instant UI feedback
+              setMedicationDoseStatus(prev => {
+                const currentStatus = prev[medicationId] || [];
+                const updatedStatus = currentStatus.map(dose => 
                   dose.time === time ? { ...dose, taken: true } : dose
                 );
-                setMedicationDoseStatus(prev => ({
+                return {
                   ...prev,
                   [medicationId]: updatedStatus
-                }));
-              }, 100);
+                };
+              });
+              
+              // Then call the actual mark taken function
+              await onMarkTaken(medicationId, time);
             }}
           />
         );
