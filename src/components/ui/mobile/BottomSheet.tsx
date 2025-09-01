@@ -31,7 +31,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     md: 'max-h-[60vh]', 
     lg: 'max-h-[80vh]',
     xl: 'max-h-[90vh]',
-    full: 'h-full'
+    full: 'h-[calc(100vh-80px)]' // Account for mobile navigation
   };
 
   useEffect(() => {
