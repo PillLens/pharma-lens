@@ -1830,6 +1830,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_old_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       find_user_by_email: {
         Args: { user_email: string }
         Returns: string
