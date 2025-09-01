@@ -158,17 +158,17 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
 
   const formSections = [
     {
-      title: t('medications.form.basics'),
+      title: t('medications.formSections.basics'),
       icon: Pill,
       fields: ['name', 'genericName', 'form', 'strength']
     },
     {
-      title: t('medications.form.dosageFrequency'),
+      title: t('medications.formSections.dosageFrequency'),
       icon: Clock,
       fields: ['dosage', 'frequency']
     },
     {
-      title: t('medications.form.datesStatus'),
+      title: t('medications.formSections.datesStatus'),
       icon: Calendar,
       fields: ['startDate', 'endDate', 'prescriber', 'notes', 'status']
     },

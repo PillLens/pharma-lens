@@ -486,7 +486,7 @@
       "reminders": "Reminders",
       "history": "History"
     },
-    "form": {
+    "formSections": {
       "basics": "Basics",
       "dosageFrequency": "Dosage & Frequency",
       "datesStatus": "Dates & Status"
