@@ -348,39 +348,43 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
         onClose={() => setShowRolePicker(false)}
         title="Select Role"
         subtitle="Choose the appropriate role for this member"
-        height="lg"
+        height="xl"
+        className="z-[110]"
       >
-        <div className="flex flex-col h-full">
-          <div className="flex-1 overflow-y-auto scrollbar-hide p-6 space-y-2">
-            {roles.map((role) => (
-              <button
-                key={role.value}
-                onClick={() => handleRoleChange(role.value)}
-                className={cn(
-                  "w-full h-16 px-4 rounded-xl border",
-                  "flex items-center gap-4",
-                  "text-left transition-all duration-200",
-                  "hover:bg-accent/50 active:bg-accent active:scale-[0.98]",
-                  formData.role === role.value
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-background"
-                )}
-              >
-                <span className="text-2xl">{role.icon}</span>
-                <div className="flex-1">
-                  <p className="font-semibold text-foreground">{role.label}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {role.value === 'patient' && 'Primary care recipient'}
-                    {role.value === 'caregiver' && 'Full access to manage care'}
-                    {role.value === 'family' && 'Family member with view access'}
-                    {role.value === 'emergency' && 'Emergency contact only'}
-                  </p>
-                </div>
-                {formData.role === role.value && (
-                  <Check className="w-6 h-6 text-primary" />
-                )}
-              </button>
-            ))}
+        <div className="flex flex-col h-full max-h-[calc(90vh-120px)]">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
+            <div className="p-6 space-y-3">
+              {roles.map((role) => (
+                <button
+                  key={role.value}
+                  onClick={() => handleRoleChange(role.value)}
+                  className={cn(
+                    "w-full h-20 px-4 rounded-xl border",
+                    "flex items-center gap-4",
+                    "text-left transition-all duration-200",
+                    "hover:bg-accent/50 active:bg-accent active:scale-[0.98]",
+                    "touch-manipulation",
+                    formData.role === role.value
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-background"
+                  )}
+                >
+                  <span className="text-3xl flex-shrink-0">{role.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground text-lg">{role.label}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {role.value === 'patient' && 'Primary care recipient'}
+                      {role.value === 'caregiver' && 'Full access to manage care'}
+                      {role.value === 'family' && 'Family member with view access'}
+                      {role.value === 'emergency' && 'Emergency contact only'}
+                    </p>
+                  </div>
+                  {formData.role === role.value && (
+                    <Check className="w-6 h-6 text-primary flex-shrink-0" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </BottomSheet>

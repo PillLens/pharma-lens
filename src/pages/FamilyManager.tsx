@@ -119,6 +119,10 @@ const FamilyManager: React.FC = () => {
 
     try {
       setIsInvitingMember(true);
+      
+      console.log('Inviting member with data:', memberData);
+      console.log('Selected group:', selectedGroup);
+      
       const success = await familySharingService.inviteFamilyMember(
         selectedGroup.id,
         memberData.email,
@@ -142,7 +146,7 @@ const FamilyManager: React.FC = () => {
       console.error('Error inviting member:', error);
       toast({
         title: t('common.error'),
-        description: 'Failed to send invitation',
+        description: 'Failed to invite member',
         variant: 'destructive',
       });
     } finally {

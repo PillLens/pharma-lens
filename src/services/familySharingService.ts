@@ -89,12 +89,16 @@ export class FamilySharingService {
   // Profile Management
   async findUserByEmail(email: string): Promise<UserProfile | null> {
     try {
+      console.log('Looking for user with email:', email);
+      
       // First try to find user in profiles table
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('email', email.toLowerCase().trim())
         .maybeSingle();
+
+      console.log('Profile search result:', { profileData, profileError });
 
       if (profileData) {
         return profileData;
@@ -104,6 +108,8 @@ export class FamilySharingService {
       const { data: userExists, error: functionError } = await supabase
         .rpc('find_user_by_email', { user_email: email.toLowerCase().trim() });
 
+      console.log('Auth user search result:', { userExists, functionError });
+
       if (functionError) {
         console.error('Error checking auth users:', functionError);
         return null;
@@ -111,15 +117,19 @@ export class FamilySharingService {
 
       if (userExists) {
         // User exists in auth but no profile yet - this is valid for invitation
-        return {
+        const fallbackProfile = {
           id: userExists,
           email: email.toLowerCase().trim(),
           display_name: email.split('@')[0],
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         } as UserProfile;
+        
+        console.log('Created fallback profile:', fallbackProfile);
+        return fallbackProfile;
       }
 
+      console.log('User not found');
       return null;
     } catch (error) {
       console.error('Error finding user by email:', error);
@@ -336,6 +346,8 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Invitation request:', { groupId, userEmail, role, permissions, currentUser: user.id });
+
       // Check family member limit before proceeding
       const { data: entitlementsData, error: entitlementsError } = await supabase
         .rpc('get_user_entitlements', { user_uuid: user.id });
@@ -369,6 +381,8 @@ export class FamilySharingService {
 
       // Find user by email
       const invitedUser = await this.findUserByEmail(userEmail);
+      console.log('Found invited user:', invitedUser);
+      
       if (!invitedUser) {
         toast.error('User not found. They need to create an account first.');
         return false;
@@ -387,6 +401,15 @@ export class FamilySharingService {
         return false;
       }
 
+      console.log('Inserting family member:', {
+        family_group_id: groupId,
+        user_id: invitedUser.id,
+        role,
+        permissions,
+        invited_by: user.id,
+        invitation_status: 'pending'
+      });
+
       const { error } = await supabase
         .from('family_members')
         .insert({
@@ -398,7 +421,10 @@ export class FamilySharingService {
           invitation_status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database insertion error:', error);
+        throw error;
+      }
 
       toast.success(`Invitation sent to ${userEmail}`);
       return true;
