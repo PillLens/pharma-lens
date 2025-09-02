@@ -97,18 +97,16 @@ class EntitlementsService {
         is_trial_eligible: profile.is_trial_eligible || false
       };
 
-      // Determine if user is in trial - only based on database dates
-      if (profile.trial_expires_at && profile.trial_started_at) {
+      // Determine if user is in trial - check if trial is still active
+      if (profile.trial_expires_at) {
         const now = new Date();
         const trialEnd = new Date(profile.trial_expires_at);
-        const trialStart = new Date(profile.trial_started_at);
         
-        // Validate trial dates
-        if (trialStart <= now && trialEnd > now) {
+        if (trialEnd > now) {
           userSubscription.status = 'trialing';
-          console.log('User is in active trial period:', userId);
-        } else if (trialEnd <= now) {
-          console.log('User trial has expired:', userId);
+          console.log('User is in active trial period:', userId, 'expires:', trialEnd);
+        } else {
+          console.log('User trial has expired:', userId, 'expired:', trialEnd);
         }
       }
 
