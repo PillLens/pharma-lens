@@ -665,8 +665,8 @@ const RemindersByMedication: React.FC<{
               // Then call the actual mark taken function
               await onMarkTaken(medicationId, time);
               
-              // Force refresh of dose status after a short delay
-              setTimeout(async () => {
+              // Force refresh of dose status immediately and after delay
+              const refreshDoseStatus = async () => {
                 const { data: adherenceLog } = await supabase
                   .from('medication_adherence_log')
                   .select('*')
@@ -691,7 +691,11 @@ const RemindersByMedication: React.FC<{
                   ...prev,
                   [medicationId]: updatedDoseStatus
                 }));
-              }, 1000);
+              };
+              
+              // Refresh immediately and then again after a delay for consistency
+              await refreshDoseStatus();
+              setTimeout(refreshDoseStatus, 1500);
             }}
           />
         );

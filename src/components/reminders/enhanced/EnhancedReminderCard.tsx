@@ -240,11 +240,8 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 currentTimeStr
               });
               
-              // Skip showing doses that have been taken
-              if (isTaken) {
-                console.log(`Skipping dose ${time} because isTaken = ${isTaken}, doseStatus:`, doseStatus);
-                return null;
-              }
+              // Show taken doses with a different visual state but don't hide them completely
+              const isRecentlyTaken = isTaken;
               
               const getDoseLabel = (time: string, totalTimes: number) => {
                 if (totalTimes === 1) return '';
@@ -265,19 +262,23 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 <div
                   key={index}
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all ${
-                    isCurrent 
-                      ? 'bg-primary text-primary-foreground shadow-md animate-pulse' 
-                      : isPast 
-                        ? 'bg-warning/10 text-warning border border-warning/20' 
-                        : 'bg-muted/50 text-foreground border border-border/50'
+                    isRecentlyTaken
+                      ? 'bg-success/20 text-success border border-success/30 opacity-60'
+                      : isCurrent 
+                        ? 'bg-primary text-primary-foreground shadow-md animate-pulse' 
+                        : isPast 
+                          ? 'bg-warning/10 text-warning border border-warning/20' 
+                          : 'bg-muted/50 text-foreground border border-border/50'
                   }`}
                   onClick={() => {
-                    if (onMarkTaken && (isCurrent || isPast)) {
+                    if (onMarkTaken && (isCurrent || isPast) && !isRecentlyTaken) {
                       onMarkTaken(time);
                     }
                   }}
                 >
-                  {isCurrent || isPast ? (
+                  {isRecentlyTaken ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : isCurrent || isPast ? (
                     <Circle className="w-4 h-4" />
                   ) : (
                     <Circle className="w-4 h-4" />
@@ -288,7 +289,9 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                       <span className="text-xs opacity-75">{doseLabel}</span>
                     )}
                   </div>
-                  {(isCurrent || isPast) && onMarkTaken && (
+                  {isRecentlyTaken ? (
+                    <span className="ml-auto text-xs text-success font-medium">✓ Taken</span>
+                  ) : (isCurrent || isPast) && onMarkTaken && (
                     <Button
                       size="sm"
                       variant="ghost"
