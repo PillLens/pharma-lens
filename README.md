@@ -1,4 +1,4 @@
-# CareCapsule - Smart Medication Management System
+# PillLens - Smart Medication Management System
 
 A comprehensive medication management platform powered by AI, designed specifically for the Azerbaijan healthcare market.
 
