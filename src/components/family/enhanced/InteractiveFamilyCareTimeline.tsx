@@ -33,7 +33,7 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
   const [selectedTab, setSelectedTab] = useState('today');
   
   // Use optimized hook for data fetching with React Query
-  const { timelineData, loading, prefetchTabData } = useFamilyTimelineData(familyGroups);
+  const { timelineData, loading, error, refetch, prefetchTabData } = useFamilyTimelineData(familyGroups);
   const { todayEvents, weekEvents, monthEvents, timelineStats } = timelineData;
 
   // Helper functions for status handling
