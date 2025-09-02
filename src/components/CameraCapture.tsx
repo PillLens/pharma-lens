@@ -154,7 +154,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const extractMedicationInfo = async (text: string, barcode?: string, sessionId?: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('extract-medication-worldwide', {
+      const { data, error } = await supabase.functions.invoke('extract-medication', {
         body: { 
           text, 
           barcode,
