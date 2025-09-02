@@ -180,8 +180,10 @@ export class EnhancedOCRService {
         // Enhance for Cyrillic characters
         this.enhanceForCyrillic(data);
         break;
+      case 'eng':
       default:
-        // Standard processing for English
+        // Enhance for English text on medicine packaging
+        this.enhanceForMedicineText(data);
         break;
     }
   }
@@ -201,6 +203,17 @@ export class EnhancedOCRService {
       const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
       const enhanced = avg > 128 ? Math.min(255, avg * 1.2) : Math.max(0, avg * 0.8);
       data[i] = data[i + 1] = data[i + 2] = enhanced;
+    }
+  }
+
+  private enhanceForMedicineText(data: Uint8ClampedArray) {
+    // Optimize for English text on medicine packaging
+    // Apply sharpening and contrast enhancement for small printed text
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      // Sharpen the image more aggressively for medicine text
+      const sharpened = avg > 128 ? Math.min(255, avg * 1.25) : Math.max(0, avg * 0.75);
+      data[i] = data[i + 1] = data[i + 2] = sharpened;
     }
   }
 
