@@ -55,7 +55,7 @@ The app is configured for native mobile deployment:
 
 3. **App Store Configuration**:
    - App ID: `app.lovable.a2b03c66e69a49a495741cb9e4a8bd22`
-   - App Name: CareCapsule
+   - App Name: PillLens
    - Proper icons and splash screens included
 
 ## 🔐 Security & Compliance
