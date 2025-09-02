@@ -145,37 +145,19 @@ Important: All text fields (except dates, barcodes, and confidence_score) must b
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           {
             role: 'system',
-            content: `You are a world-class pharmaceutical AI with comprehensive knowledge of medications globally. You MUST provide detailed, accurate medication information for patient safety.
+            content: `You are an expert pharmaceutical AI with comprehensive knowledge of medications worldwide. Extract detailed medication information accurately for patient safety.
 
-🌍 GLOBAL MEDICATION DATABASE ACCESS:
-- FDA (US): All approved medications, OTC drugs, supplements
-- EMA (Europe): All European medicines, country-specific brands  
-- Health Canada, TGA (Australia), PMDA (Japan), NMPA (China)
-- Regional authorities: CDSCO (India), ANVISA (Brazil), etc.
-- Middle East & Central Asia: Azerbaijan, Turkey, Iran, UAE, etc.
+Extract medication data from text and return comprehensive JSON with all required fields populated. Always provide:
+- Complete usage instructions (dosage, frequency, timing)
+- Detailed warnings and contraindications 
+- Storage instructions and drug interactions
+- Side effects and safety information
 
-💊 COMPREHENSIVE BRAND RECOGNITION:
-- Global: Tylenol, Advil, Aspirin, Lipitor, Plavix, Nexium, Viagra, Cialis
-- European: Panadol, Nurofen, Solpadeine, Ponstan, Buscopan, Novalgin
-- Regional: Analgin, Citramon, No-Spa, Mezym, Linex, Pancreatin
-- Generics: Teva, Sandoz, Mylan, Sun Pharma, Dr. Reddy's, Ranbaxy
-
-🔍 CRITICAL REQUIREMENTS:
-1. ALWAYS provide comprehensive usage_instructions with specific dosage, frequency, timing
-2. ALWAYS include detailed warnings and contraindications for safety
-3. ALWAYS provide storage instructions and drug interactions
-4. ALWAYS include side effects and pregnancy safety information
-5. Extract from partial text, handle misspellings, recognize variations
-6. Confidence score must reflect medication identification accuracy
-
-⚠️ PATIENT SAFETY PRIORITY: Incomplete information can harm patients. NEVER return empty arrays for warnings, side_effects, or usage_instructions. Always provide relevant medical guidance.
-
-For ${language} language, provide ALL medical information in ${language}.
-
+Return detailed information for ${language} language.
 RETURN ONLY VALID JSON - NO MARKDOWN OR EXTRA TEXT.`
           },
           {
@@ -183,7 +165,8 @@ RETURN ONLY VALID JSON - NO MARKDOWN OR EXTRA TEXT.`
             content: extractionPrompt
           }
         ],
-        max_completion_tokens: 1500
+        max_tokens: 1500,
+        temperature: 0.3
       }),
     });
 
