@@ -547,7 +547,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         </div>
 
         {/* Navigation */}
-        <div className="flex-shrink-0 p-2 pb-8 border-t border-border bg-background safe-bottom">
+        <div className="flex-shrink-0 p-4 pb-20 border-t border-border bg-background">
           <div className="flex gap-3">
             {currentStep > 0 && (
               <Button
