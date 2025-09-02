@@ -189,7 +189,7 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
             <span className="text-muted-foreground font-medium">Dosage & Frequency</span>
             <div className="text-left sm:text-right">
               <div className="font-semibold text-foreground text-base">{reminder.dosage}</div>
-              <div className="text-muted-foreground text-sm">{reminder.frequency}</div>
+              <div className="text-muted-foreground text-sm hidden">{reminder.frequency}</div>
             </div>
           </div>
 
