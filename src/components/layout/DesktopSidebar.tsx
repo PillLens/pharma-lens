@@ -121,26 +121,21 @@ export function DesktopSidebar() {
   return (
     <Sidebar collapsible="icon" className={isCollapsed ? "w-14" : "w-64"}>
       <SidebarHeader className="p-4">
-        {!isCollapsed && (
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0">
             <img 
-              src="/android-chrome-192x192.png" 
-              alt="PillLens" 
-              className="w-8 h-8"
+              src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
+              alt="PillLens Logo" 
+              className="w-10 h-10 object-contain"
             />
-            <div>
-              <h2 className="font-semibold text-foreground">PillLens</h2>
-              <p className="text-xs text-muted-foreground">Medical Assistant</p>
-            </div>
           </div>
-        )}
-        {isCollapsed && (
-          <img 
-            src="/android-chrome-192x192.png" 
-            alt="PillLens" 
-            className="w-8 h-8 mx-auto"
-          />
-        )}
+          {!isCollapsed && (
+            <div className="min-w-0 flex-1">
+              <h2 className="font-semibold text-foreground text-lg">PillLens</h2>
+              <p className="text-xs text-muted-foreground">Smart Medication Assistant</p>
+            </div>
+          )}
+        </div>
       </SidebarHeader>
 
       <SidebarContent>
