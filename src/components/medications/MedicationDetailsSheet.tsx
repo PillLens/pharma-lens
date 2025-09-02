@@ -118,6 +118,18 @@ const MedicationDetailsSheet: React.FC<MedicationDetailsSheetProps> = ({
           ))}
         </div>
 
+        {/* Primary Edit Action */}
+        <div className="pt-4">
+          <Button
+            onClick={onEdit}
+            className="w-full rounded-2xl"
+            size="lg"
+          >
+            <Edit3 className="w-5 h-5 mr-2" />
+            {t('common.edit')} {t('medications.title')}
+          </Button>
+        </div>
+
         {/* Notes Section */}
         {medication.notes && (
           <div className="space-y-3">
@@ -150,18 +162,6 @@ const MedicationDetailsSheet: React.FC<MedicationDetailsSheetProps> = ({
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
-        </div>
-
-        {/* Primary Edit Action */}
-        <div className="pt-4">
-          <Button
-            onClick={onEdit}
-            className="w-full rounded-2xl"
-            size="lg"
-          >
-            <Edit3 className="w-5 h-5 mr-2" />
-            {t('common.edit')} {t('medications.title')}
-          </Button>
         </div>
       </div>
     </BottomSheet>
