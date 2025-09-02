@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +11,9 @@ import { FamilyGroup } from '@/services/familySharingService';
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
 const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
 const AppointmentManager = lazy(() => import('./AppointmentManager'));
+const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
+const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
+const AdvancedAnalyticsDashboard = lazy(() => import('../analytics/AdvancedAnalyticsDashboard').then(module => ({ default: module.AdvancedAnalyticsDashboard })));
 
 interface FamilyGroupDetailsProps {
   group: FamilyGroup;
