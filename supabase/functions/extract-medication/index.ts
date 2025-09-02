@@ -27,43 +27,8 @@ serve(async (req) => {
     console.log('Language:', language, 'Region:', region);
     console.log('Text preview:', text?.substring(0, 100) || 'No text provided');
 
-    // Try barcode lookup first if barcode is provided
-    if (barcode) {
-      const knownMedications = await getKnownMedicationByBarcode(barcode);
-      if (knownMedications) {
-        console.log('Found medication by barcode:', barcode);
-        
-        // Store in database if user is authenticated
-        const authHeader = req.headers.get('Authorization');
-        if (authHeader) {
-          await storeExtraction(authHeader, knownMedications, sessionId);
-        }
-        
-        return new Response(
-          JSON.stringify({ 
-            success: true, 
-            data: knownMedications,
-            source: 'barcode_database'
-          }),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        );
-      }
-    }
-
-    // Try text-based medication lookup from worldwide medications
-    // NOTE: Prioritizing AI analysis over local database for comprehensive details
-    if (text) {
-      const textBasedMedication = await findMedicationFromText(text, language);
-      if (textBasedMedication) {
-        console.log('Found medication in local database:', textBasedMedication.brand_name);
-        console.log('Skipping local database - using AI for comprehensive analysis...');
-        
-        // Don't return here - continue to AI analysis for detailed information
-        // The local database only has basic info, AI provides comprehensive details
-      }
-    }
+    // Skip all local database lookups - always use AI for comprehensive analysis
+    console.log('Proceeding directly to AI analysis for comprehensive medication information...');
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
