@@ -21,6 +21,7 @@ import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 import { medicationAdherenceService } from '@/services/medicationAdherenceService';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 
 const Reminders: React.FC = () => {
@@ -551,40 +552,42 @@ const RemindersByMedication: React.FC<{
 
           console.log('Adherence log entries found:', adherenceLog);
 
-          // Create dose status array with more flexible time matching
-          const doseStatus = allTimes.map(time => {
-            console.log(`Checking time ${time} for taken status...`);
-            
-            const taken = adherenceLog?.some(log => {
-              const logDate = new Date(log.scheduled_time);
-              
-              // Extract time in multiple formats for comparison
-              const logHours = logDate.getHours().toString().padStart(2, '0');
-              const logMinutes = logDate.getMinutes().toString().padStart(2, '0');
-              const logTimeHHMM = `${logHours}:${logMinutes}`;
-              const logTimeHHMMSS = `${logHours}:${logMinutes}:${logDate.getSeconds().toString().padStart(2, '0')}`;
-              
-              // Normalize reminder time to HH:mm format
-              const reminderTimeHHMM = time.includes(':') ? time.substring(0, 5) : time;
-              
-              console.log(`  Comparing reminder time "${reminderTimeHHMM}" with log time "${logTimeHHMM}" (full: ${logTimeHHMMSS})`);
-              console.log(`  Log entry scheduled_time:`, log.scheduled_time);
-              
-              // Match on HH:mm format (most reliable)
-              const matches = logTimeHHMM === reminderTimeHHMM || 
-                             logTimeHHMMSS === time ||
-                             logTimeHHMM === time;
-              
-              if (matches) {
-                console.log(`  ✓ Match found! Log entry:`, log);
-              }
-              
-              return matches;
-            }) || false;
-            
-            console.log(`  Final result for ${time}: taken = ${taken}`);
-            return { time, taken };
-          });
+              // Create dose status array with timezone-aware time matching
+              const doseStatus = allTimes.map(time => {
+                console.log(`Checking time ${time} for taken status...`);
+                
+                const taken = adherenceLog?.some(log => {
+                  // Convert UTC scheduled_time to user's timezone for comparison
+                  const logDate = new Date(log.scheduled_time);
+                  const logInUserTz = toZonedTime(logDate, timezone);
+                  
+                  // Extract time in HH:mm format from the timezone-adjusted date
+                  const logTimeHHMM = `${logInUserTz.getHours().toString().padStart(2, '0')}:${logInUserTz.getMinutes().toString().padStart(2, '0')}`;
+                  
+                  // Normalize reminder time to HH:mm format
+                  const reminderTimeHHMM = time.includes(':') ? time.substring(0, 5) : time;
+                  
+                  console.log(`  Comparing reminder time "${reminderTimeHHMM}" with log time "${logTimeHHMM}"`);
+                  console.log(`  Log entry scheduled_time:`, log.scheduled_time);
+                  console.log(`  Log date in user timezone:`, logInUserTz.toLocaleString());
+                  
+                  // Allow 2-minute tolerance for time matching to handle small discrepancies
+                  const reminderMinutes = parseInt(reminderTimeHHMM.split(':')[0]) * 60 + parseInt(reminderTimeHHMM.split(':')[1]);
+                  const logMinutes = parseInt(logTimeHHMM.split(':')[0]) * 60 + parseInt(logTimeHHMM.split(':')[1]);
+                  const timeDiff = Math.abs(reminderMinutes - logMinutes);
+                  
+                  const matches = timeDiff <= 2; // 2-minute tolerance
+                  
+                  if (matches) {
+                    console.log(`  ✓ Match found! Time difference: ${timeDiff} minutes`);
+                  }
+                  
+                  return matches;
+                }) || false;
+                
+                console.log(`  Final result for ${time}: taken = ${taken}`);
+                return { time, taken };
+              });
 
           console.log(`Dose status for medication ${medicationId}:`, doseStatus);
           statusMap[medicationId] = doseStatus;
@@ -679,10 +682,20 @@ const RemindersByMedication: React.FC<{
                 const allTimes = medicationReminders.map(r => r.reminder_time);
                 const updatedDoseStatus = allTimes.map(timeSlot => {
                   const taken = adherenceLog?.some(log => {
+                    // Convert UTC scheduled_time to user's timezone for comparison
                     const logDate = new Date(log.scheduled_time);
-                    const logTimeHHMM = `${logDate.getHours().toString().padStart(2, '0')}:${logDate.getMinutes().toString().padStart(2, '0')}`;
+                    const logInUserTz = toZonedTime(logDate, timezone);
+                    
+                    // Extract time in HH:mm format from the timezone-adjusted date
+                    const logTimeHHMM = `${logInUserTz.getHours().toString().padStart(2, '0')}:${logInUserTz.getMinutes().toString().padStart(2, '0')}`;
                     const reminderTimeHHMM = timeSlot.includes(':') ? timeSlot.substring(0, 5) : timeSlot;
-                    return logTimeHHMM === reminderTimeHHMM;
+                    
+                    // Allow 2-minute tolerance for time matching
+                    const reminderMinutes = parseInt(reminderTimeHHMM.split(':')[0]) * 60 + parseInt(reminderTimeHHMM.split(':')[1]);
+                    const logMinutes = parseInt(logTimeHHMM.split(':')[0]) * 60 + parseInt(logTimeHHMM.split(':')[1]);
+                    const timeDiff = Math.abs(reminderMinutes - logMinutes);
+                    
+                    return timeDiff <= 2; // 2-minute tolerance
                   }) || false;
                   return { time: timeSlot, taken };
                 });
