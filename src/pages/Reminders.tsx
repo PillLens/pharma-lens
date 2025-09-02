@@ -664,6 +664,34 @@ const RemindersByMedication: React.FC<{
               
               // Then call the actual mark taken function
               await onMarkTaken(medicationId, time);
+              
+              // Force refresh of dose status after a short delay
+              setTimeout(async () => {
+                const { data: adherenceLog } = await supabase
+                  .from('medication_adherence_log')
+                  .select('*')
+                  .eq('user_id', user?.id)
+                  .eq('medication_id', medicationId)
+                  .gte('scheduled_time', `${format(getCurrentTimeInTimezone(timezone), 'yyyy-MM-dd')}T00:00:00`)
+                  .lt('scheduled_time', `${format(getCurrentTimeInTimezone(timezone), 'yyyy-MM-dd')}T23:59:59`)
+                  .eq('status', 'taken');
+                
+                const allTimes = medicationReminders.map(r => r.reminder_time);
+                const updatedDoseStatus = allTimes.map(timeSlot => {
+                  const taken = adherenceLog?.some(log => {
+                    const logDate = new Date(log.scheduled_time);
+                    const logTimeHHMM = `${logDate.getHours().toString().padStart(2, '0')}:${logDate.getMinutes().toString().padStart(2, '0')}`;
+                    const reminderTimeHHMM = timeSlot.includes(':') ? timeSlot.substring(0, 5) : timeSlot;
+                    return logTimeHHMM === reminderTimeHHMM;
+                  }) || false;
+                  return { time: timeSlot, taken };
+                });
+                
+                setMedicationDoseStatus(prev => ({
+                  ...prev,
+                  [medicationId]: updatedDoseStatus
+                }));
+              }, 1000);
             }}
           />
         );

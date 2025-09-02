@@ -246,14 +246,20 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 return null;
               }
               
-              const getDoseLabel = (index: number, totalTimes: number) => {
+              const getDoseLabel = (time: string, totalTimes: number) => {
                 if (totalTimes === 1) return '';
-                if (totalTimes === 2) return index === 0 ? 'Morning' : 'Evening';
-                if (totalTimes === 3) return ['Morning', 'Afternoon', 'Evening'][index];
-                return `Dose ${index + 1}`;
+                
+                const [hours] = time.split(':').map(Number);
+                
+                if (hours >= 5 && hours < 12) return 'Morning';
+                if (hours >= 12 && hours < 17) return 'Afternoon';
+                if (hours >= 17 && hours < 21) return 'Evening';
+                if (hours >= 21 || hours < 5) return 'Night';
+                
+                return `Dose ${reminder.times.indexOf(time) + 1}`;
               };
               
-              const doseLabel = getDoseLabel(index, reminder.times.length);
+              const doseLabel = getDoseLabel(time, reminder.times.length);
               
               return (
                 <div

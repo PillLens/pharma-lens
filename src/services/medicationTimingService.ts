@@ -52,7 +52,7 @@ export class MedicationTimingService {
           const formattedTime = formatInTimeZone(
             this.parseTimeToday(reminderTime, timezone), 
             timezone, 
-            'h:mm a'
+            'HH:mm'
           );
           return {
             isDue: true,
@@ -166,13 +166,11 @@ export class MedicationTimingService {
   }
 
   /**
-   * Format time for display
+   * Format time for display in 24-hour format
    */
   private formatTime(time: string): string {
     const [hours, minutes] = time.split(':').map(Number);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours % 12 || 12;
-    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   /**
