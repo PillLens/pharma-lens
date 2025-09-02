@@ -39,6 +39,28 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
       : { variant: 'secondary' as const, label: t('reminders.status.paused') };
   };
 
+  // Format time to remove seconds and make it user-friendly
+  const formatTime = (time: string) => {
+    if (time.includes(':')) {
+      const parts = time.split(':');
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return time;
+  };
+
+  // Convert raw frequency to user-friendly text
+  const formatFrequency = (frequency: string) => {
+    const frequencyMap: { [key: string]: string } = {
+      'once_daily': 'Once daily',
+      'twice_daily': '2x daily', 
+      'three_times_daily': '3x daily',
+      'four_times_daily': '4x daily',
+      'weekly': 'Weekly',
+      'as_needed': 'As needed'
+    };
+    return frequencyMap[frequency] || frequency;
+  };
+
   const statusChip = getStatusChip(reminder.status);
 
   return (
@@ -57,15 +79,15 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
           </div>
         </SheetHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Schedule Section */}
           <Card className="rounded-2xl shadow-sm border-0">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-blue-600" />
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-foreground">
+                <h3 className="font-medium text-foreground">
                   {t('reminders.details.schedule')}
                 </h3>
               </div>
@@ -76,36 +98,18 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
                     <Badge
                       key={index}
                       variant="outline"
-                      className="text-sm px-3 py-2 rounded-xl bg-muted/50 text-foreground border-border/50"
+                      className="text-sm px-3 py-1.5 rounded-lg bg-muted/50 text-foreground border-border/50 font-mono"
                     >
-                      {time}
+                      {formatTime(time)}
                     </Badge>
                   ))}
                 </div>
                 
-                <div className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm">
                   <span className="font-medium text-foreground">{reminder.dosage}</span>
-                  <span className="mx-2">•</span>
-                  <span>{reminder.frequency}</span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="text-muted-foreground">{formatFrequency(reminder.frequency)}</span>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Frequency Section */}
-          <Card className="rounded-2xl shadow-sm border-0">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-foreground">
-                  {t('reminders.details.frequency')}
-                </h3>
-              </div>
-              
-              <div className="text-sm text-muted-foreground">
-                {reminder.frequency}
               </div>
             </CardContent>
           </Card>
@@ -113,12 +117,12 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
           {/* Next Dose */}
           {reminder.nextDose && (
             <Card className="rounded-2xl shadow-sm border-0">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-amber-600" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                    <Bell className="w-4 h-4 text-amber-600" />
                   </div>
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-medium text-foreground">
                     {t('reminders.details.nextDose')}
                   </h3>
                 </div>
@@ -133,12 +137,12 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
           {/* Notes */}
           {reminder.notes && (
             <Card className="rounded-2xl shadow-sm border-0">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-purple-600" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-medium text-foreground">
                     {t('reminders.details.notes')}
                   </h3>
                 </div>
@@ -151,7 +155,7 @@ const ReminderDetailsSheet: React.FC<ReminderDetailsSheetProps> = ({
           )}
 
           {/* Edit Button */}
-          <div className="pt-4">
+          <div className="pt-2">
             <Button 
               onClick={onEdit}
               size="lg"
