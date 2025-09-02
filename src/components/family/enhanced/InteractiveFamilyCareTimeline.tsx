@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, memo } from 'react';
 import { 
   Clock, Calendar, Activity, Heart, Phone, MessageCircle, 
   AlertTriangle, CheckCircle, Users, Pill, Thermometer,
@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/useTranslation';
-import { familyCareTimelineService, TimelineEvent, DayTimelineData, TimelineStats } from '@/services/familyCareTimelineService';
+import { useFamilyTimelineData } from '@/hooks/useFamilyTimelineData';
+import { TimelineEvent, DayTimelineData } from '@/services/familyCareTimelineService';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 interface InteractiveFamilyCareTimelineProps {
@@ -22,7 +23,7 @@ interface InteractiveFamilyCareTimelineProps {
   onEmergencyCall?: () => void;
 }
 
-const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps> = ({
+const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps> = memo(({
   familyGroups,
   onAddEvent,
   onScheduleReminder,
@@ -30,45 +31,10 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
 }) => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState('today');
-  const [timelineStats, setTimelineStats] = useState<TimelineStats | null>(null);
-  const [todayEvents, setTodayEvents] = useState<TimelineEvent[]>([]);
-  const [weekEvents, setWeekEvents] = useState<DayTimelineData[]>([]);
-  const [monthEvents, setMonthEvents] = useState<DayTimelineData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadTimelineData = async () => {
-      try {
-        setLoading(true);
-        
-        // Load timeline stats
-        const stats = await familyCareTimelineService.getTimelineStats(familyGroups);
-        setTimelineStats(stats);
-
-        // Load today's timeline
-        const today = await familyCareTimelineService.getTodayTimeline(familyGroups);
-        setTodayEvents(today);
-
-        // Load week timeline
-        const week = await familyCareTimelineService.getWeekTimeline(familyGroups);
-        setWeekEvents(week);
-
-        // Load month timeline
-        const month = await familyCareTimelineService.getMonthTimeline(familyGroups);
-        setMonthEvents(month);
-      } catch (error) {
-        console.error('Error loading timeline data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (familyGroups.length > 0) {
-      loadTimelineData();
-    } else {
-      setLoading(false);
-    }
-  }, [familyGroups]);
+  
+  // Use optimized hook for data fetching with React Query
+  const { timelineData, loading, prefetchTabData } = useFamilyTimelineData(familyGroups);
+  const { todayEvents, weekEvents, monthEvents, timelineStats } = timelineData;
 
   // Helper functions for status handling
 
@@ -151,9 +117,24 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
 
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="grid w-full grid-cols-3 mb-4">
-            <TabsTrigger value="today">Today</TabsTrigger>
-            <TabsTrigger value="week">This Week</TabsTrigger>
-            <TabsTrigger value="month">This Month</TabsTrigger>
+            <TabsTrigger 
+              value="today"
+              onMouseEnter={() => prefetchTabData('today')}
+            >
+              Today
+            </TabsTrigger>
+            <TabsTrigger 
+              value="week"
+              onMouseEnter={() => prefetchTabData('week')}
+            >
+              This Week
+            </TabsTrigger>
+            <TabsTrigger 
+              value="month"
+              onMouseEnter={() => prefetchTabData('month')}
+            >
+              This Month
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="today" className="space-y-3">
@@ -356,6 +337,8 @@ const InteractiveFamilyCareTimeline: React.FC<InteractiveFamilyCareTimelineProps
       </div>
     </div>
   );
-};
+});
+
+InteractiveFamilyCareTimeline.displayName = 'InteractiveFamilyCareTimeline';
 
 export default InteractiveFamilyCareTimeline;

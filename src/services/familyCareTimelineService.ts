@@ -42,22 +42,17 @@ class FamilyCareTimelineService {
       const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
 
       const groupIds = familyGroups.map(group => group.id);
-      const events: TimelineEvent[] = [];
 
-      // Get medication reminders for today
-      const medicationEvents = await this.getMedicationEvents(groupIds, todayStart, todayEnd);
-      events.push(...medicationEvents);
+      // Parallel execution of all data fetching
+      const [medicationEvents, appointmentEvents, taskEvents] = await Promise.all([
+        this.getMedicationEvents(groupIds, todayStart, todayEnd),
+        this.getAppointmentEvents(groupIds, todayStart, todayEnd),
+        this.getCareTaskEvents(groupIds, todayStart, todayEnd)
+      ]);
 
-      // Get appointments for today
-      const appointmentEvents = await this.getAppointmentEvents(groupIds, todayStart, todayEnd);
-      events.push(...appointmentEvents);
-
-      // Get care tasks for today
-      const taskEvents = await this.getCareTaskEvents(groupIds, todayStart, todayEnd);
-      events.push(...taskEvents);
-
-      // Sort by time
-      return events.sort((a, b) => a.time.localeCompare(b.time));
+      // Combine and sort events by time
+      const allEvents = [...medicationEvents, ...appointmentEvents, ...taskEvents];
+      return allEvents.sort((a, b) => a.time.localeCompare(b.time));
     } catch (error) {
       console.error('Error getting today timeline:', error);
       return [];
@@ -219,9 +214,17 @@ class FamilyCareTimelineService {
     }
   }
 
-  async getTimelineStats(familyGroups: any[]): Promise<TimelineStats> {
+  async getTimelineStats(todayEvents?: TimelineEvent[]): Promise<TimelineStats> {
     try {
-      const todayEvents = await this.getTodayTimeline(familyGroups);
+      // Use provided events to avoid duplicate API call
+      if (!todayEvents || todayEvents.length === 0) {
+        return {
+          todayEvents: 0,
+          completed: 0,
+          upcoming: 0,
+          overdue: 0
+        };
+      }
       
       const completed = todayEvents.filter(e => e.status === 'completed').length;
       const upcoming = todayEvents.filter(e => e.status === 'upcoming').length;

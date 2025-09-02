@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Users, Bell, Phone, MessageCircle, Share2, BarChart3, Activity, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -6,9 +6,11 @@ import { toast } from '@/hooks/use-toast';
 import { familySharingService, FamilyGroup, FamilyInvitation } from '@/services/familySharingService';
 import EnhancedFamilyEmptyState, { FamilyGroupTemplate } from '@/components/family/enhanced/EnhancedFamilyEmptyState';
 import AdvancedFamilyGroupCard from '@/components/family/enhanced/AdvancedFamilyGroupCard';
-import EnhancedFamilyDashboard from '@/components/family/enhanced/EnhancedFamilyDashboard';
-import InteractiveFamilyCareTimeline from '@/components/family/enhanced/InteractiveFamilyCareTimeline';
-import FamilyAnalyticsDashboard from '@/components/family/enhanced/FamilyAnalyticsDashboard';
+
+// Lazy load components that aren't immediately visible
+const EnhancedFamilyDashboard = lazy(() => import('@/components/family/enhanced/EnhancedFamilyDashboard'));
+const InteractiveFamilyCareTimeline = lazy(() => import('@/components/family/enhanced/InteractiveFamilyCareTimeline'));
+const FamilyAnalyticsDashboard = lazy(() => import('@/components/family/enhanced/FamilyAnalyticsDashboard'));
 import GroupSettingsSheet from '@/components/family/GroupSettingsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
@@ -405,11 +407,13 @@ const FamilyManager: React.FC = () => {
             </TabsList>
 
             <TabsContent value="overview">
-              <EnhancedFamilyDashboard 
-                familyGroups={familyGroups}
-                onEmergencyCall={handleEmergencyCall}
-                onQuickAction={handleQuickAction}
-              />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <EnhancedFamilyDashboard 
+                  familyGroups={familyGroups}
+                  onEmergencyCall={handleEmergencyCall}
+                  onQuickAction={handleQuickAction}
+                />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="groups">
@@ -453,20 +457,24 @@ const FamilyManager: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="timeline">
-              <InteractiveFamilyCareTimeline 
-                familyGroups={familyGroups}
-                onAddEvent={handleAddEvent}
-                onScheduleReminder={handleScheduleReminder}
-                onEmergencyCall={handleEmergencyCall}
-              />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <InteractiveFamilyCareTimeline 
+                  familyGroups={familyGroups}
+                  onAddEvent={handleAddEvent}
+                  onScheduleReminder={handleScheduleReminder}
+                  onEmergencyCall={handleEmergencyCall}
+                />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="analytics">
-              <FamilyAnalyticsDashboard 
-                familyGroups={familyGroups}
-                onExportReport={handleExportReport}
-                onContactProvider={handleContactProvider}
-              />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <FamilyAnalyticsDashboard 
+                  familyGroups={familyGroups}
+                  onExportReport={handleExportReport}
+                  onContactProvider={handleContactProvider}
+                />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </div>
@@ -509,6 +517,16 @@ const FamilyManager: React.FC = () => {
     </ProfessionalMobileLayout>
   );
 };
+
+const TabLoadingSkeleton: React.FC = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-24 w-full rounded-lg" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Skeleton className="h-32 w-full rounded-lg" />
+      <Skeleton className="h-32 w-full rounded-lg" />
+    </div>
+  </div>
+);
 
 // Loading Skeleton Component
 const LoadingSkeleton: React.FC = () => (
