@@ -89,14 +89,38 @@ export class FamilySharingService {
   // Profile Management
   async findUserByEmail(email: string): Promise<UserProfile | null> {
     try {
-      const { data, error } = await supabase
+      // First try to find user in profiles table
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('email', email.toLowerCase().trim())
-        .single();
+        .maybeSingle();
 
-      if (error) return null;
-      return data;
+      if (profileData) {
+        return profileData;
+      }
+
+      // If not found in profiles, check if user exists in auth system using the database function
+      const { data: userExists, error: functionError } = await supabase
+        .rpc('find_user_by_email', { user_email: email.toLowerCase().trim() });
+
+      if (functionError) {
+        console.error('Error checking auth users:', functionError);
+        return null;
+      }
+
+      if (userExists) {
+        // User exists in auth but no profile yet - this is valid for invitation
+        return {
+          id: userExists,
+          email: email.toLowerCase().trim(),
+          display_name: email.split('@')[0],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as UserProfile;
+      }
+
+      return null;
     } catch (error) {
       console.error('Error finding user by email:', error);
       return null;
