@@ -26,7 +26,7 @@ export interface FamilyMember {
   id: string;
   family_group_id: string;
   user_id: string;
-  role: 'caregiver' | 'patient' | 'emergency_contact';
+  role: 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency';
   permissions: {
     view_medications: boolean;
     edit_medications: boolean;
@@ -65,7 +65,7 @@ export interface FamilyInvitation {
   familyGroupName: string;
   invitedBy: string;
   inviterName?: string;
-  role: 'caregiver' | 'patient' | 'emergency_contact';
+  role: 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency';
   invitedAt: string;
 }
 
@@ -76,7 +76,7 @@ export interface FamilyGroupTemplate {
   description: string;
   icon: string;
   suggestedRoles: Array<{
-    role: 'caregiver' | 'patient' | 'emergency_contact';
+    role: 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency';
     permissions: {
       view_medications: boolean;
       edit_medications: boolean;
@@ -270,7 +270,7 @@ export class FamilySharingService {
 
           return {
             ...member,
-            role: member.role as 'caregiver' | 'patient' | 'emergency_contact',
+            role: member.role as 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
             invitation_status: member.invitation_status as 'pending' | 'accepted' | 'declined',
             permissions: member.permissions as {
               view_medications: boolean;
@@ -336,7 +336,7 @@ export class FamilySharingService {
   async inviteFamilyMember(
     groupId: string, 
     userEmail: string, 
-    role: 'caregiver' | 'patient' | 'emergency_contact',
+    role: 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
     permissions: {
       view_medications: boolean;
       edit_medications: boolean;

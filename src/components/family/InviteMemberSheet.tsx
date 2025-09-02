@@ -138,7 +138,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
           emergencyAccess: true,
         },
       }));
-    } else if (role === 'patient') {
+    } else if (role === 'family') {
       setFormData(prev => ({
         ...prev,
         permissions: {
@@ -148,7 +148,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
           emergencyAccess: false,
         },
       }));
-    } else if (role === 'emergency_contact') {
+    } else if (role === 'emergency') {
       setFormData(prev => ({
         ...prev,
         permissions: {
@@ -254,7 +254,8 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
                   >
                     <SelectItem value="patient">{t('family.roles.patient')}</SelectItem>
                     <SelectItem value="caregiver">{t('family.roles.caregiver')}</SelectItem>
-                    <SelectItem value="emergency_contact">{t('family.roles.emergency')}</SelectItem>
+                    <SelectItem value="family">{t('family.roles.family')}</SelectItem>
+                    <SelectItem value="emergency">{t('family.roles.emergency')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.role && <p className="text-xs text-destructive">{errors.role}</p>}
