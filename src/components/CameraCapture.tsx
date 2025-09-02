@@ -154,7 +154,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
 
   const extractMedicationInfo = async (text: string, barcode?: string, sessionId?: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('extract-medication', {
+      const { data, error } = await supabase.functions.invoke('extract-medication-worldwide', {
         body: { 
           text, 
           barcode,
@@ -249,7 +249,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       // Step 2: Perform OCR
       setProcessingStep("Extracting text from image...");
       await ocrService.initialize();
-      const ocrResult = await ocrService.processImage(imageData);
+      const ocrResult = await ocrService.processImage(imageData, language);
       
       setOcrText(ocrResult.text);
       setConfidence(ocrResult.confidence);
