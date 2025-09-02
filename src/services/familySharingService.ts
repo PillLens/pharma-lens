@@ -392,6 +392,13 @@ export class FamilySharingService {
         } else {
           maxFamilyMembers = 0; // Free plan
         }
+        
+        console.log('User plan check:', {
+          trialExpires: profile?.trial_expires_at,
+          isTrialActive: profile?.trial_expires_at && new Date(profile.trial_expires_at) > new Date(),
+          plan: profile?.plan,
+          maxFamilyMembers
+        });
       }
 
       // Get current family member count for this group
@@ -406,6 +413,11 @@ export class FamilySharingService {
       }
 
       const currentCount = currentMembers?.length || 0;
+
+      if (maxFamilyMembers === 0) {
+        toast.error('Your trial has expired. Upgrade to Pro Family to invite members.');
+        return false;
+      }
 
       if (maxFamilyMembers > 0 && currentCount >= maxFamilyMembers) {
         toast.error(`You've reached your plan's limit of ${maxFamilyMembers} family members. Upgrade to Pro Family for more members.`);
