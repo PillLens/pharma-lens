@@ -50,7 +50,7 @@ serve(async (req) => {
       }
     }
 
-    // Try text-based medication lookup from common Azerbaijan medications
+    // Try text-based medication lookup from worldwide medications
     if (text) {
       const textBasedMedication = await findMedicationFromText(text, language);
       if (textBasedMedication) {
@@ -298,7 +298,7 @@ IMPORTANT: You must respond with ONLY valid JSON, no markdown formatting, no add
 
 // Known medication database lookup function
 async function getKnownMedicationByBarcode(barcode: string) {
-  const medications = getAzerbaijanMedicationDatabase();
+  const medications = getWorldwideMedicationDatabase();
   const found = medications.find(med => med.barcode === barcode);
   
   if (found) {
@@ -308,9 +308,9 @@ async function getKnownMedicationByBarcode(barcode: string) {
   return null;
 }
 
-// Text-based medication finder
+// Text-based medication finder - Updated for worldwide coverage
 async function findMedicationFromText(text: string, language: string) {
-  const medications = getAzerbaijanMedicationDatabase();
+  const medications = getWorldwideMedicationDatabase();
   const searchText = text.toLowerCase();
   
   // Try exact brand name match first
@@ -350,10 +350,10 @@ async function findMedicationFromText(text: string, language: string) {
   return null;
 }
 
-// Comprehensive Azerbaijan medication database
-function getAzerbaijanMedicationDatabase() {
+// Comprehensive worldwide medication database
+function getWorldwideMedicationDatabase() {
   return [
-    // Pain relievers & fever reducers
+    // Pain relievers & fever reducers - Global brands
     {
       barcode: '4770251043697',
       productName: 'Aspirin Cardio',
@@ -361,7 +361,7 @@ function getAzerbaijanMedicationDatabase() {
       manufacturer: 'Bayer',
       strength: '100mg',
       form: 'tablet',
-      country: 'AZ'
+      country: 'Global'
     },
     {
       barcode: '8901391509173',
@@ -370,41 +370,122 @@ function getAzerbaijanMedicationDatabase() {
       manufacturer: 'Bayer',
       strength: '400mg + 240mg',
       form: 'effervescent tablet',
-      country: 'AZ'
+      country: 'Global'
     },
+    {
+      productName: 'Tylenol',
+      genericName: 'Paracetamol',
+      manufacturer: 'Johnson & Johnson',
+      strength: '500mg',
+      form: 'tablet',
+      country: 'US'
+    },
+    {
+      productName: 'Panadol',
+      genericName: 'Paracetamol',
+      manufacturer: 'GSK',
+      strength: '500mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    {
+      productName: 'Advil',
+      genericName: 'Ibuprofen',
+      manufacturer: 'Pfizer',
+      strength: '200mg',
+      form: 'tablet',
+      country: 'US'
+    },
+    {
+      productName: 'Motrin',
+      genericName: 'Ibuprofen',
+      manufacturer: 'Johnson & Johnson',
+      strength: '200mg',
+      form: 'tablet',
+      country: 'US'
+    },
+    {
+      productName: 'Nurofen',
+      genericName: 'Ibuprofen',
+      manufacturer: 'Reckitt Benckiser',
+      strength: '200mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    {
+      productName: 'Aleve',
+      genericName: 'Naproxen',
+      manufacturer: 'Bayer',
+      strength: '220mg',
+      form: 'tablet',
+      country: 'US'
+    },
+    // Cardiovascular medications
+    {
+      productName: 'Lisinopril',
+      genericName: 'Lisinopril',
+      manufacturer: 'Various',
+      strength: '10mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    {
+      productName: 'Amlodipine',
+      genericName: 'Amlodipine',
+      manufacturer: 'Pfizer',
+      strength: '5mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    {
+      productName: 'Metoprolol',
+      genericName: 'Metoprolol',
+      manufacturer: 'Various',
+      strength: '50mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    // Antibiotics
+    {
+      productName: 'Amoxicillin',
+      genericName: 'Amoxicillin',
+      manufacturer: 'Various',
+      strength: '500mg',
+      form: 'capsule',
+      country: 'Global'
+    },
+    {
+      productName: 'Azithromycin',
+      genericName: 'Azithromycin',
+      manufacturer: 'Pfizer',
+      strength: '250mg',
+      form: 'tablet',
+      country: 'Global'
+    },
+    // Supplements
+    {
+      productName: 'Omega-3',
+      genericName: 'Omega-3 fatty acids',
+      manufacturer: 'Various',
+      strength: '1000mg',
+      form: 'capsule',
+      country: 'Global'
+    },
+    {
+      productName: 'Vitamin D3',
+      genericName: 'Cholecalciferol',
+      manufacturer: 'Various',
+      strength: '1000IU',
+      form: 'tablet',
+      country: 'Global'
+    },
+    // Include Azerbaijan medications for backward compatibility
     {
       barcode: '7901234567892',
       productName: 'Paracetamol',
       genericName: 'Paracetamol',
       manufacturer: 'Nobel İlaç',
       strength: '500mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    {
-      barcode: '7901234567893',
-      productName: 'Paracetamol',
-      genericName: 'Paracetamol',
-      manufacturer: 'Nobel İlaç',
-      strength: '125mg',
-      form: 'suppository',
-      country: 'AZ'
-    },
-    {
-      barcode: '5901234567894',
-      productName: 'Nurofen',
-      genericName: 'Ibuprofen',
-      manufacturer: 'Reckitt Benckiser',
-      strength: '200mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    {
-      barcode: '5901234567895',
-      productName: 'Nurofen Forte',
-      genericName: 'Ibuprofen',
-      manufacturer: 'Reckitt Benckiser',
-      strength: '400mg',
       form: 'tablet',
       country: 'AZ'
     },
@@ -423,72 +504,6 @@ function getAzerbaijanMedicationDatabase() {
       genericName: 'Paracetamol + Acetylsalicylic acid + Caffeine',
       manufacturer: 'Pharmstandard',
       strength: '240mg + 240mg + 30mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    // Cardiovascular medications
-    {
-      barcode: '5901234567890',
-      productName: 'Lisinopril-Teva',
-      genericName: 'Lisinopril',
-      manufacturer: 'Teva',
-      strength: '10mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    {
-      barcode: '5901234567891',
-      productName: 'Amlodipine',
-      genericName: 'Amlodipine',
-      manufacturer: 'Pfizer',
-      strength: '5mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    // Digestive system
-    {
-      barcode: '8901234567898',
-      productName: 'No-Spa',
-      genericName: 'Drotaverine',
-      manufacturer: 'Sanofi',
-      strength: '40mg',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    {
-      barcode: '8901234567899',
-      productName: 'Mezym',
-      genericName: 'Pancreatin',
-      manufacturer: 'Berlin-Chemie',
-      strength: '10000 U',
-      form: 'tablet',
-      country: 'AZ'
-    },
-    {
-      barcode: '8901234567800',
-      productName: 'Linex',
-      genericName: 'Lactobacillus acidophilus',
-      manufacturer: 'Lek',
-      strength: '280mg',
-      form: 'capsule',
-      country: 'AZ'
-    },
-    // Antibiotics
-    {
-      barcode: '9901234567801',
-      productName: 'Amoxicillin',
-      genericName: 'Amoxicillin',
-      manufacturer: 'Sandoz',
-      strength: '500mg',
-      form: 'capsule',
-      country: 'AZ'
-    },
-    {
-      barcode: '9901234567802',
-      productName: 'Azithromycin',
-      genericName: 'Azithromycin',
-      manufacturer: 'Pfizer',
-      strength: '250mg',
       form: 'tablet',
       country: 'AZ'
     }
