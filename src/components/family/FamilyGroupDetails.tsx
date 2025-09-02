@@ -1,0 +1,235 @@
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/hooks/useTranslation';
+import { FamilyGroup } from '@/services/familySharingService';
+
+// Lazy load the heavy components
+const CareTasksManager = lazy(() => import('./CareTasksManager'));
+const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
+const AppointmentManager = lazy(() => import('./AppointmentManager'));
+
+interface FamilyGroupDetailsProps {
+  group: FamilyGroup;
+  onBack: () => void;
+  onEditGroup: (group: FamilyGroup) => void;
+  currentUserId: string;
+}
+
+const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
+  group,
+  onBack,
+  onEditGroup,
+  currentUserId
+}) => {
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Get active family members
+  const activeMembers = group.members?.filter(m => m.invitation_status === 'accepted') || [];
+
+  const TabLoadingSkeleton = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <Card key={i}>
+            <CardContent className="p-4">
+              <Skeleton className="h-4 w-3/4 mb-2" />
+              <Skeleton className="h-3 w-1/2" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <h2 className="text-2xl font-bold">{group.name}</h2>
+            <p className="text-sm text-muted-foreground">
+              {activeMembers.length} active members
+            </p>
+          </div>
+        </div>
+        
+        <Button
+          variant="outline" 
+          size="sm"
+          onClick={() => onEditGroup(group)}
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          Settings
+        </Button>
+      </div>
+
+      {/* Group Overview Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" />
+              <div>
+                <p className="text-2xl font-bold">{activeMembers.length}</p>
+                <p className="text-xs text-muted-foreground">Active Members</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <ClipboardList className="w-4 h-4 text-warning" />
+              <div>
+                <p className="text-2xl font-bold">0</p>
+                <p className="text-xs text-muted-foreground">Pending Tasks</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-500" />
+              <div>
+                <p className="text-2xl font-bold">0</p>
+                <p className="text-xs text-muted-foreground">Upcoming Appointments</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-green-500" />
+              <div>
+                <p className="text-2xl font-bold">0</p>
+                <p className="text-xs text-muted-foreground">Unread Messages</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabbed Interface */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <Activity className="w-4 h-4" />
+            <span>Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <ClipboardList className="w-4 h-4" />
+            <span>Care Tasks</span>
+          </TabsTrigger>
+          <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <MessageCircle className="w-4 h-4" />
+            <span>Messages</span>
+          </TabsTrigger>
+          <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <Calendar className="w-4 h-4" />
+            <span>Appointments</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="space-y-6">
+            {/* Family Members */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Family Members
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {activeMembers.map((member) => (
+                  <div key={member.user_id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-medium">
+                          {member.user_id?.charAt(0) || '?'}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">
+                          Member {member.user_id?.slice(0, 8)}
+                        </p>
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {member.role}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                      <span className="text-xs text-muted-foreground">Online</span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity Placeholder */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No recent activity</p>
+                  <p className="text-xs">Family activities will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="tasks">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <CareTasksManager
+              familyGroupId={group.id}
+              familyMembers={activeMembers}
+            />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="messaging">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <FamilyMessaging
+              familyGroupId={group.id}
+              familyMembers={activeMembers}
+              currentUserId={currentUserId}
+            />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="appointments">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <AppointmentManager
+              familyGroupId={group.id}
+              familyMembers={activeMembers}
+            />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+export default FamilyGroupDetails;

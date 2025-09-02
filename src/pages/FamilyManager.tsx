@@ -11,6 +11,7 @@ import AdvancedFamilyGroupCard from '@/components/family/enhanced/AdvancedFamily
 const EnhancedFamilyDashboard = lazy(() => import('@/components/family/enhanced/EnhancedFamilyDashboard'));
 const InteractiveFamilyCareTimeline = lazy(() => import('@/components/family/enhanced/InteractiveFamilyCareTimeline'));
 const FamilyAnalyticsDashboard = lazy(() => import('@/components/family/enhanced/FamilyAnalyticsDashboard'));
+const FamilyGroupDetails = lazy(() => import('@/components/family/FamilyGroupDetails'));
 import GroupSettingsSheet from '@/components/family/GroupSettingsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
@@ -23,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const FamilyManager: React.FC = () => {
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ const FamilyManager: React.FC = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<FamilyGroupTemplate | undefined>(undefined);
   const [editingGroup, setEditingGroup] = useState<FamilyGroup | null>(null);
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string>('');
 
   // Load family data
   const loadFamilyData = async () => {
@@ -71,7 +74,19 @@ const FamilyManager: React.FC = () => {
   // Effects
   useEffect(() => {
     loadFamilyData();
+    getCurrentUser();
   }, []);
+
+  const getCurrentUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    } catch (error) {
+      console.error('Error getting current user:', error);
+    }
+  };
 
   // Handlers
   const handleCreateGroup = async (groupName: string, template?: FamilyGroupTemplate) => {
@@ -188,6 +203,7 @@ const FamilyManager: React.FC = () => {
   const handleGroupCardTap = (group: FamilyGroup) => {
     setSelectedGroup(group);
     setShowGroupDetails(true);
+    setActiveTab('group-details');
   };
 
   const handleInviteFromGroup = (group: FamilyGroup) => {
@@ -318,6 +334,32 @@ const FamilyManager: React.FC = () => {
       description: t('toast.startingDemoVideo') 
     });
   };
+
+  // Show group details view
+  if (showGroupDetails && selectedGroup) {
+    return (
+      <ProfessionalMobileLayout 
+        title={selectedGroup.name}
+        showHeader={true}
+        className="bg-gradient-surface"
+      >
+        <div className="px-4 py-2 w-full">
+          <Suspense fallback={<LoadingSkeleton />}>
+            <FamilyGroupDetails
+              group={selectedGroup}
+              onBack={() => {
+                setShowGroupDetails(false);
+                setSelectedGroup(null);
+                setActiveTab('overview');
+              }}
+              onEditGroup={handleEditGroup}
+              currentUserId={currentUserId}
+            />
+          </Suspense>
+        </div>
+      </ProfessionalMobileLayout>
+    );
+  }
 
   return (
     <ProfessionalMobileLayout 
