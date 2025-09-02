@@ -51,7 +51,7 @@ class EnhancedMemberManagementService {
         .from('family_members')
         .select(`
           *,
-          profiles:user_id (display_name, email, avatar_url)
+          profiles!family_members_user_id_fkey (display_name, email, avatar_url)
         `)
         .in('family_group_id', groupIds)
         .eq('invitation_status', 'accepted');
@@ -60,7 +60,10 @@ class EnhancedMemberManagementService {
 
       return data?.map(member => ({
         ...member,
-        user_profile: member.profiles
+        role: member.role as 'caregiver' | 'patient' | 'emergency_contact',
+        permissions: member.permissions as { view_medications: boolean; edit_medications: boolean; receive_alerts: boolean; },
+        invitation_status: member.invitation_status as 'accepted' | 'pending' | 'declined',
+        user_profile: Array.isArray(member.profiles) ? member.profiles[0] : member.profiles
       })) || [];
     } catch (error) {
       console.error('Error fetching family members:', error);
@@ -92,7 +95,7 @@ class EnhancedMemberManagementService {
           medical_conditions: profile.medical_conditions || [],
           last_seen: profile.last_seen,
           timezone: profile.timezone,
-          notification_preferences: profile.notification_preferences || {
+          notification_preferences: (profile.notification_preferences as any) || {
             medication_reminders: true,
             family_updates: true,
             emergency_alerts: true,

@@ -50,7 +50,7 @@ interface EmergencyAlert {
   title: string;
   message: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
-  status: 'active' | 'resolved' | 'cancelled';
+  status?: 'active' | 'resolved' | 'cancelled';
   created_by: string;
   family_group_id: string;
   location?: {

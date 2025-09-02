@@ -189,19 +189,22 @@ class EmergencyFeaturesService {
       if (error) throw error;
 
       // Transform activity logs into alert format
-      return (data || []).map(activity => ({
-        id: activity.id,
-        type: activity.activity_data?.alert_type || 'general',
-        title: activity.activity_data?.title || 'Emergency Alert',
-        message: activity.activity_data?.message || 'Emergency alert sent',
-        priority: activity.priority as 'low' | 'medium' | 'high' | 'critical',
-        status: 'resolved' as const, // For historical alerts, assume resolved
-        created_by: activity.user_id,
-        family_group_id: activity.family_group_id,
-        location: activity.activity_data?.location,
-        created_at: activity.created_at,
-        resolved_at: activity.created_at // Mock resolved time
-      }));
+      return (data || []).map(activity => {
+        const activityData = activity.activity_data as any;
+        return {
+          id: activity.id,
+          type: activityData?.alert_type || 'general',
+          title: activityData?.title || 'Emergency Alert',
+          message: activityData?.message || 'Emergency alert sent',
+          priority: activity.priority as 'low' | 'medium' | 'high' | 'critical',
+          status: 'resolved' as const, // For historical alerts, assume resolved
+          created_by: activity.user_id,
+          family_group_id: activity.family_group_id,
+          location: activityData?.location,
+          created_at: activity.created_at,
+          resolved_at: activity.created_at // Mock resolved time
+        };
+      });
 
     } catch (error) {
       console.error('Error fetching recent emergency alerts:', error);
@@ -212,15 +215,26 @@ class EmergencyFeaturesService {
   async resolveEmergencyAlert(alertId: string): Promise<void> {
     try {
       // In production, this would update the emergency_alerts table
-      // For now, we'll update the activity log
-      const { error } = await supabase
+      // For now, we'll update the activity log with resolved timestamp
+      const { data: currentActivity } = await supabase
         .from('family_activity_log')
-        .update({
-          activity_data: supabase.raw('activity_data || ?', [{ resolved_at: new Date().toISOString() }])
-        })
-        .eq('id', alertId);
+        .select('activity_data')
+        .eq('id', alertId)
+        .single();
 
-      if (error) throw error;
+      if (currentActivity) {
+        const updatedData = {
+          ...currentActivity.activity_data as any,
+          resolved_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase
+          .from('family_activity_log')
+          .update({ activity_data: updatedData })
+          .eq('id', alertId);
+
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error resolving emergency alert:', error);
       throw error;
