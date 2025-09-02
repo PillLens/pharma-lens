@@ -23,7 +23,7 @@ export const useSEO = ({
   const { language } = useTranslation();
   
   const baseUrl = 'https://pilllens.com'; // Replace with your actual domain
-  const defaultOgImage = `${baseUrl}/lovable-uploads/efbf41f7-9e35-4eb9-b847-9d959c18b76f.png`;
+  const defaultOgImage = `${baseUrl}/android-chrome-512x512.png`;
   
   const fullTitle = title ? `${title} | PillLens` : 'PillLens — Scan, Track & Manage Your Medications Easily';
   const metaDescription = description || 'PillLens helps you stay on top of your health. Scan pill barcodes, identify medications instantly, set smart reminders, and share schedules with family or caregivers.';

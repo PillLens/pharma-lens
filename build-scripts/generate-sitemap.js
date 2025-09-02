@@ -44,7 +44,7 @@ function generateImageSitemap() {
   <url>
     <loc>${baseUrl}/</loc>
     <image:image>
-      <image:loc>${baseUrl}/lovable-uploads/39c4089d-d2bb-4326-941f-1de6a17a137c.png</image:loc>
+      <image:loc>${baseUrl}/android-chrome-512x512.png</image:loc>
       <image:caption>PillLens - Smart Medication Management App Logo</image:caption>
       <image:title>PillLens Logo</image:title>
     </image:image>
