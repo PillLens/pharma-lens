@@ -38,7 +38,7 @@ export const AppMetadata = () => {
         'Offline medication database',
         'Healthcare provider integration'
       ],
-      'screenshot': 'https://pilllens.com/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png',
+      'screenshot': 'https://pilllens.com/android-chrome-512x512.png',
       'softwareVersion': '1.0',
       'datePublished': '2024-01-01',
       'inLanguage': ['en', 'ru', 'az', 'tr'],
@@ -104,7 +104,7 @@ export const AppMetadata = () => {
       'url': 'https://pilllens.com',
       'applicationCategory': 'HealthApplication',
       'browserRequirements': 'Requires JavaScript. Requires HTML5.',
-      'screenshot': 'https://pilllens.com/lovable-uploads/ef5d513d-bd9f-4fb2-988a-2549626a51f3.png',
+      'screenshot': 'https://pilllens.com/android-chrome-512x512.png',
       'featureList': [
         'Online medication database access',
         'Cloud sync for medication data',

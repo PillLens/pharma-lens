@@ -1,14 +1,14 @@
-// Service Worker for CareCapsule
+// Service Worker for PillLens
 // Provides offline functionality and caching
 
-const CACHE_NAME = 'care-capsule-v1.0.0';
+const CACHE_NAME = 'pilllens-v1.0.0';
 const STATIC_CACHE_URLS = [
   '/',
   '/manifest.json',
   '/assets/medical-hero.jpg'
 ];
 
-const DYNAMIC_CACHE_NAME = 'care-capsule-dynamic-v1.0.0';
+const DYNAMIC_CACHE_NAME = 'pilllens-dynamic-v1.0.0';
 
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
@@ -156,16 +156,16 @@ self.addEventListener('push', (event) => {
   
   const options = {
     body: event.data ? event.data.text() : 'New notification',
-    icon: '/icon-192x192.png',
-    badge: '/badge-72x72.png',
-    tag: 'care-capsule-notification',
+    icon: '/android-chrome-192x192.png',
+    badge: '/android-chrome-192x192.png',
+    tag: 'pilllens-notification',
     data: {
       url: '/'
     }
   };
 
   event.waitUntil(
-    self.registration.showNotification('CareCapsule', options)
+    self.registration.showNotification('PillLens', options)
   );
 });
 

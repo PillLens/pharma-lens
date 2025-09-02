@@ -77,8 +77,8 @@
   "related_applications": [
     {
       "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=app.lovable.carecapsule",
-      "id": "app.lovable.carecapsule"
+      "url": "https://play.google.com/store/apps/details?id=com.pilllens.app",
+      "id": "com.pilllens.app"
     }
   ],
   "prefer_related_applications": false
