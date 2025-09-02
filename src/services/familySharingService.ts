@@ -348,18 +348,51 @@ export class FamilySharingService {
 
       console.log('Invitation request:', { groupId, userEmail, role, permissions, currentUser: user.id });
 
-      // Check family member limit before proceeding
-      const { data: entitlementsData, error: entitlementsError } = await supabase
-        .rpc('get_user_entitlements', { user_uuid: user.id });
+      // Check family member limit before proceeding with fallback
+      let entitlements = null;
+      let maxFamilyMembers = 0;
+      
+      try {
+        const { data: entitlementsData, error: entitlementsError } = await supabase
+          .rpc('get_user_entitlements', { user_uuid: user.id });
 
-      if (entitlementsError) {
-        console.error('Error checking entitlements:', entitlementsError);
-        toast.error('Failed to verify plan limits');
-        return false;
+        if (entitlementsError) {
+          console.error('Error checking entitlements:', entitlementsError);
+          // Fallback: Check if user is in trial from profiles table
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('trial_expires_at, plan')
+            .eq('id', user.id)
+            .single();
+
+          if (profile?.trial_expires_at && new Date(profile.trial_expires_at) > new Date()) {
+            // User is in trial, allow family features
+            maxFamilyMembers = 5;
+          } else {
+            // No trial, use free plan limits
+            maxFamilyMembers = 0;
+          }
+        } else {
+          entitlements = entitlementsData as any || {};
+          maxFamilyMembers = (entitlements.max_family_members as number) || 0;
+        }
+      } catch (error) {
+        console.error('Failed to check entitlements, using fallback:', error);
+        // Fallback: Check profile directly
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('trial_expires_at, plan')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.trial_expires_at && new Date(profile.trial_expires_at) > new Date()) {
+          maxFamilyMembers = 5; // Trial user
+        } else if (profile?.plan === 'pro_family') {
+          maxFamilyMembers = 5; // Pro family plan
+        } else {
+          maxFamilyMembers = 0; // Free plan
+        }
       }
-
-      const entitlements = entitlementsData as any || {};
-      const maxFamilyMembers = (entitlements.max_family_members as number) || 0;
 
       // Get current family member count for this group
       const { data: currentMembers, error: membersError } = await supabase
