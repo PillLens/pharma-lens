@@ -133,12 +133,12 @@ const TodaysOverview: React.FC = () => {
                     <TranslatedText translationKey="dashboard.nextReminder" fallback="Next reminder" />
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {todayData.nextReminder?.medication} at {todayData.nextReminder?.time}
+                    {todayData.nextReminder?.medication}
                   </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-warning">
-                  <Clock className="w-3 h-3" />
-                  <span>{getTimeUntilReminder(todayData.nextReminder?.time)}</span>
+                  <div className="text-xs text-warning flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    <span>{getTimeUntilReminder(todayData.nextReminder?.time)} at {todayData.nextReminder?.time}</span>
+                  </div>
                 </div>
               </div>
             )}
