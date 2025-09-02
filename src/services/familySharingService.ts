@@ -432,6 +432,57 @@ export class FamilySharingService {
         throw error;
       }
 
+      // Send invitation email
+      try {
+        const { data: inviterProfile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single();
+
+        const { data: familyGroup } = await supabase
+          .from('family_groups')
+          .select('name')
+          .eq('id', groupId)
+          .single();
+
+        const inviterName = inviterProfile?.display_name || user.email || 'Someone';
+        
+        // Create invitation link with encoded data
+        const invitationData = {
+          groupId,
+          inviterName,
+          familyGroupName: familyGroup?.name || 'Family Group',
+          role,
+          invitedEmail: userEmail
+        };
+        
+        const encodedData = btoa(JSON.stringify(invitationData));
+        const invitationLink = `${window.location.origin}/family/invite?data=${encodedData}`;
+
+        // Send email via edge function
+        const { error: emailError } = await supabase.functions.invoke('send-family-invitation', {
+          body: {
+            invitedEmail: userEmail,
+            inviterName,
+            familyGroupName: familyGroup?.name || 'Family Group',
+            role,
+            invitationLink,
+            groupId
+          }
+        });
+
+        if (emailError) {
+          console.error('Error sending invitation email:', emailError);
+          // Don't fail the invitation creation if email fails
+        } else {
+          console.log('Invitation email sent successfully to:', userEmail);
+        }
+      } catch (emailError) {
+        console.error('Error in email sending process:', emailError);
+        // Don't fail the invitation creation if email fails
+      }
+
       toast.success(`Invitation sent to ${userEmail}`);
       return true;
     } catch (error) {

@@ -26,6 +26,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Reminders from "./pages/Reminders";
 import FamilyManager from "./pages/FamilyManager";
+import FamilyInvite from "./pages/FamilyInvite";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -107,6 +108,7 @@ const App = () => {
                     </AppLayout>
                   </ProtectedRoute>
                 } />
+                <Route path="/family/invite" element={<FamilyInvite />} />
                 <Route path="/reminders" element={
                   <ProtectedRoute>
                     <AppLayout>
