@@ -22,7 +22,7 @@ export const MobileFamilyVoiceHub: React.FC<MobileFamilyVoiceHubProps> = ({
   familyGroupId,
   familyMembers
 }) => {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
   const [quickActions, setQuickActions] = useState<string[]>([]);
