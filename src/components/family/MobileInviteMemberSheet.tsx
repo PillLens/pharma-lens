@@ -55,8 +55,7 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
   const roles = [
     { value: 'patient', label: t('family.roles.patient'), icon: '🩺' },
     { value: 'caregiver', label: t('family.roles.caregiver'), icon: '👥' },
-    { value: 'family', label: t('family.roles.family'), icon: '👨‍👩‍👧‍👦' },
-    { value: 'emergency', label: t('family.roles.emergency'), icon: '🚨' },
+    { value: 'emergency_contact', label: t('family.roles.emergency'), icon: '🚨' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -124,7 +123,7 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
           emergencyAccess: true,
         },
       }));
-    } else if (role === 'family') {
+    } else if (role === 'patient') {
       setFormData(prev => ({
         ...prev,
         permissions: {
@@ -134,7 +133,7 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
           emergencyAccess: false,
         },
       }));
-    } else if (role === 'emergency') {
+    } else if (role === 'emergency_contact') {
       setFormData(prev => ({
         ...prev,
         permissions: {
@@ -375,8 +374,7 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
                     <p className="text-sm text-muted-foreground mt-1">
                       {role.value === 'patient' && 'Primary care recipient'}
                       {role.value === 'caregiver' && 'Full access to manage care'}
-                      {role.value === 'family' && 'Family member with view access'}
-                      {role.value === 'emergency' && 'Emergency contact only'}
+                      {role.value === 'emergency_contact' && 'Emergency contact only'}
                     </p>
                   </div>
                   {formData.role === role.value && (
