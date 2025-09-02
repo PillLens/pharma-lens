@@ -13,7 +13,9 @@ const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
 const AppointmentManager = lazy(() => import('./AppointmentManager'));
 const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
-const AdvancedAnalyticsDashboard = lazy(() => import('../analytics/AdvancedAnalyticsDashboard').then(module => ({ default: module.AdvancedAnalyticsDashboard })));
+const RealTimeCommunication = lazy(() => import('./RealTimeCommunication').then(module => ({ default: module.RealTimeCommunication })));
+const VoiceCommunication = lazy(() => import('./VoiceCommunication').then(module => ({ default: module.VoiceCommunication })));
+const EnhancedNotificationCenter = lazy(() => import('./EnhancedNotificationCenter').then(module => ({ default: module.EnhancedNotificationCenter })));
 
 interface FamilyGroupDetailsProps {
   group: FamilyGroup;
@@ -128,22 +130,30 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
             <Activity className="w-4 h-4" />
             <span>Overview</span>
           </TabsTrigger>
           <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
             <ClipboardList className="w-4 h-4" />
-            <span>Care Tasks</span>
+            <span>Tasks</span>
           </TabsTrigger>
           <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
             <MessageCircle className="w-4 h-4" />
-            <span>Messages</span>
+            <span>Chat</span>
+          </TabsTrigger>
+          <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <Users className="w-4 h-4" />
+            <span>Voice AI</span>
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+            <Settings className="w-4 h-4" />
+            <span>Alerts</span>
           </TabsTrigger>
           <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
             <Calendar className="w-4 h-4" />
-            <span>Appointments</span>
+            <span>Calendar</span>
           </TabsTrigger>
         </TabsList>
 
@@ -219,6 +229,21 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
               familyMembers={activeMembers}
               currentUserId={currentUserId}
             />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="voice">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <VoiceCommunication
+              familyGroupId={group.id}
+              currentUserId={currentUserId}
+            />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <EnhancedNotificationCenter />
           </Suspense>
         </TabsContent>
 
