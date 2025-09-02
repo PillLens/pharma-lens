@@ -53,27 +53,15 @@ serve(async (req) => {
     }
 
     // Try text-based medication lookup from worldwide medications
+    // NOTE: Prioritizing AI analysis over local database for comprehensive details
     if (text) {
       const textBasedMedication = await findMedicationFromText(text, language);
       if (textBasedMedication) {
-        console.log('Found medication from text analysis:', textBasedMedication.brand_name);
+        console.log('Found medication in local database:', textBasedMedication.brand_name);
+        console.log('Skipping local database - using AI for comprehensive analysis...');
         
-        // Store in database if user is authenticated
-        const authHeader = req.headers.get('Authorization');
-        if (authHeader) {
-          await storeExtraction(authHeader, textBasedMedication, sessionId);
-        }
-        
-        return new Response(
-          JSON.stringify({ 
-            success: true, 
-            data: textBasedMedication,
-            source: 'text_database'
-          }),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        );
+        // Don't return here - continue to AI analysis for detailed information
+        // The local database only has basic info, AI provides comprehensive details
       }
     }
 
@@ -1059,7 +1047,7 @@ function getWorldwideMedicationDatabase() {
   ];
 }
 
-// Create standardized medication response
+// Create standardized medication response with comprehensive details
 function createMedicationResponse(medicationData: any, barcode: string | null, confidence: number) {
   return {
     brand_name: medicationData.productName,
@@ -1070,22 +1058,22 @@ function createMedicationResponse(medicationData: any, barcode: string | null, c
     confidence_score: confidence,
     barcode: barcode || medicationData.barcode,
     active_ingredients: [medicationData.genericName],
-    storage_instructions: "Store in a cool, dry place away from direct sunlight",
+    storage_instructions: getStorageInstructions(medicationData.genericName),
     indications: getIndicationsForMedication(medicationData.genericName),
-    contraindications: [],
+    contraindications: getContraindications(medicationData.genericName),
     warnings: getWarningsForMedication(medicationData.genericName),
-    side_effects: [],
+    side_effects: getSideEffects(medicationData.genericName),
     usage_instructions: {
-      dosage: "As directed by physician",
-      frequency: "As prescribed",
-      duration: "As prescribed",
-      timing: "As directed",
+      dosage: getDosageInstructions(medicationData.genericName, medicationData.strength),
+      frequency: getFrequencyInstructions(medicationData.genericName),
+      duration: getDurationInstructions(medicationData.genericName),
+      timing: getTimingInstructions(medicationData.genericName),
       route: getRouteForForm(medicationData.form),
       special_instructions: getSpecialInstructions(medicationData.genericName)
     },
-    drug_interactions: [],
-    pregnancy_safety: null,
-    age_restrictions: null,
+    drug_interactions: getDrugInteractions(medicationData.genericName),
+    pregnancy_safety: getPregnancySafety(medicationData.genericName),
+    age_restrictions: getAgeRestrictions(medicationData.genericName),
     expiry_date: null
   };
 }
@@ -1143,6 +1131,194 @@ function getSpecialInstructions(genericName: string): string {
   };
   
   return instructions[genericName] || 'Take with water';
+}
+
+// New comprehensive helper functions for detailed medication information
+function getDosageInstructions(genericName: string, strength: string): string {
+  const dosageMap: Record<string, string> = {
+    'Paracetamol': 'Adults: 1-2 tablets (500-1000mg) every 4-6 hours. Maximum 8 tablets (4000mg) in 24 hours',
+    'Acetaminophen': 'Adults: 1-2 tablets (500-1000mg) every 4-6 hours. Maximum 8 tablets (4000mg) in 24 hours',
+    'Ibuprofen': 'Adults: 1-2 tablets (200-400mg) every 4-6 hours. Maximum 6 tablets (1200mg) daily',
+    'Acetylsalicylic acid': 'Adults: 1-2 tablets (325-650mg) every 4 hours. Maximum 12 tablets daily',
+    'Aspirin': 'Adults: 1-2 tablets (325-650mg) every 4 hours. Maximum 12 tablets daily',
+    'Ascorbic acid': 'Adults: 1 tablet (500-1000mg) daily. Can be increased to 2-3 tablets during illness',
+    'Vitamin C': 'Adults: 1 tablet (500-1000mg) daily. Can be increased to 2-3 tablets during illness',
+    'Drotaverine': 'Adults: 1-2 tablets (40-80mg) every 8 hours as needed for pain',
+    'Pancreatin': 'Adults: 1-2 tablets with each meal to aid digestion',
+    'Amoxicillin': 'Adults: 1 capsule (500mg) every 8 hours for 7-10 days',
+    'Azithromycin': 'Adults: 2 tablets (500mg) on day 1, then 1 tablet (250mg) daily for 4 days',
+    'Lisinopril': 'Adults: 1 tablet (10mg) once daily, may be increased to 20-40mg daily',
+    'Amlodipine': 'Adults: 1 tablet (5mg) once daily, may be increased to 10mg daily',
+    'Metformin': 'Adults: Start with 1 tablet (500mg) twice daily with meals, may increase gradually'
+  };
+  
+  return dosageMap[genericName] || `Take as indicated on package or as directed by healthcare provider. Strength: ${strength}`;
+}
+
+function getFrequencyInstructions(genericName: string): string {
+  const frequencyMap: Record<string, string> = {
+    'Paracetamol': 'Every 4-6 hours as needed (maximum 4 times daily)',
+    'Acetaminophen': 'Every 4-6 hours as needed (maximum 4 times daily)', 
+    'Ibuprofen': 'Every 4-6 hours as needed (maximum 3 times daily)',
+    'Acetylsalicylic acid': 'Every 4 hours as needed (maximum 6 times daily)',
+    'Aspirin': 'Every 4 hours as needed (maximum 6 times daily)',
+    'Ascorbic acid': 'Once daily, preferably with breakfast',
+    'Vitamin C': 'Once daily, preferably with breakfast',
+    'Drotaverine': 'Every 8 hours as needed for spasms',
+    'Pancreatin': 'With each main meal (3 times daily)',
+    'Amoxicillin': 'Every 8 hours (3 times daily)',
+    'Azithromycin': 'Once daily for 5 days',
+    'Lisinopril': 'Once daily, preferably at the same time each day',
+    'Amlodipine': 'Once daily, preferably at the same time each day',
+    'Metformin': 'Twice daily with breakfast and dinner'
+  };
+  
+  return frequencyMap[genericName] || 'As directed by healthcare provider';
+}
+
+function getDurationInstructions(genericName: string): string {
+  const durationMap: Record<string, string> = {
+    'Paracetamol': 'As needed for pain/fever. Do not use for more than 10 days without consulting doctor',
+    'Acetaminophen': 'As needed for pain/fever. Do not use for more than 10 days without consulting doctor',
+    'Ibuprofen': 'As needed for pain/inflammation. Do not use for more than 10 days without consulting doctor', 
+    'Acetylsalicylic acid': 'As needed for pain. Consult doctor if symptoms persist beyond 3 days',
+    'Aspirin': 'As needed for pain. Consult doctor if symptoms persist beyond 3 days',
+    'Ascorbic acid': 'Daily supplementation. Can be used long-term',
+    'Vitamin C': 'Daily supplementation. Can be used long-term',
+    'Drotaverine': 'As needed for spasms. Usually 2-3 days',
+    'Pancreatin': 'Long-term use with meals as needed for digestion',
+    'Amoxicillin': 'Complete full 7-10 day course even if feeling better',
+    'Azithromycin': 'Complete full 5-day course even if feeling better',
+    'Lisinopril': 'Long-term daily use as prescribed by doctor',
+    'Amlodipine': 'Long-term daily use as prescribed by doctor',
+    'Metformin': 'Long-term daily use as prescribed by doctor'
+  };
+  
+  return durationMap[genericName] || 'Use as directed by healthcare provider';
+}
+
+function getTimingInstructions(genericName: string): string {
+  const timingMap: Record<string, string> = {
+    'Paracetamol': 'Can be taken with or without food',
+    'Acetaminophen': 'Can be taken with or without food',
+    'Ibuprofen': 'Take with food or after meals to avoid stomach upset',
+    'Acetylsalicylic acid': 'Take with food to reduce stomach irritation',
+    'Aspirin': 'Take with food to reduce stomach irritation',
+    'Ascorbic acid': 'Best taken in morning with breakfast',
+    'Vitamin C': 'Best taken in morning with breakfast',
+    'Drotaverine': 'Can be taken with or without food',
+    'Pancreatin': 'Take during or immediately after meals',
+    'Amoxicillin': 'Can be taken with or without food, but with food if stomach upset occurs',
+    'Azithromycin': 'Take 1 hour before or 2 hours after meals',
+    'Lisinopril': 'Take at the same time daily, preferably morning',
+    'Amlodipine': 'Take at the same time daily, can be morning or evening',
+    'Metformin': 'Take with meals to reduce stomach upset'
+  };
+  
+  return timingMap[genericName] || 'Follow healthcare provider instructions';
+}
+
+function getStorageInstructions(genericName: string): string {
+  const storageMap: Record<string, string> = {
+    'Paracetamol': 'Store at room temperature 15-30°C (59-86°F). Keep in dry place away from light',
+    'Acetaminophen': 'Store at room temperature 15-30°C (59-86°F). Keep in dry place away from light',
+    'Ibuprofen': 'Store at room temperature 15-30°C (59-86°F). Keep in original container, away from moisture',
+    'Acetylsalicylic acid': 'Store at room temperature below 25°C (77°F). Keep dry and away from light',
+    'Aspirin': 'Store at room temperature below 25°C (77°F). Keep dry and away from light',
+    'Ascorbic acid': 'Store in cool, dry place below 25°C (77°F). Protect from light and moisture',
+    'Vitamin C': 'Store in cool, dry place below 25°C (77°F). Protect from light and moisture',
+    'Amoxicillin': 'Store at room temperature. Keep in original container with lid tightly closed',
+    'Azithromycin': 'Store at room temperature. Keep in original container away from moisture',
+    'Pancreatin': 'Store at room temperature in dry place. Keep container tightly closed'
+  };
+  
+  return storageMap[genericName] || 'Store at room temperature in a dry place away from light and moisture. Keep out of reach of children';
+}
+
+function getContraindications(genericName: string): string[] {
+  const contraMap: Record<string, string[]> = {
+    'Paracetamol': ['Severe liver disease', 'Alcohol dependency', 'Allergy to paracetamol'],
+    'Acetaminophen': ['Severe liver disease', 'Alcohol dependency', 'Allergy to acetaminophen'],
+    'Ibuprofen': ['Peptic ulcer', 'Severe heart failure', 'Severe kidney disease', 'Aspirin allergy', 'Third trimester pregnancy'],
+    'Acetylsalicylic acid': ['Children under 16 years', 'Active peptic ulcer', 'Severe asthma', 'Hemophilia'],
+    'Aspirin': ['Children under 16 years', 'Active peptic ulcer', 'Severe asthma', 'Hemophilia'],
+    'Amoxicillin': ['Penicillin allergy', 'Severe kidney disease'],
+    'Azithromycin': ['Severe liver disease', 'Macrolide antibiotic allergy'],
+    'Lisinopril': ['Pregnancy', 'Bilateral renal artery stenosis', 'Angioedema history'],
+    'Amlodipine': ['Severe aortic stenosis', 'Unstable angina', 'Severe hypotension']
+  };
+  
+  return contraMap[genericName] || [];
+}
+
+function getSideEffects(genericName: string): string[] {
+  const sideEffectsMap: Record<string, string[]> = {
+    'Paracetamol': ['Rare: skin rash', 'Very rare: liver damage with overdose'],
+    'Acetaminophen': ['Rare: skin rash', 'Very rare: liver damage with overdose'],
+    'Ibuprofen': ['Stomach upset', 'Heartburn', 'Dizziness', 'Rare: stomach ulcer'],
+    'Acetylsalicylic acid': ['Stomach irritation', 'Heartburn', 'Nausea', 'Rare: stomach bleeding'],
+    'Aspirin': ['Stomach irritation', 'Heartburn', 'Nausea', 'Rare: stomach bleeding'],
+    'Ascorbic acid': ['Large doses may cause stomach upset', 'Diarrhea with excessive intake'],
+    'Vitamin C': ['Large doses may cause stomach upset', 'Diarrhea with excessive intake'],
+    'Amoxicillin': ['Diarrhea', 'Nausea', 'Skin rash', 'Rare: allergic reaction'],
+    'Azithromycin': ['Stomach upset', 'Diarrhea', 'Nausea', 'Headache'],
+    'Lisinopril': ['Dry cough', 'Dizziness', 'Fatigue', 'Rare: angioedema'],
+    'Amlodipine': ['Ankle swelling', 'Dizziness', 'Flushing', 'Fatigue']
+  };
+  
+  return sideEffectsMap[genericName] || [];
+}
+
+function getDrugInteractions(genericName: string): string[] {
+  const interactionMap: Record<string, string[]> = {
+    'Paracetamol': ['Warfarin (increased bleeding risk)', 'Carbamazepine (reduced effectiveness)'],
+    'Acetaminophen': ['Warfarin (increased bleeding risk)', 'Carbamazepine (reduced effectiveness)'],
+    'Ibuprofen': ['Warfarin (increased bleeding)', 'Lithium (increased toxicity)', 'ACE inhibitors (reduced effect)'],
+    'Acetylsalicylic acid': ['Warfarin (bleeding risk)', 'Methotrexate (toxicity)', 'Diabetes medications (hypoglycemia)'],
+    'Aspirin': ['Warfarin (bleeding risk)', 'Methotrexate (toxicity)', 'Diabetes medications (hypoglycemia)'],
+    'Amoxicillin': ['Oral contraceptives (reduced effectiveness)', 'Allopurinol (increased rash risk)'],
+    'Azithromycin': ['Warfarin (increased bleeding)', 'Digoxin (increased levels)'],
+    'Lisinopril': ['Potassium supplements (hyperkalemia)', 'NSAIDs (reduced effectiveness)', 'Lithium (toxicity)'],
+    'Amlodipine': ['Simvastatin (muscle problems)', 'Strong CYP3A4 inhibitors (increased levels)']
+  };
+  
+  return interactionMap[genericName] || [];
+}
+
+function getPregnancySafety(genericName: string): string {
+  const pregnancyMap: Record<string, string> = {
+    'Paracetamol': 'Safe during pregnancy when used as directed',
+    'Acetaminophen': 'Safe during pregnancy when used as directed',
+    'Ibuprofen': 'Avoid in third trimester. Consult doctor in first two trimesters',
+    'Acetylsalicylic acid': 'Avoid during pregnancy unless specifically prescribed',
+    'Aspirin': 'Avoid during pregnancy unless specifically prescribed',
+    'Ascorbic acid': 'Safe during pregnancy in recommended doses',
+    'Vitamin C': 'Safe during pregnancy in recommended doses',
+    'Amoxicillin': 'Generally safe during pregnancy when prescribed by doctor',
+    'Azithromycin': 'Use only if clearly needed and prescribed by doctor',
+    'Lisinopril': 'Contraindicated during pregnancy - can harm fetus',
+    'Amlodipine': 'Use only if potential benefit justifies risk to fetus'
+  };
+  
+  return pregnancyMap[genericName] || 'Consult healthcare provider before use during pregnancy';
+}
+
+function getAgeRestrictions(genericName: string): string {
+  const ageMap: Record<string, string> = {
+    'Paracetamol': 'Safe for all ages with appropriate dosing. Infant formulations available',
+    'Acetaminophen': 'Safe for all ages with appropriate dosing. Infant formulations available',
+    'Ibuprofen': 'Not recommended under 6 months. Use pediatric formulations for children',
+    'Acetylsalicylic acid': 'Not recommended under 16 years due to Reye syndrome risk',
+    'Aspirin': 'Not recommended under 16 years due to Reye syndrome risk',
+    'Ascorbic acid': 'Safe for all ages with age-appropriate dosing',
+    'Vitamin C': 'Safe for all ages with age-appropriate dosing',
+    'Amoxicillin': 'Safe for children when prescribed. Dosing based on weight',
+    'Azithromycin': 'Safe for children when prescribed. Dosing based on weight',
+    'Lisinopril': 'Generally for adults. Pediatric use requires specialist supervision',
+    'Amlodipine': 'Generally for adults. Limited pediatric data available'
+  };
+  
+  return ageMap[genericName] || 'Consult healthcare provider for appropriate age and dosing';
 }
 
 // Helper function to store extraction in database
