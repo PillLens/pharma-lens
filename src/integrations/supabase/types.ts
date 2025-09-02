@@ -223,6 +223,60 @@ export type Database = {
         }
         Relationships: []
       }
+      data_sources: {
+        Row: {
+          api_key_required: boolean
+          attribution_required: boolean
+          base_url: string | null
+          created_at: string
+          data_quality_score: number | null
+          id: string
+          is_active: boolean
+          last_sync: string | null
+          license_type: string
+          license_url: string | null
+          provider_name: string
+          rate_limit_per_hour: number | null
+          supported_countries: string[] | null
+          supported_data_types: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          api_key_required?: boolean
+          attribution_required?: boolean
+          base_url?: string | null
+          created_at?: string
+          data_quality_score?: number | null
+          id?: string
+          is_active?: boolean
+          last_sync?: string | null
+          license_type?: string
+          license_url?: string | null
+          provider_name: string
+          rate_limit_per_hour?: number | null
+          supported_countries?: string[] | null
+          supported_data_types?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          api_key_required?: boolean
+          attribution_required?: boolean
+          base_url?: string | null
+          created_at?: string
+          data_quality_score?: number | null
+          id?: string
+          is_active?: boolean
+          last_sync?: string | null
+          license_type?: string
+          license_url?: string | null
+          provider_name?: string
+          rate_limit_per_hour?: number | null
+          supported_countries?: string[] | null
+          supported_data_types?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       device_tokens: {
         Row: {
           app_version: string | null
@@ -1258,8 +1312,10 @@ export type Database = {
         Row: {
           active_ingredients: string[] | null
           atc_code: string | null
+          attribution_text: string | null
           barcode: string | null
           brand_name: string
+          confidence_score: number | null
           country_code: string
           created_at: string
           data_source: string | null
@@ -1267,13 +1323,23 @@ export type Database = {
           expiry_monitoring: boolean | null
           form: string | null
           generic_name: string | null
+          gtin: string | null
           id: string
           image_url: string | null
+          last_sync: string | null
           leaflet_url: string | null
+          license_type: string | null
           manufacturer: string | null
+          ndc_number: string | null
           prescription_required: boolean | null
+          registration_number: string | null
+          regulatory_authority: string | null
+          rxcui: string | null
           safety_warnings: string[] | null
           search_keywords: string[] | null
+          source_id: string | null
+          source_provider: string | null
+          source_url: string | null
           storage_conditions: string | null
           strength: string | null
           therapeutic_class: string | null
@@ -1283,8 +1349,10 @@ export type Database = {
         Insert: {
           active_ingredients?: string[] | null
           atc_code?: string | null
+          attribution_text?: string | null
           barcode?: string | null
           brand_name: string
+          confidence_score?: number | null
           country_code?: string
           created_at?: string
           data_source?: string | null
@@ -1292,13 +1360,23 @@ export type Database = {
           expiry_monitoring?: boolean | null
           form?: string | null
           generic_name?: string | null
+          gtin?: string | null
           id?: string
           image_url?: string | null
+          last_sync?: string | null
           leaflet_url?: string | null
+          license_type?: string | null
           manufacturer?: string | null
+          ndc_number?: string | null
           prescription_required?: boolean | null
+          registration_number?: string | null
+          regulatory_authority?: string | null
+          rxcui?: string | null
           safety_warnings?: string[] | null
           search_keywords?: string[] | null
+          source_id?: string | null
+          source_provider?: string | null
+          source_url?: string | null
           storage_conditions?: string | null
           strength?: string | null
           therapeutic_class?: string | null
@@ -1308,8 +1386,10 @@ export type Database = {
         Update: {
           active_ingredients?: string[] | null
           atc_code?: string | null
+          attribution_text?: string | null
           barcode?: string | null
           brand_name?: string
+          confidence_score?: number | null
           country_code?: string
           created_at?: string
           data_source?: string | null
@@ -1317,20 +1397,38 @@ export type Database = {
           expiry_monitoring?: boolean | null
           form?: string | null
           generic_name?: string | null
+          gtin?: string | null
           id?: string
           image_url?: string | null
+          last_sync?: string | null
           leaflet_url?: string | null
+          license_type?: string | null
           manufacturer?: string | null
+          ndc_number?: string | null
           prescription_required?: boolean | null
+          registration_number?: string | null
+          regulatory_authority?: string | null
+          rxcui?: string | null
           safety_warnings?: string[] | null
           search_keywords?: string[] | null
+          source_id?: string | null
+          source_provider?: string | null
+          source_url?: string | null
           storage_conditions?: string | null
           strength?: string | null
           therapeutic_class?: string | null
           updated_at?: string
           verification_status?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_source_provider_fkey"
+            columns: ["source_provider"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["provider_name"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -1421,6 +1519,59 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      provider_sync_logs: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          provider_name: string
+          records_added: number | null
+          records_failed: number | null
+          records_processed: number | null
+          records_updated: number | null
+          started_at: string
+          sync_status: string
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          provider_name: string
+          records_added?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string
+          sync_status?: string
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          provider_name?: string
+          records_added?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string
+          sync_status?: string
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_sync_logs_provider_name_fkey"
+            columns: ["provider_name"]
+            isOneToOne: false
+            referencedRelation: "data_sources"
+            referencedColumns: ["provider_name"]
+          },
+        ]
       }
       push_notifications: {
         Row: {

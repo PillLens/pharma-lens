@@ -3,6 +3,7 @@ import { comprehensiveMedications } from '@/data/comprehensiveMedications';
 import { realBarcodeMappings, findProductByBarcode } from '@/data/realBarcodeMappings';
 import { drugInteractionService } from './drugInteractionService';
 import { storageService } from './storageService';
+import { globalDataProviderService } from './dataProviders/GlobalDataProviderService';
 
 export interface ProductRecord {
   brand_name: string;
@@ -60,7 +61,9 @@ class DatabaseService {
           ...med.indications?.map(ind => ind.toLowerCase()) || []
         ].filter(Boolean),
         verification_status: 'verified',
-        data_source: 'comprehensive_database'
+        source_provider: 'Comprehensive_DB',
+        confidence_score: 0.88,
+        license_type: 'proprietary'
       }));
 
       // Step 2: Add real barcode mappings
@@ -86,7 +89,9 @@ class DatabaseService {
           mapping.manufacturer.toLowerCase()
         ],
         verification_status: 'verified',
-        data_source: 'real_barcode_database'
+        source_provider: 'Azerbaijan_Local',
+        confidence_score: 0.85,
+        license_type: 'proprietary'
       }));
 
       // Combine both datasets
@@ -114,8 +119,24 @@ class DatabaseService {
     }
   }
 
-  async searchProducts(query: string, limit: number = 10): Promise<any[]> {
+  async searchProducts(query: string, limit: number = 10, options: {
+    country?: string;
+    providers?: string[];
+    includeExternal?: boolean;
+  } = {}): Promise<any[]> {
     try {
+      const { includeExternal = true, ...searchOptions } = options;
+
+      // Use global data provider service for comprehensive search
+      if (includeExternal) {
+        const results = await globalDataProviderService.searchMedications(query, {
+          limit,
+          ...searchOptions
+        });
+        return results.medications;
+      }
+
+      // Fallback to local database only
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -131,16 +152,28 @@ class DatabaseService {
     }
   }
 
-  async findProductByBarcode(barcode: string): Promise<any | null> {
+  async findProductByBarcode(barcode: string, options: {
+    country?: string;
+    providers?: string[];
+    includeExternal?: boolean;
+  } = {}): Promise<any | null> {
     try {
-      // First try real barcode mappings for immediate response
+      const { includeExternal = true, ...searchOptions } = options;
+
+      // Use global data provider service for comprehensive barcode search
+      if (includeExternal) {
+        const result = await globalDataProviderService.searchByBarcode(barcode, searchOptions);
+        if (result) return result;
+      }
+
+      // First try real barcode mappings for immediate response (legacy support)
       const realMapping = findProductByBarcode(barcode);
       if (realMapping) {
         // Check if this product exists in database
         const { data: existingProduct } = await supabase
           .from('products')
           .select('*')
-          .eq('barcode', barcode)
+          .or(`barcode.eq.${barcode},ndc_number.eq.${barcode},gtin.eq.${barcode}`)
           .eq('verification_status', 'verified')
           .maybeSingle();
 
@@ -158,7 +191,7 @@ class DatabaseService {
           barcode: realMapping.barcode,
           country_code: realMapping.country,
           verification_status: 'verified',
-          data_source: 'real_barcode_mapping'
+          source_provider: 'Azerbaijan_Local'
         };
       }
 
@@ -166,7 +199,7 @@ class DatabaseService {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('barcode', barcode)
+        .or(`barcode.eq.${barcode},ndc_number.eq.${barcode},gtin.eq.${barcode}`)
         .eq('verification_status', 'verified')
         .maybeSingle();
 
