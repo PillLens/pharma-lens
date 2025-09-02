@@ -116,10 +116,10 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
 
   return (
     <Card 
-      className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer ${getCardVariant()}`}
+      className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer max-w-sm mx-auto ${getCardVariant()}`}
       onClick={onTap}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         {/* Header with medication info */}
         <div className="flex items-start justify-between mb-5">
           <div className="flex-1">
@@ -128,20 +128,20 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
                 <Pill className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-bold text-foreground text-lg leading-tight">
+                <div className="mb-1">
+                  <h3 className="font-bold text-foreground text-lg leading-tight mb-2">
                     {reminder.medicationName}
                   </h3>
-                  {reminder.times.length > 1 && (
-                    <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border-blue-200">
-                      {reminder.times.length}x daily
-                    </Badge>
-                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={statusInfo.variant} className="text-xs px-3 py-1 rounded-full font-medium">
                     {statusInfo.label}
                   </Badge>
+                  {reminder.times.length > 1 && (
+                    <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border-blue-200">
+                      {reminder.times.length}x daily
+                    </Badge>
+                  )}
                   {streak > 0 && (
                     <Badge variant="outline" className="text-xs px-2 py-1 rounded-full bg-success/10 text-success border-success/20">
                       🔥 {streak} days
