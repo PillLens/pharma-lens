@@ -1,4 +1,9 @@
 class MobileOptimizationService {
+  init() {
+    // Initialize mobile optimization features
+    console.log('Mobile optimization service initialized');
+  }
+
   async getMobileSettings(userId: string) {
     return {};
   }

@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import {
   Send, Phone, Video, Users, Clock, MapPin, 
-  AlertCircle, Heart, Pill, Calendar, Bell
+  AlertCircle, Heart, Pill, Calendar, Bell, MessageCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { realTimeCommunicationService } from '@/services/realTimeCommunicationService';
@@ -73,7 +73,7 @@ export const RealTimeCommunication: React.FC<RealTimeCommunicationProps> = ({
       
       // Load recent messages
       const recentMessages = await realTimeCommunicationService.getRecentMessages(familyGroup.id);
-      setMessages(recentMessages);
+      setMessages(recentMessages.map(msg => ({ ...msg, read_by: msg.read_by || [] })));
 
       // Set up real-time channel
       const channel = supabase
@@ -102,15 +102,27 @@ export const RealTimeCommunication: React.FC<RealTimeCommunicationProps> = ({
         )
         .on('presence', { event: 'sync' }, () => {
           const presenceState = channel.presenceState();
-          const online = Object.values(presenceState).flat() as PresenceState[];
+          const online = Object.values(presenceState).flat().map((p: any) => ({
+            user_id: p.user_id || '',
+            online_at: p.online_at || new Date().toISOString(),
+            status: p.status || 'online'
+          })) as PresenceState[];
           setOnlineMembers(online);
         })
         .on('presence', { event: 'join' }, ({ newPresences }) => {
-          const joinedUsers = newPresences as PresenceState[];
+          const joinedUsers = newPresences.map((p: any) => ({
+            user_id: p.user_id || '',
+            online_at: p.online_at || new Date().toISOString(),
+            status: p.status || 'online'
+          })) as PresenceState[];
           setOnlineMembers(prev => [...prev, ...joinedUsers]);
         })
         .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-          const leftUsers = leftPresences as PresenceState[];
+          const leftUsers = leftPresences.map((p: any) => ({
+            user_id: p.user_id || '',
+            online_at: p.online_at || new Date().toISOString(),
+            status: p.status || 'online'
+          })) as PresenceState[];
           setOnlineMembers(prev => 
             prev.filter(member => 
               !leftUsers.some(left => left.user_id === member.user_id)
@@ -165,7 +177,7 @@ export const RealTimeCommunication: React.FC<RealTimeCommunicationProps> = ({
         message_type: 'text'
       });
 
-      setMessages(prev => [...prev, message]);
+      setMessages(prev => [...prev, { ...message, read_by: message.read_by || [] }]);
       setNewMessage('');
       
       // Stop typing indicator
@@ -210,7 +222,7 @@ export const RealTimeCommunication: React.FC<RealTimeCommunicationProps> = ({
                 metadata
               });
               
-              setMessages(prev => [...prev, message]);
+              setMessages(prev => [...prev, { ...message, read_by: message.read_by || [] }]);
             });
           }
           break;
@@ -231,7 +243,7 @@ export const RealTimeCommunication: React.FC<RealTimeCommunicationProps> = ({
           metadata
         });
         
-        setMessages(prev => [...prev, message]);
+        setMessages(prev => [...prev, { ...message, read_by: message.read_by || [] }]);
       }
 
     } catch (error) {

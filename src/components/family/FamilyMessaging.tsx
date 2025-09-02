@@ -59,11 +59,9 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
   const setupRealTimeSubscription = () => {
     return realTimeCommunicationService.subscribeToFamilyUpdates(
       familyGroupId,
-      (payload) => {
-        console.log('Real-time update:', payload);
-        if (payload.eventType === 'INSERT' && payload.table === 'communication_logs') {
-          loadMessages(); // Refresh messages
-        }
+      (message: CommunicationMessage) => {
+        console.log('Real-time message:', message);
+        loadMessages(); // Refresh messages
       }
     );
   };
@@ -75,14 +73,14 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const success = await realTimeCommunicationService.sendMessage(
-      familyGroupId,
-      messageType === 'emergency' ? 'emergency' : 'text',
-      newMessage,
-      {},
-      selectedRecipient || undefined,
-      messageType === 'emergency'
-    );
+    const success = await realTimeCommunicationService.sendMessage({
+      family_group_id: familyGroupId,
+      sender_id: currentUserId,
+      content: newMessage,
+      message_type: messageType === 'emergency' ? 'emergency' : 'text',
+      recipient_id: selectedRecipient || undefined,
+      metadata: {}
+    });
 
     if (success) {
       setNewMessage('');
@@ -92,14 +90,13 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
   };
 
   const handleEmergencyAlert = async () => {
-    const success = await realTimeCommunicationService.sendMessage(
-      familyGroupId,
-      'emergency',
-      'Emergency assistance needed - please respond immediately',
-      { priority: 'urgent', timestamp: new Date().toISOString() },
-      undefined,
-      true
-    );
+    const success = await realTimeCommunicationService.sendMessage({
+      family_group_id: familyGroupId,
+      sender_id: currentUserId,
+      content: 'Emergency assistance needed - please respond immediately',
+      message_type: 'emergency',
+      metadata: { priority: 'urgent', timestamp: new Date().toISOString() }
+    });
 
     if (success) {
       toast({
@@ -204,7 +201,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
                       
                       <div className={`flex-1 max-w-xs ${isOwnMessage ? 'text-right' : ''}`}>
                         <div className={`rounded-lg p-3 ${
-                          message.is_emergency 
+                          message.message_type === 'emergency' 
                             ? 'bg-destructive/10 border border-destructive/20' 
                             : isOwnMessage
                             ? 'bg-primary text-primary-foreground'
@@ -215,14 +212,14 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
                             {!isOwnMessage && (
                               <span className="text-xs font-medium">{senderInfo.name}</span>
                             )}
-                            {message.is_emergency && (
+                            {message.message_type === 'emergency' && (
                               <Badge variant="destructive" className="text-xs">
                                 EMERGENCY
                               </Badge>
                             )}
                           </div>
                           
-                          <p className="text-sm">{message.message_content}</p>
+                          <p className="text-sm">{message.content}</p>
                           
                           <div className={`text-xs mt-1 ${
                             isOwnMessage ? 'text-primary-foreground/70' : 'text-muted-foreground'
