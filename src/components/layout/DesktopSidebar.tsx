@@ -140,7 +140,7 @@ export function DesktopSidebar() {
             <img 
               src="/lovable-uploads/8df43217-1e50-414e-ac87-3543963dc9ab.png" 
               alt="PillLens Logo" 
-              className="w-20 h-20 object-contain"
+              className="w-10 h-10 object-contain"
             />
           </div>
         )}
