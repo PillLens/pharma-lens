@@ -164,7 +164,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
-        className="w-full max-w-md p-0" 
+        className="w-full max-w-md p-0 z-[60]" 
         side="right"
       >
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
@@ -250,7 +250,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
                     align="start"
                     sideOffset={4}
                     avoidCollisions={true}
-                    className="z-50 bg-background border border-border shadow-lg"
+                    className="z-[100] bg-background border border-border shadow-lg rounded-lg max-h-60 overflow-y-auto"
                   >
                     <SelectItem value="patient">{t('family.roles.patient')}</SelectItem>
                     <SelectItem value="caregiver">{t('family.roles.caregiver')}</SelectItem>
