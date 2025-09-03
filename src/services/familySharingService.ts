@@ -481,30 +481,17 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // First, try to find invitation by user_id (existing users)
-      let { data: invitation, error: findError } = await supabase
+      // Find ALL pending invitations for this user in this group (by both user_id and email)
+      const { data: invitations, error: findError } = await supabase
         .from('family_members')
         .select('id, user_id, invited_email')
         .eq('family_group_id', groupId)
-        .eq('user_id', user.id)
         .eq('invitation_status', 'pending')
-        .single();
+        .or(`user_id.eq.${user.id},invited_email.eq.${user.email?.toLowerCase().trim()}`);
 
-      // If not found by user_id, look for invitation by email (new users)
-      if (!invitation && user.email) {
-        const { data: emailInvitation, error: emailError } = await supabase
-          .from('family_members')
-          .select('id, user_id, invited_email')
-          .eq('family_group_id', groupId)
-          .eq('invited_email', user.email.toLowerCase().trim())
-          .eq('invitation_status', 'pending')
-          .single();
+      if (findError) throw findError;
 
-        invitation = emailInvitation;
-        findError = emailError;
-      }
-
-      if (!invitation) {
+      if (!invitations || invitations.length === 0) {
         console.error('No pending invitation found for user:', user.email);
         throw new Error('No pending invitation found for your account');
       }
@@ -515,20 +502,21 @@ export class FamilySharingService {
 
       if (response === 'accepted') {
         updates.accepted_at = new Date().toISOString();
-        // If this was an email invitation (user_id is null), set the user_id and clear invited_email
-        if (!invitation.user_id) {
-          updates.user_id = user.id;
-          updates.invited_email = null;
-        }
+        updates.user_id = user.id;
+        updates.invited_email = null;
       }
 
+      // Update ALL duplicate invitations for this user
       const { error } = await supabase
         .from('family_members')
         .update(updates)
-        .eq('id', invitation.id);
+        .eq('family_group_id', groupId)
+        .eq('invitation_status', 'pending')
+        .or(`user_id.eq.${user.id},invited_email.eq.${user.email?.toLowerCase().trim()}`);
 
       if (error) throw error;
 
+      console.log(`Updated ${invitations.length} invitation(s) with status: ${response}`);
       toast.success(`Invitation ${response}`);
       return true;
     } catch (error) {
