@@ -224,11 +224,8 @@ export class FamilySharingService {
             permissions: typeof member.permissions === 'object' ? 
               member.permissions as FamilyMember['permissions'] : 
               { view_medications: true, edit_medications: false, receive_alerts: true },
-            user_profile: member.user_profile && 
-              typeof member.user_profile === 'object' && 
-              member.user_profile !== null &&
-              !('error' in member.user_profile) ? 
-              member.user_profile as UserProfile : undefined
+            user_profile: this.isValidProfile(member.user_profile) ? 
+              member.user_profile : undefined
           }));
 
           return {
@@ -290,16 +287,10 @@ export class FamilySharingService {
         permissions: typeof member.permissions === 'object' ? 
           member.permissions as FamilyMember['permissions'] : 
           { view_medications: true, edit_medications: false, receive_alerts: true },
-        user_profile: member.user_profile && 
-          typeof member.user_profile === 'object' && 
-          member.user_profile !== null &&
-          !('error' in member.user_profile) ? 
-          member.user_profile as UserProfile : undefined,
-        inviter_profile: member.inviter_profile && 
-          typeof member.inviter_profile === 'object' && 
-          member.inviter_profile !== null &&
-          !('error' in member.inviter_profile) ? 
-          member.inviter_profile as UserProfile : undefined
+        user_profile: this.isValidProfile(member.user_profile) ? 
+          member.user_profile : undefined,
+        inviter_profile: this.isValidProfile(member.inviter_profile) ? 
+          member.inviter_profile : undefined
       })) || [];
 
       // Get creator profile
