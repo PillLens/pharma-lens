@@ -61,8 +61,23 @@ const UpcomingMedicationCard: React.FC<{
           return;
         }
 
-        // Calculate next reminder time
+        // Get today's adherence data to check what's already taken
         const now = new Date();
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(now);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const { data: todaysAdherence } = await supabase
+          .from('medication_adherence_log')
+          .select('scheduled_time, status')
+          .eq('user_id', user.id)
+          .eq('medication_id', medication.id)
+          .gte('scheduled_time', startOfDay.toISOString())
+          .lte('scheduled_time', endOfDay.toISOString())
+          .eq('status', 'taken');
+
+        // Calculate next reminder time
         const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
         const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
 
@@ -78,9 +93,19 @@ const UpcomingMedicationCard: React.FC<{
             const adjustedDay = dayOfWeek === 7 ? 0 : dayOfWeek; // Convert Sunday from 7 to 0
             let daysUntil = (adjustedDay - currentDay + 7) % 7;
 
-            // If it's the same day, check if reminder time has passed
-            if (daysUntil === 0 && reminderTimeInMinutes <= currentTime) {
-              daysUntil = 7; // Move to next week
+            // If it's today, check if already taken or time has passed
+            if (daysUntil === 0) {
+              // Check if this reminder was already taken today
+              const reminderTaken = todaysAdherence?.some(log => {
+                const logTime = new Date(log.scheduled_time);
+                const logTimeStr = `${logTime.getHours().toString().padStart(2, '0')}:${logTime.getMinutes().toString().padStart(2, '0')}`;
+                return logTimeStr === reminder.reminder_time;
+              }) || false;
+
+              // If taken or time passed, move to next occurrence
+              if (reminderTaken || reminderTimeInMinutes <= currentTime) {
+                daysUntil = 7; // Move to next week
+              }
             }
 
             if (daysUntil < minDaysUntil) {
