@@ -568,11 +568,8 @@ export class FamilySharingService {
         sharing_permissions: typeof item.sharing_permissions === 'object' && item.sharing_permissions !== null ?
           item.sharing_permissions as SharedMedication['sharing_permissions'] :
           { view: true, edit: false, delete: false },
-        shared_by_profile: item.shared_by_profile && 
-          typeof item.shared_by_profile === 'object' && 
-          item.shared_by_profile !== null &&
-          !('error' in item.shared_by_profile) ? 
-          item.shared_by_profile as UserProfile : undefined
+        shared_by_profile: this.isValidProfile(item.shared_by_profile) ? 
+          item.shared_by_profile : undefined
       }));
     } catch (error) {
       console.error('Error fetching shared medications:', error);
