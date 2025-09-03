@@ -24,6 +24,26 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
   currentUserId
 }) => {
   const { t } = useTranslation();
+  
+  // Safety checks for props
+  if (!familyGroupId || !currentUserId) {
+    console.error('FamilyMessaging: Missing required props', { familyGroupId, currentUserId });
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        <p>Unable to load messaging. Missing required information.</p>
+      </div>
+    );
+  }
+  
+  if (!Array.isArray(familyMembers)) {
+    console.error('FamilyMessaging: familyMembers is not an array', familyMembers);
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        <p>Unable to load messaging. Invalid family members data.</p>
+      </div>
+    );
+  }
+  
   const [messages, setMessages] = useState<CommunicationMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [messageType, setMessageType] = useState<'text' | 'emergency'>('text');
