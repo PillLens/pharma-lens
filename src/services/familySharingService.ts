@@ -532,3 +532,6 @@ export class FamilySharingService {
 }
 
 export const familySharingService = new FamilySharingService();
+
+// Force rebuild - methods should be available
+console.log('FamilySharingService methods:', Object.getOwnPropertyNames(FamilySharingService.prototype));
