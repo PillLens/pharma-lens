@@ -9,7 +9,6 @@ import { FamilyGroup } from '@/services/familySharingService';
 
 // Lazy load the heavy components
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
-const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
 const AppointmentManager = lazy(() => import('./AppointmentManager'));
 const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
@@ -132,7 +131,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-7 md:grid-cols-7 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
+        <TabsList className="grid w-full grid-cols-6 md:grid-cols-6 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Activity className="w-4 h-4" />
             <span className="hidden sm:block">Overview</span>
@@ -140,10 +139,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
           <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <ClipboardList className="w-4 h-4" />
             <span className="hidden sm:block">Tasks</span>
-          </TabsTrigger>
-          <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
-            <MessageCircle className="w-4 h-4" />
-            <span className="hidden sm:block">Chat</span>
           </TabsTrigger>
           <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Users className="w-4 h-4" />
@@ -224,16 +219,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
             <CareTasksManager
               familyGroupId={group.id}
               familyMembers={activeMembers}
-            />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="messaging">
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <FamilyMessaging
-              familyGroupId={group.id}
-              familyMembers={activeMembers}
-              currentUserId={currentUserId}
             />
           </Suspense>
         </TabsContent>
