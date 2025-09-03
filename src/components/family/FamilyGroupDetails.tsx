@@ -171,25 +171,48 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
               <CardContent className="space-y-3">
                 {activeMembers.map((member) => (
                   <div key={member.user_id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-sm font-medium">
-                          {member.user_id?.charAt(0) || '?'}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">
-                          Member {member.user_id?.slice(0, 8)}
-                        </p>
-                        <p className="text-xs text-muted-foreground capitalize">
-                          {member.role}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                      <span className="text-xs text-muted-foreground">Online</span>
-                    </div>
+                     <div className="flex items-center gap-3">
+                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                         <span className="text-sm font-medium">
+                           {(member.display_name || 
+                             member.user_email || 
+                             member.user_profile?.display_name || 
+                             member.user_profile?.email)?.charAt(0)?.toUpperCase() || 
+                             member.user_id?.charAt(0) || '?'}
+                         </span>
+                       </div>
+                       <div>
+                         <p className="font-medium text-sm">
+                           {member.display_name || 
+                            member.user_email || 
+                            member.user_profile?.display_name || 
+                            member.user_profile?.email ||
+                            `Member ${member.user_id?.slice(0, 8)}`}
+                         </p>
+                         <p className="text-xs text-muted-foreground capitalize">
+                           {member.role}
+                         </p>
+                       </div>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                       <span className="text-xs text-muted-foreground">Online</span>
+                       {member.user_id !== currentUserId && (
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={async () => {
+                             const success = await familySharingService.removeFamilyMember(group.id, member.user_id);
+                             if (success && onMemberRemoved) {
+                               onMemberRemoved();
+                             }
+                           }}
+                           className="text-destructive hover:text-destructive hover:bg-destructive/10 ml-2 px-2 py-1"
+                         >
+                           Remove
+                         </Button>
+                       )}
+                     </div>
                   </div>
                 ))}
               </CardContent>
