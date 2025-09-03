@@ -63,13 +63,13 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
             <div className="flex-1" onClick={onTap}>
               <h3 className="font-semibold text-foreground mb-1">{group.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {group.members?.length || 0} {getMemberCountText(group.members?.length || 0)}
-                {group.members && group.members.length > 0 && (
+                {group.member_count || 0} {getMemberCountText(group.member_count || 0)}
+                {group.members && group.member_count > 0 && (
                   <>
                     {' • '}
-                    {group.members.filter(m => m.role === 'caregiver').length > 0 && (
+                    {group.members.filter(m => m.role === 'caregiver' && m.invitation_status === 'accepted').length > 0 && (
                       <span>
-                        {group.members.filter(m => m.role === 'caregiver').length} {t('family.roles.caregiver').toLowerCase()}
+                        {group.members.filter(m => m.role === 'caregiver' && m.invitation_status === 'accepted').length} {t('family.roles.caregiver').toLowerCase()}
                       </span>
                     )}
                   </>
@@ -107,22 +107,22 @@ const FamilyGroupCard: React.FC<FamilyGroupCardProps> = ({
           {/* Member Avatars */}
           <div className="flex items-center justify-between">
             <div className="flex -space-x-2">
-              {group.members && group.members.length > 0 ? (
+              {group.members && group.members.filter(m => m.invitation_status === 'accepted').length > 0 ? (
                 <>
-                  {group.members.slice(0, 4).map((member, index) => (
+                  {group.members.filter(m => m.invitation_status === 'accepted').slice(0, 4).map((member, index) => (
                     <Avatar key={member.id} className="w-8 h-8 border-2 border-background shadow-sm">
                       <AvatarFallback className="text-xs bg-primary/10 text-primary font-medium">
                         {getInitials(member.display_name || member.user_email || 'U')}
                       </AvatarFallback>
                     </Avatar>
                   ))}
-                  {group.members.length > 4 && (
-                    <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center shadow-sm">
-                      <span className="text-xs text-muted-foreground font-medium">
-                        +{group.members.length - 4}
-                      </span>
-                    </div>
-                  )}
+                    {group.members.filter(m => m.invitation_status === 'accepted').length > 4 && (
+                      <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center shadow-sm">
+                        <span className="text-xs text-muted-foreground font-medium">
+                          +{group.members.filter(m => m.invitation_status === 'accepted').length - 4}
+                        </span>
+                      </div>
+                    )}
                 </>
               ) : (
                 <div className="flex items-center gap-2 text-muted-foreground">
