@@ -224,8 +224,10 @@ export class FamilySharingService {
             permissions: typeof member.permissions === 'object' ? 
               member.permissions as FamilyMember['permissions'] : 
               { view_medications: true, edit_medications: false, receive_alerts: true },
-            user_profile: member.user_profile && typeof member.user_profile === 'object' && 
-              !('error' in member.user_profile) && member.user_profile !== null ? 
+            user_profile: member.user_profile && 
+              typeof member.user_profile === 'object' && 
+              member.user_profile !== null &&
+              !('error' in member.user_profile) ? 
               member.user_profile as UserProfile : undefined
           }));
 
@@ -288,11 +290,15 @@ export class FamilySharingService {
         permissions: typeof member.permissions === 'object' ? 
           member.permissions as FamilyMember['permissions'] : 
           { view_medications: true, edit_medications: false, receive_alerts: true },
-        user_profile: member.user_profile && typeof member.user_profile === 'object' && 
-          !('error' in member.user_profile) && member.user_profile !== null ? 
+        user_profile: member.user_profile && 
+          typeof member.user_profile === 'object' && 
+          member.user_profile !== null &&
+          !('error' in member.user_profile) ? 
           member.user_profile as UserProfile : undefined,
-        inviter_profile: member.inviter_profile && typeof member.inviter_profile === 'object' && 
-          !('error' in member.inviter_profile) && member.inviter_profile !== null ? 
+        inviter_profile: member.inviter_profile && 
+          typeof member.inviter_profile === 'object' && 
+          member.inviter_profile !== null &&
+          !('error' in member.inviter_profile) ? 
           member.inviter_profile as UserProfile : undefined
       })) || [];
 
@@ -571,8 +577,10 @@ export class FamilySharingService {
         sharing_permissions: typeof item.sharing_permissions === 'object' && item.sharing_permissions !== null ?
           item.sharing_permissions as SharedMedication['sharing_permissions'] :
           { view: true, edit: false, delete: false },
-        shared_by_profile: item.shared_by_profile && typeof item.shared_by_profile === 'object' && 
-          !('error' in item.shared_by_profile) && item.shared_by_profile !== null ? 
+        shared_by_profile: item.shared_by_profile && 
+          typeof item.shared_by_profile === 'object' && 
+          item.shared_by_profile !== null &&
+          !('error' in item.shared_by_profile) ? 
           item.shared_by_profile as UserProfile : undefined
       }));
     } catch (error) {

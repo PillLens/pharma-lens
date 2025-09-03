@@ -439,7 +439,7 @@
       "startConversation": "Start your family conversation",
       "messageSent": "Message sent",
       "failedToSend": "Failed to send message"
-    },
+    }
   },
   "scanner": {
     "scanMedication": "Scan Medication",
