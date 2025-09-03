@@ -141,6 +141,7 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // Create the family group
       const { data, error } = await supabase
         .from('family_groups')
         .insert({
@@ -151,6 +152,29 @@ export class FamilySharingService {
         .single();
 
       if (error) throw error;
+
+      // Add the creator as a family member with accepted status
+      const { error: memberError } = await supabase
+        .from('family_members')
+        .insert({
+          family_group_id: data.id,
+          user_id: user.id,
+          role: 'caregiver', // Creator is typically the primary caregiver
+          invitation_status: 'accepted',
+          invited_by: user.id,
+          permissions: {
+            view_medications: true,
+            edit_medications: true,
+            receive_alerts: true,
+            emergency_access: true
+          },
+          accepted_at: new Date().toISOString()
+        });
+
+      if (memberError) {
+        console.error('Error adding creator as family member:', memberError);
+        // Don't fail the entire operation, just log the error
+      }
 
       toast.success('Family group created successfully');
       return data;
