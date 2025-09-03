@@ -1,5 +1,5 @@
 import React from 'react';
-import { Video, MessageCircle, Settings, UserPlus, Trash2 } from 'lucide-react';
+import { Settings, UserPlus, Trash2 } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -14,8 +14,6 @@ import { useTranslation } from 'react-i18next';
 interface MobileActionSheetProps {
   children: React.ReactNode;
   onInviteMember: () => void;
-  onVideoCall?: () => void;
-  onMessage?: () => void;
   onEditGroup: () => void;
   onDeleteGroup: () => void;
   groupName: string;
@@ -24,8 +22,6 @@ interface MobileActionSheetProps {
 export const MobileActionSheet: React.FC<MobileActionSheetProps> = ({
   children,
   onInviteMember,
-  onVideoCall,
-  onMessage,
   onEditGroup,
   onDeleteGroup,
   groupName
@@ -60,31 +56,6 @@ export const MobileActionSheet: React.FC<MobileActionSheetProps> = ({
             <UserPlus className="w-5 h-5 mr-4 text-primary" />
             <span className="text-base font-medium">{t('family.member.invite')}</span>
           </Button>
-          
-          <Separator className="my-2" />
-          
-          {/* Communication Actions */}
-          {onVideoCall && (
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-14 px-4 text-left"
-              onClick={() => handleAction(onVideoCall)}
-            >
-              <Video className="w-5 h-5 mr-4 text-blue-500" />
-              <span className="text-base font-medium">{t('family.actions.groupVideoCall')}</span>
-            </Button>
-          )}
-          
-          {onMessage && (
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-14 px-4 text-left"
-              onClick={() => handleAction(onMessage)}
-            >
-              <MessageCircle className="w-5 h-5 mr-4 text-green-500" />
-              <span className="text-base font-medium">{t('family.actions.groupMessage')}</span>
-            </Button>
-          )}
           
           <Separator className="my-2" />
           

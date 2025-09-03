@@ -277,16 +277,11 @@ export const EnhancedMemberManagement: React.FC<EnhancedMemberManagementProps> =
                   )}
                 </div>
 
-                {/* Quick Actions */}
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MessageCircle className="h-3 w-3 mr-1" />
-                    Message
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Phone className="h-3 w-3 mr-1" />
-                    Call
-                  </Button>
+                {/* Member info only - no action buttons */}
+                <div className="pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Family member
+                  </p>
                 </div>
               </CardContent>
             </Card>

@@ -493,9 +493,6 @@ const FamilyManager: React.FC = () => {
                       onInviteMember={() => handleInviteFromGroup(group)}
                       onEditGroup={() => handleEditGroup(group)}
                       onDeleteGroup={() => handleDeleteGroup(group)}
-                      onCall={handleCall}
-                      onMessage={handleMessage}
-                      onVideoCall={handleVideoCall}
                     />
                   ))}
                 </div>
