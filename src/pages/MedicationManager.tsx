@@ -197,7 +197,7 @@ const MedicationManager: React.FC = () => {
     removeMedication,
     refetch
   } = useMedicationHistory();
-  const { addReminder } = useReminders();
+  const { reminders, addReminder, deleteReminder } = useReminders();
 
   // States
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
@@ -465,18 +465,68 @@ const MedicationManager: React.FC = () => {
         const { reminderTimes, reminderDays, enableReminders } = data._reminderSettings;
         console.log('Updating reminders:', { reminderTimes, reminderDays, enableReminders });
         
-        // TODO: Implement reminder updates - for now, inform user to manage reminders separately
-        if (enableReminders && reminderTimes && reminderDays) {
-          toast.success('Medication updated! Please manage reminders in the Reminders tab.');
+        if (enableReminders && reminderTimes && reminderDays && reminderTimes.length > 0) {
+          // First, delete existing reminders for this medication
+          const existingReminders = reminders.filter(r => r.medication_id === selectedMedication.id);
+          
+          for (const reminder of existingReminders) {
+            await deleteReminder(reminder.id);
+          }
+          
+          // Then create new reminders with updated settings
+          let remindersUpdated = 0;
+          let reminderErrors = 0;
+          
+          for (const time of reminderTimes) {
+            try {
+              console.log('Creating updated reminder for time:', time);
+              const reminderData = {
+                medication_id: selectedMedication.id,
+                reminder_time: time,
+                days_of_week: reminderDays,
+                notification_settings: {
+                  sound: true,
+                  vibration: true,
+                  led: true
+                }
+              };
+              
+              await addReminder(reminderData);
+              remindersUpdated++;
+            } catch (error) {
+              console.error('Failed to create updated reminder for time:', time, error);
+              reminderErrors++;
+            }
+          }
+          
+          console.log(`Updated ${remindersUpdated} reminders, ${reminderErrors} errors`);
+          
+          if (remindersUpdated > 0 && reminderErrors === 0) {
+            toast.success(`Medication updated with ${remindersUpdated} reminder${remindersUpdated > 1 ? 's' : ''}!`);
+          } else if (remindersUpdated > 0 && reminderErrors > 0) {
+            toast.warning(`Medication updated with ${remindersUpdated} reminder${remindersUpdated > 1 ? 's' : ''}, but ${reminderErrors} failed to update.`);
+          } else {
+            toast.error('Medication updated but reminders failed to update. Please set them manually.');
+          }
+        } else if (!enableReminders) {
+          // If reminders are disabled, remove all existing reminders for this medication
+          const existingReminders = reminders.filter(r => r.medication_id === selectedMedication.id);
+          
+          for (const reminder of existingReminders) {
+            await deleteReminder(reminder.id);
+          }
+          
+          toast.success('Medication updated and reminders disabled.');
         } else {
-          toast.success('Medication updated successfully');
+          toast.success('Medication updated successfully.');
         }
       } else {
-        toast.success('Medication updated successfully');
+        toast.success('Medication updated successfully.');
       }
       
       setIsEditSheetOpen(false);
       setSelectedMedication(null);
+      refetch();
     } catch (error) {
       console.error('Error updating medication:', error);
       toast.error('Failed to update medication');
