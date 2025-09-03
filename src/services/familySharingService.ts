@@ -173,7 +173,7 @@ export class FamilySharingService {
 
       if (error) throw error;
 
-      // Get creator profiles and member counts
+      // Get creator profiles, member counts, and actual members
       const groupsWithDetails = await Promise.all(
         (data || []).map(async (group) => {
           // Get creator profile
@@ -183,17 +183,43 @@ export class FamilySharingService {
             .eq('id', group.creator_id)
             .single();
 
-          // Count members
-          const { count } = await supabase
+          // Get actual members with their profiles
+          const { data: members } = await supabase
             .from('family_members')
-            .select('*', { count: 'exact', head: true })
+            .select('*')
             .eq('family_group_id', group.id)
             .eq('invitation_status', 'accepted');
+
+          // Get profiles for each member
+          const membersWithProfiles = await Promise.all(
+            (members || []).map(async (member) => {
+              const { data: userProfile } = await supabase
+                .from('profiles')
+                .select('id, email, display_name, avatar_url, created_at, updated_at')
+                .eq('id', member.user_id)
+                .single();
+
+              return {
+                ...member,
+                role: member.role as 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
+                invitation_status: member.invitation_status as 'pending' | 'accepted' | 'declined',
+                permissions: member.permissions as {
+                  view_medications: boolean;
+                  edit_medications: boolean;
+                  receive_alerts: boolean;
+                },
+                user_profile: userProfile || undefined,
+                display_name: userProfile?.display_name || userProfile?.email || member.invited_email,
+                user_email: userProfile?.email || member.invited_email
+              };
+            })
+          );
 
           return {
             ...group,
             creator_profile: creatorProfile || undefined,
-            member_count: (count || 0) + 1 // +1 for creator
+            members: membersWithProfiles,
+            member_count: (members?.length || 0) + 1 // +1 for creator
           };
         })
       );
