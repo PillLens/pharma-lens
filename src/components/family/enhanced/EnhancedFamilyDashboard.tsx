@@ -67,9 +67,9 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
     }
   }, [familyGroups]);
 
-  // Use real metrics or fallback to calculated values
-  const totalMembers = healthMetrics?.totalMembers || familyGroups.reduce((sum, group) => sum + (group.members?.length || 0), 0);
-  const activeMembers = healthMetrics?.activeMembers || familyGroups.reduce((sum, group) => 
+  // Use actual family group data for accurate member counts
+  const totalMembers = familyGroups.reduce((sum, group) => sum + (group.members?.length || 0), 0);
+  const activeMembers = familyGroups.reduce((sum, group) => 
     sum + (group.members?.filter(m => m.invitation_status === 'accepted').length || 0), 0);
   
   console.log('Dashboard calculation:', {
