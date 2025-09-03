@@ -305,12 +305,12 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
                   </div>
 
                   <div>
-                    <Label>Assign To *</Label>
+                    <Label className="text-base font-medium">Assign To *</Label>
                     <Select
                       value={taskForm.assignedTo}
                       onValueChange={(value) => setTaskForm(prev => ({ ...prev, assignedTo: value }))}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="mt-2 h-12 text-base">
                         <SelectValue placeholder="Select family member" />
                       </SelectTrigger>
                       <SelectContent>
@@ -324,20 +324,21 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
                   </div>
 
                   <div>
-                    <Label htmlFor="dueDate">Due Date (Optional)</Label>
+                    <Label htmlFor="dueDate" className="text-base font-medium">Due Date (Optional)</Label>
                     <Input
                       id="dueDate"
                       type="datetime-local"
                       value={taskForm.dueDate}
                       onChange={(e) => setTaskForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                      className="mt-2 h-12 text-base"
                     />
                   </div>
 
-                  <div className="flex gap-2 pt-4">
-                    <Button onClick={handleCreateTask} className="flex-1">
+                  <div className="flex flex-col gap-3 pt-6">
+                    <Button onClick={handleCreateTask} className="h-12 text-base font-medium">
                       Create Task
                     </Button>
-                    <Button variant="outline" onClick={() => setShowCreateTask(false)}>
+                    <Button variant="outline" onClick={() => setShowCreateTask(false)} className="h-12 text-base">
                       Cancel
                     </Button>
                   </div>
