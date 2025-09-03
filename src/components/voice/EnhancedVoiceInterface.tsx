@@ -278,27 +278,27 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       {/* Connection Status & Controls */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bot className="w-5 h-5" />
+          <CardTitle className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <Bot className="w-4 h-4" />
               <span>AI Voice Assistant</span>
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${getConnectionStatusColor(connectionStatus)}`} />
-                <span className="text-sm text-muted-foreground">
-                  {getConnectionStatusText(connectionStatus)}
-                </span>
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${getConnectionStatusColor(connectionStatus)}`} />
+              <span className="text-xs text-muted-foreground">
+                {getConnectionStatusText(connectionStatus)}
+              </span>
             </div>
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="space-y-4">
-          {/* Voice Settings */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="space-y-3">
+          {/* Voice Settings - Mobile Optimized */}
+          <div className="space-y-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium">OpenAI Voice</label>
+              <label className="text-xs font-medium text-muted-foreground">Voice Model</label>
               <Select value={selectedVoice} onValueChange={setSelectedVoice} disabled={isConnected}>
-                <SelectTrigger>
+                <SelectTrigger className="h-10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -310,31 +310,16 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">ElevenLabs Voice (TTS)</label>
-              <Select value={elevenLabsVoice} onValueChange={setElevenLabsVoice}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {VOICE_OPTIONS.map(voice => (
-                    <SelectItem key={voice.id} value={voice.id}>
-                      <div className="flex flex-col">
-                        <span>{voice.name}</span>
-                        <span className="text-xs text-muted-foreground">{voice.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
-          {/* Connection Controls */}
-          <div className="flex gap-2">
+          {/* Connection Controls - Mobile Optimized */}
+          <div className="flex flex-col gap-2">
             {!isConnected ? (
-              <Button onClick={startConversation} className="flex-1" disabled={connectionStatus === 'connecting'}>
+              <Button 
+                onClick={startConversation} 
+                className="w-full h-12 text-sm" 
+                disabled={connectionStatus === 'connecting'}
+              >
                 {connectionStatus === 'connecting' ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -348,35 +333,35 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                 )}
               </Button>
             ) : (
-              <>
-                <Button onClick={endConversation} variant="destructive" className="flex-1">
+              <div className="flex gap-2">
+                <Button onClick={endConversation} variant="destructive" className="flex-1 h-12">
                   <PhoneOff className="w-4 h-4 mr-2" />
                   End Chat
                 </Button>
                 <Button
                   onClick={() => setIsMuted(!isMuted)}
                   variant="outline"
-                  size="icon"
+                  className="h-12 px-4"
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </Button>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Status Indicators */}
+          {/* Status Indicators - Mobile Optimized */}
           {isConnected && (
-            <div className="flex gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Mic className={`w-4 h-4 ${isListening ? 'text-green-500' : 'text-muted-foreground'}`} />
-                <span className={isListening ? 'text-green-600' : 'text-muted-foreground'}>
-                  {isListening ? 'Listening...' : 'Ready'}
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                <Mic className={`w-3 h-3 ${isListening ? 'text-green-500' : 'text-muted-foreground'}`} />
+                <span className={isListening ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                  {isListening ? 'Listening' : 'Ready'}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Speaker className={`w-4 h-4 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} />
-                <span className={isSpeaking ? 'text-blue-600' : 'text-muted-foreground'}>
-                  {isSpeaking ? 'Speaking...' : 'Silent'}
+              <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                <Speaker className={`w-3 h-3 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} />
+                <span className={isSpeaking ? 'text-blue-600 font-medium' : 'text-muted-foreground'}>
+                  {isSpeaking ? 'Speaking' : 'Silent'}
                 </span>
               </div>
             </div>
@@ -394,7 +379,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-80 px-4">
+            <ScrollArea className="h-64 px-4">
               <div className="space-y-4 pb-4">
                 {messages.map((message) => (
                   <div

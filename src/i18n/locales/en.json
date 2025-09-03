@@ -428,13 +428,18 @@
       "groupDeleted": "Group deleted successfully",
       "groupUpdated": "Group updated successfully"
     },
-    "validation": {
-      "groupNameRequired": "Group name is required",
-      "emailRequired": "Email address is required",
-      "roleRequired": "Role selection is required",
-      "memberNameRequired": "Member name is required",
-      "invalidEmail": "Please enter a valid email address"
-    }
+    "messaging": {
+      "title": "Family Chat",
+      "sendMessage": "Send Message",
+      "typeMessage": "Type a message...",
+      "emergency": "Emergency",
+      "medication": "Medication",
+      "location": "Location",
+      "noMessages": "No messages yet",
+      "startConversation": "Start your family conversation",
+      "messageSent": "Message sent",
+      "failedToSend": "Failed to send message"
+    },
   },
   "scanner": {
     "scanMedication": "Scan Medication",
