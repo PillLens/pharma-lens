@@ -481,19 +481,51 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // First, try to find invitation by user_id (existing users)
+      let { data: invitation, error: findError } = await supabase
+        .from('family_members')
+        .select('id, user_id, invited_email')
+        .eq('family_group_id', groupId)
+        .eq('user_id', user.id)
+        .eq('invitation_status', 'pending')
+        .single();
+
+      // If not found by user_id, look for invitation by email (new users)
+      if (!invitation && user.email) {
+        const { data: emailInvitation, error: emailError } = await supabase
+          .from('family_members')
+          .select('id, user_id, invited_email')
+          .eq('family_group_id', groupId)
+          .eq('invited_email', user.email.toLowerCase().trim())
+          .eq('invitation_status', 'pending')
+          .single();
+
+        invitation = emailInvitation;
+        findError = emailError;
+      }
+
+      if (!invitation) {
+        console.error('No pending invitation found for user:', user.email);
+        throw new Error('No pending invitation found for your account');
+      }
+
       const updates: any = {
         invitation_status: response
       };
 
       if (response === 'accepted') {
         updates.accepted_at = new Date().toISOString();
+        // If this was an email invitation (user_id is null), set the user_id and clear invited_email
+        if (!invitation.user_id) {
+          updates.user_id = user.id;
+          updates.invited_email = null;
+        }
       }
 
       const { error } = await supabase
         .from('family_members')
         .update(updates)
-        .eq('family_group_id', groupId)
-        .eq('user_id', user.id);
+        .eq('id', invitation.id);
 
       if (error) throw error;
 
@@ -679,11 +711,12 @@ export class FamilySharingService {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
+      // Look for invitations by both user_id and email
       const { data, error } = await supabase
         .from('family_members')
         .select('id, family_group_id, role, invited_at, invited_by')
-        .eq('user_id', user.id)
-        .eq('invitation_status', 'pending');
+        .eq('invitation_status', 'pending')
+        .or(`user_id.eq.${user.id},invited_email.eq.${user.email?.toLowerCase().trim()}`);
 
       if (error) throw error;
 
@@ -708,7 +741,7 @@ export class FamilySharingService {
             familyGroupName: group?.name || 'Unknown Group',
             invitedBy: invitation.invited_by || '',
             inviterName: inviterProfile?.display_name || inviterProfile?.email,
-            role: invitation.role as 'caregiver' | 'patient' | 'emergency_contact',
+            role: invitation.role as 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
             invitedAt: invitation.invited_at
           };
         })
