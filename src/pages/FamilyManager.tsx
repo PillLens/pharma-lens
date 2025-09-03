@@ -139,7 +139,7 @@ const FamilyManager: React.FC = () => {
         setShowInviteMember(false);
         loadFamilyData(); // Refresh data
         toast({
-          title: t('family.messages.memberInvited'),
+          title: t('family.messages.invitationSent'),
           description: `Invitation sent to ${memberData.email}`,
         });
       }
