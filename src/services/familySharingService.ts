@@ -215,19 +215,22 @@ export class FamilySharingService {
             })
           );
 
+          // Creator is already included in accepted members, don't add +1
+          const acceptedCount = membersWithProfiles.filter(m => m.invitation_status === 'accepted').length;
+          
           console.log('Family group calculation:', {
             groupId: group.id,
             groupName: group.name,
             totalMembersInDb: members?.length || 0,
-            acceptedMembers: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length,
-            calculatedMemberCount: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length + 1
+            acceptedMembers: acceptedCount,
+            calculatedMemberCount: acceptedCount
           });
 
           return {
             ...group,
             creator_profile: creatorProfile || undefined,
             members: membersWithProfiles,
-            member_count: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length + 1 // +1 for creator, only count accepted members
+            member_count: acceptedCount // Creator is already included in accepted members
           };
         })
       );
