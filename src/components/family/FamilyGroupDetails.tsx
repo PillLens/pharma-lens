@@ -23,13 +23,15 @@ interface FamilyGroupDetailsProps {
   onBack: () => void;
   onEditGroup: (group: FamilyGroup) => void;
   currentUserId: string;
+  onMemberRemoved?: () => void;
 }
 
 const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
   group,
   onBack,
   onEditGroup,
-  currentUserId
+  currentUserId,
+  onMemberRemoved
 }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
