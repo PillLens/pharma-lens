@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { toast } from 'sonner';
 
 const QuickStatsCards: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +48,21 @@ const QuickStatsCards: React.FC = () => {
       bgColor: 'bg-warning/10',
       borderColor: 'border-warning/20', 
       onClick: () => navigate('/reminders')
+    },
+    {
+      icon: Users,
+      value: '0',
+      label: 'family',
+      translationKey: 'dashboard.family',
+      color: 'text-purple-500',
+      bgColor: 'bg-purple-50 dark:bg-purple-950/30',
+      borderColor: 'border-purple-200 dark:border-purple-800',
+      onClick: () => {
+        toast.info('🚧 Coming Soon!', {
+          description: 'Family management features are being developed.',
+          duration: 3000,
+        });
+      }
     },
     {
       icon: Activity,

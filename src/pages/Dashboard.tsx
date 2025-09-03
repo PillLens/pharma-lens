@@ -15,11 +15,13 @@ import {
   Plus,
   Crown,
   ChevronRight,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Users
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
@@ -39,7 +41,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { subscription, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
   const { dashboardStats, loading } = useDashboardData();
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
 
   // Handle checkout success/cancel
   useEffect(() => {
@@ -47,7 +49,7 @@ const Dashboard: React.FC = () => {
       const params = new URLSearchParams(location.search);
       if (params.get("checkout") === "success") {
         console.log("[CHECKOUT-SUCCESS] Payment completed successfully");
-        toast({
+        toastHook({
           title: "Payment Successful!",
           description: "Your subscription has been activated.",
         });
@@ -57,7 +59,7 @@ const Dashboard: React.FC = () => {
         refreshEntitlements();
       } else if (params.get("checkout") === "cancel") {
         console.log("[CHECKOUT-CANCEL] Payment was cancelled");
-        toast({
+        toastHook({
           title: "Payment Cancelled",
           description: "Your subscription was not activated.",
           variant: "destructive"
@@ -68,7 +70,7 @@ const Dashboard: React.FC = () => {
     };
 
     checkCheckoutSuccess();
-  }, [toast, refreshEntitlements]);
+  }, [toastHook, refreshEntitlements]);
 
   const handleRefresh = async () => {
     await refreshEntitlements();
@@ -129,6 +131,20 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-warning/10',
       borderColor: 'border-warning/20',
       onClick: () => navigate('/reminders')
+    },
+    {
+      icon: Users,
+      value: '0',
+      label: t('dashboard.family', 'Family Members'),
+      color: 'text-purple-500',
+      bgColor: 'bg-purple-50 dark:bg-purple-950/30',
+      borderColor: 'border-purple-200 dark:border-purple-800',
+      onClick: () => {
+        toast.info('🚧 Coming Soon!', {
+          description: 'Family management features are being developed.',
+          duration: 3000,
+        });
+      }
     },
     {
       icon: TrendingUp,
