@@ -71,6 +71,20 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
   const totalMembers = healthMetrics?.totalMembers || familyGroups.reduce((sum, group) => sum + (group.members?.length || 0), 0);
   const activeMembers = healthMetrics?.activeMembers || familyGroups.reduce((sum, group) => 
     sum + (group.members?.filter(m => m.invitation_status === 'accepted').length || 0), 0);
+  
+  console.log('Dashboard calculation:', {
+    healthMetrics,
+    familyGroups: familyGroups.map(g => ({
+      id: g.id,
+      name: g.name,
+      member_count: g.member_count,
+      members_length: g.members?.length,
+      accepted_members: g.members?.filter(m => m.invitation_status === 'accepted').length
+    })),
+    calculatedTotalMembers: totalMembers,
+    calculatedActiveMembers: activeMembers
+  });
+
   const overallAdherence = healthMetrics?.overallAdherence || 0;
   const pendingTasks = healthMetrics?.pendingTasks || 0;
   const careScore = healthMetrics?.careScore || 'N/A';

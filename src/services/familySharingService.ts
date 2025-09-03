@@ -215,6 +215,14 @@ export class FamilySharingService {
             })
           );
 
+          console.log('Family group calculation:', {
+            groupId: group.id,
+            groupName: group.name,
+            totalMembersInDb: members?.length || 0,
+            acceptedMembers: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length,
+            calculatedMemberCount: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length + 1
+          });
+
           return {
             ...group,
             creator_profile: creatorProfile || undefined,
