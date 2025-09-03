@@ -85,8 +85,8 @@ const Reminders: React.FC = () => {
     fetchUserTimezone();
   }, [user]);
 
-  // Callback for fetchRealData to avoid infinite loops
-  const fetchRealData = React.useCallback(async () => {
+  // Fetch user medications and real adherence data
+  const fetchRealData = async () => {
     if (!user) return;
     
     try {
@@ -117,7 +117,7 @@ const Reminders: React.FC = () => {
     } catch (error) {
       console.error('Error fetching real medication data:', error);
     }
-  }, [user]);
+  };
 
   useEffect(() => {
     fetchRealData();

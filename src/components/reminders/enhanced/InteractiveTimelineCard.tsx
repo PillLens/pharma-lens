@@ -7,7 +7,6 @@ import { Progress } from '@/components/ui/progress';
 import { getCurrentTimeInTimezone } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { useTranslation } from '@/hooks/useTranslation';
-import { missedDoseTrackingService } from '@/services/missedDoseTrackingService';
 
 interface TimelineEntry {
   id: string;
@@ -40,19 +39,7 @@ const InteractiveTimelineCard: React.FC<InteractiveTimelineCardProps> = ({
     const timer = setInterval(() => {
       setCurrentTime(getCurrentTimeInTimezone(effectiveTimezone));
     }, 60000);
-    
-    // Listen for missed dose updates to refresh the timeline
-    const handleMissedDoseUpdate = () => {
-      // Force re-render by updating current time
-      setCurrentTime(getCurrentTimeInTimezone(effectiveTimezone));
-    };
-
-    window.addEventListener('missedDoseUpdate', handleMissedDoseUpdate);
-    
-    return () => {
-      clearInterval(timer);
-      window.removeEventListener('missedDoseUpdate', handleMissedDoseUpdate);
-    };
+    return () => clearInterval(timer);
   }, [effectiveTimezone]);
 
   const getStatusIcon = (status: string) => {

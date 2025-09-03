@@ -585,48 +585,6 @@ export type Database = {
           },
         ]
       }
-      family_calls: {
-        Row: {
-          call_type: string
-          caller_id: string
-          created_at: string
-          duration_seconds: number | null
-          ended_at: string | null
-          family_group_id: string
-          id: string
-          recipient_id: string
-          started_at: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          call_type: string
-          caller_id: string
-          created_at?: string
-          duration_seconds?: number | null
-          ended_at?: string | null
-          family_group_id: string
-          id?: string
-          recipient_id: string
-          started_at?: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          call_type?: string
-          caller_id?: string
-          created_at?: string
-          duration_seconds?: number | null
-          ended_at?: string | null
-          family_group_id?: string
-          id?: string
-          recipient_id?: string
-          started_at?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       family_groups: {
         Row: {
           created_at: string
@@ -649,15 +607,7 @@ export type Database = {
           name?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "family_groups_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       family_health_insights: {
         Row: {
@@ -749,20 +699,6 @@ export type Database = {
             columns: ["family_group_id"]
             isOneToOne: false
             referencedRelation: "family_groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "family_members_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "family_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

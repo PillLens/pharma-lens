@@ -131,6 +131,7 @@ const FamilyManager: React.FC = () => {
           view_medications: memberData.permissions.canView,
           edit_medications: memberData.permissions.canEdit,
           receive_alerts: memberData.permissions.receiveNotifications,
+          emergency_access: memberData.permissions.emergencyAccess,
         }
       );
 
@@ -242,7 +243,7 @@ const FamilyManager: React.FC = () => {
   const handleRemoveMember = async (groupId: string, memberId: string) => {
     try {
       // TODO: Implement member removal API call
-      await familySharingService.removeFamilyMember(memberId);
+      await familySharingService.removeFamilyMember(groupId, memberId);
       await loadFamilyData(); // Refresh data
     } catch (error) {
       console.error('Error removing member:', error);
@@ -493,6 +494,9 @@ const FamilyManager: React.FC = () => {
                       onInviteMember={() => handleInviteFromGroup(group)}
                       onEditGroup={() => handleEditGroup(group)}
                       onDeleteGroup={() => handleDeleteGroup(group)}
+                      onCall={handleCall}
+                      onMessage={handleMessage}
+                      onVideoCall={handleVideoCall}
                     />
                   ))}
                 </div>

@@ -142,6 +142,8 @@ const AdvancedFamilyGroupCard: React.FC<AdvancedFamilyGroupCardProps> = ({
           {isMobile ? (
             <MobileActionSheet
               onInviteMember={onInviteMember}
+              onVideoCall={() => onVideoCall?.(group.id)}
+              onMessage={() => onMessage?.(group.id)}
               onEditGroup={onEditGroup}
               onDeleteGroup={onDeleteGroup}
               groupName={group.name}
