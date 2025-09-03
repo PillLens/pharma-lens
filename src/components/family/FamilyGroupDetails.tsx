@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { FamilyGroup } from '@/services/familySharingService';
 // Lazy load the heavy components
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
 const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
+const CallInterface = lazy(() => import('./CallInterface'));
 const AppointmentManager = lazy(() => import('./AppointmentManager'));
 const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
@@ -132,7 +133,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-7 md:grid-cols-7 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
+        <TabsList className="grid w-full grid-cols-8 md:grid-cols-8 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Activity className="w-4 h-4" />
             <span className="hidden sm:block">Overview</span>
@@ -144,6 +145,10 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
           <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <MessageCircle className="w-4 h-4" />
             <span className="hidden sm:block">Chat</span>
+          </TabsTrigger>
+          <TabsTrigger value="calls" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Phone className="w-4 h-4" />
+            <span className="hidden sm:block">Calls</span>
           </TabsTrigger>
           <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Users className="w-4 h-4" />
@@ -231,6 +236,16 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
         <TabsContent value="messaging">
           <Suspense fallback={<TabLoadingSkeleton />}>
             <FamilyMessaging
+              familyGroupId={group.id}
+              familyMembers={activeMembers}
+              currentUserId={currentUserId}
+            />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="calls">
+          <Suspense fallback={<TabLoadingSkeleton />}>
+            <CallInterface
               familyGroupId={group.id}
               familyMembers={activeMembers}
               currentUserId={currentUserId}
