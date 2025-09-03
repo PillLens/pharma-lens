@@ -341,6 +341,7 @@ export class FamilySharingService {
       view_medications: boolean;
       edit_medications: boolean;
       receive_alerts: boolean;
+      emergency_access?: boolean;
     }
   ): Promise<boolean> {
     try {
@@ -551,6 +552,7 @@ export class FamilySharingService {
       view_medications: boolean;
       edit_medications: boolean;
       receive_alerts: boolean;
+      emergency_access?: boolean;
     }
   ): Promise<boolean> {
     try {

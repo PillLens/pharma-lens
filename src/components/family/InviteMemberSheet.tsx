@@ -61,6 +61,29 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
     },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      role: '',
+      permissions: {
+        canView: true,
+        canEdit: false,
+        receiveNotifications: true,
+        emergencyAccess: false,
+      },
+    });
+    setErrors({});
+  };
+
+  // Reset form when sheet closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      resetForm();
+    }
+  }, [isOpen]);
 
   // Use mobile version on mobile devices
   if (isMobile) {
@@ -98,19 +121,7 @@ const InviteMemberSheet: React.FC<InviteMemberSheetProps> = ({
 
     if (Object.keys(newErrors).length === 0) {
       onInvite(formData);
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        role: '',
-        permissions: {
-          canView: true,
-          canEdit: false,
-          receiveNotifications: true,
-          emergencyAccess: false,
-        },
-      });
+      // Don't reset form here - let parent handle success/failure
     }
   };
 

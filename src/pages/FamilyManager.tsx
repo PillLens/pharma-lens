@@ -131,6 +131,7 @@ const FamilyManager: React.FC = () => {
           view_medications: memberData.permissions.canView,
           edit_medications: memberData.permissions.canEdit,
           receive_alerts: memberData.permissions.receiveNotifications,
+          emergency_access: memberData.permissions.emergencyAccess,
         }
       );
 

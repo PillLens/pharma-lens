@@ -51,6 +51,29 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showRolePicker, setShowRolePicker] = useState(false);
+  
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      role: '',
+      permissions: {
+        canView: true,
+        canEdit: false,
+        receiveNotifications: true,
+        emergencyAccess: false,
+      },
+    });
+    setErrors({});
+  };
+
+  // Reset form when sheet closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      resetForm();
+    }
+  }, [isOpen]);
 
   const roles = [
     { value: 'patient', label: t('family.roles.patient'), icon: '🩺' },
@@ -83,19 +106,7 @@ const MobileInviteMemberSheet: React.FC<MobileInviteMemberSheetProps> = ({
 
     if (Object.keys(newErrors).length === 0) {
       onInvite(formData);
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        role: '',
-        permissions: {
-          canView: true,
-          canEdit: false,
-          receiveNotifications: true,
-          emergencyAccess: false,
-        },
-      });
+      // Don't reset form here - let parent handle success/failure
     }
   };
 
