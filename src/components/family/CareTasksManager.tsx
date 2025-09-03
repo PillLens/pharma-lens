@@ -213,109 +213,110 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
                 New Task
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Create Care Task</SheetTitle>
-                <SheetDescription>
+            <SheetContent className="w-full sm:max-w-lg h-full overflow-y-auto">
+              <SheetHeader className="space-y-4 pb-6">
+                <SheetTitle className="text-xl font-semibold">Create Care Task</SheetTitle>
+                <SheetDescription className="text-base text-muted-foreground">
                   Assign a care task to a family member
                 </SheetDescription>
               </SheetHeader>
 
-              <div className="space-y-4 mt-6">
+              <div className="space-y-8 pb-8">
                 {/* Task Templates */}
                 <div>
-                  <Label>Quick Templates</Label>
-                  <div className="grid grid-cols-1 gap-2 mt-2">
+                  <Label className="text-lg font-medium mb-4 block">Quick Templates</Label>
+                  <div className="grid grid-cols-1 gap-4">
                     {templates.slice(0, 3).map((template) => (
                       <Button
                         key={template.id}
                         variant="outline"
-                        size="sm"
                         onClick={() => handleUseTemplate(template)}
-                        className="justify-start h-auto p-3"
+                        className="justify-start h-auto p-6 text-left border-2 hover:border-primary transition-colors"
                       >
-                        <div className="text-left">
-                          <div className="font-medium text-sm">{template.title}</div>
-                          <div className="text-xs text-muted-foreground">{template.description}</div>
+                        <div className="w-full">
+                          <div className="font-semibold text-base mb-2">{template.title}</div>
+                          <div className="text-sm text-muted-foreground leading-relaxed">{template.description}</div>
                         </div>
                       </Button>
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <Label htmlFor="title">Task Title *</Label>
+                    <Label htmlFor="title" className="text-lg font-medium mb-3 block">Task Title *</Label>
                     <Input
                       id="title"
                       value={taskForm.title}
                       onChange={(e) => setTaskForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="Enter task title"
+                      className="h-14 text-lg px-4 border-2 focus:border-primary"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-lg font-medium mb-3 block">Description</Label>
                     <Textarea
                       id="description"
                       value={taskForm.description}
                       onChange={(e) => setTaskForm(prev => ({ ...prev, description: e.target.value }))}
                       placeholder="Task description..."
-                      rows={3}
+                      rows={4}
+                      className="text-base px-4 py-3 border-2 focus:border-primary resize-none"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-6">
                     <div>
-                      <Label>Task Type</Label>
+                      <Label className="text-lg font-medium mb-3 block">Task Type</Label>
                       <Select
                         value={taskForm.taskType}
                         onValueChange={(value: any) => setTaskForm(prev => ({ ...prev, taskType: value }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-14 text-lg px-4 border-2 focus:border-primary">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="medication">Medication</SelectItem>
-                          <SelectItem value="appointment">Appointment</SelectItem>
-                          <SelectItem value="monitoring">Monitoring</SelectItem>
-                          <SelectItem value="emergency">Emergency</SelectItem>
-                          <SelectItem value="general">General</SelectItem>
+                          <SelectItem value="medication" className="py-4 text-base">Medication</SelectItem>
+                          <SelectItem value="appointment" className="py-4 text-base">Appointment</SelectItem>
+                          <SelectItem value="monitoring" className="py-4 text-base">Monitoring</SelectItem>
+                          <SelectItem value="emergency" className="py-4 text-base">Emergency</SelectItem>
+                          <SelectItem value="general" className="py-4 text-base">General</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <Label>Priority</Label>
+                      <Label className="text-lg font-medium mb-3 block">Priority</Label>
                       <Select
                         value={taskForm.priority}
                         onValueChange={(value: any) => setTaskForm(prev => ({ ...prev, priority: value }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="h-14 text-lg px-4 border-2 focus:border-primary">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="normal">Normal</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
+                          <SelectItem value="low" className="py-4 text-base">Low</SelectItem>
+                          <SelectItem value="normal" className="py-4 text-base">Normal</SelectItem>
+                          <SelectItem value="high" className="py-4 text-base">High</SelectItem>
+                          <SelectItem value="urgent" className="py-4 text-base">Urgent</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-base font-medium">Assign To *</Label>
+                    <Label className="text-lg font-medium mb-3 block">Assign To *</Label>
                     <Select
                       value={taskForm.assignedTo}
-                      onValueChange={(value) => setTaskForm(prev => ({ ...prev, assignedTo: value }))}
+                      onValueChange={(value) => setTaskForm(prev => ({ ...pred, assignedTo: value }))}
                     >
-                      <SelectTrigger className="mt-2 h-12 text-base">
+                      <SelectTrigger className="h-14 text-lg px-4 border-2 focus:border-primary">
                         <SelectValue placeholder="Select family member" />
                       </SelectTrigger>
                       <SelectContent>
                         {familyMembers.map((member) => (
-                          <SelectItem key={member.user_id} value={member.user_id}>
+                          <SelectItem key={member.user_id} value={member.user_id} className="py-4 text-base">
                             {member.profiles?.display_name || member.email}
                           </SelectItem>
                         ))}
@@ -324,21 +325,28 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
                   </div>
 
                   <div>
-                    <Label htmlFor="dueDate" className="text-base font-medium">Due Date (Optional)</Label>
+                    <Label htmlFor="dueDate" className="text-lg font-medium mb-3 block">Due Date (Optional)</Label>
                     <Input
                       id="dueDate"
                       type="datetime-local"
                       value={taskForm.dueDate}
                       onChange={(e) => setTaskForm(prev => ({ ...prev, dueDate: e.target.value }))}
-                      className="mt-2 h-12 text-base"
+                      className="h-14 text-lg px-4 border-2 focus:border-primary"
                     />
                   </div>
 
-                  <div className="flex flex-col gap-3 pt-6">
-                    <Button onClick={handleCreateTask} className="h-12 text-base font-medium">
+                  <div className="flex flex-col gap-4 pt-6">
+                    <Button 
+                      onClick={handleCreateTask} 
+                      className="h-16 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    >
                       Create Task
                     </Button>
-                    <Button variant="outline" onClick={() => setShowCreateTask(false)} className="h-12 text-base">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowCreateTask(false)} 
+                      className="h-14 text-lg border-2 rounded-xl"
+                    >
                       Cancel
                     </Button>
                   </div>
