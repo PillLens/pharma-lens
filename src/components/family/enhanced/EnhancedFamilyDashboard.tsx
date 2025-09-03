@@ -11,13 +11,11 @@ import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 
 interface EnhancedFamilyDashboardProps {
   familyGroups: any[];
-  onEmergencyCall?: () => void;
   onQuickAction?: (action: string) => void;
 }
 
 const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
   familyGroups,
-  onEmergencyCall,
   onQuickAction
 }) => {
   const { t } = useTranslation();
@@ -123,17 +121,7 @@ const EnhancedFamilyDashboard: React.FC<EnhancedFamilyDashboardProps> = ({
       <QuickStatsGrid stats={familyStats} className="mb-6" />
 
       {/* Quick Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-destructive/20 bg-gradient-to-r from-destructive/5 to-red-500/10 hover:shadow-lg transition-all cursor-pointer" onClick={onEmergencyCall}>
-          <CardContent className="p-4 text-center">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-destructive/20 flex items-center justify-center animate-pulse">
-              <Phone className="w-6 h-6 text-destructive" />
-            </div>
-            <h3 className="font-semibold text-destructive mb-1">{t('family.dashboard.emergencyContact')}</h3>
-            <p className="text-xs text-muted-foreground">{t('family.dashboard.emergencyDescription')}</p>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 hover:shadow-lg transition-all cursor-pointer" onClick={() => onQuickAction?.('medications')}>
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
