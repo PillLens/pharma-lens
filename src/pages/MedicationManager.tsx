@@ -457,8 +457,10 @@ const MedicationManager: React.FC = () => {
     
     setIsSubmitting(true);
     try {
-      console.log('Updating medication with data:', data);
-      await updateMedication(selectedMedication.id, data);
+      // Remove UI-only fields before updating the database
+      const { _reminderSettings, ...medicationData } = data;
+      console.log('Updating medication with data:', medicationData);
+      await updateMedication(selectedMedication.id, medicationData);
       
       // Handle reminder updates if they were set
       if (data._reminderSettings) {
