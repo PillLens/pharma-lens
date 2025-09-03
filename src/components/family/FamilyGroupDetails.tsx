@@ -9,7 +9,6 @@ import { FamilyGroup } from '@/services/familySharingService';
 
 // Lazy load the heavy components
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
-const AppointmentManager = lazy(() => import('./AppointmentManager'));
 const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
 const RealTimeCommunication = lazy(() => import('./RealTimeCommunication').then(module => ({ default: module.RealTimeCommunication })));
@@ -131,7 +130,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6 md:grid-cols-6 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
+        <TabsList className="grid w-full grid-cols-5 md:grid-cols-5 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Activity className="w-4 h-4" />
             <span className="hidden sm:block">Overview</span>
@@ -151,10 +150,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
           <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Shield className="w-4 h-4" />
             <span className="hidden sm:block">Insights</span>
-          </TabsTrigger>
-          <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
-            <Calendar className="w-4 h-4" />
-            <span className="hidden sm:block">Calendar</span>
           </TabsTrigger>
         </TabsList>
 
@@ -244,15 +239,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
           <Suspense fallback={<TabLoadingSkeleton />}>
             <AdvancedFamilyInsights
               familyGroupId={group.id}
-            />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="appointments">
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <AppointmentManager
-              familyGroupId={group.id}
-              familyMembers={activeMembers}
             />
           </Suspense>
         </TabsContent>
