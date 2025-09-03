@@ -1245,5 +1245,11 @@
   "permissions": {
     "viewMedications": "View Medications",
     "editMedications": "Edit Medications"
+  },
+  "toast": {
+    "accountCreated": "Account Created Successfully",
+    "checkEmail": "Please check your email to verify your account before signing in.",
+    "welcomeBack": "Welcome Back!",
+    "signedIn": "You have been successfully signed in."
   }
 }
