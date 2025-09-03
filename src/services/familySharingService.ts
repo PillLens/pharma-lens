@@ -87,6 +87,15 @@ export interface FamilyGroupTemplate {
 
 export class FamilySharingService {
   
+  // Helper method to validate profile objects
+  private isValidProfile(profile: any): profile is UserProfile {
+    return profile && 
+      typeof profile === 'object' && 
+      !('error' in profile) &&
+      typeof profile.id === 'string' &&
+      typeof profile.email === 'string';
+  }
+  
   // Profile Management
   async findUserByEmail(email: string): Promise<UserProfile | null> {
     try {
