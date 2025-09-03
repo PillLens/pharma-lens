@@ -439,7 +439,7 @@ export class FamilySharingService {
         };
         
         const encodedData = btoa(JSON.stringify(invitationData));
-        const invitationLink = `${window.location.origin}/family/invite?data=${encodedData}`;
+        const invitationLink = `https://pilllens.com/family/invite?data=${encodedData}`;
 
         // Send email via edge function
         const { error: emailError } = await supabase.functions.invoke('send-family-invitation', {
