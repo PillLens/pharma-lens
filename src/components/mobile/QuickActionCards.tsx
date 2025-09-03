@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pill, Bell, Users, Plus, ChevronRight, Settings } from 'lucide-react';
+import { Bell, Plus, ChevronRight, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useDashboardData } from '@/hooks/useDashboardData';
@@ -33,11 +33,6 @@ const QuickActionCards: React.FC = () => {
     }
   };
 
-  const getFamilyText = () => {
-    const { members } = dashboardStats.family;
-    return members === 0 ? 'Set up family care' : `${members} member${members === 1 ? '' : 's'} connected`;
-  };
-
   const quickActions = [
     {
       icon: Plus,
@@ -54,14 +49,6 @@ const QuickActionCards: React.FC = () => {
       route: '/reminders',
       iconColor: 'text-orange-500',
       iconBg: 'bg-orange-50 dark:bg-orange-950/30'
-    },
-    {
-      icon: Users,
-      titleKey: 'family.title',
-      description: getFamilyText(),
-      route: '/family',
-      iconColor: 'text-purple-500',
-      iconBg: 'bg-purple-50 dark:bg-purple-950/30'
     },
     {
       icon: Settings,
@@ -87,8 +74,8 @@ const QuickActionCards: React.FC = () => {
       <div className="bg-background rounded-xl border border-border/60 overflow-hidden">
         {loading ? (
           // Loading skeletons
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={`skeleton-${index}`} className={`p-4 ${index < 3 ? 'border-b border-border/30' : ''}`}>
+          Array.from({ length: 3 }).map((_, index) => (
+            <div key={`skeleton-${index}`} className={`p-4 ${index < 2 ? 'border-b border-border/30' : ''}`}>
               <div className="flex items-center gap-3">
                 <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
                 <div className="flex-1 min-w-0">
