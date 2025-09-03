@@ -78,16 +78,21 @@ export const HealthcareProviderSheet: React.FC<HealthcareProviderSheetProps> = (
   const loadHealthcareProviders = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('healthcare_providers')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('name');
-
-      if (error) throw error;
-      setProviders(data || []);
+      const storageKey = `healthcare_providers_${user?.id}`;
+      const savedProviders = localStorage.getItem(storageKey);
+      
+      if (savedProviders) {
+        setProviders(JSON.parse(savedProviders));
+      } else {
+        setProviders([]);
+      }
     } catch (error) {
       console.error('Error loading healthcare providers:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load healthcare providers",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -105,18 +110,20 @@ export const HealthcareProviderSheet: React.FC<HealthcareProviderSheetProps> = (
 
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('healthcare_providers')
-        .insert({
-          ...newProvider,
-          user_id: user.id
-        })
-        .select()
-        .single();
+      const providerId = `provider_${Date.now()}`;
+      const provider = {
+        ...newProvider,
+        id: providerId,
+        user_id: user.id,
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      const storageKey = `healthcare_providers_${user.id}`;
+      const existingProviders = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const updatedProviders = [...existingProviders, provider];
+      localStorage.setItem(storageKey, JSON.stringify(updatedProviders));
 
-      setProviders(prev => [...prev, data]);
+      setProviders(updatedProviders);
       setNewProvider({
         name: '',
         specialty: '',
@@ -172,23 +179,27 @@ export const HealthcareProviderSheet: React.FC<HealthcareProviderSheetProps> = (
         };
       }
 
-      // Save contact request to database
-      const { error } = await supabase
-        .from('provider_contact_requests')
-        .insert({
-          user_id: user?.id,
-          provider_id: selectedProvider.id,
-          provider_name: selectedProvider.name,
-          provider_phone: selectedProvider.phone,
-          provider_email: selectedProvider.email,
-          message: contactRequest.message,
-          urgency: contactRequest.urgency,
-          analytics_report: analyticsReport,
-          family_group_id: contactRequest.family_group_id,
-          status: 'pending'
-        });
+      // Save contact request to localStorage
+      const requestId = `request_${Date.now()}`;
+      const request = {
+        id: requestId,
+        user_id: user?.id,
+        provider_id: selectedProvider.id,
+        provider_name: selectedProvider.name,
+        provider_phone: selectedProvider.phone,
+        provider_email: selectedProvider.email,
+        message: contactRequest.message,
+        urgency: contactRequest.urgency,
+        analytics_report: analyticsReport,
+        family_group_id: contactRequest.family_group_id,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      const storageKey = `contact_requests_${user?.id}`;
+      const existingRequests = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const updatedRequests = [...existingRequests, request];
+      localStorage.setItem(storageKey, JSON.stringify(updatedRequests));
 
       // Send notification email to provider if email exists
       if (selectedProvider.email) {

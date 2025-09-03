@@ -19,16 +19,6 @@ interface DailyCheckupSheetProps {
   selectedMember?: string;
 }
 
-interface HealthMetric {
-  id: string;
-  icon: React.ComponentType<any>;
-  label: string;
-  value: number;
-  unit: string;
-  color: string;
-  description: string;
-}
-
 interface DailyCheckupData {
   mood: number;
   energy: number;
@@ -72,25 +62,22 @@ export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
   const checkTodaysCheckup = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
-        .from('daily_health_checkups')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('checkup_date', today)
-        .single();
+      const storageKey = `daily_checkup_${user?.id}_${today}`;
+      const savedCheckup = localStorage.getItem(storageKey);
 
-      if (data) {
+      if (savedCheckup) {
+        const checkup = JSON.parse(savedCheckup);
         setHasCompletedToday(true);
         setCheckupData({
-          mood: data.mood_score,
-          energy: data.energy_level,
-          pain: data.pain_level,
-          sleep: data.sleep_quality,
-          appetite: data.appetite_level,
-          stress: data.stress_level,
-          symptoms: data.symptoms || '',
-          notes: data.notes || '',
-          medications_taken: data.medications_taken
+          mood: checkup.mood_score,
+          energy: checkup.energy_level,
+          pain: checkup.pain_level,
+          sleep: checkup.sleep_quality,
+          appetite: checkup.appetite_level,
+          stress: checkup.stress_level,
+          symptoms: checkup.symptoms || '',
+          notes: checkup.notes || '',
+          medications_taken: checkup.medications_taken
         });
       } else {
         setHasCompletedToday(false);
@@ -122,34 +109,20 @@ export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
         overall_wellness_score: Math.round(
           (checkupData.mood + checkupData.energy + (10 - checkupData.pain) + 
            checkupData.sleep + checkupData.appetite + (10 - checkupData.stress)) / 6
-        )
+        ),
+        created_at: new Date().toISOString()
       };
 
-      if (hasCompletedToday) {
-        // Update existing record
-        const { error } = await supabase
-          .from('daily_health_checkups')
-          .update(checkupRecord)
-          .eq('user_id', user.id)
-          .eq('checkup_date', today);
-
-        if (error) throw error;
-        toast({
-          title: 'Daily Checkup Updated',
-          description: 'Your health checkup has been updated successfully.',
-        });
-      } else {
-        // Create new record
-        const { error } = await supabase
-          .from('daily_health_checkups')
-          .insert(checkupRecord);
-
-        if (error) throw error;
-        toast({
-          title: 'Daily Checkup Completed',
-          description: 'Your health checkup has been recorded successfully.',
-        });
-      }
+      // Save to localStorage temporarily
+      const storageKey = `daily_checkup_${user.id}_${today}`;
+      localStorage.setItem(storageKey, JSON.stringify(checkupRecord));
+      
+      toast({
+        title: hasCompletedToday ? 'Daily Checkup Updated' : 'Daily Checkup Completed',
+        description: hasCompletedToday 
+          ? 'Your health checkup has been updated successfully.'
+          : 'Your health checkup has been recorded successfully.',
+      });
 
       // Notify family members if any
       if (familyGroups.length > 0) {
