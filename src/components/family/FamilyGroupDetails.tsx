@@ -35,13 +35,13 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
   const activeMembers = group.members?.filter(m => m.invitation_status === 'accepted') || [];
 
   const TabLoadingSkeleton = () => (
-    <div className="space-y-4 p-4">
-      <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-3 p-3">
+      <div className="grid grid-cols-1 gap-3">
         {[1, 2, 3].map(i => (
           <Card key={i}>
-            <CardContent className="p-4">
-              <Skeleton className="h-4 w-3/4 mb-2" />
-              <Skeleton className="h-3 w-1/2" />
+            <CardContent className="p-3">
+              <Skeleton className="h-3 w-3/4 mb-2" />
+              <Skeleton className="h-2 w-1/2" />
             </CardContent>
           </Card>
         ))}
@@ -51,128 +51,101 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile-First Header */}
+      {/* Compact Header */}
       <div className="sticky top-0 z-50 bg-background border-b">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className="flex items-center justify-between p-3">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={onBack}
-              className="shrink-0 h-9 w-9"
+              className="shrink-0 h-8 w-8"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-semibold truncate">{group.name}</h1>
-              <p className="text-sm text-muted-foreground hidden sm:block">
-                Manage your family group and members
-              </p>
+              <h1 className="text-base font-semibold truncate">{group.name}</h1>
             </div>
           </div>
           
           <Button 
-            variant="outline" 
-            size="sm"
+            variant="ghost" 
+            size="icon"
             onClick={() => onEditGroup(group)}
-            className="shrink-0 h-9"
+            className="shrink-0 h-8 w-8"
           >
-            <Settings className="w-4 h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Settings</span>
+            <Settings className="w-4 h-4" />
           </Button>
         </div>
       </div>
 
-      {/* Mobile-Optimized Stats */}
-      <div className="p-4 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Compact Stats */}
+      <div className="p-3">
+        <div className="grid grid-cols-3 gap-2">
           <Card className="border-primary/20">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Users className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-2xl font-bold text-foreground">{activeMembers.length}</p>
-                  <p className="text-sm text-muted-foreground">Active Members</p>
-                </div>
+            <CardContent className="p-3">
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">{activeMembers.length}</p>
+                <p className="text-xs text-muted-foreground">Members</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-amber-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-100 rounded-lg">
-                  <ClipboardList className="w-5 h-5 text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-2xl font-bold text-foreground">0</p>
-                  <p className="text-sm text-muted-foreground">Pending Tasks</p>
-                </div>
+            <CardContent className="p-3">
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">0</p>
+                <p className="text-xs text-muted-foreground">Tasks</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-blue-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Calendar className="w-5 h-5 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-2xl font-bold text-foreground">0</p>
-                  <p className="text-sm text-muted-foreground">Appointments</p>
-                </div>
+            <CardContent className="p-3">
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">0</p>
+                <p className="text-xs text-muted-foreground">Events</p>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Mobile-Friendly Tabs */}
+      {/* Compact Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
-        <div className="border-b bg-background/95 backdrop-blur sticky top-16 z-40">
-          <TabsList className="w-full h-auto p-1 bg-transparent justify-start">
-            <div className="flex overflow-x-auto pb-1 w-full">
+        <div className="border-b bg-background sticky top-[49px] z-40">
+          <TabsList className="w-full h-auto p-0 bg-transparent justify-start">
+            <div className="flex overflow-x-auto w-full">
               <TabsTrigger 
                 value="overview" 
-                className="flex flex-col items-center gap-1 min-w-[80px] h-16 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg mx-1"
+                className="flex items-center gap-2 min-w-0 flex-1 h-10 px-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
               >
-                <Activity className="w-5 h-5" />
-                <span className="text-xs font-medium">Overview</span>
+                <Activity className="w-4 h-4" />
+                <span className="text-sm font-medium">Overview</span>
               </TabsTrigger>
               
               <TabsTrigger 
                 value="tasks" 
-                className="flex flex-col items-center gap-1 min-w-[80px] h-16 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg mx-1"
+                className="flex items-center gap-2 min-w-0 flex-1 h-10 px-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
               >
-                <ClipboardList className="w-5 h-5" />
-                <span className="text-xs font-medium">Tasks</span>
+                <ClipboardList className="w-4 h-4" />
+                <span className="text-sm font-medium">Tasks</span>
               </TabsTrigger>
               
               <TabsTrigger 
                 value="analytics" 
-                className="flex flex-col items-center gap-1 min-w-[80px] h-16 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg mx-1"
+                className="flex items-center gap-2 min-w-0 flex-1 h-10 px-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
               >
-                <Settings className="w-5 h-5" />
-                <span className="text-xs font-medium">Analytics</span>
+                <Settings className="w-4 h-4" />
+                <span className="text-sm font-medium">Analytics</span>
               </TabsTrigger>
               
               <TabsTrigger 
                 value="insights" 
-                className="flex flex-col items-center gap-1 min-w-[80px] h-16 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg mx-1"
+                className="flex items-center gap-2 min-w-0 flex-1 h-10 px-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
               >
-                <Shield className="w-5 h-5" />
-                <span className="text-xs font-medium">Insights</span>
-              </TabsTrigger>
-              
-              <TabsTrigger 
-                value="appointments" 
-                className="flex flex-col items-center gap-1 min-w-[80px] h-16 px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg mx-1"
-              >
-                <Calendar className="w-5 h-5" />
-                <span className="text-xs font-medium">Calendar</span>
+                <Shield className="w-4 h-4" />
+                <span className="text-sm font-medium">Insights</span>
               </TabsTrigger>
             </div>
           </TabsList>
@@ -180,27 +153,27 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
         <div className="flex-1">
           <TabsContent value="overview" className="mt-0 p-0">
-            <div className="p-4 space-y-4">
-              {/* Family Members - Mobile Optimized */}
+            <div className="p-3 space-y-3">
+              {/* Family Members - Compact */}
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
+                <CardHeader className="pb-2 px-3 pt-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
                     <Users className="w-4 h-4" />
                     Family Members
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="px-3 pb-3 space-y-2">
                   {activeMembers.length > 0 ? (
                     activeMembers.map((member) => (
-                      <div key={member.user_id} className="flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-muted/70 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="text-sm font-semibold text-primary">
+                      <div key={member.user_id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-xs font-semibold text-primary">
                               {member.user_id?.charAt(0)?.toUpperCase() || '?'}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-sm">
+                            <p className="font-medium text-xs">
                               Member {member.user_id?.slice(0, 8)}
                             </p>
                             <p className="text-xs text-muted-foreground capitalize">
@@ -208,35 +181,35 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <div className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                           <span className="text-xs text-muted-foreground">Online</span>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p className="text-sm">No family members yet</p>
-                      <p className="text-xs">Invite members to get started</p>
+                    <div className="text-center py-4 text-muted-foreground">
+                      <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                      <p className="text-xs">No family members yet</p>
+                      <p className="text-xs opacity-60">Invite members to get started</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Recent Activity - Mobile Optimized */}
+              {/* Recent Activity - Compact */}
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
+                <CardHeader className="pb-2 px-3 pt-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
                     <Activity className="w-4 h-4" />
                     Recent Activity
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Activity className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm font-medium">No recent activity</p>
-                    <p className="text-xs">Family activities will appear here</p>
+                <CardContent className="px-3 pb-3">
+                  <div className="text-center py-4 text-muted-foreground">
+                    <Activity className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                    <p className="text-xs">No recent activity</p>
+                    <p className="text-xs opacity-60">Family activities will appear here</p>
                   </div>
                 </CardContent>
               </Card>
