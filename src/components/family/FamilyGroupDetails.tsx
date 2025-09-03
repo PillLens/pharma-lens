@@ -132,34 +132,34 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1">
-          <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+        <TabsList className="grid w-full grid-cols-7 md:grid-cols-7 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
+          <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Activity className="w-4 h-4" />
-            <span>Overview</span>
+            <span className="hidden sm:block">Overview</span>
           </TabsTrigger>
-          <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <ClipboardList className="w-4 h-4" />
-            <span>Tasks</span>
+            <span className="hidden sm:block">Tasks</span>
           </TabsTrigger>
-          <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="messaging" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <MessageCircle className="w-4 h-4" />
-            <span>Chat</span>
+            <span className="hidden sm:block">Chat</span>
           </TabsTrigger>
-          <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Users className="w-4 h-4" />
-            <span>Voice AI</span>
+            <span className="hidden sm:block">Voice AI</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Settings className="w-4 h-4" />
-            <span>Analytics</span>
+            <span className="hidden sm:block">Analytics</span>
           </TabsTrigger>
-          <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Shield className="w-4 h-4" />
-            <span>Insights</span>
+            <span className="hidden sm:block">Insights</span>
           </TabsTrigger>
-          <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
+          <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Calendar className="w-4 h-4" />
-            <span>Calendar</span>
+            <span className="hidden sm:block">Calendar</span>
           </TabsTrigger>
         </TabsList>
 
