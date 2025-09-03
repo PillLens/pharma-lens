@@ -188,7 +188,7 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold">{t('family.careTasks.title')}</h3>
+          <h3 className="text-lg font-semibold">Care Tasks</h3>
           <Badge variant="secondary">{tasks.length}</Badge>
         </div>
         
