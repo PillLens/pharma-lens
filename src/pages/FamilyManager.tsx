@@ -374,6 +374,15 @@ const FamilyManager: React.FC = () => {
               }}
               onEditGroup={handleEditGroup}
               currentUserId={currentUserId}
+              onMemberRemoved={async () => {
+                // Refresh group details when a member is removed
+                const updatedGroup = await familySharingService.getFamilyGroupDetails(selectedGroup.id);
+                if (updatedGroup) {
+                  setSelectedGroup(updatedGroup);
+                }
+                // Also refresh the main groups list
+                loadFamilyData();
+              }}
             />
           </Suspense>
         </div>

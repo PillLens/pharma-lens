@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from '@/hooks/useTranslation';
-import { FamilyGroup } from '@/services/familySharingService';
+import { FamilyGroup, familySharingService } from '@/services/familySharingService';
+import { toast } from '@/hooks/use-toast';
 
 // Lazy load the heavy components
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
