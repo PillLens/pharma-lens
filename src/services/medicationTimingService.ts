@@ -314,28 +314,24 @@ export class MedicationTimingService {
         r.days_of_week.includes(currentDayOfWeek)
       );
 
-      // Check if any dose was taken for current reminder window
-      for (const reminder of todaysReminders) {
-        const windowInfo = this.isInDoseWindow(currentTime, reminder.reminder_time, 30);
+      // Check if any dose was taken for specific reminder times (not window-based)
+      for (const dose of doses) {
+        const scheduledTime = new Date(dose.scheduled_time);
+        const scheduledTimeStr = `${scheduledTime.getHours().toString().padStart(2, '0')}:${scheduledTime.getMinutes().toString().padStart(2, '0')}`;
         
-        // If we're in a reminder window, check for taken doses
-        if (windowInfo.isDue || windowInfo.isOverdue) {
-          const reminderDate = this.parseTimeToday(reminder.reminder_time, timezone);
+        // Find the exact reminder this dose matches
+        const matchingReminder = todaysReminders.find(r => r.reminder_time === scheduledTimeStr);
+        
+        if (matchingReminder) {
+          // Only return recently taken if we're still within the reminder window for THIS specific time
+          const windowInfo = this.isInDoseWindow(currentTime, matchingReminder.reminder_time, 30);
           
-          // Create a wider window for matching (±60 minutes)
-          const windowStart = new Date(reminderDate.getTime() - 60 * 60 * 1000);
-          const windowEnd = new Date(reminderDate.getTime() + 60 * 60 * 1000);
-
-          for (const dose of doses) {
-            const scheduledTime = new Date(dose.scheduled_time);
-            // Check if scheduled time matches this reminder window
-            if (scheduledTime >= windowStart && scheduledTime <= windowEnd) {
-              console.log(`Found matching dose for ${reminder.reminder_time}:`, dose);
-              return { 
-                recentlyTaken: true, 
-                takenTime: dose.taken_time 
-              };
-            }
+          if (windowInfo.isDue || windowInfo.isOverdue) {
+            console.log(`${scheduledTimeStr} was recently taken, skipping due/overdue check`);
+            return { 
+              recentlyTaken: true, 
+              takenTime: dose.taken_time 
+            };
           }
         }
       }
