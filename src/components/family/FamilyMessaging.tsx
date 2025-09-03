@@ -102,11 +102,11 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
       metadata: {}
     });
 
-    if (success) {
-      setNewMessage('');
-      setMessageType('text');
-      loadMessages(); // Refresh messages
-    }
+      if (success) {
+        setNewMessage('');
+        setMessageType('text');
+        await loadMessages(); // Refresh messages
+      }
   };
 
   const handleEmergencyAlert = async () => {
