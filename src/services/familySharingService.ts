@@ -219,7 +219,7 @@ export class FamilySharingService {
             ...group,
             creator_profile: creatorProfile || undefined,
             members: membersWithProfiles,
-            member_count: (members?.length || 0) + 1 // +1 for creator
+            member_count: membersWithProfiles.filter(m => m.invitation_status === 'accepted').length + 1 // +1 for creator, only count accepted members
           };
         })
       );
