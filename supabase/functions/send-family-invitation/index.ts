@@ -43,7 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     const emailResponse = await resend.emails.send({
-      from: "PillLens Family <invitations@resend.dev>",
+      from: "PillLens Family <invitations@pilllens.com>",
       to: [invitedEmail],
       subject: `${inviterName} invited you to join their family group on PillLens`,
       html: `
