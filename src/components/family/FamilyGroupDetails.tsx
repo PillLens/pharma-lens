@@ -1,9 +1,10 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield } from 'lucide-react';
+import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield, MoreVertical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/hooks/useTranslation';
 import { FamilyGroup, familySharingService } from '@/services/familySharingService';
 import { toast } from '@/hooks/use-toast';
@@ -174,19 +175,21 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
                      <div className="flex items-center gap-3">
                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                          <span className="text-sm font-medium">
-                           {(member.display_name || 
+                           {(member.user_profile?.display_name || 
+                             member.user_profile?.email || 
+                             member.display_name || 
                              member.user_email || 
-                             member.user_profile?.display_name || 
-                             member.user_profile?.email)?.charAt(0)?.toUpperCase() || 
+                             member.invited_email)?.charAt(0)?.toUpperCase() || 
                              member.user_id?.charAt(0) || '?'}
                          </span>
                        </div>
                        <div>
                          <p className="font-medium text-sm">
-                           {member.display_name || 
+                           {member.user_profile?.display_name || 
+                            member.user_profile?.email || 
+                            member.display_name || 
                             member.user_email || 
-                            member.user_profile?.display_name || 
-                            member.user_profile?.email ||
+                            member.invited_email ||
                             `Member ${member.user_id?.slice(0, 8)}`}
                          </p>
                          <p className="text-xs text-muted-foreground capitalize">
@@ -198,19 +201,27 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
                        <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
                        <span className="text-xs text-muted-foreground">Online</span>
                        {member.user_id !== currentUserId && (
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           onClick={async () => {
-                             const success = await familySharingService.removeFamilyMember(group.id, member.user_id);
-                             if (success && onMemberRemoved) {
-                               onMemberRemoved();
-                             }
-                           }}
-                           className="text-destructive hover:text-destructive hover:bg-destructive/10 ml-2 px-2 py-1"
-                         >
-                           Remove
-                         </Button>
+                         <DropdownMenu>
+                           <DropdownMenuTrigger asChild>
+                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                               <MoreVertical className="h-4 w-4" />
+                             </Button>
+                           </DropdownMenuTrigger>
+                           <DropdownMenuContent align="end">
+                             <DropdownMenuItem
+                               onClick={async () => {
+                                 const success = await familySharingService.removeFamilyMember(group.id, member.user_id);
+                                 if (success && onMemberRemoved) {
+                                   onMemberRemoved();
+                                 }
+                               }}
+                               className="text-destructive focus:text-destructive"
+                             >
+                               <Trash2 className="mr-2 h-4 w-4" />
+                               Remove Member
+                             </DropdownMenuItem>
+                           </DropdownMenuContent>
+                         </DropdownMenu>
                        )}
                      </div>
                   </div>

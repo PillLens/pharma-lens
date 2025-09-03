@@ -33,6 +33,7 @@ export interface FamilyMember {
     receive_alerts: boolean;
   };
   invited_by?: string;
+  invited_email?: string;
   invitation_status: 'pending' | 'accepted' | 'declined';
   invited_at: string;
   accepted_at?: string;
@@ -246,20 +247,20 @@ export class FamilySharingService {
             .eq('id', member.invited_by)
             .single() : { data: null };
 
-          return {
-            ...member,
-            role: member.role as 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
-            invitation_status: member.invitation_status as 'pending' | 'accepted' | 'declined',
-            permissions: member.permissions as {
-              view_medications: boolean;
-              edit_medications: boolean;
-              receive_alerts: boolean;
-            },
-            user_profile: userProfile || undefined,
-            inviter_profile: inviterProfile || undefined,
-            display_name: userProfile?.display_name || userProfile?.email,
-            user_email: userProfile?.email
-          };
+           return {
+             ...member,
+             role: member.role as 'caregiver' | 'patient' | 'emergency_contact' | 'family' | 'emergency',
+             invitation_status: member.invitation_status as 'pending' | 'accepted' | 'declined',
+             permissions: member.permissions as {
+               view_medications: boolean;
+               edit_medications: boolean;
+               receive_alerts: boolean;
+             },
+             user_profile: userProfile || undefined,
+             inviter_profile: inviterProfile || undefined,
+             display_name: userProfile?.display_name || userProfile?.email || member.invited_email,
+             user_email: userProfile?.email || member.invited_email
+           };
         })
       );
 
