@@ -585,6 +585,48 @@ export type Database = {
           },
         ]
       }
+      family_calls: {
+        Row: {
+          call_type: string
+          caller_id: string
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          family_group_id: string
+          id: string
+          recipient_id: string
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          call_type: string
+          caller_id: string
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          family_group_id: string
+          id?: string
+          recipient_id: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          call_type?: string
+          caller_id?: string
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          family_group_id?: string
+          id?: string
+          recipient_id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       family_groups: {
         Row: {
           created_at: string

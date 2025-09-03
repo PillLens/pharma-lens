@@ -230,13 +230,23 @@ export class FamilySharingService {
 
   async getFamilyGroupDetails(groupId: string): Promise<FamilyGroup | null> {
     try {
+      console.log('Getting family group details for:', groupId);
+      
       const { data, error } = await supabase
         .from('family_groups')
         .select('*')
         .eq('id', groupId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching group:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.log('No group found with ID:', groupId);
+        return null;
+      }
 
       // Get creator profile
       const { data: creatorProfile } = await supabase
@@ -245,11 +255,12 @@ export class FamilySharingService {
         .eq('id', data.creator_id)
         .single();
 
-      // Get members
+      // Get accepted members only
       const { data: members, error: membersError } = await supabase
         .from('family_members')
         .select('*')
-        .eq('family_group_id', groupId);
+        .eq('family_group_id', groupId)
+        .eq('invitation_status', 'accepted'); // Only get accepted members
 
       if (membersError) {
         console.error('Error fetching members:', membersError);
@@ -282,10 +293,14 @@ export class FamilySharingService {
             user_profile: userProfile || undefined,
             inviter_profile: inviterProfile || undefined,
             display_name: userProfile?.display_name || userProfile?.email,
-            user_email: userProfile?.email
+            user_email: userProfile?.email,
+            profiles: userProfile || undefined // Add this for compatibility
           };
         })
       );
+
+      console.log('Group details loaded:', data);
+      console.log('Group members loaded:', membersWithProfiles);
 
       return {
         ...data,
