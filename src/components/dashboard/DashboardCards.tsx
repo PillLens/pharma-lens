@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Pill, Users, FileText, Shield, CreditCard, TrendingUp, AlertCircle, Target, Award, Bell } from 'lucide-react';
+import { Clock, Pill, FileText, Shield, CreditCard, TrendingUp, AlertCircle, Target, Award, Bell } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -181,45 +181,6 @@ export function DashboardCards({ onNavigate }: DashboardCardsProps) {
         )}
       </div>
 
-      {/* Family & Care */}
-      <FeatureGate feature="can_create_family_group" showPaywall={false}>
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary" />
-                <CardTitle className="text-lg">
-                  <TranslatedText translationKey="dashboard.familyCare" fallback="Family & Care" />
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => onNavigate('/family')}>
-                <TranslatedText translationKey="dashboard.openFamily" fallback="Open Family" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-4">
-              {dashboardStats.family.groups > 0 ? (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">{dashboardStats.family.groups} groups • {dashboardStats.family.members} members</p>
-                  <Button variant="outline" size="sm" onClick={() => onNavigate('/family')}>
-                    <TranslatedText translationKey="dashboard.manageFamily" fallback="Manage Family" />
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <TranslatedText translationKey="dashboard.noFamilyGroups" fallback="No family groups yet" />
-                  </p>
-                  <Button variant="outline" size="sm" className="mt-2" onClick={() => onNavigate('/family')}>
-                    <TranslatedText translationKey="dashboard.createGroup" fallback="Create Group" />
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </FeatureGate>
 
       {/* Reports & Export */}
       <FeatureGate feature="can_export_reports">

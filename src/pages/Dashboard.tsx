@@ -4,7 +4,6 @@ import {
   Sparkles, 
   Pill, 
   Clock, 
-  Users, 
   TrendingUp, 
   Heart, 
   Sun, 
@@ -142,15 +141,6 @@ const Dashboard: React.FC = () => {
       borderColor: 'border-primary/20',
       onClick: () => navigate('/medications')
     },
-    {
-      icon: Users,
-      value: dashboardStats.family.members,
-      label: t('dashboard.familyMembers', 'Family Members'),
-      color: 'text-info',
-      bgColor: 'bg-info/10',
-      borderColor: 'border-info/20',
-      onClick: () => navigate('/family')
-    }
   ];
 
   return (
@@ -356,29 +346,6 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Family Care */}
-              <div
-                onClick={() => navigate('/family')}
-                className="p-4 border-b border-border/30 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-foreground mb-0.5 text-base">
-                      <TranslatedText translationKey="dashboard.familyHealth" />
-                    </div>
-                    <div className="text-sm text-muted-foreground leading-tight">
-                      {dashboardStats.family.groups > 0 
-                        ? `${dashboardStats.family.members} ${t('dashboard.familyMembersText')}` 
-                        : t('dashboard.setupFamilyCare')
-                      }
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
-                </div>
-              </div>
 
               {/* Settings Card */}
               <div

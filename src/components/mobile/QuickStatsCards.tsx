@@ -49,16 +49,6 @@ const QuickStatsCards: React.FC = () => {
       onClick: () => navigate('/reminders')
     },
     {
-      icon: Users,
-      value: dashboardStats.family.groups,
-      label: 'family',
-      translationKey: 'dashboard.family',
-      color: 'text-info',
-      bgColor: 'bg-info/10',
-      borderColor: 'border-info/20',
-      onClick: () => navigate('/family')
-    },
-    {
       icon: Activity,
       value: dashboardStats.scans.recentCount,
       label: 'scans',

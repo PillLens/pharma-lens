@@ -58,12 +58,6 @@ const navigationItems = [
     category: 'medical'
   },
   {
-    icon: Users,
-    labelKey: 'navigation.family',
-    href: '/family',
-    category: 'medical'
-  },
-  {
     icon: History,
     labelKey: 'navigation.history',
     href: '/history',

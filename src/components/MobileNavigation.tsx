@@ -41,7 +41,7 @@ const MobileNavigation = () => {
     { icon: Scan, labelKey: 'navigation.scanner', href: '/scanner' },
     { icon: History, labelKey: 'navigation.history', href: '/history' },
     { icon: Pill, labelKey: 'navigation.medications', href: '/medications' },
-    { icon: Users, labelKey: 'navigation.family', href: '/family' },
+    
     { icon: Bell, labelKey: 'navigation.reminders', href: '/reminders' },
     { icon: Shield, labelKey: 'navigation.security', href: '/security' },
     { icon: Settings, labelKey: 'navigation.settings', href: '/settings' },

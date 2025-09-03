@@ -36,7 +36,7 @@ const EnhancedMobileNavigation = () => {
     { icon: Home, labelKey: 'navigation.scanner', href: '/', descriptionKey: 'descriptions.scanMedications' },
     { icon: History, labelKey: 'navigation.history', href: '/history', descriptionKey: 'descriptions.viewHistory' },
     { icon: Pill, labelKey: 'navigation.medications', href: '/medications', descriptionKey: 'descriptions.manageMedications' },
-    { icon: Users, labelKey: 'navigation.family', href: '/family', descriptionKey: 'descriptions.familyCaregivers' },
+    
     { icon: Bell, labelKey: 'navigation.reminders', href: '/reminders', descriptionKey: 'descriptions.medicationReminders' },
     { icon: Shield, labelKey: 'navigation.security', href: '/security', descriptionKey: 'descriptions.securityDashboard' },
   ];
