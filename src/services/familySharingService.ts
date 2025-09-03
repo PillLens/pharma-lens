@@ -105,30 +105,8 @@ export class FamilySharingService {
         return profileData;
       }
 
-      // If not found in profiles, check if user exists in auth system using the database function
-      const { data: userExists, error: functionError } = await supabase
-        .rpc('find_user_by_email', { user_email: email.toLowerCase().trim() });
-
-      console.log('Auth user search result:', { userExists, functionError });
-
-      if (functionError) {
-        console.error('Error checking auth users:', functionError);
-        return null;
-      }
-
-      if (userExists) {
-        // User exists in auth but no profile yet - this is valid for invitation
-        const fallbackProfile = {
-          id: userExists,
-          email: email.toLowerCase().trim(),
-          display_name: email.split('@')[0],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        } as UserProfile;
-        
-        console.log('Created fallback profile:', fallbackProfile);
-        return fallbackProfile;
-      }
+      // If not found in profiles, user doesn't exist yet - they need to create an account
+      // For invitations, we'll allow the invitation to be sent anyway
 
       console.log('User not found');
       return null;
@@ -390,27 +368,32 @@ export class FamilySharingService {
       const invitedUser = await this.findUserByEmail(userEmail);
       console.log('Found invited user:', invitedUser);
       
+      // For users not found in profiles, create invitation anyway - they can accept when they sign up
+      let targetUserId;
       if (!invitedUser) {
-        toast.error('User not found. They need to create an account first.');
-        return false;
-      }
+        // Create a temporary unique ID for the invitation (they'll need to match email when signing up)
+        targetUserId = `pending_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${Date.now()}`;
+        console.log('Creating invitation for non-existent user with temp ID:', targetUserId);
+      } else {
+        targetUserId = invitedUser.id;
+        
+        // Check if user is already a member
+        const { data: existingMember } = await supabase
+          .from('family_members')
+          .select('id')
+          .eq('family_group_id', groupId)
+          .eq('user_id', targetUserId)
+          .single();
 
-      // Check if user is already a member
-      const { data: existingMember } = await supabase
-        .from('family_members')
-        .select('id')
-        .eq('family_group_id', groupId)
-        .eq('user_id', invitedUser.id)
-        .single();
-
-      if (existingMember) {
-        toast.error('User is already a member of this group');
-        return false;
+        if (existingMember) {
+          toast.error('User is already a member of this group');
+          return false;
+        }
       }
 
       console.log('Inserting family member:', {
         family_group_id: groupId,
-        user_id: invitedUser.id,
+        user_id: targetUserId,
         role,
         permissions,
         invited_by: user.id,
@@ -421,7 +404,7 @@ export class FamilySharingService {
         .from('family_members')
         .insert({
           family_group_id: groupId,
-          user_id: invitedUser.id,
+          user_id: targetUserId,
           role,
           permissions,
           invited_by: user.id,
