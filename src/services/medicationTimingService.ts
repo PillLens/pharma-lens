@@ -12,13 +12,13 @@ export interface MedicationTimingInfo {
 
 export class MedicationTimingService {
   /**
-   * Get next dose time based on actual user reminders
+   * Get next dose time based on actual user reminders and adherence status
    */
   async getNextDoseTime(
     medicationId: string,
     userId: string,
     timezone: string,
-    recentlyTaken: boolean = false
+    forceRefresh: boolean = false
   ): Promise<MedicationTimingInfo> {
     try {
       // Get active reminders for this medication
@@ -38,45 +38,71 @@ export class MedicationTimingService {
       const currentTime = format(now, 'HH:mm');
       const currentDayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // Convert Sunday (0) to 7
 
+      // Get today's adherence data to check what's been taken
+      const startOfDay = new Date(now);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const { data: todaysAdherence } = await supabase
+        .from('medication_adherence_log')
+        .select('scheduled_time, status, taken_time')
+        .eq('user_id', userId)
+        .eq('medication_id', medicationId)
+        .gte('scheduled_time', startOfDay.toISOString())
+        .lte('scheduled_time', endOfDay.toISOString())
+        .eq('status', 'taken');
+
       // Find today's reminders
       const todaysReminders = reminders.filter(r => 
         r.days_of_week.includes(currentDayOfWeek)
       ).sort((a, b) => a.reminder_time.localeCompare(b.reminder_time));
 
-      // Check each reminder to see if we're in the window
+      // Check if there's a current due/overdue reminder that hasn't been taken
       for (const reminder of todaysReminders) {
         const reminderTime = reminder.reminder_time;
-        const windowInfo = this.isInDoseWindow(currentTime, reminderTime, 30);
+        const windowInfo = this.isInDoseWindow(currentTime, reminderTime, 15); // Reduced to 15-minute window
+        
+        // Check if this specific reminder time has been taken today
+        const reminderTaken = todaysAdherence?.some(log => {
+          const logTime = new Date(log.scheduled_time);
+          const logTimeStr = `${logTime.getHours().toString().padStart(2, '0')}:${logTime.getMinutes().toString().padStart(2, '0')}`;
+          return logTimeStr === reminderTime;
+        }) || false;
 
-        if (windowInfo.isDue && !recentlyTaken) {
+        if ((windowInfo.isDue || windowInfo.isOverdue) && !reminderTaken) {
           const formattedTime = formatInTimeZone(
             this.parseTimeToday(reminderTime, timezone), 
             timezone, 
             'HH:mm'
           );
+          
+          // Check if it's been overdue for more than 15 minutes - should be marked as missed
+          if (windowInfo.isOverdue) {
+            const [currentHour, currentMinute] = currentTime.split(':').map(Number);
+            const [reminderHour, reminderMinute] = reminderTime.split(':').map(Number);
+            const currentTotalMinutes = currentHour * 60 + currentMinute;
+            const reminderTotalMinutes = reminderHour * 60 + reminderMinute;
+            const overdueBy = currentTotalMinutes - reminderTotalMinutes;
+            
+            if (overdueBy > 15) {
+              // Mark as missed if overdue by more than 15 minutes
+              await this.markDoseAsMissed(userId, medicationId, reminderTime, timezone);
+              continue; // Skip to next reminder
+            }
+          }
+          
           return {
-            isDue: true,
-            nextTime: `Due at ${formattedTime}`,
+            isDue: windowInfo.isDue,
+            nextTime: windowInfo.isDue ? `Due at ${formattedTime}` : `Overdue: ${formattedTime}`,
             isOverdue: windowInfo.isOverdue,
-            currentReminderTime: reminderTime,
-            upcomingReminderTimes: todaysReminders.map(r => r.reminder_time)
-          };
-        }
-
-        if (windowInfo.isOverdue && !recentlyTaken) {
-          // Find next upcoming reminder today or tomorrow
-          const nextReminder = this.findNextReminder(todaysReminders, currentTime, reminders, currentDayOfWeek);
-          return {
-            isDue: false,
-            nextTime: nextReminder,
-            isOverdue: true,
             currentReminderTime: reminderTime,
             upcomingReminderTimes: todaysReminders.map(r => r.reminder_time)
           };
         }
       }
 
-      // Not due - find next upcoming reminder
+      // Find next upcoming reminder (all current reminders taken or missed)
       const nextReminder = this.findNextReminder(todaysReminders, currentTime, reminders, currentDayOfWeek);
       return {
         isDue: false,
@@ -92,12 +118,60 @@ export class MedicationTimingService {
   }
 
   /**
-   * Check if current time is within dose window
+   * Mark a dose as missed after grace period
+   */
+  private async markDoseAsMissed(userId: string, medicationId: string, reminderTime: string, timezone: string): Promise<void> {
+    try {
+      // Create scheduled time for today
+      const today = toZonedTime(new Date(), timezone);
+      const [hours, minutes] = reminderTime.split(':').map(Number);
+      const scheduledTime = new Date(today);
+      scheduledTime.setHours(hours, minutes, 0, 0);
+
+      // Check if this dose is already logged
+      const { data: existingDose } = await supabase
+        .from('medication_adherence_log')
+        .select('id, status')
+        .eq('user_id', userId)
+        .eq('medication_id', medicationId)
+        .eq('scheduled_time', scheduledTime.toISOString())
+        .single();
+
+      // Only mark as missed if it's not already taken or missed
+      if (!existingDose) {
+        await supabase
+          .from('medication_adherence_log')
+          .insert({
+            user_id: userId,
+            medication_id: medicationId,
+            scheduled_time: scheduledTime.toISOString(),
+            status: 'missed',
+            notes: 'Automatically marked as missed after grace period'
+          });
+        console.log(`Marked dose as missed: ${reminderTime} for medication ${medicationId}`);
+      } else if (existingDose.status === 'scheduled') {
+        // Update from scheduled to missed
+        await supabase
+          .from('medication_adherence_log')
+          .update({
+            status: 'missed',
+            notes: 'Automatically marked as missed after grace period'
+          })
+          .eq('id', existingDose.id);
+        console.log(`Updated scheduled dose to missed: ${reminderTime} for medication ${medicationId}`);
+      }
+    } catch (error) {
+      console.error('Error marking dose as missed:', error);
+    }
+  }
+
+  /**
+   * Check if current time is within dose window - improved logic
    */
   private isInDoseWindow(
     currentTime: string,
     reminderTime: string,
-    windowMinutes: number = 30
+    graceMinutes: number = 15
   ): { isDue: boolean; isOverdue: boolean } {
     const [currentHour, currentMinute] = currentTime.split(':').map(Number);
     const [reminderHour, reminderMinute] = reminderTime.split(':').map(Number);
@@ -105,11 +179,16 @@ export class MedicationTimingService {
     const currentTotalMinutes = currentHour * 60 + currentMinute;
     const reminderTotalMinutes = reminderHour * 60 + reminderMinute;
     
-    const windowStart = reminderTotalMinutes - windowMinutes;
-    const windowEnd = reminderTotalMinutes + windowMinutes;
+    // Due window: 15 minutes before to scheduled time
+    const dueWindowStart = reminderTotalMinutes - graceMinutes;
+    const dueWindowEnd = reminderTotalMinutes;
     
-    const isDue = currentTotalMinutes >= windowStart && currentTotalMinutes <= windowEnd;
-    const isOverdue = currentTotalMinutes > windowEnd;
+    // Overdue window: after scheduled time up to grace period
+    const overdueWindowStart = reminderTotalMinutes;
+    const overdueWindowEnd = reminderTotalMinutes + graceMinutes;
+    
+    const isDue = currentTotalMinutes >= dueWindowStart && currentTotalMinutes <= dueWindowEnd;
+    const isOverdue = currentTotalMinutes > overdueWindowStart && currentTotalMinutes <= overdueWindowEnd;
     
     return { isDue, isOverdue };
   }
@@ -131,7 +210,7 @@ export class MedicationTimingService {
       const [reminderHour, reminderMinute] = reminder.reminder_time.split(':').map(Number);
       const reminderTotalMinutes = reminderHour * 60 + reminderMinute;
       
-      if (reminderTotalMinutes > currentTotalMinutes + 30) { // 30 min buffer
+      if (reminderTotalMinutes > currentTotalMinutes + 15) { // 15 min buffer
         const formattedTime = this.formatTime(reminder.reminder_time);
         return `Next: Today ${formattedTime}`;
       }

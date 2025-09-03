@@ -546,15 +546,24 @@ const MedicationManager: React.FC = () => {
       );
 
       if (success) {
+        // Clear any active notifications for this medication/time
+        const { medicationNotificationService } = await import('@/services/medicationNotificationService');
+        await medicationNotificationService.markDoseTaken(medicationId, reminderTimeToUse);
+
         toast.success('Medication marked as taken! 🎉', {
           description: 'Dose logged successfully in your health record',
           duration: 3000,
         });
 
-        // Refresh medications to update stats and clear overdue status
+        // Immediate refresh to show next scheduled dose
         refetch();
-        // Trigger refresh of upcoming dose times
         setRefreshKey(prev => prev + 1);
+        
+        // Force component re-render after small delay to ensure timing service updates
+        setTimeout(() => {
+          refetch();
+          setRefreshKey(prev => prev + 1);
+        }, 500);
       } else {
         throw new Error('Failed to record dose');
       }
