@@ -79,50 +79,50 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
       </div>
 
       {/* Group Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card className="bg-background border">
+          <CardContent className="p-3">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-primary" />
-              <div>
-                <p className="text-2xl font-bold">{activeMembers.length}</p>
-                <p className="text-xs text-muted-foreground">Active Members</p>
+              <div className="min-w-0">
+                <p className="text-lg font-semibold">{activeMembers.length}</p>
+                <p className="text-xs text-muted-foreground truncate">Active Members</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
+        <Card className="bg-background border">
+          <CardContent className="p-3">
             <div className="flex items-center gap-2">
               <ClipboardList className="w-4 h-4 text-warning" />
-              <div>
-                <p className="text-2xl font-bold">0</p>
-                <p className="text-xs text-muted-foreground">Pending Tasks</p>
+              <div className="min-w-0">
+                <p className="text-lg font-semibold">0</p>
+                <p className="text-xs text-muted-foreground truncate">Pending Tasks</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
+        <Card className="bg-background border">
+          <CardContent className="p-3">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-blue-500" />
-              <div>
-                <p className="text-2xl font-bold">0</p>
-                <p className="text-xs text-muted-foreground">Upcoming Appointments</p>
+              <div className="min-w-0">
+                <p className="text-lg font-semibold">0</p>
+                <p className="text-xs text-muted-foreground truncate">Upcoming Appointments</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
+        <Card className="bg-background border">
+          <CardContent className="p-3">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-green-500" />
-              <div>
-                <p className="text-2xl font-bold">0</p>
-                <p className="text-xs text-muted-foreground">Unread Messages</p>
+              <div className="min-w-0">
+                <p className="text-lg font-semibold">0</p>
+                <p className="text-xs text-muted-foreground truncate">Unread Messages</p>
               </div>
             </div>
           </CardContent>
