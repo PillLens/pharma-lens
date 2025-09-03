@@ -368,43 +368,40 @@ export class FamilySharingService {
       const invitedUser = await this.findUserByEmail(userEmail);
       console.log('Found invited user:', invitedUser);
       
-      // For users not found in profiles, create invitation anyway - they can accept when they sign up
-      let targetUserId;
-      if (!invitedUser) {
-        // Create a temporary unique ID for the invitation (they'll need to match email when signing up)
-        targetUserId = `pending_${userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${Date.now()}`;
-        console.log('Creating invitation for non-existent user with temp ID:', targetUserId);
-      } else {
-        targetUserId = invitedUser.id;
-        
-        // Check if user is already a member
+      // Check if user or email is already invited/member
+      if (invitedUser) {
         const { data: existingMember } = await supabase
           .from('family_members')
           .select('id')
           .eq('family_group_id', groupId)
-          .eq('user_id', targetUserId)
+          .eq('user_id', invitedUser.id)
           .single();
 
         if (existingMember) {
           toast.error('User is already a member of this group');
           return false;
         }
+      } else {
+        const { data: existingInvite } = await supabase
+          .from('family_members')
+          .select('id')
+          .eq('family_group_id', groupId)
+          .eq('invited_email', userEmail.toLowerCase().trim())
+          .single();
+
+        if (existingInvite) {
+          toast.error('An invitation has already been sent to this email');
+          return false;
+        }
       }
-
-      console.log('Inserting family member:', {
-        family_group_id: groupId,
-        user_id: targetUserId,
-        role,
-        permissions,
-        invited_by: user.id,
-        invitation_status: 'pending'
-      });
-
+      
+      // For users not found in profiles, create invitation with email instead of user_id
       const { error } = await supabase
         .from('family_members')
         .insert({
           family_group_id: groupId,
-          user_id: targetUserId,
+          user_id: invitedUser?.id || null,
+          invited_email: invitedUser ? null : userEmail.toLowerCase().trim(),
           role,
           permissions,
           invited_by: user.id,

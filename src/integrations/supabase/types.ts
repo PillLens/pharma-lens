@@ -659,10 +659,11 @@ export type Database = {
           invitation_status: string
           invited_at: string
           invited_by: string | null
+          invited_email: string | null
           permissions: Json
           role: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           accepted_at?: string | null
@@ -672,10 +673,11 @@ export type Database = {
           invitation_status?: string
           invited_at?: string
           invited_by?: string | null
+          invited_email?: string | null
           permissions?: Json
           role: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           accepted_at?: string | null
@@ -685,10 +687,11 @@ export type Database = {
           invitation_status?: string
           invited_at?: string
           invited_by?: string | null
+          invited_email?: string | null
           permissions?: Json
           role?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
