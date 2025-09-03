@@ -225,7 +225,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
         <TabsContent value="voice">
           <Suspense fallback={<TabLoadingSkeleton />}>
-            <EnhancedVoiceInterface
+            <MobileVoiceInterface
               familyGroupId={group.id}
               onSpeakingChange={(speaking) => console.log('Voice speaking:', speaking)}
             />
