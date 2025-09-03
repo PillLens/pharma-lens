@@ -118,15 +118,22 @@ export class ScheduledDoseService {
       // Find the dose that matches this reminder time (more flexible matching)
       let targetDose = null;
       if (existingDoses) {
+        const reminderTimeShort = reminderTime.substring(0, 5); // Get HH:MM part
+        const [reminderHour, reminderMinute] = reminderTimeShort.split(':').map(Number);
+        const reminderTotalMinutes = reminderHour * 60 + reminderMinute;
+        
+        // Look for doses within a 30-minute window of the reminder time
         for (const dose of existingDoses) {
           const doseTime = new Date(dose.scheduled_time);
-          const doseTimeStr = `${doseTime.getHours().toString().padStart(2, '0')}:${doseTime.getMinutes().toString().padStart(2, '0')}`;
-          const reminderTimeShort = reminderTime.substring(0, 5); // Get HH:MM part
+          const doseTotalMinutes = doseTime.getHours() * 60 + doseTime.getMinutes();
+          const timeDifference = Math.abs(doseTotalMinutes - reminderTotalMinutes);
           
-          console.log(`[DEBUG] Comparing dose time ${doseTimeStr} with reminder time ${reminderTimeShort}`);
+          console.log(`[DEBUG] Checking dose at ${doseTime.getHours()}:${doseTime.getMinutes()} vs reminder ${reminderTimeShort} - diff: ${timeDifference} minutes`);
           
-          if (doseTimeStr === reminderTimeShort) {
+          // Match if within 30-minute window (allows for early or late taking)
+          if (timeDifference <= 30) {
             targetDose = dose;
+            console.log(`[DEBUG] Found matching dose within ${timeDifference} minutes`);
             break;
           }
         }
@@ -155,7 +162,16 @@ export class ScheduledDoseService {
 
       // If no dose found, create a new one with the scheduled time
       console.log(`[DEBUG] No existing dose found for ${reminderTime}, creating new entry`);
-      const scheduledTime = createScheduledTime(reminderTime);
+      
+      // Use user's timezone for consistency
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('timezone')
+        .eq('id', userId)
+        .single();
+      
+      const userTimezone = userProfile?.timezone || 'UTC';
+      const scheduledTime = createScheduledTime(reminderTime, userTimezone);
       
       const { error } = await supabase
         .from('medication_adherence_log')
@@ -168,7 +184,7 @@ export class ScheduledDoseService {
           notes: notes || 'Marked via Take Now button'
         });
 
-      console.log(`[DEBUG] Created new entry, error:`, error);
+      console.log(`[DEBUG] Created new entry with timezone ${userTimezone}, error:`, error);
       
       if (error) {
         console.error(`[ERROR] Failed to create dose entry:`, error);
