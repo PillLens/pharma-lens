@@ -130,30 +130,28 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="w-full overflow-x-auto">
-          <TabsList className="flex w-max min-w-full justify-start gap-1 p-1">
-            <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit whitespace-nowrap">
-              <Activity className="w-4 h-4" />
-              <span className="hidden sm:block">Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit whitespace-nowrap">
-              <ClipboardList className="w-4 h-4" />
-              <span className="hidden sm:block">Tasks</span>
-            </TabsTrigger>
-            <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit whitespace-nowrap">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:block">Voice AI</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit whitespace-nowrap">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:block">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit whitespace-nowrap">
-              <Shield className="w-4 h-4" />
-              <span className="hidden sm:block">Insights</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList className="grid w-full grid-cols-5 md:grid-cols-5 sm:flex sm:w-auto sm:overflow-x-auto sm:justify-start">
+          <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Activity className="w-4 h-4" />
+            <span className="hidden sm:block">Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <ClipboardList className="w-4 h-4" />
+            <span className="hidden sm:block">Tasks</span>
+          </TabsTrigger>
+          <TabsTrigger value="voice" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Users className="w-4 h-4" />
+            <span className="hidden sm:block">Voice AI</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Settings className="w-4 h-4" />
+            <span className="hidden sm:block">Analytics</span>
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Shield className="w-4 h-4" />
+            <span className="hidden sm:block">Insights</span>
+          </TabsTrigger>
+        </TabsList>
 
         <TabsContent value="overview">
           <div className="space-y-6">
