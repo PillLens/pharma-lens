@@ -130,7 +130,7 @@ export class FamilySharingService {
       }
 
       // Check entitlements
-      const canCreate = await entitlementsService.canCreateFamilyGroup();
+      const canCreate = await entitlementsService.canCreateFamilyGroup(user.id);
       if (!canCreate) {
         toast.error('Upgrade to Pro to create family groups');
         return null;
@@ -224,7 +224,9 @@ export class FamilySharingService {
             permissions: typeof member.permissions === 'object' ? 
               member.permissions as FamilyMember['permissions'] : 
               { view_medications: true, edit_medications: false, receive_alerts: true },
-            user_profile: member.user_profile || undefined
+            user_profile: member.user_profile && typeof member.user_profile === 'object' && 
+              !('error' in member.user_profile) && member.user_profile !== null ? 
+              member.user_profile as UserProfile : undefined
           }));
 
           return {
@@ -285,7 +287,13 @@ export class FamilySharingService {
         invitation_status: member.invitation_status as FamilyMember['invitation_status'],
         permissions: typeof member.permissions === 'object' ? 
           member.permissions as FamilyMember['permissions'] : 
-          { view_medications: true, edit_medications: false, receive_alerts: true }
+          { view_medications: true, edit_medications: false, receive_alerts: true },
+        user_profile: member.user_profile && typeof member.user_profile === 'object' && 
+          !('error' in member.user_profile) && member.user_profile !== null ? 
+          member.user_profile as UserProfile : undefined,
+        inviter_profile: member.inviter_profile && typeof member.inviter_profile === 'object' && 
+          !('error' in member.inviter_profile) && member.inviter_profile !== null ? 
+          member.inviter_profile as UserProfile : undefined
       })) || [];
 
       // Get creator profile
@@ -466,7 +474,12 @@ export class FamilySharingService {
         familyGroupId: invitation.family_group_id,
         familyGroupName: invitation.family_group?.name || 'Unknown Group',
         invitedBy: invitation.invited_by,
-        inviterName: invitation.inviter_profile?.display_name,
+        inviterName: invitation.inviter_profile && 
+          typeof invitation.inviter_profile === 'object' && 
+          invitation.inviter_profile !== null &&
+          !('error' in invitation.inviter_profile) && 
+          'display_name' in invitation.inviter_profile ? 
+          invitation.inviter_profile.display_name : undefined,
         role: invitation.role as FamilyInvitation['role'],
         invitedAt: invitation.invited_at
       }));
@@ -529,9 +542,160 @@ export class FamilySharingService {
       return false;
     }
   }
+
+  // Add missing methods that are called by components
+  async inviteFamilyMember(
+    familyGroupId: string, 
+    email: string, 
+    role: FamilyMember['role'],
+    permissions?: Partial<FamilyMember['permissions']>
+  ): Promise<boolean> {
+    return this.inviteToFamilyGroup(familyGroupId, email, role, permissions);
+  }
+
+  async getSharedMedications(groupId: string): Promise<SharedMedication[]> {
+    try {
+      const { data, error } = await supabase
+        .from('shared_medications')
+        .select(`
+          *,
+          medication:user_medications(*),
+          shared_by_profile:profiles(id, display_name, avatar_url, email)
+        `)
+        .eq('family_group_id', groupId);
+
+      if (error) throw error;
+      
+      return (data || []).map(item => ({
+        ...item,
+        sharing_permissions: typeof item.sharing_permissions === 'object' && item.sharing_permissions !== null ?
+          item.sharing_permissions as SharedMedication['sharing_permissions'] :
+          { view: true, edit: false, delete: false },
+        shared_by_profile: item.shared_by_profile && typeof item.shared_by_profile === 'object' && 
+          !('error' in item.shared_by_profile) && item.shared_by_profile !== null ? 
+          item.shared_by_profile as UserProfile : undefined
+      }));
+    } catch (error) {
+      console.error('Error fetching shared medications:', error);
+      return [];
+    }
+  }
+
+  async shareMedication(
+    medicationId: string,
+    familyGroupId: string,
+    permissions: SharedMedication['sharing_permissions']
+  ): Promise<boolean> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase
+        .from('shared_medications')
+        .insert({
+          medication_id: medicationId,
+          family_group_id: familyGroupId,
+          shared_by: user.id,
+          sharing_permissions: permissions
+        });
+
+      if (error) throw error;
+      toast.success('Medication shared successfully');
+      return true;
+    } catch (error) {
+      console.error('Error sharing medication:', error);
+      toast.error('Failed to share medication');
+      return false;
+    }
+  }
+
+  async updateSharingPermissions(
+    sharedMedicationId: string,
+    permissions: SharedMedication['sharing_permissions']
+  ): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('shared_medications')
+        .update({ sharing_permissions: permissions })
+        .eq('id', sharedMedicationId);
+
+      if (error) throw error;
+      toast.success('Sharing permissions updated');
+      return true;
+    } catch (error) {
+      console.error('Error updating permissions:', error);
+      toast.error('Failed to update permissions');
+      return false;
+    }
+  }
+
+  async stopSharingMedication(sharedMedicationId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('shared_medications')
+        .delete()
+        .eq('id', sharedMedicationId);
+
+      if (error) throw error;
+      toast.success('Medication sharing stopped');
+      return true;
+    } catch (error) {
+      console.error('Error stopping medication sharing:', error);
+      toast.error('Failed to stop sharing');
+      return false;
+    }
+  }
+
+  async updateFamilyGroup(groupId: string, updates: Partial<FamilyGroup>): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('family_groups')
+        .update(updates)
+        .eq('id', groupId);
+
+      if (error) throw error;
+      toast.success('Family group updated');
+      return true;
+    } catch (error) {
+      console.error('Error updating family group:', error);
+      toast.error('Failed to update family group');
+      return false;
+    }
+  }
+
+  async removeFamilyMember(memberId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('family_members')
+        .delete()
+        .eq('id', memberId);
+
+      if (error) throw error;
+      toast.success('Family member removed');
+      return true;
+    } catch (error) {
+      console.error('Error removing family member:', error);
+      toast.error('Failed to remove family member');
+      return false;
+    }
+  }
+
+  async deleteFamilyGroup(groupId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('family_groups')
+        .delete()
+        .eq('id', groupId);
+
+      if (error) throw error;
+      toast.success('Family group deleted');
+      return true;
+    } catch (error) {
+      console.error('Error deleting family group:', error);
+      toast.error('Failed to delete family group');
+      return false;
+    }
+  }
 }
 
 export const familySharingService = new FamilySharingService();
-
-// Force rebuild - methods should be available
-console.log('FamilySharingService methods:', Object.getOwnPropertyNames(FamilySharingService.prototype));

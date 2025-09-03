@@ -202,6 +202,14 @@ class EntitlementsService {
     }
   }
 
+  async canCreateFamilyGroup(userId?: string): Promise<boolean> {
+    const currentUserId = userId || (await supabase.auth.getUser()).data.user?.id;
+    if (!currentUserId) return false;
+    
+    const entitlements = await this.getUserEntitlements(currentUserId);
+    return entitlements.can_create_family_group;
+  }
+
   clearCache(userId?: string): void {
     if (userId) {
       this.cache.delete(userId);
