@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { ArrowLeft, Users, MessageCircle, Calendar, ClipboardList, Activity, Settings, Shield, Phone } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, ClipboardList, Activity, Settings, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,14 +9,9 @@ import { FamilyGroup } from '@/services/familySharingService';
 
 // Lazy load the heavy components
 const CareTasksManager = lazy(() => import('./CareTasksManager'));
-const FamilyMessaging = lazy(() => import('./FamilyMessaging'));
-const CallInterface = lazy(() => import('./CallInterface'));
 const AppointmentManager = lazy(() => import('./AppointmentManager'));
 const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').then(module => ({ default: module.HealthInsightsDashboard })));
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
-const RealTimeCommunication = lazy(() => import('./RealTimeCommunication').then(module => ({ default: module.RealTimeCommunication })));
-const VoiceCommunication = lazy(() => import('./VoiceCommunication').then(module => ({ default: module.VoiceCommunication })));
-const EnhancedVoiceInterface = lazy(() => import('../voice/EnhancedVoiceInterface').then(module => ({ default: module.EnhancedVoiceInterface })));
 const FamilyAnalyticsDashboard = lazy(() => import('../analytics/FamilyAnalyticsDashboard').then(module => ({ default: module.FamilyAnalyticsDashboard })));
 const AdvancedFamilyInsights = lazy(() => import('./AdvancedFamilyInsights').then(module => ({ default: module.AdvancedFamilyInsights })));
 
@@ -55,24 +50,23 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={onBack}>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={onBack}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h2 className="text-2xl font-bold">{group.name}</h2>
-            <p className="text-sm text-muted-foreground">
-              {activeMembers.length} active members
+            <h1 className="text-2xl font-bold">{group.name}</h1>
+            <p className="text-muted-foreground">
+              Manage your family group and members
             </p>
           </div>
         </div>
         
-        <Button
+        <Button 
           variant="outline" 
-          size="sm"
           onClick={() => onEditGroup(group)}
         >
           <Settings className="w-4 h-4 mr-2" />
@@ -80,8 +74,8 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
         </Button>
       </div>
 
-      {/* Group Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -117,7 +111,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
             </div>
           </CardContent>
         </Card>
-
       </div>
 
       {/* Tabbed Interface */}
@@ -126,6 +119,22 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
             <Activity className="w-4 h-4" />
             <span className="hidden sm:block">Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <ClipboardList className="w-4 h-4" />
+            <span className="hidden sm:block">Tasks</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Settings className="w-4 h-4" />
+            <span className="hidden sm:block">Analytics</span>
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Shield className="w-4 h-4" />
+            <span className="hidden sm:block">Insights</span>
+          </TabsTrigger>
+          <TabsTrigger value="appointments" className="flex flex-col items-center gap-1 py-3 px-3 text-xs min-w-fit">
+            <Calendar className="w-4 h-4" />
+            <span className="hidden sm:block">Calendar</span>
           </TabsTrigger>
         </TabsList>
 
@@ -166,7 +175,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
               </CardContent>
             </Card>
 
-            {/* Recent Activity Placeholder */}
+            {/* Recent Activity */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -177,8 +186,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
               <CardContent>
                 <div className="text-center py-8 text-muted-foreground">
                   <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No recent activity</p>
-                  <p className="text-xs">Family activities will appear here</p>
+                  <p className="text-sm">Family activities will appear here</p>
                 </div>
               </CardContent>
             </Card>
@@ -190,35 +198,6 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
             <CareTasksManager
               familyGroupId={group.id}
               familyMembers={activeMembers}
-            />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="messaging">
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <FamilyMessaging
-              familyGroupId={group.id}
-              familyMembers={activeMembers}
-              currentUserId={currentUserId}
-            />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="calls">
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <CallInterface
-              familyGroupId={group.id}
-              familyMembers={activeMembers}
-              currentUserId={currentUserId}
-            />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="voice">
-          <Suspense fallback={<TabLoadingSkeleton />}>
-            <EnhancedVoiceInterface
-              familyGroupId={group.id}
-              onSpeakingChange={(speaking) => console.log('Voice speaking:', speaking)}
             />
           </Suspense>
         </TabsContent>
