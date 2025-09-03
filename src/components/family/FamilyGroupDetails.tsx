@@ -132,7 +132,7 @@ const FamilyGroupDetails: React.FC<FamilyGroupDetailsProps> = ({
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-1">
           <TabsTrigger value="overview" className="flex flex-col items-center gap-1 py-3 px-2 text-xs">
             <Activity className="w-4 h-4" />
             <span>Overview</span>
