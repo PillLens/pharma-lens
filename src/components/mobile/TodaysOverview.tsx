@@ -4,9 +4,11 @@ import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, Mobil
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useMissedDoseData } from '@/hooks/useMissedDoseData';
 
 const TodaysOverview: React.FC = () => {
   const { dashboardStats, loading } = useDashboardData();
+  const { totalMissed, totalOverdue } = useMissedDoseData();
 
   // Calculate time until next reminder
   const getTimeUntilReminder = (reminderTime?: string): string => {
@@ -46,7 +48,8 @@ const TodaysOverview: React.FC = () => {
   const todayData = {
     nextReminder: dashboardStats.reminders.nextReminder,
     completedToday: dashboardStats.adherence.completedToday,
-    missedToday: dashboardStats.adherence.missedToday,
+    missedToday: Math.max(dashboardStats.adherence.missedToday, totalMissed), // Use actual missed count
+    overdueToday: totalOverdue, // Add overdue count
     totalToday: dashboardStats.adherence.totalToday,
     streakDays: dashboardStats.adherence.streak
   };
@@ -122,8 +125,22 @@ const TodaysOverview: React.FC = () => {
               </div>
             </div>
 
-            {/* Next Reminder */}
-            {hasUpcomingReminders && todayData.nextReminder && (
+            {/* Next Reminder or Overdue Alert */}
+            {todayData.overdueToday > 0 ? (
+              <div className="flex items-center gap-3 p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-destructive animate-pulse" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-destructive">
+                    {todayData.overdueToday} overdue dose{todayData.overdueToday > 1 ? 's' : ''}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    <TranslatedText translationKey="dashboard.overdueAlert" fallback="Please take your medication soon" />
+                  </div>
+                </div>
+              </div>
+            ) : hasUpcomingReminders && todayData.nextReminder && (
               <div className="flex items-center gap-3 p-3 bg-warning/5 border border-warning/20 rounded-lg">
                 <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
                   <Bell className="w-5 h-5 text-warning animate-pulse" />
