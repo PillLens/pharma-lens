@@ -45,7 +45,7 @@ const AppInfo = () => {
               <li className="flex items-start">
                 <span className="text-primary mr-2">👨‍👩‍👧‍👦</span>
                 <div>
-                  <strong>Family Plan Support:</strong> Manage medication schedules for multiple family members from one account
+                  <strong>Smart Reminders:</strong> Never miss a dose with intelligent medication reminders
                 </div>
               </li>
               <li className="flex items-start">

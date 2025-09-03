@@ -31,7 +31,6 @@ export const AppMetadata = () => {
         'Medication identification and information',
         'Usage instructions and dosage guidance',
         'Smart medication reminders',
-        'Family plan support for managing multiple users',
         'Multi-language support (English, Azerbaijani, Russian, Turkish)',
         'Medication adherence tracking',
         'Barcode scanning for accurate identification',
@@ -123,7 +122,7 @@ export const AppMetadata = () => {
           'name': 'What is PillLens?',
           'acceptedAnswer': {
             '@type': 'Answer',
-            'text': 'PillLens is a medication management app that helps you scan pills, identify medications, get usage instructions, and set smart reminders. It supports family plans and multiple languages.'
+            'text': 'PillLens is a medication management app that helps you scan pills, identify medications, get usage instructions, and set smart reminders. It supports multiple languages.'
           }
         },
         {
@@ -155,7 +154,7 @@ export const AppMetadata = () => {
           'name': 'Can I manage medications for my family?',
           'acceptedAnswer': {
             '@type': 'Answer',
-            'text': 'Yes, PillLens offers family plan support that allows you to manage medication schedules and reminders for multiple family members from one account.'
+            'text': 'Yes, PillLens offers medication management features that allow you to manage medication schedules and reminders from one account.'
           }
         }
       ]
@@ -185,7 +184,7 @@ export const AppMetadata = () => {
       { name: 'app:name', content: 'PillLens' },
       { name: 'app:category', content: 'Healthcare, Medication Management' },
       { name: 'app:platform', content: 'Android, iOS, Web' },
-      { name: 'app:features', content: 'pill scanner, medication reminders, family plans, multi-language' },
+      { name: 'app:features', content: 'pill scanner, medication reminders, multi-language' },
       { name: 'app:url', content: 'https://pilllens.com' },
       { name: 'app:tagline', content: 'Scan, understand, and never miss a dose with PillLens.' },
       { name: 'healthcare:category', content: 'medication-management' },

@@ -10,7 +10,7 @@ export interface UserEntitlements {
 }
 
 export interface UserSubscription {
-  plan: 'free' | 'pro_individual' | 'pro_family';
+  plan: 'free' | 'pro_individual';
   status: 'active' | 'trialing' | 'past_due' | 'canceled' | 'incomplete';
   trial_expires_at?: string;
   current_period_end?: string;
@@ -89,7 +89,7 @@ class EntitlementsService {
         .maybeSingle();
 
       const userSubscription: UserSubscription = {
-        plan: (profile.plan as 'free' | 'pro_individual' | 'pro_family') || 'free',
+        plan: (profile.plan as 'free' | 'pro_individual') || 'free',
         status: (subscription?.status as 'active' | 'trialing' | 'past_due' | 'canceled' | 'incomplete') || 'active',
         trial_expires_at: profile.trial_expires_at,
         current_period_end: subscription?.current_period_end,
@@ -243,11 +243,6 @@ class EntitlementsService {
         name: 'Pro Individual',
         monthly: { price: 5.99, stripe_product_id: 'prod_SvnkjphfFmzJCU' },
         yearly: { price: 39.99, stripe_product_id: 'prod_Svnk7nMQJbI9y9' }
-      },
-      pro_family: {
-        name: 'Pro Family',
-        monthly: { price: 9.99, stripe_product_id: 'prod_SvnlNRrwSnGq8t' },
-        yearly: { price: 69.99, stripe_product_id: 'prod_SvnlpLbYnb6cSc' }
       }
     };
   }

@@ -350,7 +350,6 @@ const Settings: React.FC = () => {
   const getSubscriptionLabel = () => {
     if (isInTrial) return t('settings.billing.trialActive');
     if (subscription.plan === 'pro_individual') return t('settings.billing.proIndividual');
-    if (subscription.plan === 'pro_family') return t('settings.billing.proFamily');
     return t('settings.billing.freePlan');
   };
 

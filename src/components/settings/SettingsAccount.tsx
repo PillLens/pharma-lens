@@ -49,7 +49,6 @@ export const SettingsAccount: React.FC<SettingsAccountProps> = ({
   const getSubscriptionLabel = () => {
     if (isInTrial) return t('settings.billing.trialActive');
     if (subscription.plan === 'pro_individual') return t('settings.billing.proIndividual');
-    if (subscription.plan === 'pro_family') return t('settings.billing.proFamily');
     return t('settings.billing.freePlan');
   };
 
@@ -114,7 +113,7 @@ export const SettingsAccount: React.FC<SettingsAccountProps> = ({
               </div>
               <div className="text-center">
                 <p className="text-xl font-bold text-primary">
-                  {subscription.plan === 'pro_family' ? '5' : subscription.plan === 'pro_individual' ? '1' : '0'}
+                  {subscription.plan === 'pro_individual' ? '1' : '0'}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   <TranslatedText translationKey="dashboard.familyMembers" fallback="Family Members" />

@@ -72,8 +72,8 @@ const MobileNavigation = () => {
                   className={subscription.plan !== 'free' ? 'bg-gradient-to-r from-primary to-primary-glow text-white' : ''}
                 >
                   {isInTrial && <Crown className="w-3 h-3 mr-1" />}
-                  {subscription.plan === 'free' ? 'Free' : 
-                   subscription.plan === 'pro_individual' ? 'Pro Individual' : 'Pro Family'}
+                   {subscription.plan === 'free' ? 'Free' : 
+                   subscription.plan === 'pro_individual' ? 'Pro Individual' : 'Pro Individual'}
                 </Badge>
                 {isInTrial && (
                   <Badge variant="secondary" className="text-xs">

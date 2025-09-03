@@ -90,8 +90,6 @@ const Dashboard: React.FC = () => {
     switch (subscription.plan) {
       case 'pro_individual':
         return t('dashboard.proIndividual', 'Pro Individual');
-      case 'pro_family':
-        return t('dashboard.proFamily', 'Pro Family');
       default:
         return t('dashboard.free', 'Free');
     }

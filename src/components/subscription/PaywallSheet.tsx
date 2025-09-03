@@ -25,7 +25,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
   const pricing = entitlementsService.getPricingPlans();
 
-  const handleUpgrade = async (plan: 'pro_individual' | 'pro_family', event?: React.MouseEvent) => {
+  const handleUpgrade = async (plan: 'pro_individual', event?: React.MouseEvent) => {
     // Prevent event bubbling and double clicks
     if (event) {
       event.preventDefault();
@@ -261,77 +261,6 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
               </CardContent>
             </Card>
 
-            {/* Pro Family */}
-            <Card className="relative overflow-hidden border-primary">
-              <div className="absolute top-0 right-0 bg-gradient-to-br from-primary to-primary-glow text-white text-xs px-3 py-1 rounded-bl-lg">
-                <TranslatedText translationKey="subscription.mostPopular" fallback="Most Popular" />
-              </div>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      <TranslatedText translationKey="subscription.proFamily" fallback="Pro Family" />
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      <TranslatedText 
-                        translationKey="subscription.proFamilyDescription" 
-                        fallback="Complete family health management" 
-                      />
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      ${isYearly ? '69.99' : '9.99'}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      <TranslatedText 
-                        translationKey={isYearly ? "subscription.perYear" : "subscription.perMonth"} 
-                        fallback={isYearly ? "/year" : "/month"} 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2 mb-6">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.everythingInPro" fallback="Everything in Pro Individual" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.createFamilyGroups" fallback="Create & manage family groups" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.upTo5Members" fallback="Up to 5 family members" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.caregiverLogging" fallback="Caregiver logging" />
-                    </span>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={(e) => handleUpgrade('pro_family', e)}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-primary to-primary-glow"
-                >
-                  {canStartTrial && !isInTrial ? (
-                    <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
-                  ) : (
-                    <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Testimonials Placeholder */}
