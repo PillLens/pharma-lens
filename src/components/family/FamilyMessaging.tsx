@@ -27,7 +27,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
   const [messages, setMessages] = useState<CommunicationMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [messageType, setMessageType] = useState<'text' | 'emergency'>('text');
-  const [selectedRecipient, setSelectedRecipient] = useState<string>('');
+  const [selectedRecipient, setSelectedRecipient] = useState<string>('everyone');
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +78,7 @@ const FamilyMessaging: React.FC<FamilyMessagingProps> = ({
       sender_id: currentUserId,
       content: newMessage,
       message_type: messageType === 'emergency' ? 'emergency' : 'text',
-      recipient_id: selectedRecipient || undefined,
+      recipient_id: selectedRecipient === 'everyone' ? undefined : selectedRecipient,
       metadata: {}
     });
 
