@@ -309,7 +309,7 @@ const CareTasksManager: React.FC<CareTasksManagerProps> = ({
                     <Label className="text-lg font-medium mb-3 block">Assign To *</Label>
                     <Select
                       value={taskForm.assignedTo}
-                      onValueChange={(value) => setTaskForm(prev => ({ ...pred, assignedTo: value }))}
+                      onValueChange={(value) => setTaskForm(prev => ({ ...prev, assignedTo: value }))}
                     >
                       <SelectTrigger className="h-14 text-lg px-4 border-2 focus:border-primary">
                         <SelectValue placeholder="Select family member" />
