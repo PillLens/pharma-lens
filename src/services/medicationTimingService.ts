@@ -58,20 +58,28 @@ export class MedicationTimingService {
         r.days_of_week.includes(currentDayOfWeek)
       ).sort((a, b) => a.reminder_time.localeCompare(b.reminder_time));
 
+      // Build a set of taken reminder times for quick lookup
+      const takenReminderTimes = new Set(
+        todaysAdherence?.map(log => {
+          const logTime = new Date(log.scheduled_time);
+          return `${logTime.getHours().toString().padStart(2, '0')}:${logTime.getMinutes().toString().padStart(2, '0')}`;
+        }) || []
+      );
+
       // Check if there's a current due/overdue reminder that hasn't been taken
       for (const reminder of todaysReminders) {
         const reminderTime = reminder.reminder_time;
-        const windowInfo = this.isInDoseWindow(currentTime, reminderTime, 15); // Reduced to 15-minute window
+        const windowInfo = this.isInDoseWindow(currentTime, reminderTime, 15);
         
         // Check if this specific reminder time has been taken today
-        const reminderTaken = todaysAdherence?.some(log => {
-          const logTime = new Date(log.scheduled_time);
-          const logTimeStr = `${logTime.getHours().toString().padStart(2, '0')}:${logTime.getMinutes().toString().padStart(2, '0')}`;
-          console.log(`Checking if ${reminderTime} was taken - found log: ${logTimeStr}, status: ${log.status}`);
-          return logTimeStr === reminderTime && log.status === 'taken';
-        }) || false;
+        const reminderTaken = takenReminderTimes.has(reminderTime);
+        
+        if (reminderTaken) {
+          console.log(`${reminderTime} was recently taken, skipping due/overdue check`);
+          continue; // Skip to next reminder
+        }
 
-        if ((windowInfo.isDue || windowInfo.isOverdue) && !reminderTaken) {
+        if (windowInfo.isDue || windowInfo.isOverdue) {
           const formattedTime = formatInTimeZone(
             this.parseTimeToday(reminderTime, timezone), 
             timezone, 
@@ -104,7 +112,7 @@ export class MedicationTimingService {
       }
 
       // Find next upcoming reminder (all current reminders taken or missed)
-      const nextReminder = this.findNextReminder(todaysReminders, currentTime, reminders, currentDayOfWeek);
+      const nextReminder = await this.findNextReminder(todaysReminders, currentTime, reminders, currentDayOfWeek, userId, medicationId, timezone);
       return {
         isDue: false,
         nextTime: nextReminder,
@@ -195,23 +203,50 @@ export class MedicationTimingService {
   }
 
   /**
-   * Find the next reminder time
+   * Find the next reminder time - improved to handle taken doses
    */
-  private findNextReminder(
+  private async findNextReminder(
     todaysReminders: any[],
     currentTime: string,
     allReminders: any[],
-    currentDayOfWeek: number
-  ): string {
+    currentDayOfWeek: number,
+    userId: string,
+    medicationId: string,
+    timezone: string
+  ): Promise<string> {
     const [currentHour, currentMinute] = currentTime.split(':').map(Number);
     const currentTotalMinutes = currentHour * 60 + currentMinute;
 
-    // Check if there's a reminder later today
+    // Get today's adherence data to check what's been taken
+    const today = new Date();
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const { data: todaysAdherence } = await supabase
+      .from('medication_adherence_log')
+      .select('scheduled_time, status')
+      .eq('user_id', userId)
+      .eq('medication_id', medicationId)
+      .gte('scheduled_time', startOfDay.toISOString())
+      .lte('scheduled_time', endOfDay.toISOString())
+      .eq('status', 'taken');
+
+    const takenTimes = new Set(
+      todaysAdherence?.map(log => {
+        const logTime = new Date(log.scheduled_time);
+        return `${logTime.getHours().toString().padStart(2, '0')}:${logTime.getMinutes().toString().padStart(2, '0')}`;
+      }) || []
+    );
+
+    // Check if there's a reminder later today that hasn't been taken
     for (const reminder of todaysReminders) {
       const [reminderHour, reminderMinute] = reminder.reminder_time.split(':').map(Number);
       const reminderTotalMinutes = reminderHour * 60 + reminderMinute;
       
-      if (reminderTotalMinutes > currentTotalMinutes + 15) { // 15 min buffer
+      // Look for reminders after current time that haven't been taken
+      if (reminderTotalMinutes > currentTotalMinutes && !takenTimes.has(reminder.reminder_time)) {
         const formattedTime = this.formatTime(reminder.reminder_time);
         return `Next: Today ${formattedTime}`;
       }
