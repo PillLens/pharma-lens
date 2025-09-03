@@ -14,7 +14,7 @@ const HealthInsightsDashboard = lazy(() => import('./HealthInsightsDashboard').t
 const EmergencyFeaturesManager = lazy(() => import('./EmergencyFeaturesManager').then(module => ({ default: module.EmergencyFeaturesManager })));
 const RealTimeCommunication = lazy(() => import('./RealTimeCommunication').then(module => ({ default: module.RealTimeCommunication })));
 const VoiceCommunication = lazy(() => import('./VoiceCommunication').then(module => ({ default: module.VoiceCommunication })));
-const EnhancedVoiceInterface = lazy(() => import('../voice/EnhancedVoiceInterface').then(module => ({ default: module.EnhancedVoiceInterface })));
+const MobileVoiceInterface = lazy(() => import('../voice/MobileVoiceInterface'));
 const FamilyAnalyticsDashboard = lazy(() => import('../analytics/FamilyAnalyticsDashboard').then(module => ({ default: module.FamilyAnalyticsDashboard })));
 const AdvancedFamilyInsights = lazy(() => import('./AdvancedFamilyInsights').then(module => ({ default: module.AdvancedFamilyInsights })));
 
