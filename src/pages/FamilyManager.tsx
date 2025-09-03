@@ -205,10 +205,25 @@ const FamilyManager: React.FC = () => {
     }
   };
 
-  const handleGroupCardTap = (group: FamilyGroup) => {
-    setSelectedGroup(group);
-    setShowGroupDetails(true);
-    setActiveTab('group-details');
+  const handleGroupCardTap = async (group: FamilyGroup) => {
+    setLoading(true);
+    try {
+      const groupDetails = await familySharingService.getFamilyGroupDetails(group.id);
+      if (groupDetails) {
+        setSelectedGroup(groupDetails);
+        setShowGroupDetails(true);
+        setActiveTab('group-details');
+      }
+    } catch (error) {
+      console.error('Error fetching group details:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load group details',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInviteFromGroup = (group: FamilyGroup) => {
