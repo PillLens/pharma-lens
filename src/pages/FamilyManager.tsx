@@ -278,16 +278,9 @@ const FamilyManager: React.FC = () => {
   };
 
   // Enhanced handlers for new features
-  const handleEmergencyCall = () => {
-    toast({ 
-      title: t('toast.emergencyCall'), 
-      description: t('toast.initiatingEmergencyContact') 
-    });
-  };
-
   const handleQuickAction = (action: string) => {
     toast({ 
-      title: t('toast.quickAction'), 
+      title: t('toast.quickAction'),
       description: t('toast.featureComingSoon', { action }) 
     });
   };
@@ -481,7 +474,6 @@ const FamilyManager: React.FC = () => {
               <Suspense fallback={<TabLoadingSkeleton />}>
                 <EnhancedFamilyDashboard 
                   familyGroups={familyGroups}
-                  onEmergencyCall={handleEmergencyCall}
                   onQuickAction={handleQuickAction}
                 />
               </Suspense>
@@ -533,7 +525,6 @@ const FamilyManager: React.FC = () => {
                   familyGroups={familyGroups}
                   onAddEvent={handleAddEvent}
                   onScheduleReminder={handleScheduleReminder}
-                  onEmergencyCall={handleEmergencyCall}
                 />
               </Suspense>
             </TabsContent>
