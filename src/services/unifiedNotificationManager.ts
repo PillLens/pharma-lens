@@ -79,7 +79,7 @@ class UnifiedNotificationManager {
           id: 'test',
           type: 'emergency',
           title: 'Test Notification',
-          message: 'This is a test notification from CareCapsule',
+          message: 'This is a test notification from PillLens',
           severity: 'low'
         });
       } else {

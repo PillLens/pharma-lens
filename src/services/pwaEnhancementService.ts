@@ -64,7 +64,7 @@ export class PWAEnhancementService {
             </svg>
           </div>
           <div>
-            <div class="font-medium text-sm">Install CareCapsule</div>
+            <div class="font-medium text-sm">Install PillLens</div>
             <div class="text-xs text-muted-foreground">Get the full app experience</div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 # Production Deployment Guide
 
-This guide covers the complete production deployment infrastructure implemented for CareCapsule.
+This guide covers the complete production deployment infrastructure implemented for PillLens.
 
 ## 🚀 Overview
 
@@ -134,7 +134,7 @@ npm run build:mobile:android
 2. **Signing Setup** (first time):
 ```bash
 # Generate keystore
-keytool -genkey -v -keystore android/keystores/release.keystore -alias carecapsule -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore android/keystores/release.keystore -alias pilllens -keyalg RSA -keysize 2048 -validity 10000
 
 # Update android/app/build.gradle with signing config
 ```
@@ -293,4 +293,4 @@ This infrastructure is designed for:
 - **Rollback capabilities**: Quick recovery from issues
 - **Monitoring integration**: Real-time health checks
 
-The production deployment system ensures CareCapsule maintains high availability, performance, and user experience across web and mobile platforms.
+The production deployment system ensures PillLens maintains high availability, performance, and user experience across web and mobile platforms.

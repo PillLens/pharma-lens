@@ -107,11 +107,11 @@ function buildiOSRelease() {
                  -scheme App 
                  -configuration Release 
                  -destination generic/platform=iOS 
-                 -archivePath ./build/CareCapsule.xcarchive 
+                 -archivePath ./build/PillLens.xcarchive 
                  archive
     `, { stdio: 'inherit' });
 
-    console.log('📦 iOS archive generated: ios/App/build/CareCapsule.xcarchive');
+    console.log('📦 iOS archive generated: ios/App/build/PillLens.xcarchive');
     console.log('ℹ️  Use Xcode Organizer to export IPA for distribution');
 
   } catch (error) {
@@ -127,14 +127,14 @@ function generateSigningInstructions() {
 ## Android Signing
 
 1. Generate a release keystore:
-   keytool -genkey -v -keystore android/keystores/release.keystore -alias carecapsule -keyalg RSA -keysize 2048 -validity 10000
+   keytool -genkey -v -keystore android/keystores/release.keystore -alias pilllens -keyalg RSA -keysize 2048 -validity 10000
 
 2. Update android/app/build.gradle with signing config:
    signingConfigs {
      release {
        storeFile file('../keystores/release.keystore')
        storePassword 'your_store_password'
-       keyAlias 'carecapsule'
+       keyAlias 'pilllens'
        keyPassword 'your_key_password'
      }
    }

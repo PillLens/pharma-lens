@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lovable.a2b03c66e69a49a495741cb9e4a8bd22',
-  appName: 'CareCapsule',
+  appName: 'PillLens',
   webDir: 'dist',
   plugins: {
     Camera: {
@@ -40,12 +40,12 @@ const config: CapacitorConfig = {
   android: {
     buildOptions: {
       keystorePath: 'android/keystores/release.keystore',
-      keystoreAlias: 'carecapsule',
+      keystoreAlias: 'pilllens',
       releaseType: 'AAB'
     }
   },
   ios: {
-    scheme: 'CareCapsule'
+    scheme: 'PillLens'
   }
 };
 

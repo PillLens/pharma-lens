@@ -330,7 +330,7 @@ class AdvancedPDFService {
     this.doc.text('Verification', 22, yPos + 20);
     
     // Verification URL
-    const verificationUrl = `https://verify.carecapsule.com/${data.reportId || 'temp'}`;
+    const verificationUrl = `https://verify.pilllens.com/${data.reportId || 'temp'}`;
     this.doc.text(`Verify at: ${verificationUrl}`, 55, yPos + 20);
   }
 
