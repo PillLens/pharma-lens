@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import heroImage from "@/assets/medical-hero.jpg";
+import heroImage from "@/assets/pilllens-logo.png";
 import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
 import FloatingActionButton from "@/components/mobile/FloatingActionButton";
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from "@/components/ui/mobile/MobileCard";
