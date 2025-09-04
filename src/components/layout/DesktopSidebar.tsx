@@ -119,7 +119,7 @@ export function DesktopSidebar() {
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <img 
-                src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
+                src="/pilllens-logo.png" 
                 alt="PillLens Logo" 
                 className="w-10 h-10 object-contain"
               />
@@ -132,7 +132,7 @@ export function DesktopSidebar() {
         ) : (
           <div className="flex justify-center">
             <img 
-              src="/lovable-uploads/8df43217-1e50-414e-ac87-3543963dc9ab.png" 
+              src="/pilllens-logo.png" 
               alt="PillLens Logo" 
               className="w-10 h-10 object-contain"
             />
