@@ -3,7 +3,7 @@ import { NotificationPermissionDialog } from './NotificationPermissionDialog';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useAuth } from '@/hooks/useAuth';
 import { environmentService } from '@/services/environmentService';
-import { oneSignalService } from '@/services/oneSignalService';
+import { unifiedNotificationManager } from '@/services/unifiedNotificationManager';
 import { supabase } from '@/integrations/supabase/client';
 
 export const FirstLaunchNotificationSetup: React.FC = () => {
@@ -52,10 +52,12 @@ export const FirstLaunchNotificationSetup: React.FC = () => {
     try {
       setLoading(true);
 
-      // Request notification permission from OneSignal
+      // Request notification permission
       if (environmentService.isFeatureEnabled('push-notifications')) {
-        await oneSignalService.optIn();
-        await oneSignalService.registerUser(user.id);
+        const granted = await unifiedNotificationManager.requestPermission();
+        if (granted) {
+          await unifiedNotificationManager.registerUser(user.id);
+        }
       }
 
       // Update preferences to enable notifications

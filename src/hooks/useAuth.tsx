@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { oneSignalService } from '@/services/oneSignalService';
+import { unifiedNotificationManager } from '@/services/unifiedNotificationManager';
 import { environmentService } from '@/services/environmentService';
 
 interface AuthContextType {
@@ -29,21 +29,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle OneSignal user registration/cleanup
+        // Handle notification user registration/cleanup
         if (environmentService.isFeatureEnabled('push-notifications')) {
           setTimeout(() => {
-            if (session?.user && oneSignalService.isServiceInitialized()) {
-              // Register user with OneSignal after login
-              oneSignalService.registerUser(session.user.id).catch(error => {
-                console.error('Failed to register user with OneSignal:', error);
-              });
-            } else if (!session?.user) {
-              // Cleanup OneSignal on logout
-              oneSignalService.cleanup().catch(error => {
-                console.error('Failed to cleanup OneSignal:', error);
+            if (session?.user && unifiedNotificationManager.isServiceInitialized()) {
+              // Register user after login
+              unifiedNotificationManager.registerUser(session.user.id).catch(error => {
+                console.error('Failed to register user with notifications:', error);
               });
             }
-          }, 0);
+          }, 100);
         }
       }
     );
@@ -54,15 +49,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
       
-      // Register existing user with OneSignal if service is ready
+      // Register existing user if service is ready
       if (session?.user && environmentService.isFeatureEnabled('push-notifications')) {
         setTimeout(() => {
-          if (oneSignalService.isServiceInitialized()) {
-            oneSignalService.registerUser(session.user.id).catch(error => {
-              console.error('Failed to register existing user with OneSignal:', error);
+          if (unifiedNotificationManager.isServiceInitialized()) {
+            unifiedNotificationManager.registerUser(session.user.id).catch(error => {
+              console.error('Failed to register existing user with notifications:', error);
             });
           }
-        }, 1000); // Give OneSignal time to initialize
+        }, 500); // Reduced timeout for better performance
       }
     });
 
@@ -101,13 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    // Cleanup OneSignal before signing out
+    // Cleanup notifications before signing out  
     if (environmentService.isFeatureEnabled('push-notifications')) {
-      try {
-        await oneSignalService.cleanup();
-      } catch (error) {
-        console.error('Failed to cleanup OneSignal on logout:', error);
-      }
+      // Note: cleanup handled by unified notification manager automatically
     }
     
     await supabase.auth.signOut();

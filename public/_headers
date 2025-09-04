@@ -7,6 +7,32 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.onesignal.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://bquxkkaipevuakmqqilk.supabase.co https://onesignal.com https://www.google-analytics.com https://analytics.google.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
+# Static assets caching
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images caching  
+*.png
+  Cache-Control: public, max-age=2592000
+*.jpg
+  Cache-Control: public, max-age=2592000
+*.jpeg
+  Cache-Control: public, max-age=2592000
+*.webp
+  Cache-Control: public, max-age=2592000
+*.svg
+  Cache-Control: public, max-age=2592000
+
+# Fonts caching
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service worker
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
 /sitemap.xml
   Content-Type: application/xml
 

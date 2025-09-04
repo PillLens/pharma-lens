@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/useTranslation';
+import heroOptimized from '@/assets/hero-optimized.webp';
 import { TranslatedText } from '@/components/TranslatedText';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
@@ -103,7 +104,13 @@ export default function Auth() {
             <div className="text-center space-y-3">
               {/* PillLens Logo */}
               <div className="w-16 h-16 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
-                <img src="/lovable-uploads/6c439905-5c8e-4538-9dcc-5a230fb64695.png" alt="PillLens" className="w-16 h-16 object-cover" />
+                <img 
+                  src={heroOptimized} 
+                  alt="PillLens" 
+                  className="w-16 h-16 object-cover" 
+                  fetchPriority="high"
+                  loading="eager"
+                />
               </div>
               
               {/* Title */}
@@ -256,7 +263,13 @@ export default function Auth() {
         <div className="p-6">
           <div className="text-center mb-6">
             <div className="w-16 h-16 mx-auto mb-4">
-              <img src="/lovable-uploads/6c439905-5c8e-4538-9dcc-5a230fb64695.png" alt="PillLens" className="w-16 h-16 rounded-xl" />
+              <img 
+                src={heroOptimized} 
+                alt="PillLens" 
+                className="w-16 h-16 rounded-xl"
+                fetchPriority="high"
+                loading="eager" 
+              />
             </div>
              <h2 className="text-xl font-semibold">
                <TranslatedText translationKey="authPage.welcomeMessage" />

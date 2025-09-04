@@ -5,42 +5,28 @@ import './i18n' // Initialize i18n
 import { environmentService } from './services/environmentService'
 import { pwaEnhancementService } from './services/pwaEnhancementService'
 import { mobileOptimizationService } from './services/mobileOptimizationService'
+import { performanceOptimizationService } from './services/performanceOptimizationService'
 
 // Initialize PWA enhancements and mobile optimizations
 pwaEnhancementService.init()
 mobileOptimizationService.init()
+performanceOptimizationService.init()
 
-// Initialize OneSignal if enabled and ensure user registration
-const initializeOneSignal = async () => {
+// Initialize unified notification manager (lazy loaded)
+const initializeNotifications = async () => {
   try {
     if (environmentService.isFeatureEnabled('push-notifications')) {
-      const { oneSignalService } = await import('./services/oneSignalService');
-      const success = await oneSignalService.initialize(environmentService.env.oneSignalAppId);
-      if (success) {
-        console.log('OneSignal initialized successfully');
-        
-        // Check if user is already authenticated and register them
-        const { data: { session } } = await (await import('./integrations/supabase/client')).supabase.auth.getSession();
-        if (session?.user) {
-          setTimeout(async () => {
-            try {
-              await oneSignalService.registerUser(session.user.id);
-              console.log('Existing user registered with OneSignal');
-            } catch (error) {
-              console.error('Failed to register existing user with OneSignal:', error);
-            }
-          }, 2000); // Give OneSignal more time to fully initialize
-        }
-      } else {
-        console.warn('OneSignal initialization failed');
-      }
+      // Lazy load notification manager only when needed
+      const { unifiedNotificationManager } = await import('./services/unifiedNotificationManager');
+      await unifiedNotificationManager.initialize();
+      console.log('Notification manager initialized successfully');
     }
   } catch (error) {
-    console.error('Failed to initialize OneSignal:', error);
+    console.error('Failed to initialize notification manager:', error);
   }
 };
 
-// Initialize OneSignal after DOM is ready
-initializeOneSignal();
+// Initialize notifications after DOM is ready
+window.addEventListener('load', initializeNotifications);
 
 createRoot(document.getElementById("root")!).render(<App />);
