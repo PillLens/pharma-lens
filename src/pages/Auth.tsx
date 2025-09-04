@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/useTranslation';
-import heroOptimized from '@/assets/hero-optimized.webp';
+import pillLensLogo from '@/assets/pilllens-logo.png';
 import { TranslatedText } from '@/components/TranslatedText';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { MobileButton } from '@/components/ui/mobile/MobileButton';
@@ -105,7 +105,7 @@ export default function Auth() {
               {/* PillLens Logo */}
               <div className="w-16 h-16 mx-auto medical-surface rounded-xl overflow-hidden shadow-soft">
                 <img 
-                  src={heroOptimized} 
+                  src={pillLensLogo} 
                   alt="PillLens" 
                   className="w-16 h-16 object-cover" 
                   fetchPriority="high"
@@ -264,7 +264,7 @@ export default function Auth() {
           <div className="text-center mb-6">
             <div className="w-16 h-16 mx-auto mb-4">
               <img 
-                src={heroOptimized} 
+                src={pillLensLogo} 
                 alt="PillLens" 
                 className="w-16 h-16 rounded-xl"
                 fetchPriority="high"
