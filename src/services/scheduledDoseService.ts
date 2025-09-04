@@ -350,8 +350,37 @@ export class ScheduledDoseService {
 
       const uniqueEntries = Array.from(uniqueDoses.values());
       const taken = uniqueEntries.filter(a => a.status === 'taken').length;
-      const scheduled = uniqueEntries.filter(a => a.status === 'scheduled').length;
-      const missed = uniqueEntries.filter(a => a.status === 'missed').length;
+      let missed = uniqueEntries.filter(a => a.status === 'missed').length;
+      let scheduled = uniqueEntries.filter(a => a.status === 'scheduled').length;
+
+      // Check for doses that should be considered missed (scheduled time has passed by more than 30 minutes)
+      const now = new Date();
+      const scheduledEntries = uniqueEntries.filter(a => a.status === 'scheduled');
+      
+      for (const entry of scheduledEntries) {
+        const scheduledTime = new Date(entry.scheduled_time);
+        const timeDifferenceMs = now.getTime() - scheduledTime.getTime();
+        const timeDifferenceMinutes = timeDifferenceMs / (1000 * 60);
+        
+        // If more than 30 minutes have passed since the scheduled time, consider it missed
+        if (timeDifferenceMinutes > 30) {
+          missed++;
+          scheduled--;
+          
+          // Optionally update the database to mark it as missed
+          try {
+            await supabase
+              .from('medication_adherence_log')
+              .update({ status: 'missed' })
+              .eq('user_id', userId)
+              .eq('medication_id', entry.medication_id)
+              .eq('scheduled_time', entry.scheduled_time)
+              .eq('status', 'scheduled');
+          } catch (error) {
+            console.error('Error updating missed dose status:', error);
+          }
+        }
+      }
 
       // Use expected doses as the total, not the sum of database entries
       return {
