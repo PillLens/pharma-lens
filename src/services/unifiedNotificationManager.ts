@@ -2,6 +2,7 @@ import { capacitorService } from './capacitorService';
 import { notificationService } from './notificationService';
 import { oneSignalService } from './oneSignalService';
 import { environmentService } from './environmentService';
+import { nativeNotificationManager } from './nativeNotificationManager';
 
 export interface NotificationPreferences {
   enabled: boolean;
@@ -25,9 +26,15 @@ class UnifiedNotificationManager {
     try {
       this.isNative = capacitorService.isNative();
       
+      console.log('[UNIFIED-MANAGER] Initializing for platform:', this.isNative ? 'native' : 'web');
+      
       if (this.isNative) {
-        // Initialize Capacitor notifications for native apps
-        await notificationService.initialize();
+        // Initialize native notification manager for mobile apps
+        const success = await nativeNotificationManager.initialize();
+        if (!success) {
+          console.warn('[UNIFIED-MANAGER] Native notification manager failed to initialize');
+          return false;
+        }
       } else if (environmentService.isFeatureEnabled('push-notifications')) {
         // Initialize OneSignal for web
         const appId = environmentService.env.oneSignalAppId;
@@ -37,6 +44,7 @@ class UnifiedNotificationManager {
       }
 
       this.isInitialized = true;
+      console.log('[UNIFIED-MANAGER] Successfully initialized');
       return true;
     } catch (error) {
       console.error('Failed to initialize notification manager:', error);
@@ -47,10 +55,16 @@ class UnifiedNotificationManager {
   async requestPermission(): Promise<boolean> {
     try {
       if (this.isNative) {
-        // Use Capacitor permission request
-        return await capacitorService.requestPermissions();
+        // Request both push and local notification permissions for native apps
+        const pushPermission = await capacitorService.requestPushPermissions();
+        const localPermission = await capacitorService.requestLocalNotificationPermissions();
+        
+        console.log('[UNIFIED-MANAGER] Permission results - Push:', pushPermission, 'Local:', localPermission);
+        
+        // Local notifications are essential for medication reminders
+        return localPermission;
       } else {
-        // Use OneSignal permission request
+        // Use OneSignal permission request for web
         return await oneSignalService.optIn();
       }
     } catch (error) {
@@ -62,7 +76,11 @@ class UnifiedNotificationManager {
   async checkPermission(): Promise<boolean> {
     try {
       if (this.isNative) {
-        return await capacitorService.checkPermissions();
+        // Check both push and local notification permissions
+        const pushPermission = await capacitorService.checkPushPermissions();
+        const localPermission = await capacitorService.checkLocalNotificationPermissions();
+        
+        return localPermission; // Local notifications are more important for medication reminders
       } else {
         return await oneSignalService.isSubscribed();
       }
@@ -93,7 +111,17 @@ class UnifiedNotificationManager {
 
   async registerUser(userId: string): Promise<boolean> {
     try {
-      if (!this.isNative && environmentService.isFeatureEnabled('push-notifications')) {
+      if (this.isNative) {
+        // For native apps, ensure native notification manager is initialized
+        if (!nativeNotificationManager.isServiceInitialized()) {
+          await nativeNotificationManager.initialize();
+        }
+        
+        // Schedule all active reminders for this user
+        await nativeNotificationManager.scheduleAllActiveReminders(userId);
+        
+        return true;
+      } else if (environmentService.isFeatureEnabled('push-notifications')) {
         return await oneSignalService.registerUser(userId);
       }
       return true;

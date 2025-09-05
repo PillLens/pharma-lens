@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NotificationPermissionDialog } from './NotificationPermissionDialog';
 import { unifiedNotificationManager } from '@/services/unifiedNotificationManager';
 import { useAuth } from '@/hooks/useAuth';
-import { useIsNativeMobile } from '@/hooks/use-mobile';
+import { capacitorService } from '@/services/capacitorService';
 import { supabase } from '@/integrations/supabase/client';
 
 interface MobileNotificationSetupProps {
@@ -11,7 +11,7 @@ interface MobileNotificationSetupProps {
 
 export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = ({ onComplete }) => {
   const { user } = useAuth();
-  const isNative = useIsNativeMobile();
+  const isNative = capacitorService.isNative();
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState(false);
@@ -58,12 +58,18 @@ export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = (
     try {
       setLoading(true);
 
-      // Request permission through unified manager
+      console.log('[MOBILE-NOTIFICATION-SETUP] Starting notification setup...');
+      
+      // Initialize and request permission through unified manager
+      await unifiedNotificationManager.initialize();
       const granted = await unifiedNotificationManager.requestPermission();
       
+      console.log('[MOBILE-NOTIFICATION-SETUP] Permission granted:', granted);
+      
       if (granted && user) {
-        // Register user if authenticated
-        await unifiedNotificationManager.registerUser(user.id);
+        // Register user and schedule existing reminders
+        const registered = await unifiedNotificationManager.registerUser(user.id);
+        console.log('[MOBILE-NOTIFICATION-SETUP] User registered:', registered);
       }
 
       // Mark as asked
@@ -78,6 +84,11 @@ export const MobileNotificationSetup: React.FC<MobileNotificationSetupProps> = (
 
       setShowDialog(false);
       onComplete?.();
+      
+      if (granted) {
+        console.log('[MOBILE-NOTIFICATION-SETUP] Setup completed successfully');
+      }
+      
     } catch (error) {
       console.error('Error enabling notifications:', error);
     } finally {

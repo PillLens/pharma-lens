@@ -8,6 +8,8 @@ import ProfessionalMobileLayout from './ProfessionalMobileLayout';
 import { securityAuditService, SecurityMetrics, AuditLogEntry } from '@/services/securityAuditService';
 import { hipaaComplianceService, HIPAAComplianceData } from '@/services/hipaaComplianceService';
 import { rateLimitingService, RateLimitResult } from '@/services/rateLimitingService';
+import { NotificationTestPanel } from '@/components/notifications/NotificationTestPanel';
+import { capacitorService } from '@/services/capacitorService';
 import { toast } from 'sonner';
 
 export const MobileSecurityDashboard: React.FC = () => {
@@ -115,6 +117,7 @@ export const MobileSecurityDashboard: React.FC = () => {
 
   const complianceScore = complianceData?.complianceScore || 0;
   const securityStatus = getSecurityStatus(complianceScore);
+  const isNative = capacitorService.isNative();
 
   return (
     <ProfessionalMobileLayout title="Security" showHeader={true}>
@@ -144,8 +147,15 @@ export const MobileSecurityDashboard: React.FC = () => {
             <Download className="h-3 w-3 mr-1" />
             Export
           </Button>
-        </div>
       </div>
+
+      {/* Notification Test Panel */}
+      {isNative && (
+        <div className="space-y-4">
+          <NotificationTestPanel />
+        </div>
+      )}
+    </div>
 
       {/* Compliance Alert */}
       {complianceScore < 95 && (

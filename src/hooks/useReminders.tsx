@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { nativeNotificationManager } from '@/services/nativeNotificationManager';
+import { capacitorService } from '@/services/capacitorService';
 
 export interface MedicationReminder {
   id: string;
@@ -119,15 +121,45 @@ export const useReminders = () => {
       if (error) throw error;
 
       // Replace optimistic update with real data
+      const newReminder = {
+        ...data,
+        medication: undefined,
+        notification_settings: typeof data.notification_settings === 'object' 
+          ? data.notification_settings as { sound: boolean; vibration: boolean; led: boolean; }
+          : { sound: true, vibration: true, led: true }
+      } as ReminderWithMedication;
+
       setReminders(prev => prev.map(r => 
-        r.id === optimisticReminder.id ? {
-          ...data,
-          medication: undefined,
-          notification_settings: typeof data.notification_settings === 'object' 
-            ? data.notification_settings as { sound: boolean; vibration: boolean; led: boolean; }
-            : { sound: true, vibration: true, led: true }
-        } as ReminderWithMedication : r
+        r.id === optimisticReminder.id ? newReminder : r
       ));
+
+      // Schedule native notifications if on mobile
+      if (capacitorService.isNative()) {
+        console.log('[USE-REMINDERS] Scheduling native notification for new reminder');
+        try {
+          // Get medication details for scheduling
+          const { data: medication } = await supabase
+            .from('user_medications')
+            .select('medication_name, dosage')
+            .eq('id', reminderData.medication_id)
+            .single();
+
+          if (medication) {
+            const reminderForScheduling = {
+              ...newReminder,
+              medication: {
+                medication_name: medication.medication_name,
+                dosage: medication.dosage
+              }
+            };
+
+            await nativeNotificationManager.scheduleReminder(reminderForScheduling);
+          }
+        } catch (scheduleError) {
+          console.error('[USE-REMINDERS] Failed to schedule native notification:', scheduleError);
+          toast.warning('Reminder saved but notification scheduling failed. Please check your notification permissions.');
+        }
+      }
       
       return data;
     } catch (error) {
@@ -151,7 +183,43 @@ export const useReminders = () => {
 
       if (error) throw error;
 
-      await fetchReminders(); // Refresh the list
+      // Cancel existing native notifications for this reminder
+      if (capacitorService.isNative()) {
+        await nativeNotificationManager.cancelReminder(id);
+      }
+
+      // Reschedule if still active
+      if (updates.is_active !== false && capacitorService.isNative()) {
+        try {
+          // Refresh the list to get updated reminder
+          await fetchReminders();
+          const updatedReminder = reminders.find(r => r.id === id);
+          
+          if (updatedReminder && updatedReminder.is_active) {
+            // Get medication details
+            const { data: medication } = await supabase
+              .from('user_medications')
+              .select('medication_name, dosage')
+              .eq('id', updatedReminder.medication_id)
+              .single();
+
+            if (medication) {
+              const reminderForScheduling = {
+                ...updatedReminder,
+                medication: {
+                  medication_name: medication.medication_name,
+                  dosage: medication.dosage
+                }
+              };
+
+              await nativeNotificationManager.scheduleReminder(reminderForScheduling);
+            }
+          }
+        } catch (scheduleError) {
+          console.error('[USE-REMINDERS] Failed to reschedule notification:', scheduleError);
+        }
+      }
+      
       return true;
     } catch (error) {
       console.error('Error updating reminder:', error);
@@ -162,6 +230,11 @@ export const useReminders = () => {
 
   const deleteReminder = async (id: string) => {
     try {
+      // Cancel native notifications first
+      if (capacitorService.isNative()) {
+        await nativeNotificationManager.cancelReminder(id);
+      }
+
       const { error } = await supabase
         .from('medication_reminders')
         .delete()
