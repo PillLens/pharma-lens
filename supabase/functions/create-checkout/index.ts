@@ -56,8 +56,8 @@ serve(async (req) => {
     // Price IDs mapping - your actual Stripe price IDs
     const priceIds = {
       pro_individual: {
-        monthly: "price_1Rzw9FK6MpH3rgygAuEJal37", // $5.99 USD
-        yearly: "price_1Rzw9UK6MpH3rgygirn3a1cd"   // $39.99 USD
+        monthly: "price_1S3zVEEQjcZdgqoDPhQ6FCHG", // $5.99 USD
+        yearly: "price_1S3zWIEQjcZdgqoDA4dn6luh"   // $39.99 USD
       },
       pro_family: {
         monthly: "price_1Rzw9iK6MpH3rgygNBVM2lDk", // $9.99 USD
