@@ -18,9 +18,18 @@ serve(async (req) => {
     // Initialize Stripe INSIDE the request handler where secrets are available
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     console.log("[CREATE-CHECKOUT] hasStripeKey:", !!stripeKey);
+    console.log("[CREATE-CHECKOUT] stripeKeyPrefix:", stripeKey ? stripeKey.substring(0, 8) + "..." : "null");
+    console.log("[CREATE-CHECKOUT] Available env vars:", Object.keys(Deno.env.toObject()).filter(key => key.includes('STRIPE')));
     
     if (!stripeKey) {
+      console.error("[CREATE-CHECKOUT] STRIPE_SECRET_KEY not found in environment");
+      console.error("[CREATE-CHECKOUT] All env vars:", Object.keys(Deno.env.toObject()));
       throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    
+    if (!stripeKey.startsWith('sk_')) {
+      console.error("[CREATE-CHECKOUT] Invalid Stripe key format:", stripeKey.substring(0, 8));
+      throw new Error("Invalid STRIPE_SECRET_KEY format");
     }
     
     const stripe = new Stripe(stripeKey, {
