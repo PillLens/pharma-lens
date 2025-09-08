@@ -9,13 +9,15 @@ interface ProfessionalMobileLayoutProps {
   title?: string;
   showHeader?: boolean;
   className?: string;
+  leftAction?: React.ReactNode;
 }
 
 const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
   children,
   title,
   showHeader = true,
-  className
+  className,
+  leftAction
 }) => {
   const isMobile = useIsMobile();
 
@@ -28,10 +30,16 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
       {/* Premium Mobile Header with safe area */}
         {showHeader && title && (
           <header className="sticky top-0 z-40 bg-background backdrop-blur-md border-b border-border/50 safe-area-top safe-area-x" style={{ backgroundColor: 'white' }}>
-          <div className="px-6 py-4">
-            <h1 className="text-xl font-bold text-foreground text-center">
+          <div className="px-6 py-4 flex items-center justify-between">
+            {leftAction && (
+              <div className="flex items-center">
+                {leftAction}
+              </div>
+            )}
+            <h1 className={cn("text-xl font-bold text-foreground", leftAction ? "flex-1 text-center -ml-12" : "text-center")}>
               {title}
             </h1>
+            <div className="w-12" /> {/* Spacer for balance when leftAction exists */}
           </div>
         </header>
       )}

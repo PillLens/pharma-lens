@@ -32,6 +32,7 @@ import { SettingsSecurity } from '@/components/settings/SettingsSecurity';
 import { SettingsAccount } from '@/components/settings/SettingsAccount';
 import { SettingsRow } from '@/components/settings/SettingsRow';
 import { SettingsSectionHeader } from '@/components/settings/SettingsSectionHeader';
+import { PlanLimitsCard } from '@/components/settings/PlanLimitsCard';
 import { PrivacyPolicySheet } from '@/components/settings/PrivacyPolicySheet';
 import { TermsOfServiceSheet } from '@/components/settings/TermsOfServiceSheet';
 import { ContactSheet } from '@/components/settings/ContactSheet';
@@ -488,7 +489,8 @@ const Settings: React.FC = () => {
         {/* Subscription Section */}
         <div className="mt-6">
           <SettingsSectionHeader title={t('settings.billing.title')} />
-          <div className="bg-background">
+          <div className="bg-background space-y-4">
+            <PlanLimitsCard onUpgrade={() => setShowPaywall(true)} />
             <SettingsRow
               icon={<CreditCard className="w-5 h-5 text-primary" />}
               title={t('settings.billing.currentPlan')}

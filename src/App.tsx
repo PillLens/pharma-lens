@@ -26,6 +26,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Reminders from "./pages/Reminders";
 import Settings from "./pages/Settings";
+import Pricing from "./pages/Pricing";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import AppInfo from "./pages/AppInfo";
@@ -112,6 +113,13 @@ const App = () => {
                   <ProtectedRoute>
                     <AppLayout>
                       <Settings />
+                    </AppLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/pricing" element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <Pricing />
                     </AppLayout>
                   </ProtectedRoute>
                 } />

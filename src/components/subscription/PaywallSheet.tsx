@@ -190,78 +190,103 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
             )}
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid gap-4">
-            {/* Pro Individual */}
-            <Card className="relative overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      <TranslatedText translationKey="subscription.proIndividual" fallback="Pro Individual" />
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      <TranslatedText 
-                        translationKey="subscription.proIndividualDescription" 
-                        fallback="Perfect for personal medication management" 
-                      />
-                    </p>
+          {/* Free vs Pro Comparison */}
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-2 divide-x divide-border">
+                {/* Free Plan */}
+                <div className="p-4 bg-muted/30">
+                  <div className="text-center mb-4">
+                    <h3 className="font-semibold text-muted-foreground">Free Plan</h3>
+                    <div className="text-2xl font-bold text-muted-foreground">$0</div>
+                    <div className="text-xs text-muted-foreground">Forever</div>
                   </div>
-                  <div className="text-right">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Basic medication scanning</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>1 medication reminder</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>1 device only</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <X className="w-3 h-3" />
+                      <span>No family groups</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <X className="w-3 h-3" />
+                      <span>No advanced reports</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <X className="w-3 h-3" />
+                      <span>No HIPAA compliance</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pro Plan */}
+                <div className="p-4 bg-gradient-to-br from-primary/5 to-primary-glow/5 relative">
+                  <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary-glow text-white text-xs">
+                    Most Popular
+                  </Badge>
+                  <div className="text-center mb-4 mt-2">
+                    <h3 className="font-semibold">Pro Individual</h3>
                     <div className="text-2xl font-bold">
                       ${isYearly ? '39.99' : '5.99'}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      <TranslatedText 
-                        translationKey={isYearly ? "subscription.perYear" : "subscription.perMonth"} 
-                        fallback={isYearly ? "/year" : "/month"} 
-                      />
+                    <div className="text-xs text-muted-foreground">
+                      {isYearly ? '/year' : '/month'}
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Everything in Free</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Unlimited reminders</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Up to 3 devices</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Family group management</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>Advanced reports & exports</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500" />
+                      <span>HIPAA compliance reports</span>
                     </div>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="space-y-2 mb-6">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.unlimitedMedications" fallback="Unlimited medications" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.advancedReports" fallback="Advanced reports & exports" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.hipaaReports" fallback="HIPAA compliance reports" />
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">
-                      <TranslatedText translationKey="subscription.maxDevices" fallback="Up to 3 devices" />
-                    </span>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={(e) => handleUpgrade('pro_individual', e)}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-primary to-primary-glow"
-                >
-                  {canStartTrial && !isInTrial ? (
-                    <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
-                  ) : (
-                    <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-
-          </div>
+          {/* Upgrade Button */}
+          <Button 
+            onClick={(e) => handleUpgrade('pro_individual', e)}
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-primary to-primary-glow text-white"
+            size="lg"
+          >
+            {canStartTrial && !isInTrial ? (
+              <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
+            ) : (
+              <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade to Pro" />
+            )}
+          </Button>
 
           {/* Testimonials Placeholder */}
           <div className="text-center space-y-4 py-6">

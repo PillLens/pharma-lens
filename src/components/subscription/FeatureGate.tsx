@@ -40,6 +40,44 @@ export function FeatureGate({
     return null;
   }
 
+  // Get feature-specific messaging
+  const getFeatureMessage = (feature: keyof UserEntitlements) => {
+    switch (feature) {
+      case 'reminders_limit':
+        return {
+          title: "You've reached your reminder limit",
+          description: "Free users get 1 reminder. Pro users get unlimited reminders.",
+          highlight: "Unlimited Reminders"
+        };
+      case 'can_create_family_group':
+        return {
+          title: "Family groups require Pro",
+          description: "Create and manage family groups with Pro Individual plan.",
+          highlight: "Family Management"
+        };
+      case 'can_export_reports':
+        return {
+          title: "Reports require Pro",
+          description: "Export detailed medication adherence reports with Pro.",
+          highlight: "Advanced Reports"
+        };
+      case 'hipaa_report_access':
+        return {
+          title: "HIPAA reports require Pro",
+          description: "Access HIPAA compliance reports with Pro Individual plan.",
+          highlight: "HIPAA Compliance"
+        };
+      default:
+        return {
+          title: "This is a Pro feature",
+          description: "Upgrade to Pro Individual to unlock this feature.",
+          highlight: "Pro Feature"
+        };
+    }
+  };
+
+  const featureMessage = getFeatureMessage(feature);
+
   // Show inline gate
   return (
     <>
@@ -53,13 +91,13 @@ export function FeatureGate({
             <div>
               <Badge variant="outline" className="mb-2">
                 <Lock className="w-3 h-3 mr-1" />
-                <TranslatedText translationKey="subscription.proFeature" fallback="Pro Feature" />
+                {featureMessage.highlight}
               </Badge>
+              <h4 className="font-medium text-foreground mb-1">
+                {featureMessage.title}
+              </h4>
               <p className="text-sm text-muted-foreground">
-                <TranslatedText 
-                  translationKey="subscription.upgradeToUnlock" 
-                  fallback="Upgrade to unlock this feature" 
-                />
+                {featureMessage.description}
               </p>
             </div>
             <Button 
@@ -68,7 +106,7 @@ export function FeatureGate({
               className="bg-gradient-to-r from-primary to-primary-glow"
             >
               <Crown className="w-4 h-4 mr-2" />
-              <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade" />
+              <TranslatedText translationKey="subscription.upgrade" fallback="Upgrade to Pro" />
             </Button>
           </div>
         </div>
