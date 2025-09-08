@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { dataExportService, ExportResult } from '@/services/dataExportService';
 import { toast } from 'sonner';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export const useDataExport = () => {
+  const { t } = useTranslation();
   const [isExporting, setIsExporting] = useState(false);
   const [exportResult, setExportResult] = useState<ExportResult | null>(null);
 
@@ -13,7 +15,7 @@ export const useDataExport = () => {
     setExportResult(null);
 
     try {
-      toast.info('Preparing your data export...');
+      toast.info(t('toast.export.preparing'));
       
       const result = await dataExportService.exportUserData();
       
@@ -36,12 +38,12 @@ export const useDataExport = () => {
       
       if (error instanceof Error) {
         if (error.message.includes('Rate limit')) {
-          toast.error('You can only export your data once per hour. Please try again later.');
+          toast.error(t('toast.export.rateLimitError'));
         } else {
-          toast.error(`Export failed: ${error.message}`);
+          toast.error(`${t('toast.export.failed')}: ${error.message}`);
         }
       } else {
-        toast.error('Failed to export data. Please try again.');
+        toast.error(t('toast.export.failed'));
       }
       
       throw error;
@@ -52,7 +54,7 @@ export const useDataExport = () => {
 
   const downloadExport = async (result: ExportResult = exportResult!) => {
     if (!result?.downloadUrl) {
-      toast.error('No export available to download');
+      toast.error(t('toast.export.noExportAvailable'));
       return;
     }
 
@@ -60,7 +62,7 @@ export const useDataExport = () => {
       await dataExportService.downloadFile(result.downloadUrl, result.fileName);
     } catch (error) {
       console.error('Download failed:', error);
-      toast.error('Failed to download export file');
+      toast.error(t('toast.export.downloadError'));
     }
   };
 

@@ -16,6 +16,7 @@
     "edit": "Edit",
     "add": "Add",
     "close": "Close",
+    "download": "Download",
     "confidence": "Confidence",
     "optional": "Optional",
     "tryAgain": "Please try again",
@@ -824,6 +825,13 @@
       "title": "Privacy & Data",
       "exportData": "Export My Data",
       "exportDescription": "Download all your data in a portable format",
+      "exportInfo": "Export all your data in JSON format for backup or migration purposes",
+      "exportInfoDescription": "Download a complete copy of your medications, reminders, family data, and health records",
+      "exportInProgress": "Your data export is being prepared...",
+      "exportReady": "Your data export is ready for download",
+      "preparingExport": "Preparing your data export",
+      "exportProgressDescription": "This may take a few moments depending on the amount of data",
+      "exportExpires": "Download expires:",
       "clearCache": "Clear Cache",
       "clearCacheDescription": "Clear locally stored app data",
       "exportStarted": "Data Export Started",
@@ -1250,6 +1258,67 @@
     "accountCreated": "Account Created Successfully",
     "checkEmail": "Please check your email to verify your account before signing in.",
     "welcomeBack": "Welcome Back!",
-    "signedIn": "You have been successfully signed in."
+    "signedIn": "You have been successfully signed in.",
+    "medication": {
+      "created": "Medication added successfully",
+      "updated": "Medication updated successfully",
+      "deleted": "Medication deleted successfully",
+      "paused": "Medication paused",
+      "resumed": "Medication resumed",
+      "shared": "Medication shared successfully",
+      "shareError": "Failed to share medication",
+      "loadError": "Failed to load medication data",
+      "saveError": "Failed to save medication",
+      "reminderCreated": "Reminder created successfully",
+      "reminderUpdated": "Reminder updated successfully",
+      "reminderDeleted": "Reminder deleted successfully"
+    },
+    "voice": {
+      "ready": "Voice assistant ready",
+      "started": "Voice assistant started",
+      "stopped": "Voice assistant stopped",
+      "error": "Voice interface error",
+      "microphonePermissionRequired": "Microphone permission required for voice chat",
+      "startError": "Failed to start voice assistant",
+      "premiumVoice": "Playing with premium voice",
+      "premiumVoiceError": "Failed to play premium voice"
+    },
+    "family": {
+      "groupCreated": "Family group created successfully",
+      "groupDeleted": "Group deleted successfully",
+      "memberAdded": "Member added successfully",
+      "memberRemoved": "Member removed successfully",
+      "invitationSent": "Invitation sent successfully",
+      "invitationAccepted": "Invitation accepted",
+      "invitationDeclined": "Invitation declined",
+      "loadError": "Failed to load family data. Please try again.",
+      "emergencyAlertSent": "Emergency alert sent to family members",
+      "locationShared": "Emergency location shared with family",
+      "medicationShared": "Medication shared with {{count}} group(s)",
+      "medicationSharingError": "Failed to share medication",
+      "selectMedicationAndGroup": "Please select a medication and at least one family group",
+      "stoppedSharing": "Stopped sharing medication"
+    },
+    "export": {
+      "preparing": "Preparing your data export...",
+      "rateLimitError": "You can only export your data 5 times per hour. Please try again later.",
+      "failed": "Export failed",
+      "noExportAvailable": "No export available to download",
+      "downloadError": "Failed to download export file",
+      "downloadStarted": "Download started successfully"
+    },
+    "notification": {
+      "testScheduled": "Test medication reminder scheduled for 3 seconds from now",
+      "testError": "Failed to send test medication reminder",
+      "testing": "Testing medication reminder notification..."
+    },
+    "general": {
+      "success": "Success",
+      "error": "Error occurred",
+      "saved": "Changes saved successfully",
+      "deleted": "Deleted successfully",
+      "updated": "Updated successfully",
+      "created": "Created successfully"
+    }
   }
 }

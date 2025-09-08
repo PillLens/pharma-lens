@@ -50,10 +50,10 @@ export class DataExportService {
       link.click();
       document.body.removeChild(link);
       
-      toast.success('Download started successfully');
+      // Toast message handled by component
     } catch (error) {
       console.error('Download error:', error);
-      toast.error('Failed to start download');
+      // Toast message handled by component
       throw error;
     }
   }

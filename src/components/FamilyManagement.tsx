@@ -60,7 +60,7 @@ export const FamilyManagement: React.FC = () => {
       setPendingInvitations(invitations);
     } catch (error) {
       console.error('Error loading family data:', error);
-      toast.error('Failed to load family data. Please try again.');
+      toast.error(t('toast.family.loadError'));
     } finally {
       setLoading(false);
     }

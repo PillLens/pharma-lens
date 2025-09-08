@@ -85,18 +85,18 @@ serve(async (req) => {
     const user = userData.user;
     if (!user) throw new Error('User not authenticated');
 
-    // Check rate limit using the database function
+    // Check rate limit using the database function (5 exports per hour)
     const { data: canProceed, error: rateLimitError } = await supabaseClient
       .rpc('check_rate_limit', {
         p_identifier: user.id,
         p_endpoint: 'export-user-data',
-        p_limit: 1,
+        p_limit: 5,
         p_window_minutes: 60 // 1 hour window
       });
 
     if (rateLimitError || !canProceed) {
       return new Response(JSON.stringify({ 
-        error: 'Rate limit exceeded. You can export your data once per hour.' 
+        error: 'Rate limit exceeded. You can export your data up to 5 times per hour. Please try again later.' 
       }), {
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

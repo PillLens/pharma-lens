@@ -8,6 +8,7 @@ import { RealtimeChat } from '@/utils/RealtimeAudio';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hapticService } from '@/services/hapticService';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   Mic, MicOff, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
@@ -45,10 +46,11 @@ const OPENAI_VOICES = [
   { id: "ballad", name: "Ballad" }
 ];
 
-export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
-  familyGroupId,
-  onSpeakingChange
+export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({ 
+  familyGroupId, 
+  onSpeakingChange 
 }) => {
+  const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -114,7 +116,7 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
         
       case 'error':
         console.error('Voice interface error:', event.error);
-        toast.error(event.error.message || 'Voice interface error');
+        toast.error(t('toast.voice.error') + ': ' + (event.error.message || 'Unknown error'));
         break;
     }
   };
@@ -156,7 +158,7 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
 
       if (error) throw error;
       
-      toast.success('Notification sent to family members');
+      toast.success(t('toast.family.emergencyAlertSent'));
       hapticService.feedback('success');
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -196,12 +198,12 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       setIsConnected(true);
       
       addMessage('system', 'Voice assistant connected. Start speaking!');
-      toast.success('Voice assistant is ready');
+      toast.success(t('toast.voice.ready'));
       hapticService.feedback('success');
       
     } catch (error) {
       console.error('Error starting conversation:', error);
-      toast.error(`Failed to start voice assistant: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(t('toast.voice.startError') + ': ' + (error instanceof Error ? error.message : 'Unknown error'));
       hapticService.feedback('error');
     }
   };
@@ -215,7 +217,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
     setCurrentTranscript('');
     
     addMessage('system', 'Voice assistant disconnected');
-    toast.success('Voice assistant disconnected');
+    toast.success(t('toast.voice.stopped'));
   };
 
   const playTextWithElevenLabs = async (text: string) => {
@@ -247,11 +249,11 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
           };
         }
         
-        toast.success('Playing message with ElevenLabs voice');
+        toast.success(t('toast.voice.premiumVoice'));
       }
     } catch (error) {
       console.error('Error with ElevenLabs TTS:', error);
-      toast.error('Failed to play with ElevenLabs voice');
+      toast.error(t('toast.voice.premiumVoiceError'));
     }
   };
 
