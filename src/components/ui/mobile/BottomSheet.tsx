@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MobileButton } from './MobileButton';
+import { CloseButton } from '@/components/ui/CloseButton';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -97,14 +98,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
               )}
             </div>
             {dismissible && (
-              <MobileButton
-                variant="ghost"
-                size="sm"
+              <CloseButton
                 onClick={onClose}
-                className="p-2"
-              >
-                <X className="w-5 h-5" />
-              </MobileButton>
+                size="sm"
+              />
             )}
           </div>
         )}

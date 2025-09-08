@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CloseButton } from "@/components/ui/CloseButton";
 import { MedicationCard } from "./MedicationCard";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -348,9 +349,7 @@ export const CameraCapture = ({ onClose, onScanResult, language }: CameraCapture
       <header className="sticky top-0 z-50 px-4 py-6 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="w-5 h-5" />
-            </Button>
+            <CloseButton onClick={onClose} size="md" />
             <h1 className="text-xl font-semibold text-foreground">{t('scanner.scanMedication')}</h1>
           </div>
           <Badge variant="outline" className="text-xs">

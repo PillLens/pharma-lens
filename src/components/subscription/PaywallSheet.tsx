@@ -10,6 +10,7 @@ import { useSubscription } from '@/contexts/SubscriptionContext';
 import { UserEntitlements, entitlementsService } from '@/services/entitlementsService';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { CloseButton } from '@/components/ui/CloseButton';
 
 interface PaywallSheetProps {
   isOpen: boolean;
@@ -150,9 +151,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                 </SheetDescription>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose} className="flex-shrink-0">
-              <X className="w-4 h-4" />
-            </Button>
+            <CloseButton onClick={onClose} className="flex-shrink-0" />
           </div>
 
           {canStartTrial && (
