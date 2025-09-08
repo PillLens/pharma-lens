@@ -36,7 +36,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
                 {leftAction}
               </div>
             )}
-            <h1 className={cn("text-xl font-bold text-foreground", leftAction ? "flex-1 text-center -ml-12" : "text-center")}>
+            <h1 className="text-xl font-bold text-foreground text-center flex-1">
               {title}
             </h1>
             <div className="w-12" /> {/* Spacer for balance when leftAction exists */}
