@@ -131,39 +131,39 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[90vh] overflow-y-auto">
-        <SheetHeader className="space-y-4 pb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
-                <featureHighlight.icon className="w-6 h-6 text-white" />
+      <SheetContent side="bottom" className="h-[95vh] overflow-y-auto p-4 sm:p-6">
+        <SheetHeader className="space-y-3 pb-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center flex-shrink-0">
+                <featureHighlight.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <div>
-                <SheetTitle className="text-xl">
+              <div className="flex-1 min-w-0">
+                <SheetTitle className="text-lg sm:text-xl leading-tight">
                   <TranslatedText 
                     translationKey="subscription.unlockPremium" 
                     fallback="Unlock Premium Features" 
                   />
                 </SheetTitle>
-                <SheetDescription>
+                <SheetDescription className="text-sm sm:text-base mt-1">
                   {featureHighlight.description}
                 </SheetDescription>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} className="flex-shrink-0">
               <X className="w-4 h-4" />
             </Button>
           </div>
 
           {canStartTrial && (
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50 border border-amber-200 dark:border-amber-800 rounded-lg p-3 sm:p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Star className="w-5 h-5 text-amber-500" />
-                <span className="font-semibold text-amber-800">
+                <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                <span className="font-semibold text-amber-800 dark:text-amber-200 text-sm sm:text-base">
                   <TranslatedText translationKey="subscription.14dayTrial" fallback="14-Day Free Trial" />
                 </span>
               </div>
-              <p className="text-sm text-amber-700">
+              <p className="text-xs sm:text-sm text-amber-700 dark:text-amber-300">
                 <TranslatedText 
                   translationKey="subscription.trialDescription" 
                   fallback="Try all Pro Individual features free for 14 days. Cancel anytime." 
@@ -173,9 +173,9 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
           )}
         </SheetHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
             <span className={`text-sm ${!isYearly ? 'font-semibold' : 'text-muted-foreground'}`}>
               <TranslatedText translationKey="subscription.monthly" fallback="Monthly" />
             </span>
@@ -193,79 +193,79 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
           {/* Free vs Pro Comparison */}
           <Card className="overflow-hidden">
             <CardContent className="p-0">
-              <div className="grid grid-cols-2 divide-x divide-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                 {/* Free Plan */}
-                <div className="p-4 bg-muted/30">
-                  <div className="text-center mb-4">
-                    <h3 className="font-semibold text-muted-foreground">Free Plan</h3>
-                    <div className="text-2xl font-bold text-muted-foreground">$0</div>
+                <div className="p-3 sm:p-4 bg-muted/30">
+                  <div className="text-center mb-3 sm:mb-4">
+                    <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Free Plan</h3>
+                    <div className="text-xl sm:text-2xl font-bold text-muted-foreground">$0</div>
                     <div className="text-xs text-muted-foreground">Forever</div>
                   </div>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Basic medication scanning</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>1 medication reminder</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>1 device only</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <X className="w-3 h-3" />
+                      <X className="w-3 h-3 flex-shrink-0" />
                       <span>No family groups</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <X className="w-3 h-3" />
+                      <X className="w-3 h-3 flex-shrink-0" />
                       <span>No advanced reports</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <X className="w-3 h-3" />
+                      <X className="w-3 h-3 flex-shrink-0" />
                       <span>No HIPAA compliance</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Pro Plan */}
-                <div className="p-4 bg-gradient-to-br from-primary/5 to-primary-glow/5 relative">
-                  <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary-glow text-white text-xs">
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-primary/5 to-primary-glow/5 relative">
+                  <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary-glow text-white text-xs px-2 py-1">
                     Most Popular
                   </Badge>
-                  <div className="text-center mb-4 mt-2">
-                    <h3 className="font-semibold">Pro Individual</h3>
-                    <div className="text-2xl font-bold">
+                  <div className="text-center mb-3 sm:mb-4 mt-2">
+                    <h3 className="font-semibold text-sm sm:text-base">Pro Individual</h3>
+                    <div className="text-xl sm:text-2xl font-bold">
                       ${isYearly ? '39.99' : '5.99'}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {isYearly ? '/year' : '/month'}
                     </div>
                   </div>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Everything in Free</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Unlimited reminders</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Up to 3 devices</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Family group management</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Advanced reports & exports</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-3 h-3 text-green-500" />
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>HIPAA compliance reports</span>
                     </div>
                   </div>
@@ -278,8 +278,7 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
           <Button 
             onClick={(e) => handleUpgrade('pro_individual', e)}
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary to-primary-glow text-white"
-            size="lg"
+            className="w-full bg-gradient-to-r from-primary to-primary-glow text-white h-12 sm:h-14 text-sm sm:text-base font-semibold"
           >
             {canStartTrial && !isInTrial ? (
               <TranslatedText translationKey="subscription.startFreeTrial" fallback="Start Free Trial" />
@@ -289,13 +288,13 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
           </Button>
 
           {/* Testimonials Placeholder */}
-          <div className="text-center space-y-4 py-6">
+          <div className="text-center space-y-3 sm:space-y-4 py-4 sm:py-6">
             <div className="flex justify-center gap-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
               ))}
             </div>
-            <p className="text-sm text-muted-foreground italic">
+            <p className="text-xs sm:text-sm text-muted-foreground italic px-4">
               <TranslatedText 
                 translationKey="subscription.testimonialPlaceholder" 
                 fallback="Join thousands of users managing their health with confidence" 
