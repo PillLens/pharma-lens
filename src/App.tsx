@@ -30,6 +30,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import AppInfo from "./pages/AppInfo";
 import Sitemap from "./pages/Sitemap";
+import Loading from "./pages/Loading";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => {
               <AppMetadata />
               
               <Routes>
+                <Route path="/loading" element={<Loading />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
