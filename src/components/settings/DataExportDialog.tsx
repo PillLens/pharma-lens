@@ -36,10 +36,10 @@ export const DataExportDialog: React.FC<DataExportDialogProps> = ({
           </DialogTitle>
           <DialogDescription>
             {isExporting 
-              ? t('settings.privacy.exportInProgress')
+              ? 'Generating your comprehensive health data PDF report...'
               : exportResult 
-                ? t('settings.privacy.exportReady')
-                : t('settings.privacy.exportDescription')
+                ? 'Your PDF health report is ready for download'
+                : 'Export your complete health data as a secure PDF document'
             }
           </DialogDescription>
         </DialogHeader>
@@ -50,9 +50,9 @@ export const DataExportDialog: React.FC<DataExportDialogProps> = ({
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 animate-spin text-primary" />
                 <div>
-                  <p className="font-medium">{t('settings.privacy.preparingExport')}</p>
+                  <p className="font-medium">Creating PDF Report</p>
                   <p className="text-sm text-muted-foreground">
-                    {t('settings.privacy.exportProgressDescription')}
+                    Compiling your medications, adherence data, and health information...
                   </p>
                 </div>
               </div>
@@ -67,10 +67,10 @@ export const DataExportDialog: React.FC<DataExportDialogProps> = ({
                 <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-4 h-4" />
+                    <FileText className="w-4 h-4 text-red-500" />
                     <span className="font-medium">{exportResult.fileName}</span>
-                    <Badge variant="outline" className="text-xs">
-                      {exportResult.format.toUpperCase()}
+                    <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                      PDF
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">
@@ -103,9 +103,9 @@ export const DataExportDialog: React.FC<DataExportDialogProps> = ({
               <div className="text-center space-y-3">
                 <FileText className="w-12 h-12 text-muted-foreground mx-auto" />
                 <div>
-                  <p className="font-medium mb-1">{t('settings.privacy.exportInfo')}</p>
+                  <p className="font-medium mb-1">Export Your Health Data</p>
                   <p className="text-sm text-muted-foreground">
-                    {t('settings.privacy.exportInfoDescription')}
+                    Generate a comprehensive PDF report of your medications, adherence records, and health data
                   </p>
                 </div>
               </div>
