@@ -22,12 +22,6 @@ export function CloseButton({
     lg: 'w-10 h-10'
   };
 
-  const iconSizes = {
-    sm: 'w-3 h-3',
-    md: 'w-4 h-4', 
-    lg: 'w-5 h-5'
-  };
-
   if (variant === 'minimal') {
     return (
       <Button 
@@ -36,7 +30,7 @@ export function CloseButton({
         onClick={onClick}
         className={cn("p-1", sizeClasses[size], className)}
       >
-        <X className={iconSizes[size]} />
+        <X />
       </Button>
     );
   }
@@ -52,7 +46,7 @@ export function CloseButton({
         className
       )}
     >
-      <X className={cn(iconSizes[size], "text-primary")} />
+      <X className="text-primary" />
     </Button>
   );
 }
