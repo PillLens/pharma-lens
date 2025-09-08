@@ -25,36 +25,44 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }
   const [selectedReminderId, setSelectedReminderId] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Show modal when trial expires
-  const shouldShow = isOpen && user && !isInTrial && subscription.plan === 'free' && reminders.length > 1;
+  // Show modal when trial expires - only if user has more than 1 ACTIVE reminder
+  const activeReminders = reminders.filter(r => r.is_active);
+  const shouldShow = isOpen && user && !isInTrial && subscription.plan === 'free' && activeReminders.length > 1;
 
   useEffect(() => {
-    // Auto-select the most recent reminder by default
-    if (shouldShow && reminders.length > 1) {
-      const sortedReminders = [...reminders].sort((a, b) => 
+    // Auto-select the most recent active reminder by default
+    if (shouldShow && activeReminders.length > 1) {
+      const sortedActiveReminders = [...activeReminders].sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
-      setSelectedReminderId(sortedReminders[0].id);
+      setSelectedReminderId(sortedActiveReminders[0].id);
     }
-  }, [shouldShow, reminders]);
+  }, [shouldShow, activeReminders]);
 
   const handleKeepSelected = async () => {
     if (!selectedReminderId || !user) return;
 
     setIsProcessing(true);
     try {
-      // Disable all reminders except the selected one
+      // Update all reminders: activate selected one, deactivate others
       const updatePromises = reminders.map(reminder => {
-        if (reminder.id !== selectedReminderId) {
+        if (reminder.id === selectedReminderId) {
+          // Ensure selected reminder is active
+          return updateReminder(reminder.id, { is_active: true });
+        } else {
+          // Deactivate all other reminders
           return updateReminder(reminder.id, { is_active: false });
         }
-        return Promise.resolve(true);
       });
 
       const results = await Promise.all(updatePromises);
       
       // Check if all updates were successful
       if (results.every(result => result === true)) {
+        // Store that user has handled trial expiration
+        const handledKey = `trial_handled_${user.id}`;
+        localStorage.setItem(handledKey, Date.now().toString());
+        
         toast.success('Successfully updated your reminders for the free plan');
         onClose();
         onSuccess?.();
@@ -96,7 +104,7 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }
 
           <div className="space-y-2">
             <h4 className="font-medium">Select reminder to keep active:</h4>
-            {reminders.map((reminder) => (
+            {activeReminders.map((reminder) => (
               <div key={reminder.id} className="flex items-start gap-3 p-3 rounded-lg border">
                 <Checkbox
                   checked={selectedReminderId === reminder.id}

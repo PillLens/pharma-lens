@@ -136,11 +136,20 @@ const Reminders: React.FC = () => {
   useEffect(() => {
     fetchRealData();
 
-    // Check for trial expiration on load
-    if (user && !isInTrial && subscription.plan === 'free' && reminders.length > 1) {
-      setShowTrialExpiredDialog(true);
+    // Check for trial expiration on load - only show if user has more than 1 ACTIVE reminder
+    const activeReminders = reminders.filter(r => r.is_active);
+    if (user && !isInTrial && subscription.plan === 'free' && activeReminders.length > 1) {
+      // Check if user has already handled trial expiration recently
+      const handledKey = `trial_handled_${user.id}`;
+      const lastHandled = localStorage.getItem(handledKey);
+      const now = Date.now();
+      
+      // Only show dialog if not handled in the last 24 hours
+      if (!lastHandled || (now - parseInt(lastHandled)) > 24 * 60 * 60 * 1000) {
+        setShowTrialExpiredDialog(true);
+      }
     }
-  }, [user, isInTrial, subscription.plan, reminders.length]);
+  }, [user, isInTrial, subscription.plan, reminders]);
 
   // Handle reminder actions
   const handleToggleReminder = async (id: string) => {
