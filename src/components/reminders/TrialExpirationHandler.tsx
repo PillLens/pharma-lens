@@ -44,34 +44,30 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }
 
     setIsProcessing(true);
     try {
-      // Update all reminders: activate selected one, deactivate others
-      const updatePromises = reminders.map(reminder => {
-        if (reminder.id === selectedReminderId) {
-          // Ensure selected reminder is active
-          return updateReminder(reminder.id, { is_active: true });
-        } else {
-          // Deactivate all other reminders
-          return updateReminder(reminder.id, { is_active: false });
-        }
-      });
-
-      const results = await Promise.all(updatePromises);
+      // Import smart deletion service
+      const { SmartTrialDeletionService } = await import('@/services/smartTrialDeletionService');
       
-      // Check if all updates were successful
-      if (results.every(result => result === true)) {
-        // Store that user has handled trial expiration
-        const handledKey = `trial_handled_${user.id}`;
-        localStorage.setItem(handledKey, Date.now().toString());
-        
-        toast.success('Successfully updated your reminders for the free plan');
-        onClose();
-        onSuccess?.();
-      } else {
-        throw new Error('Some reminders failed to update');
-      }
+      // Perform smart deletion
+      const result = await SmartTrialDeletionService.handleTrialExpirationDeletion(
+        selectedReminderId,
+        reminders,
+        user.id
+      );
+
+      // Store that user has handled trial expiration
+      const handledKey = `trial_handled_${user.id}`;
+      localStorage.setItem(handledKey, Date.now().toString());
+      
+      // Generate success message
+      const message = SmartTrialDeletionService.generateSummaryMessage(result);
+      toast.success(message);
+      
+      onClose();
+      onSuccess?.();
+      
     } catch (error) {
-      console.error('Error updating reminders:', error);
-      toast.error('Failed to update reminders. Please try again.');
+      console.error('Error processing trial expiration:', error);
+      toast.error('Failed to process your selection. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -98,7 +94,8 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               Your 14-day Pro trial has ended. Free users can only have 1 active reminder. 
-              Choose which one to keep, or upgrade to Pro for unlimited reminders.
+              Choose which one to keep - <strong>other reminders and unused medications will be permanently deleted</strong>. 
+              Shared medications and those with history will be preserved.
             </AlertDescription>
           </Alert>
 
@@ -144,12 +141,12 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }
               variant="outline"
               className="w-full"
             >
-              {isProcessing ? 'Processing...' : 'Keep Selected Reminder (Free)'}
+              {isProcessing ? 'Deleting Others...' : 'Keep Selected & Delete Others (Free)'}
             </Button>
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            Other reminders will be paused but not deleted. You can reactivate them anytime with Pro.
+            Unselected reminders will be permanently deleted. Medications with family sharing or substantial usage history will be preserved.
           </p>
         </CardContent>
       </Card>
