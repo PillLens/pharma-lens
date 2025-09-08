@@ -6,6 +6,65 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+function generateCSV(data: any[]): string {
+  if (!data || data.length === 0) return '';
+  
+  const headers = Object.keys(data[0]);
+  const csvRows = [headers.join(',')];
+  
+  for (const row of data) {
+    const values = headers.map(header => {
+      const value = row[header];
+      return value !== null && value !== undefined ? `"${String(value).replace(/"/g, '""')}"` : '';
+    });
+    csvRows.push(values.join(','));
+  }
+  
+  return csvRows.join('\n');
+}
+
+function generateExportFile(userData: any, format: 'csv' | 'json'): string {
+  const exportData = {
+    exportedAt: new Date().toISOString(),
+    userId: userData.profile?.id || 'unknown',
+    userEmail: userData.profile?.email || 'unknown',
+    ...userData
+  };
+  
+  if (format === 'json') {
+    return JSON.stringify(exportData, null, 2);
+  } else {
+    // For CSV, flatten the structure
+    let csvContent = 'PillLens Data Export\n\n';
+    
+    // Profile section
+    if (userData.profile) {
+      csvContent += 'Profile Information\n';
+      csvContent += generateCSV([userData.profile]) + '\n\n';
+    }
+    
+    // Medications section
+    if (userData.medications && userData.medications.length > 0) {
+      csvContent += 'Medications\n';
+      csvContent += generateCSV(userData.medications) + '\n\n';
+    }
+    
+    // Adherence Log section
+    if (userData.adherenceLog && userData.adherenceLog.length > 0) {
+      csvContent += 'Adherence Log\n';
+      csvContent += generateCSV(userData.adherenceLog) + '\n\n';
+    }
+    
+    // Sessions section
+    if (userData.sessions && userData.sessions.length > 0) {
+      csvContent += 'Sessions\n';
+      csvContent += generateCSV(userData.sessions) + '\n\n';
+    }
+    
+    return csvContent;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -26,69 +85,118 @@ serve(async (req) => {
     const user = userData.user;
     if (!user) throw new Error('User not authenticated');
 
-    // Rate limiting check
-    const { data: rateLimitData } = await supabaseClient
-      .from('api_rate_limits')
-      .select('*')
-      .eq('identifier', user.id)
-      .eq('endpoint', 'export-user-data')
-      .gte('window_end', new Date().toISOString())
-      .single();
+    // Check rate limit using the database function
+    const { data: canProceed, error: rateLimitError } = await supabaseClient
+      .rpc('check_rate_limit', {
+        p_identifier: user.id,
+        p_endpoint: 'export-user-data',
+        p_limit: 1,
+        p_window_minutes: 60 // 1 hour window
+      });
 
-    if (rateLimitData && rateLimitData.request_count >= 1) {
-      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please wait before requesting another export.' }), {
+    if (rateLimitError || !canProceed) {
+      return new Response(JSON.stringify({ 
+        error: 'Rate limit exceeded. You can export your data once per hour.' 
+      }), {
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Update rate limit
-    await supabaseClient.from('api_rate_limits').upsert({
-      identifier: user.id,
-      endpoint: 'export-user-data',
-      request_count: 1,
-      window_start: new Date().toISOString(),
-      window_end: new Date(Date.now() + 60000).toISOString() // 1 minute window
-    });
-
-    // Fetch user data
+    // Fetch comprehensive user data
     const [
       { data: profile },
       { data: medications },
-      { data: reminders },
+      { data: adherenceLog },
       { data: sessions },
-      { data: adherenceLog }
+      { data: familyGroups },
+      { data: familyMembers },
+      { data: deviceTokens },
+      { data: feedback },
+      { data: healthCheckups }
     ] = await Promise.all([
-      supabaseClient.from('profiles').select('*').eq('id', user.id).single(),
+      supabaseClient.from('profiles').select('*').eq('id', user.id).maybeSingle(),
       supabaseClient.from('user_medications').select('*').eq('user_id', user.id),
-      supabaseClient.from('medication_reminders').select('*').eq('user_id', user.id),
+      supabaseClient.from('medication_adherence_log').select('*').eq('user_id', user.id),
       supabaseClient.from('sessions').select('*').eq('user_id', user.id),
-      supabaseClient.from('medication_adherence_log').select('*').eq('user_id', user.id)
+      supabaseClient.from('family_groups').select('*').eq('creator_id', user.id),
+      supabaseClient.from('family_members').select('*').eq('user_id', user.id),
+      supabaseClient.from('device_tokens').select('*').eq('user_id', user.id),
+      supabaseClient.from('feedback').select('*').eq('user_id', user.id),
+      supabaseClient.from('daily_health_checkups').select('*').eq('user_id', user.id)
     ]);
 
-    // Create CSV content
-    const csvData = {
-      profile: profile || {},
+    const completeUserData = {
+      profile,
       medications: medications || [],
-      reminders: reminders || [],
+      adherenceLog: adherenceLog || [],
       sessions: sessions || [],
-      adherenceLog: adherenceLog || []
+      familyGroups: familyGroups || [],
+      familyMembers: familyMembers || [],
+      deviceTokens: deviceTokens || [],
+      feedback: feedback || [],
+      healthCheckups: healthCheckups || []
     };
 
-    // Convert to CSV format
-    const csvContent = JSON.stringify(csvData, null, 2);
+    // Generate file content
+    const format = 'json'; // Default to JSON, can be made configurable
+    const fileContent = generateExportFile(completeUserData, format);
+    const fileName = `pilllens-export-${user.id}-${new Date().toISOString().split('T')[0]}.${format}`;
     
-    // In a real implementation, you would:
-    // 1. Generate a proper CSV file
-    // 2. Upload to storage bucket
-    // 3. Return a signed URL for download
-    // For now, we'll return a data URL
-    
-    const dataUrl = `data:application/json;charset=utf-8,${encodeURIComponent(csvContent)}`;
+    // Upload to storage
+    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+      .from('user-exports')
+      .upload(`${user.id}/${fileName}`, fileContent, {
+        contentType: format === 'json' ? 'application/json' : 'text/csv',
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw new Error('Failed to generate export file');
+    }
+
+    // Generate signed URL for download (valid for 1 hour)
+    const { data: signedUrlData, error: urlError } = await supabaseClient.storage
+      .from('user-exports')
+      .createSignedUrl(`${user.id}/${fileName}`, 3600);
+
+    if (urlError || !signedUrlData?.signedUrl) {
+      console.error('URL generation error:', urlError);
+      throw new Error('Failed to generate download link');
+    }
+
+    // Log export for audit purposes
+    await supabaseClient.from('usage_analytics').insert({
+      user_id: user.id,
+      event_type: 'data_export',
+      event_data: {
+        format,
+        fileName,
+        recordCounts: {
+          medications: medications?.length || 0,
+          adherenceLog: adherenceLog?.length || 0,
+          sessions: sessions?.length || 0,
+          familyGroups: familyGroups?.length || 0,
+          feedback: feedback?.length || 0
+        }
+      }
+    });
 
     return new Response(JSON.stringify({ 
-      downloadUrl: dataUrl,
-      message: 'Data export ready for download' 
+      downloadUrl: signedUrlData.signedUrl,
+      fileName,
+      format,
+      expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+      message: 'Your data export is ready for download. Link expires in 1 hour.',
+      recordCounts: {
+        medications: medications?.length || 0,
+        adherenceRecords: adherenceLog?.length || 0,
+        scanSessions: sessions?.length || 0,
+        familyGroups: familyGroups?.length || 0,
+        feedback: feedback?.length || 0,
+        healthCheckups: healthCheckups?.length || 0
+      }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
@@ -96,7 +204,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Export error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message || 'Failed to export data. Please try again later.' 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

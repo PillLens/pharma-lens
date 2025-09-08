@@ -38,6 +38,8 @@ import { TermsOfServiceSheet } from '@/components/settings/TermsOfServiceSheet';
 import { ContactSheet } from '@/components/settings/ContactSheet';
 import { LocationTimezoneSettings } from '@/components/settings/LocationTimezoneSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { DataExportDialog } from '@/components/settings/DataExportDialog';
+import { useDataExport } from '@/hooks/useDataExport';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -72,7 +74,9 @@ const Settings: React.FC = () => {
   const { user, signOut } = useAuth();
   const { subscription, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
   const { t, changeLanguage, language } = useTranslation();
+  const { exportData, isExporting, exportResult, downloadExport, formatRecordSummary } = useDataExport();
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -245,28 +249,12 @@ const Settings: React.FC = () => {
   };
 
   const handleExportData = async () => {
+    setShowExportDialog(true);
     try {
-      setLoading(true);
-      const { data, error } = await supabase.functions.invoke('export-user-data');
-      
-      if (error) throw error;
-      
-      if (data?.downloadUrl) {
-        window.open(data.downloadUrl, '_blank');
-        toast({
-          title: t('settings.privacy.exportStarted'),
-          description: t('settings.privacy.exportDescription'),
-        });
-      }
+      await exportData();
     } catch (error) {
-      console.error('Error exporting data:', error);
-      toast({
-        title: t('common.error'),
-        description: t('settings.privacy.exportError'),
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+      console.error('Export failed:', error);
+      // Error handling is done in the useDataExport hook
     }
   };
 
@@ -468,7 +456,7 @@ const Settings: React.FC = () => {
               title={t('settings.privacy.exportData')}
               subtitle={t('settings.privacy.exportDescription')}
               onClick={handleExportData}
-              showArrow={!loading}
+              showArrow={!isExporting}
             />
             <SettingsRow
               icon={<Trash2 className="w-5 h-5 text-primary" />}
@@ -705,6 +693,16 @@ const Settings: React.FC = () => {
       <ContactSheet
         isOpen={showContact}
         onClose={() => setShowContact(false)}
+      />
+
+      {/* Data Export Dialog */}
+      <DataExportDialog
+        isOpen={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+        isExporting={isExporting}
+        exportResult={exportResult}
+        onDownload={() => downloadExport()}
+        formatRecordSummary={formatRecordSummary}
       />
 
       <PaywallSheet 
