@@ -195,11 +195,12 @@ export const useReminders = () => {
         await nativeNotificationManager.cancelReminder(id);
       }
 
+      // Always refresh local state after database update
+      await fetchReminders();
+
       // Reschedule if still active
       if (updates.is_active !== false && capacitorService.isNative()) {
         try {
-          // Refresh the list to get updated reminder
-          await fetchReminders();
           const updatedReminder = reminders.find(r => r.id === id);
           
           if (updatedReminder && updatedReminder.is_active) {

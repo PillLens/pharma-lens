@@ -535,6 +535,7 @@ const Reminders: React.FC = () => {
             setShowTrialExpiredDialog(false);
             setShowUpgrade(true);
           }}
+          onSuccess={fetchReminders}
         />
 
         {/* Upgrade Paywall */}

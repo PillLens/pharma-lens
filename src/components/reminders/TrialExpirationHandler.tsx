@@ -9,14 +9,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { useReminders } from '@/hooks/useReminders';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { entitlementsService } from '@/services/entitlementsService';
+import { toast } from 'sonner';
 
 interface TrialExpirationHandlerProps {
   isOpen: boolean;
   onClose: () => void;
   onUpgrade: () => void;
+  onSuccess?: () => void;
 }
 
-export function TrialExpirationHandler({ isOpen, onClose, onUpgrade }: TrialExpirationHandlerProps) {
+export function TrialExpirationHandler({ isOpen, onClose, onUpgrade, onSuccess }: TrialExpirationHandlerProps) {
   const { user } = useAuth();
   const { reminders, updateReminder } = useReminders();
   const { subscription, isInTrial, trialDaysRemaining } = useSubscription();
@@ -49,10 +51,19 @@ export function TrialExpirationHandler({ isOpen, onClose, onUpgrade }: TrialExpi
         return Promise.resolve(true);
       });
 
-      await Promise.all(updatePromises);
-      onClose();
+      const results = await Promise.all(updatePromises);
+      
+      // Check if all updates were successful
+      if (results.every(result => result === true)) {
+        toast.success('Successfully updated your reminders for the free plan');
+        onClose();
+        onSuccess?.();
+      } else {
+        throw new Error('Some reminders failed to update');
+      }
     } catch (error) {
       console.error('Error updating reminders:', error);
+      toast.error('Failed to update reminders. Please try again.');
     } finally {
       setIsProcessing(false);
     }
