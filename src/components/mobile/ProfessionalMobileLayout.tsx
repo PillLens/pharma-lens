@@ -39,7 +39,7 @@ const ProfessionalMobileLayout: React.FC<ProfessionalMobileLayoutProps> = ({
             <h1 className="text-xl font-bold text-foreground text-center flex-1">
               {title}
             </h1>
-            <div className="w-12" /> {/* Spacer for balance when leftAction exists */}
+            {leftAction && <div className="w-12" />} {/* Spacer for balance when leftAction exists */}
           </div>
         </header>
       )}
