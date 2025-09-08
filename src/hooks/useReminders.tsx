@@ -80,6 +80,13 @@ export const useReminders = () => {
   }) => {
     if (!user) return null;
 
+    // Check reminder limits before adding
+    const canCreate = await canCreateReminder();
+    if (!canCreate.allowed) {
+      toast.error(canCreate.reason);
+      return null;
+    }
+
     try {
       // Optimistic update - add to local state first
       const optimisticReminder = {
@@ -270,6 +277,76 @@ export const useReminders = () => {
     );
   };
 
+  const canCreateReminder = async () => {
+    if (!user) {
+      return { allowed: false, reason: 'User not authenticated' };
+    }
+
+    try {
+      // Import entitlementsService dynamically to avoid circular imports
+      const { entitlementsService } = await import('@/services/entitlementsService');
+      
+      const entitlements = await entitlementsService.getUserEntitlements(user.id);
+      const subscription = await entitlementsService.getUserSubscription(user.id);
+      
+      const currentCount = reminders.length;
+      const limit = entitlements.reminders_limit;
+      
+      // If unlimited (-1) or in trial, allow
+      const isInTrial = await entitlementsService.isInTrial(user.id);
+      if (limit === -1 || isInTrial) {
+        return { allowed: true, reason: '' };
+      }
+      
+      // Check if at or over limit
+      if (currentCount >= limit) {
+        const trialDays = isInTrial ? await entitlementsService.getRemainingTrialDays(user.id) : 0;
+        
+        if (isInTrial && trialDays > 0) {
+          return { allowed: true, reason: '' };
+        }
+        
+        return { 
+          allowed: false, 
+          reason: `You've reached your limit of ${limit} reminder${limit === 1 ? '' : 's'}. Upgrade to Pro for unlimited reminders.`
+        };
+      }
+      
+      return { allowed: true, reason: '' };
+    } catch (error) {
+      console.error('Error checking reminder limits:', error);
+      return { allowed: false, reason: 'Unable to verify reminder limits. Please try again.' };
+    }
+  };
+
+  const getReminderLimitInfo = async () => {
+    if (!user) return null;
+
+    try {
+      const { entitlementsService } = await import('@/services/entitlementsService');
+      
+      const entitlements = await entitlementsService.getUserEntitlements(user.id);
+      const subscription = await entitlementsService.getUserSubscription(user.id);
+      
+      const currentCount = reminders.length;
+      const limit = entitlements.reminders_limit;
+      const isInTrial = await entitlementsService.isInTrial(user.id);
+      const trialDays = isInTrial ? await entitlementsService.getRemainingTrialDays(user.id) : 0;
+      
+      return {
+        current: currentCount,
+        limit: limit === -1 ? 'unlimited' : limit,
+        isInTrial,
+        trialDays,
+        canCreate: (limit === -1 || currentCount < limit || isInTrial),
+        plan: subscription.plan
+      };
+    } catch (error) {
+      console.error('Error getting reminder limit info:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     fetchReminders();
     
@@ -294,6 +371,8 @@ export const useReminders = () => {
     toggleReminderStatus,
     getActiveReminders,
     getTodaysReminders,
+    canCreateReminder,
+    getReminderLimitInfo,
     refetch: fetchReminders
   };
 };

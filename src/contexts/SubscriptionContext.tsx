@@ -9,6 +9,7 @@ interface SubscriptionContextType {
   loading: boolean;
   refreshEntitlements: () => Promise<void>;
   checkFeatureAccess: (feature: keyof UserEntitlements) => boolean;
+  canCreateMore: (feature: keyof UserEntitlements, currentCount: number) => boolean;
   isInTrial: boolean;
   trialDaysRemaining: number;
   canStartTrial: boolean;
@@ -65,7 +66,30 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   };
 
   const checkFeatureAccess = (feature: keyof UserEntitlements): boolean => {
-    return !!entitlements[feature];
+    const value = entitlements[feature];
+    
+    // For numeric limits, check if it's unlimited (-1) or greater than 0
+    if (typeof value === 'number') {
+      return value === -1 || value > 0;
+    }
+    
+    // For boolean features
+    return !!value;
+  };
+
+  const canCreateMore = (feature: keyof UserEntitlements, currentCount: number): boolean => {
+    const value = entitlements[feature];
+    
+    if (typeof value === 'number') {
+      // If unlimited or in trial, allow
+      if (value === -1 || isInTrial) {
+        return true;
+      }
+      // Otherwise check if under limit
+      return currentCount < value;
+    }
+    
+    return !!value;
   };
 
   const isInTrial = subscription.status === 'trialing';
@@ -152,6 +176,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     loading: loading || authLoading,
     refreshEntitlements,
     checkFeatureAccess,
+    canCreateMore,
     isInTrial,
     trialDaysRemaining,
     canStartTrial,

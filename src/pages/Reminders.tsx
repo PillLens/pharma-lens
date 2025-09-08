@@ -12,9 +12,13 @@ import InteractiveTimelineCard from '@/components/reminders/enhanced/Interactive
 import ReminderDetailsSheet from '@/components/reminders/ReminderDetailsSheet';
 import AddReminderSheet from '@/components/reminders/AddReminderSheet';
 import RemindersFloatingActionButton from '@/components/reminders/RemindersFloatingActionButton';
+import { ReminderLimitBanner } from '@/components/reminders/ReminderLimitBanner';
+import { TrialExpirationHandler } from '@/components/reminders/TrialExpirationHandler';
+import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime, createScheduledTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
@@ -34,8 +38,11 @@ const Reminders: React.FC = () => {
     updateReminder, 
     deleteReminder, 
     toggleReminderStatus,
+    getReminderLimitInfo,
     refetch: fetchReminders
   } = useReminders();
+  
+  const { isInTrial, trialDaysRemaining, subscription } = useSubscription();
 
   // State management
   const [selectedReminder, setSelectedReminder] = useState<ReminderWithMedication | null>(null);
@@ -57,6 +64,9 @@ const Reminders: React.FC = () => {
     pendingToday: 0,
     missedToday: 0
   });
+  const [limitInfo, setLimitInfo] = useState<any>(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showTrialExpiredDialog, setShowTrialExpiredDialog] = useState(false);
 
   // Fetch user's timezone from profile
   useEffect(() => {
@@ -114,6 +124,10 @@ const Reminders: React.FC = () => {
       // Fetch today's actual dose adherence status
       const todayStatus = await scheduledDoseService.getTodaysAdherenceStatus(user.id);
       setTodaysAdherence(todayStatus);
+
+      // Fetch reminder limit info
+      const info = await getReminderLimitInfo();
+      setLimitInfo(info);
     } catch (error) {
       console.error('Error fetching real medication data:', error);
     }
@@ -121,7 +135,12 @@ const Reminders: React.FC = () => {
 
   useEffect(() => {
     fetchRealData();
-  }, [user]);
+
+    // Check for trial expiration on load
+    if (user && !isInTrial && subscription.plan === 'free' && reminders.length > 1) {
+      setShowTrialExpiredDialog(true);
+    }
+  }, [user, isInTrial, subscription.plan, reminders.length]);
 
   // Handle reminder actions
   const handleToggleReminder = async (id: string) => {
@@ -147,6 +166,17 @@ const Reminders: React.FC = () => {
   };
 
   const handleAddReminder = async (reminderData: any) => {
+    // Check limits first using the hook's built-in validation
+    const canCreate = await getReminderLimitInfo();
+    if (!canCreate?.canCreate) {
+      toast({
+        title: 'Reminder Limit Reached',
+        description: 'You\'ve reached your reminder limit. Upgrade to Pro for unlimited reminders.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     try {
       setIsAddingReminder(true);
       
@@ -365,6 +395,17 @@ const Reminders: React.FC = () => {
           />
           </div>
 
+          {/* Reminder Limit Banner */}
+          {limitInfo && (
+            <ReminderLimitBanner
+              current={limitInfo.current}
+              limit={limitInfo.limit}
+              isInTrial={limitInfo.isInTrial}
+              trialDays={limitInfo.trialDays}
+              onUpgrade={() => setShowUpgrade(true)}
+            />
+          )}
+
           {/* Interactive Timeline */}
           {timelineEntries.length > 0 && (
             <div className="px-4">
@@ -447,7 +488,16 @@ const Reminders: React.FC = () => {
       )}
 
       {/* Floating Action Button */}
-      <RemindersFloatingActionButton onClick={() => setShowAddReminder(true)} />
+      <RemindersFloatingActionButton 
+        onClick={async () => {
+          const canCreate = await getReminderLimitInfo();
+          if (canCreate?.canCreate) {
+            setShowAddReminder(true);
+          } else {
+            setShowUpgrade(true);
+          }
+        }} 
+      />
 
       {/* Bottom Sheets */}
       <AddReminderSheet
@@ -471,11 +521,28 @@ const Reminders: React.FC = () => {
         } : null}
         isOpen={showReminderDetails}
         onClose={() => setShowReminderDetails(false)}
-        onEdit={() => {
-          setShowReminderDetails(false);
-          setShowAddReminder(true);
-        }}
-      />
+          onEdit={() => {
+            setShowReminderDetails(false);
+            setShowAddReminder(true);
+          }}
+        />
+
+        {/* Trial Expiration Handler */}
+        <TrialExpirationHandler
+          isOpen={showTrialExpiredDialog}
+          onClose={() => setShowTrialExpiredDialog(false)}
+          onUpgrade={() => {
+            setShowTrialExpiredDialog(false);
+            setShowUpgrade(true);
+          }}
+        />
+
+        {/* Upgrade Paywall */}
+        <PaywallSheet
+          isOpen={showUpgrade}
+          onClose={() => setShowUpgrade(false)}
+          feature="reminders_limit"
+        />
     </ProfessionalMobileLayout>
   );
 };
