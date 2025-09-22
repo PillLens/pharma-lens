@@ -59,6 +59,27 @@ export const BuildOptimizer = {
     document.head.appendChild(style);
   },
 
+  // Async CSS loading to prevent render blocking
+  loadCSSAsync: (href: string, media = 'all') => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'style';
+    link.href = href;
+    link.onload = () => {
+      link.onload = null;
+      link.rel = 'stylesheet';
+      link.media = media;
+    };
+    document.head.appendChild(link);
+    
+    // Fallback for browsers without preload support
+    setTimeout(() => {
+      if (link.rel !== 'stylesheet') {
+        link.rel = 'stylesheet';
+      }
+    }, 3000);
+  },
+
   // Service Worker registration
   registerServiceWorker: async () => {
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {

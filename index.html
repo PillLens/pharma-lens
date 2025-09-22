@@ -75,9 +75,19 @@
     <link rel="dns-prefetch" href="//onesignal.com">
     <link rel="dns-prefetch" href="//cdn.onesignal.com">
     
+    <!-- Critical CSS - Inlined for fast rendering -->
+    <style>
+      :root{--background:0 0% 100%;--foreground:222.2 84% 4.9%;--card:0 0% 100%;--card-foreground:222.2 84% 4.9%;--primary:201 96% 32%;--primary-foreground:210 40% 98%;--secondary:210 40% 96%;--secondary-foreground:222.2 84% 4.9%;--border:214.3 31.8% 91.4%;--ring:201 96% 32%;--radius:0.75rem;--sidebar-background:0 0% 100%;--sidebar-foreground:222.2 84% 4.9%;}
+      .dark{--background:222.2 84% 4.9%;--foreground:210 40% 98%;--card:222.2 84% 4.9%;--card-foreground:210 40% 98%;--primary:199 89% 48%;--primary-foreground:222.2 84% 4.9%;}
+      *{border-color:hsl(var(--border));}
+      html,body{background:hsl(var(--background));color:hsl(var(--foreground));font-family:"Inter",sans-serif;-webkit-font-smoothing:antialiased;background-color:white!important;}
+      #root{background-color:white!important;}
+      @media (max-width:767px){html,body{overflow-x:hidden;height:100%;}body{overflow:hidden;}#root{overflow-y:auto;height:100dvh;-webkit-overflow-scrolling:touch;background-color:hsl(var(--background))!important;}}
+    </style>
+    
     <!-- Preload critical resources -->
     <link rel="preload" href="/src/assets/hero-optimized.webp" as="image" type="image/webp">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <!-- Fonts with optimized loading -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -111,5 +121,22 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Load non-critical CSS asynchronously -->
+    <script>
+      const loadCSS = (href) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+      };
+      
+      // Load main stylesheet after page load to prevent render blocking
+      if (window.requestIdleCallback) {
+        requestIdleCallback(() => loadCSS('/src/index.css'));
+      } else {
+        setTimeout(() => loadCSS('/src/index.css'), 0);
+      }
+    </script>
   </body>
 </html>

@@ -29,12 +29,22 @@ export default defineConfig(({ mode }) => ({
           charts: ['recharts'],
           camera: ['@ericblade/quagga2', 'tesseract.js'],
           notifications: ['react-onesignal']
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name) {
+            const info = assetInfo.name.split('.');
+            const ext = info[info.length - 1];
+            if (/\.(css)$/.test(assetInfo.name)) {
+              return `assets/[name]-[hash][extname]`;
+            }
+          }
+          return `assets/[name]-[hash][extname]`;
         }
       }
     },
     // Optimize chunk size
     chunkSizeWarningLimit: 1000,
-    // Enable CSS code splitting
+    // Enable CSS code splitting and optimize loading
     cssCodeSplit: true,
     // Enable minification
     minify: 'terser',
