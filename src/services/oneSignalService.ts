@@ -25,16 +25,39 @@ export class OneSignalService {
 
   async initialize(appId: string): Promise<boolean> {
     try {
-      // Load OneSignal SDK dynamically
+      // Prevent multiple initializations
+      if (this.isInitialized && window.OneSignal) {
+        return true;
+      }
+
+      // Load OneSignal SDK dynamically only once
       if (!window.OneSignal) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.onesignal.com/sdks/OneSignalSDK.js';
-        script.async = true;
-        document.head.appendChild(script);
-        
-        await new Promise((resolve) => {
-          script.onload = resolve;
-        });
+        // Check if SDK is already loading
+        const existingScript = document.querySelector('script[src*="OneSignalSDK"]');
+        if (!existingScript) {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.onesignal.com/sdks/OneSignalSDK.js';
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+          
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+          });
+        } else {
+          // Wait for existing script to load
+          await new Promise((resolve) => {
+            const checkLoaded = () => {
+              if (window.OneSignal) {
+                resolve(true);
+              } else {
+                setTimeout(checkLoaded, 50);
+              }
+            };
+            checkLoaded();
+          });
+        }
       }
 
       window.OneSignal = window.OneSignal || [];

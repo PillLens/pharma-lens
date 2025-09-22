@@ -16,10 +16,14 @@ performanceOptimizationService.init()
 const initializeNotifications = async () => {
   try {
     if (environmentService.isFeatureEnabled('push-notifications')) {
-      // Lazy load notification manager only when needed
-      const { unifiedNotificationManager } = await import('./services/unifiedNotificationManager');
-      await unifiedNotificationManager.initialize();
-      console.log('Notification manager initialized successfully');
+        // Lazy load notification manager only when needed and avoid duplication
+        const { unifiedNotificationManager } = await import('./services/unifiedNotificationManager');
+        
+        // Prevent multiple initializations
+        if (!unifiedNotificationManager.isServiceInitialized()) {
+          await unifiedNotificationManager.initialize();
+          console.log('Notification manager initialized successfully');
+        }
     }
   } catch (error) {
     console.error('Failed to initialize notification manager:', error);

@@ -27,8 +27,7 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
           charts: ['recharts'],
-          camera: ['@ericblade/quagga2', 'tesseract.js'],
-          notifications: ['react-onesignal']
+          camera: ['@ericblade/quagga2', 'tesseract.js']
         },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name) {
@@ -40,7 +39,9 @@ export default defineConfig(({ mode }) => ({
           }
           return `assets/[name]-[hash][extname]`;
         }
-      }
+      },
+      // External dependencies to prevent bundling duplication
+      external: mode === 'production' ? ['https://cdn.onesignal.com/sdks/OneSignalSDK.js'] : []
     },
     // Optimize chunk size
     chunkSizeWarningLimit: 1000,
@@ -58,6 +59,6 @@ export default defineConfig(({ mode }) => ({
   // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom'],
-    exclude: mode === 'production' ? ['react-onesignal'] : []
+    exclude: mode === 'production' ? [] : []
   }
 }));
