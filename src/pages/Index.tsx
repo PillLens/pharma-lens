@@ -13,8 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import heroImage from "@/assets/medical-hero-optimized.webp";
-import heroImageFallback from "@/assets/medical-hero.jpg";
+import heroImage from "@/assets/medical-hero.jpg";
 import ProfessionalMobileLayout from "@/components/mobile/ProfessionalMobileLayout";
 import FloatingActionButton from "@/components/mobile/FloatingActionButton";
 import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, MobileCardDescription } from "@/components/ui/mobile/MobileCard";
@@ -86,16 +85,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <picture>
-                  <source srcSet="/lovable-uploads/pilllens-logo-48x48.webp" type="image/webp" />
-                  <img 
-                    src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
-                    alt="PillLens" 
-                    className="w-12 h-12 object-contain"
-                    width="48"
-                    height="48"
-                  />
-                </picture>
+                <img src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" alt="PillLens" className="w-12 h-12 object-contain" />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse"></div>
               </div>
               <div>
@@ -186,16 +176,7 @@ const Index = () => {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-background to-muted/30">
                 <div className="aspect-[4/3] relative overflow-hidden">
-                  <picture>
-                    <source srcSet={heroImage} type="image/webp" />
-                    <img 
-                      src={heroImageFallback} 
-                      alt="Medical OCR scanning interface" 
-                      className="w-full h-full object-cover"
-                      width="500"
-                      height="375"
-                    />
-                  </picture>
+                  <img src={heroImage} alt="Medical OCR scanning interface" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>
                 </div>
                 

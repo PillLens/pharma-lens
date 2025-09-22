@@ -118,16 +118,11 @@ export function DesktopSidebar() {
         {!isCollapsed ? (
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
-              <picture>
-                <source srcSet="/lovable-uploads/pilllens-logo-48x48.webp" type="image/webp" />
-                <img 
-                  src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
-                  alt="PillLens Logo" 
-                  className="w-10 h-10 object-contain"
-                  width="40"
-                  height="40"
-                />
-              </picture>
+              <img 
+                src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
+                alt="PillLens Logo" 
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="font-semibold text-foreground text-lg">PillLens</h2>
@@ -136,16 +131,11 @@ export function DesktopSidebar() {
           </div>
         ) : (
           <div className="flex justify-center">
-            <picture>
-              <source srcSet="/lovable-uploads/pilllens-logo-48x48.webp" type="image/webp" />
-              <img 
-                src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
-                alt="PillLens Logo" 
-                className="w-10 h-10 object-contain"
-                width="40"
-                height="40"
-              />
-            </picture>
+            <img 
+              src="/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png" 
+              alt="PillLens Logo" 
+              className="w-10 h-10 object-contain"
+            />
           </div>
         )}
       </SidebarHeader>

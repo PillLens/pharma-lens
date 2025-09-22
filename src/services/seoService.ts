@@ -166,7 +166,7 @@ ${sitemapUrls}
       name: 'PillLens',
       description: 'Smart medication management and reminder system',
       url: this.baseUrl,
-      logo: `${this.baseUrl}/lovable-uploads/pilllens-logo-48x48.webp`,
+      logo: `${this.baseUrl}/lovable-uploads/17a150fa-03fc-4034-b5d2-287f4b29588f.png`,
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'customer service',
