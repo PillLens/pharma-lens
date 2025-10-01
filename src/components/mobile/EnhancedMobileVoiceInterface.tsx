@@ -125,7 +125,7 @@ Key mobile behaviors:
 Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
 
       chatRef.current = new RealtimeChat(handleMessage, setConnectionStatus);
-      await chatRef.current.init(mobileInstructions, 'nova'); // Use Nova voice for mobile
+      await chatRef.current.init(mobileInstructions, 'shimmer'); // Use Nova voice for mobile
 
       setIsConnected(true);
       hapticService.feedback('success');
