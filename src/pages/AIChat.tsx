@@ -1,11 +1,16 @@
 import React from 'react';
 import { PageSEO } from '@/components/seo/PageSEO';
 import { EnhancedVoiceInterface } from '@/components/voice/EnhancedVoiceInterface';
+import { EnhancedMobileVoiceInterface } from '@/components/mobile/EnhancedMobileVoiceInterface';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot, Mic, Shield, Sparkles } from 'lucide-react';
 import { TranslatedText } from '@/components/TranslatedText';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 const AIChat = () => {
+  const isMobile = useIsMobile();
+
   return (
     <>
       <PageSEO
@@ -15,24 +20,36 @@ const AIChat = () => {
         path="/ai-chat"
       />
 
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className={cn(
+        "container mx-auto px-4 py-6",
+        isMobile ? "max-w-full pb-32" : "max-w-7xl"
+      )}>
         {/* Header */}
-        <div className="mb-6">
+        <div className={cn("mb-6", isMobile && "mb-4")}>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-primary" />
+            <div className={cn(
+              "rounded-full bg-primary/10 flex items-center justify-center",
+              isMobile ? "w-8 h-8" : "w-10 h-10"
+            )}>
+              <Bot className={cn("text-primary", isMobile ? "w-4 h-4" : "w-5 h-5")} />
             </div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className={cn(
+              "font-bold text-foreground",
+              isMobile ? "text-xl" : "text-3xl"
+            )}>
               <TranslatedText translationKey="navigation.aiChat" />
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Speak naturally with PillLens AI. Ask questions about your medications, get health guidance, and manage your care.
-          </p>
+          {!isMobile && (
+            <p className="text-muted-foreground">
+              Speak naturally with PillLens AI. Ask questions about your medications, get health guidance, and manage your care.
+            </p>
+          )}
         </div>
 
-        {/* Feature Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {/* Feature Highlights - Desktop Only */}
+        {!isMobile && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card className="border-primary/20">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
@@ -74,23 +91,28 @@ const AIChat = () => {
               </CardDescription>
             </CardContent>
           </Card>
-        </div>
+          </div>
+        )}
 
-        {/* Voice Interface */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bot className="w-5 h-5" />
-              Voice Chat
-            </CardTitle>
-            <CardDescription>
-              Click "Start Voice Chat" below to begin your conversation. Grant microphone access when prompted.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <EnhancedVoiceInterface />
-          </CardContent>
-        </Card>
+        {/* Voice Interface - Conditional Rendering */}
+        {isMobile ? (
+          <EnhancedMobileVoiceInterface />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bot className="w-5 h-5" />
+                Voice Chat
+              </CardTitle>
+              <CardDescription>
+                Click "Start Voice Chat" below to begin your conversation. Grant microphone access when prompted.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <EnhancedVoiceInterface />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </>
   );
