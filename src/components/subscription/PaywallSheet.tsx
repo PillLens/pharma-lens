@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, Check, Star, Users, FileText, Shield, X } from 'lucide-react';
+import { Crown, Check, Star, Users, FileText, Shield, X, Bot } from 'lucide-react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -118,6 +118,12 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
           icon: Shield,
           title: 'Security & Compliance',
           description: 'Access HIPAA compliance reports and advanced security features.'
+        };
+      case 'ai_chat_minutes_per_month':
+        return {
+          icon: Bot,
+          title: 'Unlimited AI Chat',
+          description: 'Get unlimited access to your AI health assistant with voice support.'
         };
       default:
         return {

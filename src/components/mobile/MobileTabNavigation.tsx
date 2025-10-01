@@ -45,8 +45,8 @@ const MobileTabNavigation: React.FC = () => {
 
   return (
     <>
-      {/* AI Chat FAB - Hidden when on AI Chat page */}
-      {location.pathname !== '/ai-chat' && (
+      {/* AI Chat FAB - Hidden on pages with their own FABs */}
+      {!(['/ai-chat', '/medications', '/reminders', '/family'].includes(location.pathname)) && (
         <NavLink
           to="/ai-chat"
           className={cn(

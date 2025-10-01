@@ -7,6 +7,7 @@ export interface UserEntitlements {
   hipaa_report_access: boolean;
   max_devices: number;
   max_family_members?: number;
+  ai_chat_minutes_per_month: number; // -1 for unlimited, 10 for free tier
 }
 
 export interface UserSubscription {
@@ -220,7 +221,8 @@ class EntitlementsService {
       reminders_limit: 1,
       hipaa_report_access: false,
       max_devices: 1,
-      max_family_members: 0
+      max_family_members: 0,
+      ai_chat_minutes_per_month: 10 // Free tier gets 10 minutes
     };
   }
 

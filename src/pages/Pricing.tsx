@@ -62,6 +62,7 @@ const Pricing: React.FC = () => {
       features: [
         { name: 'Basic medication scanning', included: true },
         { name: '1 medication reminder', included: true },
+        { name: '10 AI chat minutes/month', included: true },
         { name: '1 device only', included: true },
         { name: 'Family groups', included: false },
         { name: 'Advanced reports & exports', included: false },
@@ -79,6 +80,7 @@ const Pricing: React.FC = () => {
       features: [
         { name: 'Everything in Free', included: true },
         { name: 'Unlimited medication reminders', included: true },
+        { name: 'Unlimited AI chat minutes', included: true },
         { name: 'Up to 3 devices', included: true },
         { name: 'Family group management', included: true },
         { name: 'Advanced reports & exports', included: true },

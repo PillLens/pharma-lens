@@ -3,13 +3,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Progress } from '@/components/ui/progress';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
 import { hapticService } from '@/services/hapticService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAIChatUsage } from '@/hooks/useAIChatUsage';
+import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import {
   Mic, MicOff, Volume2, VolumeX, Phone, PhoneOff,
-  Loader2, Waves, Bot, MessageSquare, HeadphonesIcon, Trash2, User
+  Loader2, Waves, Bot, MessageSquare, HeadphonesIcon, Trash2, User, Clock, Crown
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -36,10 +39,16 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
   const [lastMessage, setLastMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [userTranscript, setUserTranscript] = useState('');
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+  const [elapsedMinutes, setElapsedMinutes] = useState(0);
 
   const chatRef = useRef<RealtimeChat | null>(null);
   const vibrationRef = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<number | null>(null);
+
+  const { canChat, minutesUsed, minutesLimit, minutesRemaining, isUnlimited, loading: usageLoading, checkUsage, trackUsage } = useAIChatUsage();
 
   useEffect(() => {
     onStatusChange?.(connectionStatus);
@@ -136,6 +145,13 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
 
   const startMobileVoiceChat = async () => {
     try {
+      // Check usage limits first
+      if (!canChat) {
+        setShowPaywall(true);
+        toast.error(`You've used all ${minutesLimit} minutes this month. Upgrade to Pro for unlimited AI chat!`);
+        return;
+      }
+
       hapticService.buttonPress();
 
       // Request permissions first
@@ -158,6 +174,13 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
       await chatRef.current.init(mobileInstructions, 'shimmer'); // Use Nova voice for mobile
 
       setIsConnected(true);
+      setSessionStartTime(new Date());
+      
+      // Start usage timer
+      timerRef.current = window.setInterval(() => {
+        setElapsedMinutes(prev => prev + (1 / 60)); // Update every second
+      }, 1000);
+
       hapticService.feedback('success');
       toast.success('🎤 Voice assistant ready');
 
@@ -173,14 +196,30 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
     }
   };
 
-  const endMobileVoiceChat = () => {
+  const endMobileVoiceChat = async () => {
     hapticService.buttonPress();
+    
+    // Stop timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Track usage
+    if (sessionStartTime && elapsedMinutes > 0) {
+      const roundedMinutes = Math.ceil(elapsedMinutes);
+      await trackUsage(roundedMinutes);
+      toast.success(`Session ended. ${roundedMinutes} minute${roundedMinutes > 1 ? 's' : ''} used.`);
+    }
+
     chatRef.current?.disconnect();
     setIsConnected(false);
     setIsSpeaking(false);
     setIsListening(false);
     setCurrentTranscript('');
     setUserTranscript('');
+    setSessionStartTime(null);
+    setElapsedMinutes(0);
     
     // Clear any ongoing vibration
     if (vibrationRef.current) {
@@ -188,7 +227,8 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
       vibrationRef.current = null;
     }
 
-    toast.success('Voice chat ended');
+    // Refresh usage after tracking
+    await checkUsage();
   };
 
   const clearChatHistory = () => {
@@ -279,6 +319,52 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
               )}
             </div>
           </div>
+
+          {/* Usage Indicator */}
+          {!usageLoading && (
+            <div className="flex-shrink-0 p-3 rounded-lg bg-muted/50 border border-border/50">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    {isUnlimited ? (
+                      <span className="flex items-center gap-1">
+                        <Crown className="w-4 h-4 text-amber-500" />
+                        Unlimited
+                      </span>
+                    ) : (
+                      `${Math.floor(minutesUsed)}/${minutesLimit} min`
+                    )}
+                  </span>
+                </div>
+                {isConnected && sessionStartTime && (
+                  <Badge variant="secondary" className="text-xs">
+                    <Clock className="w-3 h-3 mr-1" />
+                    {Math.floor(elapsedMinutes)}:{String(Math.floor((elapsedMinutes % 1) * 60)).padStart(2, '0')}
+                  </Badge>
+                )}
+              </div>
+              {!isUnlimited && (
+                <>
+                  <Progress value={(minutesUsed / minutesLimit) * 100} className="h-2 mb-2" />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{Math.floor(minutesRemaining)} min remaining</span>
+                    {minutesRemaining < 2 && (
+                      <Button
+                        onClick={() => setShowPaywall(true)}
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 text-xs"
+                      >
+                        <Crown className="w-3 h-3 mr-1" />
+                        Upgrade
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Chat History */}
           {chatHistory.length > 0 && (
@@ -404,6 +490,13 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
           )}
         </CardContent>
       </Card>
+
+      {/* Paywall Sheet */}
+      <PaywallSheet
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="ai_chat_minutes_per_month"
+      />
     </div>
   );
 };
