@@ -122,8 +122,8 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
       case 'ai_chat_minutes_per_month':
         return {
           icon: Bot,
-          title: 'Unlimited AI Chat',
-          description: 'Get unlimited access to your AI health assistant with voice support.'
+          title: '10 AI Voice Minutes/Month',
+          description: 'Chat with your AI health assistant using premium voice technology (OpenAI GPT-4 + ElevenLabs).'
         };
       default:
         return {
@@ -217,6 +217,10 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
+                      <span>3 AI voice minutes/month</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>1 device only</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
@@ -268,6 +272,10 @@ export function PaywallSheet({ isOpen, onClose, feature }: PaywallSheetProps) {
                     <div className="flex items-center gap-2">
                       <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                       <span>Advanced reports & exports</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
+                      <span>10 AI voice minutes/month</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="w-3 h-3 text-green-500 flex-shrink-0" />

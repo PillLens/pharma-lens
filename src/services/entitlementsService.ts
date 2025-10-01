@@ -222,7 +222,7 @@ class EntitlementsService {
       hipaa_report_access: false,
       max_devices: 1,
       max_family_members: 0,
-      ai_chat_minutes_per_month: 10 // Free tier gets 10 minutes
+      ai_chat_minutes_per_month: 3 // Free tier gets 3 minutes
     };
   }
 

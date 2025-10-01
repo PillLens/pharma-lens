@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, Check, X, Star, Users, FileText, Shield, Smartphone, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Crown, Check, X, Star, Users, FileText, Shield, Smartphone, AlertCircle, ArrowLeft, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -62,7 +62,7 @@ const Pricing: React.FC = () => {
       features: [
         { name: 'Basic medication scanning', included: true },
         { name: '1 medication reminder', included: true },
-        { name: '10 AI chat minutes/month', included: true },
+        { name: '3 AI voice chat minutes/month', included: true },
         { name: '1 device only', included: true },
         { name: 'Family groups', included: false },
         { name: 'Advanced reports & exports', included: false },
@@ -80,7 +80,7 @@ const Pricing: React.FC = () => {
       features: [
         { name: 'Everything in Free', included: true },
         { name: 'Unlimited medication reminders', included: true },
-        { name: 'Unlimited AI chat minutes', included: true },
+        { name: '10 AI voice chat minutes/month', included: true },
         { name: 'Up to 3 devices', included: true },
         { name: 'Family group management', included: true },
         { name: 'Advanced reports & exports', included: true },
@@ -238,6 +238,43 @@ const Pricing: React.FC = () => {
           ))}
         </div>
 
+        {/* AI Voice Assistant Highlight */}
+        <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50 border-indigo-200 dark:border-indigo-800">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center flex-shrink-0">
+                <Bot className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2">
+                  AI Voice Assistant - Premium Health Support
+                </h3>
+                <p className="text-sm text-indigo-700 dark:text-indigo-300 mb-3">
+                  Have natural voice conversations with your AI health assistant powered by OpenAI's GPT-4 and ElevenLabs premium voices. Get instant answers about medications, set reminders, and manage your health - all hands-free.
+                </p>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-indigo-800 dark:text-indigo-200">Real-time voice responses</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-indigo-800 dark:text-indigo-200">Natural conversations</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-indigo-800 dark:text-indigo-200">Medication guidance</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-indigo-800 dark:text-indigo-200">24/7 availability</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Feature Comparison */}
         <Card>
           <CardHeader>
@@ -280,6 +317,13 @@ const Pricing: React.FC = () => {
                   free: 'Not available', 
                   pro: 'Full compliance',
                   color: 'text-red-500'
+                },
+                { 
+                  icon: Bot, 
+                  name: 'AI Voice Assistant', 
+                  free: '3 minutes/month', 
+                  pro: '10 minutes/month',
+                  color: 'text-indigo-500'
                 }
               ].map((feature, index) => (
                 <div key={index} className="grid grid-cols-3 gap-4 py-3 border-b border-border/50 last:border-0">
@@ -321,6 +365,10 @@ const Pricing: React.FC = () => {
               {
                 question: 'Can I upgrade or downgrade my plan?',
                 answer: 'Absolutely! You can change your plan at any time from your account settings. Changes take effect immediately.'
+              },
+              {
+                question: 'How does the AI Voice Assistant work?',
+                answer: 'Our AI Voice Assistant uses OpenAI\'s GPT-4 and ElevenLabs premium voices for natural conversations. Free users get 3 minutes per month, Pro users get 10 minutes. Perfect for hands-free medication management!'
               }
             ].map((faq, index) => (
               <div key={index} className="space-y-2">
