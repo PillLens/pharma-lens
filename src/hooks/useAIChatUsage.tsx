@@ -19,8 +19,8 @@ export function useAIChatUsage() {
   const [usage, setUsage] = useState<AIChatUsage>({
     canChat: true,
     minutesUsed: 0,
-    minutesLimit: 10,
-    minutesRemaining: 10,
+    minutesLimit: 3,
+    minutesRemaining: 3,
     isUnlimited: false,
     loading: true,
     error: null

@@ -148,7 +148,7 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
       // Check usage limits first
       if (!canChat) {
         setShowPaywall(true);
-        toast.error(`You've used all ${minutesLimit} minutes this month. Upgrade to Pro for unlimited AI chat!`);
+        toast.error(`You've used all ${minutesLimit} minutes this month. Upgrade to Pro for 10 AI voice minutes/month!`);
         return;
       }
 

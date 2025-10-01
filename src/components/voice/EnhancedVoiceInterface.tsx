@@ -4,15 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Progress } from '@/components/ui/progress';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hapticService } from '@/services/hapticService';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useAIChatUsage } from '@/hooks/useAIChatUsage';
+import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import {
   Mic, MicOff, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
-  Loader2, Speaker, HeadphonesIcon
+  Loader2, Speaker, HeadphonesIcon, Clock, Crown
 } from 'lucide-react';
 
 interface EnhancedVoiceInterfaceProps {
@@ -61,10 +64,16 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   const [elevenLabsVoice, setElevenLabsVoice] = useState("9BWtsMINqrJLrRacOk9x");
   const [isMuted, setIsMuted] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState('');
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+  const [elapsedMinutes, setElapsedMinutes] = useState(0);
   
   const chatRef = useRef<RealtimeChat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerRef = useRef<number | null>(null);
+
+  const { canChat, minutesUsed, minutesLimit, minutesRemaining, isUnlimited, loading: usageLoading, checkUsage, trackUsage } = useAIChatUsage();
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -179,6 +188,13 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
 
   const startConversation = async () => {
     try {
+      // Check usage limits first
+      if (!canChat) {
+        setShowPaywall(true);
+        toast.error(`You've used all ${minutesLimit} minutes this month. Upgrade to Pro for 10 AI voice minutes/month!`);
+        return;
+      }
+
       hapticService.buttonPress();
       
       const instructions = `You are a helpful family health assistant named Aria. You help families manage medications, coordinate care, and provide health guidance for the ${familyGroupId ? 'family group' : 'user'}.
@@ -196,6 +212,12 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       chatRef.current = new RealtimeChat(handleMessage, setConnectionStatus);
       await chatRef.current.init(instructions, selectedVoice);
       setIsConnected(true);
+      setSessionStartTime(new Date());
+      
+      // Start usage timer
+      timerRef.current = window.setInterval(() => {
+        setElapsedMinutes(prev => prev + (1 / 60)); // Update every second
+      }, 1000);
       
       addMessage('system', 'Voice assistant connected. Start speaking!');
       toast.success(t('toast.voice.ready'));
@@ -208,16 +230,34 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
     }
   };
 
-  const endConversation = () => {
+  const endConversation = async () => {
     hapticService.buttonPress();
+    
+    // Stop timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Track usage
+    if (sessionStartTime && elapsedMinutes > 0) {
+      const roundedMinutes = Math.ceil(elapsedMinutes);
+      await trackUsage(roundedMinutes);
+      toast.success(`Session ended. ${roundedMinutes} minute${roundedMinutes > 1 ? 's' : ''} used.`);
+    }
+
     chatRef.current?.disconnect();
     setIsConnected(false);
     setIsSpeaking(false);
     setIsListening(false);
     setCurrentTranscript('');
+    setSessionStartTime(null);
+    setElapsedMinutes(0);
     
     addMessage('system', 'Voice assistant disconnected');
-    toast.success(t('toast.voice.stopped'));
+
+    // Refresh usage after tracking
+    await checkUsage();
   };
 
   const playTextWithElevenLabs = async (text: string) => {
@@ -295,6 +335,43 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
         </CardHeader>
         
         <CardContent className="space-y-4">
+          {/* Usage Display */}
+          {!usageLoading && (
+            <Card className="border-primary/20">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">
+                      {isUnlimited ? (
+                        <span className="flex items-center gap-1">
+                          <Crown className="w-4 h-4 text-amber-500" />
+                          Unlimited
+                        </span>
+                      ) : (
+                        `${Math.floor(minutesUsed)}/${minutesLimit} min used`
+                      )}
+                    </span>
+                  </div>
+                  {isConnected && sessionStartTime && (
+                    <Badge variant="secondary" className="text-xs">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {Math.floor(elapsedMinutes)}:{String(Math.floor((elapsedMinutes % 1) * 60)).padStart(2, '0')}
+                    </Badge>
+                  )}
+                  {!isUnlimited && (
+                    <span className="text-xs text-muted-foreground">
+                      {Math.floor(minutesRemaining)} min remaining
+                    </span>
+                  )}
+                </div>
+                {!isUnlimited && (
+                  <Progress value={(minutesUsed / minutesLimit) * 100} className="h-2" />
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Voice Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -485,6 +562,11 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
 
       {/* Hidden audio element for ElevenLabs playback */}
       <audio ref={audioRef} style={{ display: 'none' }} />
+
+      <PaywallSheet 
+        isOpen={showPaywall} 
+        onClose={() => setShowPaywall(false)} 
+      />
 
       {/* Usage Instructions */}
       <Card>

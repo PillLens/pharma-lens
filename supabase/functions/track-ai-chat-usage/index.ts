@@ -53,7 +53,7 @@ serve(async (req) => {
 
       if (entError) throw entError;
 
-      const limit = entitlements?.ai_chat_minutes_per_month ?? 10;
+      const limit = entitlements?.ai_chat_minutes_per_month ?? 3;
       const used = usage?.minutes_used ?? 0;
       const remaining = limit === -1 ? -1 : Math.max(0, limit - used);
       const canChat = limit === -1 || remaining > 0;
