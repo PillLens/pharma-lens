@@ -2,14 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
 import { hapticService } from '@/services/hapticService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Mic, MicOff, Volume2, VolumeX, Phone, PhoneOff,
-  Loader2, Waves, Bot, MessageSquare, HeadphonesIcon
+  Loader2, Waves, Bot, MessageSquare, HeadphonesIcon, Trash2, User
 } from 'lucide-react';
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
 
 interface EnhancedMobileVoiceInterfaceProps {
   familyGroupId?: string;
@@ -27,9 +34,12 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
   const [isMuted, setIsMuted] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState('');
   const [lastMessage, setLastMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [userTranscript, setUserTranscript] = useState('');
 
   const chatRef = useRef<RealtimeChat | null>(null);
   const vibrationRef = useRef<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     onStatusChange?.(connectionStatus);
@@ -64,6 +74,19 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
     console.log('Mobile voice message:', event);
     
     switch (event.type) {
+      case 'conversation.item.input_audio_transcription.completed':
+        // User's speech transcription
+        if (event.transcript) {
+          setUserTranscript(event.transcript);
+          setChatHistory(prev => [...prev, {
+            role: 'user',
+            content: event.transcript,
+            timestamp: new Date()
+          }]);
+          setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+        }
+        break;
+
       case 'response.audio_transcript.delta':
         if (event.delta) {
           setCurrentTranscript(prev => prev + event.delta);
@@ -73,8 +96,14 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
       case 'response.audio_transcript.done':
         if (currentTranscript.trim()) {
           setLastMessage(currentTranscript);
+          setChatHistory(prev => [...prev, {
+            role: 'assistant',
+            content: currentTranscript,
+            timestamp: new Date()
+          }]);
           setCurrentTranscript('');
           hapticService.feedback('success');
+          setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
         }
         break;
         
@@ -89,6 +118,7 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
         
       case 'input_audio_buffer.speech_started':
         setIsListening(true);
+        setUserTranscript('');
         hapticService.feedback('light');
         break;
         
@@ -150,6 +180,7 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
     setIsSpeaking(false);
     setIsListening(false);
     setCurrentTranscript('');
+    setUserTranscript('');
     
     // Clear any ongoing vibration
     if (vibrationRef.current) {
@@ -158,6 +189,13 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
     }
 
     toast.success('Voice chat ended');
+  };
+
+  const clearChatHistory = () => {
+    hapticService.buttonPress();
+    setChatHistory([]);
+    setLastMessage('');
+    toast.success('Chat history cleared');
   };
 
   const playLastMessageWithElevenLabs = async () => {
@@ -215,51 +253,90 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
   };
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50">
-      <Card className="backdrop-blur-sm bg-background/95 border-primary/20 shadow-xl">
-        <CardContent className="p-4 space-y-4">
+    <div className="fixed bottom-20 left-4 right-4 z-40 max-h-[70vh] flex flex-col">
+      <Card className="backdrop-blur-sm bg-background/95 border-primary/20 shadow-xl flex flex-col max-h-full">
+        <CardContent className="p-4 space-y-4 flex flex-col min-h-0">
           {/* Status Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${getStatusColor()} transition-colors`} />
               <span className="font-medium text-sm">{getStatusText()}</span>
             </div>
-            <Badge variant={isConnected ? 'default' : 'secondary'} className="text-xs">
-              <Bot className="w-3 h-3 mr-1" />
-              AI Assistant
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant={isConnected ? 'default' : 'secondary'} className="text-xs">
+                <Bot className="w-3 h-3 mr-1" />
+                AI Assistant
+              </Badge>
+              {chatHistory.length > 0 && (
+                <Button
+                  onClick={clearChatHistory}
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Live Transcript */}
-          {(currentTranscript || lastMessage) && (
-            <div className="p-3 bg-muted/50 rounded-lg">
-              {currentTranscript ? (
-                <div className="flex items-start gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-muted-foreground">{currentTranscript}</p>
-                </div>
-              ) : lastMessage ? (
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <Bot className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" />
-                    <p className="text-sm">{lastMessage}</p>
-                  </div>
-                  <Button
-                    onClick={playLastMessageWithElevenLabs}
-                    size="sm"
-                    variant="outline"
-                    className="h-6 px-2 text-xs"
+          {/* Chat History */}
+          {chatHistory.length > 0 && (
+            <ScrollArea className="flex-1 min-h-0 max-h-[40vh] -mx-4 px-4">
+              <div className="space-y-3 pb-2">
+                {chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <HeadphonesIcon className="w-3 h-3 mr-1" />
-                    Premium Voice
-                  </Button>
-                </div>
-              ) : null}
+                    <div
+                      className={`flex gap-2 max-w-[85%] ${
+                        msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                      }`}
+                    >
+                      <div className="flex-shrink-0 mt-1">
+                        {msg.role === 'user' ? (
+                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                            <User className="w-4 h-4 text-primary" />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-blue-500" />
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className={`p-3 rounded-lg ${
+                          msg.role === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                        <p className="text-sm break-words">{msg.content}</p>
+                        <span className="text-xs opacity-60 mt-1 block">
+                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div ref={scrollRef} />
+              </div>
+            </ScrollArea>
+          )}
+
+          {/* Live Transcript */}
+          {currentTranscript && (
+            <div className="p-3 bg-muted/50 rounded-lg flex-shrink-0">
+              <div className="flex items-start gap-2">
+                <Loader2 className="w-4 h-4 animate-spin mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-muted-foreground">{currentTranscript}</p>
+              </div>
             </div>
           )}
 
           {/* Control Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-shrink-0">
             {!isConnected ? (
               <Button
                 onClick={startMobileVoiceChat}
