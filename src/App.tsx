@@ -32,6 +32,7 @@ import TermsOfService from "./pages/TermsOfService";
 import AppInfo from "./pages/AppInfo";
 import Sitemap from "./pages/Sitemap";
 import Loading from "./pages/Loading";
+import AIChat from "./pages/AIChat";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +114,13 @@ const App = () => {
                   <ProtectedRoute>
                     <AppLayout>
                       <Settings />
+                    </AppLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/ai-chat" element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <AIChat />
                     </AppLayout>
                   </ProtectedRoute>
                 } />

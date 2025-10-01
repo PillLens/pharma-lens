@@ -56,7 +56,8 @@
     "language": "Dil",
     "signOut": "Çıxış",
     "endSession": "Seansı bitir",
-    "medicationGuide": "Dərman Bələdçisi"
+    "medicationGuide": "Dərman Bələdçisi",
+    "aiChat": "AI Söhbət"
   },
   "auth": {
     "signIn": "Daxil ol",

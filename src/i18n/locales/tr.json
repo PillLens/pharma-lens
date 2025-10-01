@@ -57,7 +57,8 @@
     "language": "Dil",
     "signOut": "Çıkış",
     "endSession": "Oturumu sonlandır",
-    "medicationGuide": "İlaç Rehberi"
+    "medicationGuide": "İlaç Rehberi",
+    "aiChat": "AI Sohbet"
   },
   "auth": {
     "signIn": "Giriş Yap",

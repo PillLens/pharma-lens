@@ -63,7 +63,8 @@
     "language": "Language",
     "signOut": "Sign Out",
     "endSession": "End your session",
-    "medicationGuide": "Medication Guide"
+    "medicationGuide": "Medication Guide",
+    "aiChat": "AI Chat"
   },
   "auth": {
     "signIn": "Sign In",

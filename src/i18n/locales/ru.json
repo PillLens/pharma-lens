@@ -55,7 +55,8 @@
     "language": "Язык",
     "signOut": "Выход",
     "endSession": "Завершить сеанс",
-    "medicationGuide": "Руководство по лекарствам"
+    "medicationGuide": "Руководство по лекарствам",
+    "aiChat": "AI Чат"
   },
   "auth": {
     "signIn": "Войти",

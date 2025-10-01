@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Pill, Bell, LayoutDashboard } from 'lucide-react';
+import { Home, Pill, Bell, LayoutDashboard, Bot } from 'lucide-react';
 import { hapticService } from '@/services/hapticService';
 import { cn } from '@/lib/utils';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -45,6 +45,24 @@ const MobileTabNavigation: React.FC = () => {
 
   return (
     <>
+      {/* AI Chat FAB */}
+      <NavLink
+        to="/ai-chat"
+        className={cn(
+          "fixed right-4 z-50 md:hidden rounded-full shadow-lg transition-all duration-300",
+          "flex items-center justify-center w-14 h-14",
+          "bg-gradient-to-br from-primary to-primary/90",
+          "hover:scale-110 active:scale-95",
+          location.pathname === '/ai-chat' 
+            ? "bottom-24 ring-4 ring-primary/30" 
+            : "bottom-24"
+        )}
+        onClick={handleNavigate}
+        aria-label="AI Chat"
+      >
+        <Bot className="w-6 h-6 text-white" />
+      </NavLink>
+
       <nav className="fixed left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 shadow-lg will-change-transform bottom-nav safe-area-bottom safe-area-x content-rounded">
         {/* Modern Navigation with Labels */}
         <div className="px-2 py-2 h-full">

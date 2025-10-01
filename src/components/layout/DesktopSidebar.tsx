@@ -11,7 +11,8 @@ import {
   Shield,
   LogOut,
   User,
-  FileText
+  FileText,
+  Bot
 } from 'lucide-react';
 import {
   Sidebar,
@@ -55,6 +56,12 @@ const navigationItems = [
     icon: Bell,
     labelKey: 'navigation.reminders',
     href: '/reminders',
+    category: 'medical'
+  },
+  {
+    icon: Bot,
+    labelKey: 'navigation.aiChat',
+    href: '/ai-chat',
     category: 'medical'
   },
   {
