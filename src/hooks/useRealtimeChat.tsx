@@ -22,8 +22,15 @@ export class AudioRecorder {
   private audioContext: AudioContext | null = null;
   private processor: ScriptProcessorNode | null = null;
   private source: MediaStreamAudioSourceNode | null = null;
+  private analyser: AnalyserNode | null = null;
+  private onLevelUpdate?: (level: number) => void;
 
-  constructor(private onAudioData: (audioData: Float32Array) => void) {}
+  constructor(
+    private onAudioData: (audioData: Float32Array) => void,
+    onLevelUpdate?: (level: number) => void
+  ) {
+    this.onLevelUpdate = onLevelUpdate;
+  }
 
   async start() {
     try {
@@ -40,6 +47,14 @@ export class AudioRecorder {
       this.audioContext = new AudioContext({ sampleRate: 24000 });
       this.source = this.audioContext.createMediaStreamSource(this.stream);
       this.processor = this.audioContext.createScriptProcessor(4096, 1, 1);
+      
+      // Create analyser for audio level monitoring
+      if (this.onLevelUpdate) {
+        this.analyser = this.audioContext.createAnalyser();
+        this.analyser.fftSize = 256;
+        this.source.connect(this.analyser);
+        this.startLevelMonitoring();
+      }
 
       this.processor.onaudioprocess = (e) => {
         const inputData = e.inputBuffer.getChannelData(0);
@@ -54,7 +69,31 @@ export class AudioRecorder {
     }
   }
 
+  private startLevelMonitoring() {
+    if (!this.analyser || !this.onLevelUpdate) return;
+
+    const bufferLength = this.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const updateLevel = () => {
+      if (!this.analyser || !this.onLevelUpdate) return;
+      
+      this.analyser.getByteFrequencyData(dataArray);
+      const average = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
+      const normalizedLevel = Math.min(100, (average / 128) * 100);
+      
+      this.onLevelUpdate(normalizedLevel);
+      requestAnimationFrame(updateLevel);
+    };
+
+    updateLevel();
+  }
+
   stop() {
+    if (this.analyser) {
+      this.analyser.disconnect();
+      this.analyser = null;
+    }
     if (this.source) {
       this.source.disconnect();
       this.source = null;
@@ -177,37 +216,98 @@ class AudioQueue {
 }
 
 export const useRealtimeChat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Restore messages from localStorage on mount
+    const savedMessages = localStorage.getItem('ai-chat-messages');
+    if (savedMessages) {
+      try {
+        const parsed = JSON.parse(savedMessages);
+        return parsed.map((m: any) => ({
+          ...m,
+          timestamp: new Date(m.timestamp)
+        }));
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [isConnected, setIsConnected] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState('');
+  const [audioLevel, setAudioLevel] = useState(0);
+  const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'poor'>('excellent');
   
   const wsRef = useRef<WebSocket | null>(null);
   const audioRecorderRef = useRef<AudioRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioQueueRef = useRef<AudioQueue | null>(null);
+  const audioLevelRef = useRef<number>(0);
+  const latencyRef = useRef<number[]>([]);
+  const reconnectAttemptsRef = useRef<number>(0);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('ai-chat-messages', JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // Monitor connection quality based on latency
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const interval = setInterval(() => {
+      if (latencyRef.current.length > 0) {
+        const avgLatency = latencyRef.current.reduce((a, b) => a + b, 0) / latencyRef.current.length;
+        
+        if (avgLatency < 100) {
+          setConnectionQuality('excellent');
+        } else if (avgLatency < 300) {
+          setConnectionQuality('good');
+        } else {
+          setConnectionQuality('poor');
+        }
+        
+        // Keep only last 10 latency measurements
+        latencyRef.current = latencyRef.current.slice(-10);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isConnected]);
 
   const connect = useCallback(async () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
     const maxRetries = 3;
-    let retryCount = 0;
+    let retryCount = reconnectAttemptsRef.current;
     let retryDelay = 1000;
 
     const attemptConnection = async (): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
+          const startTime = Date.now();
           wsRef.current = new WebSocket('wss://bquxkkaipevuakmqqilk.functions.supabase.co/functions/v1/realtime-chat');
           
           wsRef.current.onopen = () => {
-            console.log('Connected to realtime chat');
+            const latency = Date.now() - startTime;
+            latencyRef.current.push(latency);
+            
+            console.log('Connected to realtime chat', { latency });
             setIsConnected(true);
-            retryCount = 0; // Reset retry count on successful connection
+            reconnectAttemptsRef.current = 0;
+            retryCount = 0;
             
             // Initialize audio context
             if (!audioContextRef.current) {
               audioContextRef.current = new AudioContext({ sampleRate: 24000 });
               audioQueueRef.current = new AudioQueue(audioContextRef.current);
+            }
+            
+            // Notify successful reconnection if this was a reconnect
+            if (reconnectAttemptsRef.current > 0) {
+              toast.success('Reconnected successfully!');
             }
             
             resolve();
@@ -285,13 +385,15 @@ export const useRealtimeChat = () => {
           wsRef.current.onerror = (error) => {
             console.error('WebSocket error:', error);
             
+            reconnectAttemptsRef.current++;
+            
             if (retryCount < maxRetries) {
               retryCount++;
               toast.error(`Connection error. Retrying (${retryCount}/${maxRetries})...`);
               
               setTimeout(() => {
                 attemptConnection().catch(reject);
-              }, retryDelay * retryCount); // Exponential backoff
+              }, retryDelay * retryCount);
             } else {
               setIsConnected(false);
               toast.error('Connection failed after multiple attempts');
@@ -386,15 +488,21 @@ export const useRealtimeChat = () => {
     }
 
     try {
-      audioRecorderRef.current = new AudioRecorder((audioData: Float32Array) => {
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          const encodedAudio = encodeAudioForAPI(audioData);
-          wsRef.current.send(JSON.stringify({
-            type: 'input_audio_buffer.append',
-            audio: encodedAudio
-          }));
+      audioRecorderRef.current = new AudioRecorder(
+        (audioData: Float32Array) => {
+          if (wsRef.current?.readyState === WebSocket.OPEN) {
+            const encodedAudio = encodeAudioForAPI(audioData);
+            wsRef.current.send(JSON.stringify({
+              type: 'input_audio_buffer.append',
+              audio: encodedAudio
+            }));
+          }
+        },
+        (level: number) => {
+          audioLevelRef.current = level;
+          setAudioLevel(level);
         }
-      });
+      );
 
       await audioRecorderRef.current.start();
       setIsRecording(true);
@@ -411,7 +519,14 @@ export const useRealtimeChat = () => {
       audioRecorderRef.current = null;
     }
     setIsRecording(false);
+    setAudioLevel(0);
     toast.success('Recording stopped');
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    setMessages([]);
+    localStorage.removeItem('ai-chat-messages');
+    toast.success('Conversation history cleared');
   }, []);
 
   useEffect(() => {
@@ -425,10 +540,13 @@ export const useRealtimeChat = () => {
     isConnected,
     isRecording,
     currentTranscript,
+    audioLevel,
+    connectionQuality,
     connect,
     disconnect,
     sendTextMessage,
     startRecording,
-    stopRecording
+    stopRecording,
+    clearHistory
   };
 };

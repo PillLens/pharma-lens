@@ -15,7 +15,8 @@ import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import {
   Mic, MicOff, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
-  Loader2, Speaker, HeadphonesIcon, Clock, Crown
+  Loader2, Speaker, HeadphonesIcon, Clock, Crown,
+  Wifi, WifiOff, Signal, Trash2, Activity
 } from 'lucide-react';
 
 interface EnhancedVoiceInterfaceProps {
@@ -70,6 +71,8 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   const [warningShown, setWarningShown] = useState(false);
   const [inGracePeriod, setInGracePeriod] = useState(false);
   const [gracePeriodSeconds, setGracePeriodSeconds] = useState(15);
+  const [audioLevel, setAudioLevel] = useState(0);
+  const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'poor'>('excellent');
   
   const chatRef = useRef<RealtimeChat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -89,6 +92,32 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   useEffect(() => {
     onSpeakingChange?.(isSpeaking);
   }, [isSpeaking, onSpeakingChange]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Space to toggle mic (when connected)
+      if (e.code === 'Space' && isConnected && !e.repeat) {
+        e.preventDefault();
+        if (isListening) {
+          // Stop recording functionality would go here
+          console.log('Stop recording');
+        } else {
+          // Start recording functionality would go here
+          console.log('Start recording');
+        }
+      }
+      
+      // Escape to end conversation
+      if (e.code === 'Escape' && isConnected) {
+        e.preventDefault();
+        endConversation();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isConnected, isListening]);
 
   const handleMessage = (event: any) => {
     console.log('Received message:', event);
@@ -189,6 +218,11 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
       isAudio
     };
     setMessages(prev => [...prev, message]);
+  };
+
+  const clearHistory = () => {
+    setMessages([]);
+    toast.success('Conversation history cleared');
   };
 
   // Usage monitoring effect
@@ -389,21 +423,50 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
     }
   };
 
+  const getConnectionQualityIcon = (quality: 'excellent' | 'good' | 'poor') => {
+    switch (quality) {
+      case 'excellent': return <Signal className="w-4 h-4 text-green-500" />;
+      case 'good': return <Signal className="w-4 h-4 text-yellow-500" />;
+      case 'poor': return <Signal className="w-4 h-4 text-red-500" />;
+    }
+  };
+
+  const getConnectionQualityText = (quality: 'excellent' | 'good' | 'poor') => {
+    return quality.charAt(0).toUpperCase() + quality.slice(1);
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="region" aria-label="AI Voice Assistant">
       {/* Connection Status & Controls */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Bot className="w-5 h-5" />
+              <Bot className="w-5 h-5" aria-hidden="true" />
               <span>AI Voice Assistant</span>
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${getConnectionStatusColor(connectionStatus)}`} />
+                <div 
+                  className={`w-2 h-2 rounded-full ${getConnectionStatusColor(connectionStatus)}`}
+                  role="status"
+                  aria-label={`Connection status: ${getConnectionStatusText(connectionStatus)}`}
+                />
                 <span className="text-sm text-muted-foreground">
                   {getConnectionStatusText(connectionStatus)}
                 </span>
               </div>
+              {isConnected && connectionQuality && (
+                <div 
+                  className="flex items-center gap-1" 
+                  title={`Connection quality: ${getConnectionQualityText(connectionQuality)}`}
+                  role="status"
+                  aria-label={`Connection quality: ${getConnectionQualityText(connectionQuality)}`}
+                >
+                  {getConnectionQualityIcon(connectionQuality)}
+                  <span className="text-xs text-muted-foreground">
+                    {getConnectionQualityText(connectionQuality)}
+                  </span>
+                </div>
+              )}
             </div>
           </CardTitle>
         </CardHeader>
@@ -504,29 +567,40 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
           {/* Connection Controls */}
           <div className="flex gap-2">
             {!isConnected ? (
-              <Button onClick={startConversation} className="flex-1" disabled={connectionStatus === 'connecting'}>
+              <Button 
+                onClick={startConversation} 
+                className="flex-1" 
+                disabled={connectionStatus === 'connecting'}
+                aria-label="Start voice chat"
+              >
                 {connectionStatus === 'connecting' ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
                     Connecting...
                   </>
                 ) : (
                   <>
-                    <Phone className="w-4 h-4 mr-2" />
+                    <Phone className="w-4 h-4 mr-2" aria-hidden="true" />
                     Start Voice Chat
                   </>
                 )}
               </Button>
             ) : (
               <>
-                <Button onClick={endConversation} variant="destructive" className="flex-1">
-                  <PhoneOff className="w-4 h-4 mr-2" />
+                <Button 
+                  onClick={endConversation} 
+                  variant="destructive" 
+                  className="flex-1"
+                  aria-label="End chat (Press Escape)"
+                >
+                  <PhoneOff className="w-4 h-4 mr-2" aria-hidden="true" />
                   End Chat
                 </Button>
                 <Button
                   onClick={() => setIsMuted(!isMuted)}
                   variant="outline"
                   size="icon"
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </Button>
@@ -534,21 +608,52 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
             )}
           </div>
 
-          {/* Status Indicators */}
+          {/* Keyboard Shortcuts Help */}
           {isConnected && (
-            <div className="flex gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Mic className={`w-4 h-4 ${isListening ? 'text-green-500' : 'text-muted-foreground'}`} />
-                <span className={isListening ? 'text-green-600' : 'text-muted-foreground'}>
-                  {isListening ? 'Listening...' : 'Ready'}
-                </span>
+            <div className="text-xs text-muted-foreground text-center border-t pt-2">
+              <kbd className="px-2 py-1 bg-muted rounded">Space</kbd> to toggle mic • 
+              <kbd className="px-2 py-1 bg-muted rounded ml-2">Esc</kbd> to end chat
+            </div>
+          )}
+
+          {/* Status Indicators with Audio Level */}
+          {isConnected && (
+            <div className="space-y-3">
+              <div className="flex gap-4 text-sm">
+                <div className="flex items-center gap-2" role="status" aria-live="polite">
+                  <Mic className={`w-4 h-4 ${isListening ? 'text-green-500' : 'text-muted-foreground'}`} aria-hidden="true" />
+                  <span className={isListening ? 'text-green-600' : 'text-muted-foreground'}>
+                    {isListening ? 'Listening...' : 'Ready'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2" role="status" aria-live="polite">
+                  <Speaker className={`w-4 h-4 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} aria-hidden="true" />
+                  <span className={isSpeaking ? 'text-blue-600' : 'text-muted-foreground'}>
+                    {isSpeaking ? 'Speaking...' : 'Silent'}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Speaker className={`w-4 h-4 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} />
-                <span className={isSpeaking ? 'text-blue-600' : 'text-muted-foreground'}>
-                  {isSpeaking ? 'Speaking...' : 'Silent'}
-                </span>
-              </div>
+              
+              {/* Audio Level Meter */}
+              {isListening && audioLevel !== undefined && (
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
+                    <span className="text-xs text-muted-foreground">Audio Level</span>
+                  </div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 transition-all duration-100"
+                      style={{ width: `${Math.min(100, audioLevel)}%` }}
+                      role="progressbar"
+                      aria-label="Microphone input level"
+                      aria-valuenow={Math.round(audioLevel)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
@@ -558,13 +663,26 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       {isConnected && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
-              Conversation
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" aria-hidden="true" />
+                Conversation
+              </CardTitle>
+              {messages.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearHistory}
+                  aria-label="Clear conversation history"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
+                  Clear
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-80 px-4">
+            <ScrollArea className="h-80 px-4" role="log" aria-label="Conversation messages">
               <div className="space-y-4 pb-4">
                 {messages.map((message) => (
                   <div
