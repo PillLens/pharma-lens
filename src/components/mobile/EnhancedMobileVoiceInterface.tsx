@@ -4,9 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
-import { RealtimeChat } from '@/utils/RealtimeAudio';
+import { useRealtimeChat } from '@/hooks/useRealtimeChat';
 import { hapticService } from '@/services/hapticService';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAIChatUsage } from '@/hooks/useAIChatUsage';
 import { PaywallSheet } from '@/components/subscription/PaywallSheet';
@@ -30,29 +29,43 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
   familyGroupId,
   onStatusChange
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTranscript, setCurrentTranscript] = useState('');
-  const [lastMessage, setLastMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [userTranscript, setUserTranscript] = useState('');
   const [showPaywall, setShowPaywall] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
 
-  const chatRef = useRef<RealtimeChat | null>(null);
-  const vibrationRef = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const vibrationRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
 
+  const { 
+    messages, 
+    isConnected, 
+    isRecording: isListening,
+    currentTranscript, 
+    connect, 
+    disconnect,
+    clearHistory 
+  } = useRealtimeChat();
+
   const { canChat, minutesUsed, minutesLimit, minutesRemaining, isUnlimited, loading: usageLoading, checkUsage, trackUsage } = useAIChatUsage();
+
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
 
   useEffect(() => {
     onStatusChange?.(connectionStatus);
   }, [connectionStatus, onStatusChange]);
+
+  useEffect(() => {
+    // Detect speaking from messages
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.type === 'assistant') {
+      setIsSpeaking(true);
+      const timer = setTimeout(() => setIsSpeaking(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [messages]);
 
   useEffect(() => {
     // Haptic feedback when speaking state changes
@@ -79,70 +92,6 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
     };
   }, [isSpeaking]);
 
-  const handleMessage = (event: any) => {
-    console.log('Mobile voice message:', event);
-    
-    switch (event.type) {
-      case 'conversation.item.input_audio_transcription.completed':
-        // User's speech transcription
-        if (event.transcript) {
-          setUserTranscript(event.transcript);
-          setChatHistory(prev => [...prev, {
-            role: 'user',
-            content: event.transcript,
-            timestamp: new Date()
-          }]);
-          setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
-        }
-        break;
-
-      case 'response.audio_transcript.delta':
-        if (event.delta) {
-          setCurrentTranscript(prev => prev + event.delta);
-        }
-        break;
-        
-      case 'response.audio_transcript.done':
-        if (currentTranscript.trim()) {
-          setLastMessage(currentTranscript);
-          setChatHistory(prev => [...prev, {
-            role: 'assistant',
-            content: currentTranscript,
-            timestamp: new Date()
-          }]);
-          setCurrentTranscript('');
-          hapticService.feedback('success');
-          setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
-        }
-        break;
-        
-      case 'response.audio.delta':
-        setIsSpeaking(true);
-        break;
-        
-      case 'response.audio.done':
-        setIsSpeaking(false);
-        hapticService.feedback('light');
-        break;
-        
-      case 'input_audio_buffer.speech_started':
-        setIsListening(true);
-        setUserTranscript('');
-        hapticService.feedback('light');
-        break;
-        
-      case 'input_audio_buffer.speech_stopped':
-        setIsListening(false);
-        break;
-        
-      case 'error':
-        console.error('Mobile voice error:', event.error);
-        hapticService.feedback('error');
-        toast.error('Voice error: ' + (event.error.message || 'Unknown error'));
-        break;
-    }
-  };
-
   const startMobileVoiceChat = async () => {
     try {
       // Check usage limits first
@@ -153,27 +102,11 @@ export const EnhancedMobileVoiceInterface: React.FC<EnhancedMobileVoiceInterface
       }
 
       hapticService.buttonPress();
+      setConnectionStatus('connecting');
 
-      // Request permissions first
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop()); // Stop the test stream
+      await connect();
 
-      const mobileInstructions = `You are Aria, a mobile family health assistant. You're optimized for quick, mobile conversations.
-
-Key mobile behaviors:
-- Keep responses very brief and conversational (1-2 sentences max)
-- Be extra warm and personal since this is a mobile, intimate interaction
-- Focus on immediate, actionable advice
-- Use simple language suitable for voice interaction
-- Prioritize urgent health and medication needs
-- Offer to send family notifications when appropriate
-
-Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
-
-      chatRef.current = new RealtimeChat(handleMessage, setConnectionStatus);
-      await chatRef.current.init(mobileInstructions, 'shimmer'); // Use Nova voice for mobile
-
-      setIsConnected(true);
+      setConnectionStatus('connected');
       setSessionStartTime(new Date());
       
       // Start usage timer
@@ -187,6 +120,7 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
     } catch (error) {
       console.error('Error starting mobile voice chat:', error);
       hapticService.feedback('error');
+      setConnectionStatus('error');
       
       if (error instanceof DOMException && error.name === 'NotAllowedError') {
         toast.error('Microphone permission required for voice chat');
@@ -212,12 +146,8 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
       toast.success(`Session ended. ${roundedMinutes} minute${roundedMinutes > 1 ? 's' : ''} used.`);
     }
 
-    chatRef.current?.disconnect();
-    setIsConnected(false);
-    setIsSpeaking(false);
-    setIsListening(false);
-    setCurrentTranscript('');
-    setUserTranscript('');
+    disconnect();
+    setConnectionStatus('disconnected');
     setSessionStartTime(null);
     setElapsedMinutes(0);
     
@@ -233,48 +163,8 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
 
   const clearChatHistory = () => {
     hapticService.buttonPress();
-    setChatHistory([]);
-    setLastMessage('');
+    clearHistory();
     toast.success('Chat history cleared');
-  };
-
-  const playLastMessageWithElevenLabs = async () => {
-    if (!lastMessage.trim()) return;
-
-    try {
-      hapticService.buttonPress();
-      
-      const { data, error } = await supabase.functions.invoke('elevenlabs-tts', {
-        body: {
-          text: lastMessage,
-          voice_id: "9BWtsMINqrJLrRacOk9x", // Aria voice
-          model: "eleven_turbo_v2_5"
-        }
-      });
-
-      if (error) throw error;
-
-      if (data.audioContent) {
-        const audioBlob = new Blob(
-          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
-          { type: 'audio/mpeg' }
-        );
-        
-        const audio = new Audio(URL.createObjectURL(audioBlob));
-        await audio.play();
-        
-        audio.onended = () => {
-          URL.revokeObjectURL(audio.src);
-          hapticService.feedback('success');
-        };
-        
-        toast.success('🔊 Playing with premium voice');
-      }
-    } catch (error) {
-      console.error('Error playing with ElevenLabs:', error);
-      hapticService.feedback('error');
-      toast.error('Failed to play premium voice');
-    }
   };
 
   const getStatusColor = () => {
@@ -307,7 +197,7 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
                 <Bot className="w-3 h-3 mr-1" />
                 AI Assistant
               </Badge>
-              {chatHistory.length > 0 && (
+              {messages.length > 0 && (
                 <Button
                   onClick={clearChatHistory}
                   size="sm"
@@ -367,21 +257,21 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
           )}
 
           {/* Chat History */}
-          {chatHistory.length > 0 && (
+          {messages.length > 0 && (
             <ScrollArea className="flex-1 min-h-0 max-h-[40vh] -mx-4 px-4">
               <div className="space-y-3 pb-2">
-                {chatHistory.map((msg, idx) => (
+                {messages.map((msg, idx) => (
                   <div
                     key={idx}
-                    className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex gap-2 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
                       className={`flex gap-2 max-w-[85%] ${
-                        msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                        msg.type === 'user' ? 'flex-row-reverse' : 'flex-row'
                       }`}
                     >
                       <div className="flex-shrink-0 mt-1">
-                        {msg.role === 'user' ? (
+                        {msg.type === 'user' ? (
                           <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
                             <User className="w-4 h-4 text-primary" />
                           </div>
@@ -393,7 +283,7 @@ Remember: This is a mobile conversation, so be concise, warm, and helpful.`;
                       </div>
                       <div
                         className={`p-3 rounded-lg ${
-                          msg.role === 'user'
+                          msg.type === 'user'
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
                         }`}

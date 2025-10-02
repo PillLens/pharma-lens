@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RealtimeChat } from '@/utils/RealtimeAudio';
-import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeChat } from '@/hooks/useRealtimeChat';
 import { toast } from 'sonner';
 import { hapticService } from '@/services/hapticService';
+import { SUPPORTED_VOICES } from '@/utils/voiceConfig';
 import {
   Mic, Bot, Phone, PhoneOff, Loader2, 
   Volume2, VolumeX, Waves
@@ -16,127 +16,52 @@ interface MobileVoiceInterfaceProps {
   onSpeakingChange?: (speaking: boolean) => void;
 }
 
-interface Message {
-  id: string;
-  type: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  isAudio?: boolean;
-}
-
-// ElevenLabs voice options
-const VOICE_OPTIONS = [
+// ElevenLabs voice options for TTS playback
+const ELEVENLABS_VOICES = [
   { id: "9BWtsMINqrJLrRacOk9x", name: "Aria", description: "Warm, conversational" },
   { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger", description: "Professional, clear" },
   { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", description: "Friendly, helpful" },
   { id: "FGY2WhTYpPnrIDTdsKH5", name: "Laura", description: "Calm, soothing" }
 ];
 
-const OPENAI_VOICES = [
-  { id: "alloy", name: "Alloy" },
-  { id: "echo", name: "Echo" },
-  { id: "shimmer", name: "Shimmer" },
-  { id: "nova", name: "Nova" },
-  { id: "sage", name: "Sage" },
-  { id: "ballad", name: "Ballad" }
-];
-
 const MobileVoiceInterface: React.FC<MobileVoiceInterfaceProps> = ({
   familyGroupId,
   onSpeakingChange
 }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedVoice, setSelectedVoice] = useState("alloy");
   const [elevenLabsVoice, setElevenLabsVoice] = useState("9BWtsMINqrJLrRacOk9x");
   const [isMuted, setIsMuted] = useState(false);
-  const [currentTranscript, setCurrentTranscript] = useState('');
-  
-  const chatRef = useRef<RealtimeChat | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const { 
+    messages, 
+    isConnected, 
+    isRecording: isListening,
+    currentTranscript, 
+    connect, 
+    disconnect 
+  } = useRealtimeChat();
 
   useEffect(() => {
     onSpeakingChange?.(isSpeaking);
   }, [isSpeaking, onSpeakingChange]);
 
-  const handleMessage = (event: any) => {
-    console.log('Received message:', event);
-    
-    switch (event.type) {
-      case 'response.audio_transcript.delta':
-        if (event.delta) {
-          setCurrentTranscript(prev => prev + event.delta);
-        }
-        break;
-        
-      case 'response.audio_transcript.done':
-        if (currentTranscript.trim()) {
-          addMessage('assistant', currentTranscript, true);
-          setCurrentTranscript('');
-        }
-        break;
-        
-      case 'response.audio.delta':
-        setIsSpeaking(true);
-        break;
-        
-      case 'response.audio.done':
-        setIsSpeaking(false);
-        break;
-        
-      case 'input_audio_buffer.speech_started':
-        setIsListening(true);
-        hapticService.feedback('light');
-        break;
-        
-      case 'input_audio_buffer.speech_stopped':
-        setIsListening(false);
-        break;
-        
-      case 'error':
-        console.error('Voice interface error:', event.error);
-        toast.error(event.error.message || 'Voice interface error');
-        break;
+  useEffect(() => {
+    // Detect speaking from messages
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.type === 'assistant') {
+      setIsSpeaking(true);
+      const timer = setTimeout(() => setIsSpeaking(false), 2000);
+      return () => clearTimeout(timer);
     }
-  };
-
-  const addMessage = (type: 'user' | 'assistant' | 'system', content: string, isAudio = false) => {
-    const message: Message = {
-      id: Date.now().toString(),
-      type,
-      content,
-      timestamp: new Date(),
-      isAudio
-    };
-    setMessages(prev => [...prev, message]);
-  };
+  }, [messages]);
 
   const startConversation = async () => {
     try {
       hapticService.buttonPress();
-      
-      const instructions = `You are a helpful family health assistant named Aria. You help families manage medications, coordinate care, and provide health guidance.
-
-Key responsibilities:
-- Answer questions about medications and health
-- Help set medication reminders and track adherence
-- Provide family care coordination advice  
-- Handle emergency situations with appropriate urgency
-- Give clear, actionable health guidance
-
-Keep responses concise (under 3 sentences), warm, and supportive. Always prioritize safety and suggest consulting healthcare professionals for serious medical concerns.`;
-
-      chatRef.current = new RealtimeChat(handleMessage, setConnectionStatus);
-      await chatRef.current.init(instructions, selectedVoice);
-      setIsConnected(true);
-      
-      addMessage('system', 'Voice assistant connected. Start speaking!');
+      await connect();
       toast.success('🎤 Voice assistant ready');
       hapticService.feedback('success');
-      
     } catch (error) {
       console.error('Error starting conversation:', error);
       toast.error(`Failed to start voice assistant: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -146,24 +71,16 @@ Keep responses concise (under 3 sentences), warm, and supportive. Always priorit
 
   const endConversation = () => {
     hapticService.buttonPress();
-    chatRef.current?.disconnect();
-    setIsConnected(false);
-    setIsSpeaking(false);
-    setIsListening(false);
-    setCurrentTranscript('');
-    
-    addMessage('system', 'Voice assistant disconnected');
+    disconnect();
     toast.success('Voice assistant disconnected');
   };
 
   const getStatusBadge = () => {
-    if (connectionStatus === 'connecting') return { color: 'bg-yellow-500', text: 'Connecting...' };
-    if (connectionStatus === 'connected') return { color: 'bg-green-500', text: 'Connected' };
-    if (connectionStatus === 'error') return { color: 'bg-red-500', text: 'Error' };
-    return { color: 'bg-gray-400', text: 'Disconnected' };
+    if (!isConnected) return { color: 'bg-gray-400', text: 'Disconnected' };
+    return { color: 'bg-green-500', text: 'Connected' };
   };
 
-  const selectedVoiceOption = VOICE_OPTIONS.find(v => v.id === elevenLabsVoice);
+  const selectedVoiceOption = ELEVENLABS_VOICES.find(v => v.id === elevenLabsVoice);
   const status = getStatusBadge();
 
   return (
@@ -200,15 +117,18 @@ Keep responses concise (under 3 sentences), warm, and supportive. Always priorit
           {/* Voice Selection */}
           <div className="space-y-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">OpenAI Voice</label>
+              <label className="text-sm font-medium text-muted-foreground">Voice</label>
               <Select value={selectedVoice} onValueChange={setSelectedVoice} disabled={isConnected}>
                 <SelectTrigger className="h-12 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {OPENAI_VOICES.map(voice => (
+                  {SUPPORTED_VOICES.map(voice => (
                     <SelectItem key={voice.id} value={voice.id} className="py-3">
-                      {voice.name}
+                      <div className="flex flex-col">
+                        <span className="font-medium">{voice.name}</span>
+                        <span className="text-xs text-muted-foreground">{voice.description}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -227,7 +147,7 @@ Keep responses concise (under 3 sentences), warm, and supportive. Always priorit
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {VOICE_OPTIONS.map(voice => (
+                  {ELEVENLABS_VOICES.map(voice => (
                     <SelectItem key={voice.id} value={voice.id} className="py-3">
                       <div className="flex flex-col">
                         <span className="font-medium">{voice.name}</span>
@@ -246,19 +166,9 @@ Keep responses concise (under 3 sentences), warm, and supportive. Always priorit
               <Button 
                 onClick={startConversation} 
                 className="w-full h-14 text-base font-medium"
-                disabled={connectionStatus === 'connecting'}
               >
-                {connectionStatus === 'connecting' ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                    Connecting...
-                  </>
-                ) : (
-                  <>
-                    <Phone className="w-5 h-5 mr-3" />
-                    Start Voice Chat
-                  </>
-                )}
+                <Phone className="w-5 h-5 mr-3" />
+                Start Voice Chat
               </Button>
             ) : (
               <Button 
@@ -326,20 +236,10 @@ Keep responses concise (under 3 sentences), warm, and supportive. Always priorit
                 <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
                 Ask about medications, family health, or care coordination
               </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                Use "Play with ElevenLabs" for high-quality text-to-speech
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                The AI can send notifications to family members when needed
-              </li>
             </ul>
           </CardContent>
         </Card>
       )}
-
-      <audio ref={audioRef} className="hidden" />
     </div>
   );
 };

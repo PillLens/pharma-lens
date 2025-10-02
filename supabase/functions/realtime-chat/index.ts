@@ -40,7 +40,7 @@ serve(async (req) => {
 
   // Connect to OpenAI Realtime API
   const connectToOpenAI = () => {
-    const openAIUrl = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01";
+    const openAIUrl = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17";
     
     openAISocket = new WebSocket(openAIUrl, [], {
       headers: {
@@ -54,83 +54,77 @@ serve(async (req) => {
     };
 
     openAISocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('OpenAI message:', data.type);
+      try {
+        const data = JSON.parse(event.data);
+        console.log('OpenAI message:', data.type);
 
-      // Handle session created event
-      if (data.type === 'session.created' && !sessionConfigured) {
-        // Configure session after connection
-        const sessionConfig = {
-          type: "session.update",
-          session: {
-            modalities: ["text", "audio"],
-            instructions: "You are a helpful family communication assistant. Help family members communicate effectively and provide medication reminders when needed. Keep responses concise and supportive.",
-            voice: "alloy",
-            input_audio_format: "pcm16",
-            output_audio_format: "pcm16",
-            input_audio_transcription: {
-              model: "whisper-1"
-            },
-            turn_detection: {
-              type: "server_vad",
-              threshold: 0.5,
-              prefix_padding_ms: 300,
-              silence_duration_ms: 1000
-            },
-            tools: [
-              {
-                type: "function",
-                name: "send_family_message",
-                description: "Send a message to family members about medication reminders or health updates",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    message: { type: "string" },
-                    message_type: { type: "string", enum: ["medication_reminder", "health_update", "emergency", "general"] },
-                    priority: { type: "string", enum: ["low", "normal", "high", "urgent"] }
-                  },
-                  required: ["message", "message_type"]
-                }
+        // Handle session created event
+        if (data.type === 'session.created' && !sessionConfigured) {
+          // Configure session after connection
+          const sessionConfig = {
+            type: "session.update",
+            session: {
+              modalities: ["text", "audio"],
+              instructions: "You are a helpful AI assistant for PillLens, a medication management app. Help users with their medication questions, provide reminders, and assist with health-related inquiries. Keep responses clear, concise, and supportive. Always prioritize user safety and encourage consulting healthcare professionals for medical decisions.",
+              voice: "alloy",
+              input_audio_format: "pcm16",
+              output_audio_format: "pcm16",
+              input_audio_transcription: {
+                model: "whisper-1"
               },
-              {
-                type: "function", 
-                name: "get_medication_status",
-                description: "Get current medication adherence status for family members",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    user_id: { type: "string" }
-                  },
-                  required: ["user_id"]
+              turn_detection: {
+                type: "server_vad",
+                threshold: 0.5,
+                prefix_padding_ms: 300,
+                silence_duration_ms: 1000
+              },
+              tools: [
+                {
+                  type: "function",
+                  name: "send_family_notification",
+                  description: "Send a notification to family members about medication reminders or health updates",
+                  parameters: {
+                    type: "object",
+                    properties: {
+                      message: { type: "string" },
+                      message_type: { type: "string", enum: ["medication_reminder", "health_update", "emergency", "general"] },
+                      priority: { type: "string", enum: ["low", "normal", "high", "urgent"] }
+                    },
+                    required: ["message", "message_type"]
+                  }
                 }
-              }
-            ],
-            tool_choice: "auto",
-            temperature: 0.8,
-            max_response_output_tokens: "inf"
-          }
-        };
-        
-        openAISocket?.send(JSON.stringify(sessionConfig));
-        sessionConfigured = true;
-      }
-
-      // Handle function calls
-      if (data.type === 'response.function_call_arguments.done') {
-        const functionName = data.name;
-        const args = JSON.parse(data.arguments);
-        
-        if (functionName === 'send_family_message') {
-          // Store message in communication_logs
-          supabase.from('communication_logs').insert({
-            message_content: args.message,
-            message_type: args.message_type,
-            sender_id: null, // AI assistant
-            family_group_id: null, // Will be set by client
-            is_emergency: args.priority === 'urgent',
-            message_data: { priority: args.priority, source: 'ai_assistant' }
-          });
+              ],
+              tool_choice: "auto",
+              temperature: 0.8,
+              max_response_output_tokens: "inf"
+            }
+          };
+          
+          openAISocket?.send(JSON.stringify(sessionConfig));
+          sessionConfigured = true;
+          console.log('Session configured successfully');
         }
+
+        // Handle function calls
+        if (data.type === 'response.function_call_arguments.done') {
+          const functionName = data.name;
+          const args = JSON.parse(data.arguments);
+          
+          if (functionName === 'send_family_notification') {
+            console.log('Function call:', functionName, args);
+            // Store notification in communication_logs
+            await supabase.from('communication_logs').insert({
+              message_content: args.message,
+              message_type: args.message_type,
+              sender_id: null, // AI assistant
+              family_group_id: null, // Will be set by client
+              is_emergency: args.priority === 'urgent',
+              message_data: { priority: args.priority, source: 'ai_assistant' }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error processing OpenAI message:', error);
       }
 
       // Forward all messages to client
@@ -141,10 +135,13 @@ serve(async (req) => {
 
     openAISocket.onerror = (error) => {
       console.error('OpenAI WebSocket error:', error);
-      socket.send(JSON.stringify({
-        type: 'error',
-        message: 'OpenAI connection error'
-      }));
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+          type: 'error',
+          error: 'connection_error',
+          message: 'Failed to connect to AI service. Please try again.'
+        }));
+      }
     };
 
     openAISocket.onclose = () => {

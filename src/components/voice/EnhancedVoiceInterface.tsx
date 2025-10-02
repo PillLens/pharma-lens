@@ -5,13 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
-import { RealtimeChat } from '@/utils/RealtimeAudio';
+import { useRealtimeChat } from '@/hooks/useRealtimeChat';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hapticService } from '@/services/hapticService';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAIChatUsage } from '@/hooks/useAIChatUsage';
 import { PaywallSheet } from '@/components/subscription/PaywallSheet';
+import { SUPPORTED_VOICES } from '@/utils/voiceConfig';
 import {
   Mic, MicOff, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
@@ -33,7 +34,7 @@ interface Message {
 }
 
 // ElevenLabs voice options
-const VOICE_OPTIONS = [
+const ELEVENLABS_VOICES = [
   { id: "9BWtsMINqrJLrRacOk9x", name: "Aria", description: "Warm, conversational" },
   { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger", description: "Professional, clear" },
   { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", description: "Friendly, helpful" },
@@ -41,40 +42,35 @@ const VOICE_OPTIONS = [
   { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie", description: "Energetic, upbeat" }
 ];
 
-const OPENAI_VOICES = [
-  { id: "alloy", name: "Alloy" },
-  { id: "echo", name: "Echo" },
-  { id: "shimmer", name: "Shimmer" },
-  { id: "nova", name: "Nova" },
-  { id: "sage", name: "Sage" },
-  { id: "ballad", name: "Ballad" }
-];
-
 export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({ 
   familyGroupId, 
   onSpeakingChange 
 }) => {
   const { t } = useTranslation();
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedVoice, setSelectedVoice] = useState("alloy");
   const [useElevenLabs, setUseElevenLabs] = useState(false);
   const [elevenLabsVoice, setElevenLabsVoice] = useState("9BWtsMINqrJLrRacOk9x");
   const [isMuted, setIsMuted] = useState(false);
-  const [currentTranscript, setCurrentTranscript] = useState('');
   const [showPaywall, setShowPaywall] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
   const [warningShown, setWarningShown] = useState(false);
   const [inGracePeriod, setInGracePeriod] = useState(false);
   const [gracePeriodSeconds, setGracePeriodSeconds] = useState(15);
-  const [audioLevel, setAudioLevel] = useState(0);
   const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'poor'>('excellent');
+  const [isSpeaking, setIsSpeaking] = useState(false);
   
-  const chatRef = useRef<RealtimeChat | null>(null);
+  const { 
+    messages, 
+    isConnected, 
+    isRecording: isListening,
+    currentTranscript, 
+    audioLevel,
+    connect, 
+    disconnect,
+    clearHistory 
+  } = useRealtimeChat();
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -92,6 +88,16 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   useEffect(() => {
     onSpeakingChange?.(isSpeaking);
   }, [isSpeaking, onSpeakingChange]);
+
+  useEffect(() => {
+    // Detect speaking from messages
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.type === 'assistant') {
+      setIsSpeaking(true);
+      const timer = setTimeout(() => setIsSpeaking(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [messages]);
 
   // Keyboard shortcuts
   useEffect(() => {
