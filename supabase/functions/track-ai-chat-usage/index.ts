@@ -75,44 +75,17 @@ serve(async (req) => {
         throw new Error('Invalid minutes value');
       }
 
-      // Upsert usage record
-      const { error: upsertError } = await supabaseClient
-        .from('ai_chat_usage')
-        .upsert({
-          user_id: user.id,
-          month: currentMonth,
-          minutes_used: minutes,
-          session_count: 1,
-          last_session_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,month',
-          ignoreDuplicates: false
-        });
+      // Use atomic increment with PostgreSQL's ON CONFLICT DO UPDATE
+      // This prevents race conditions and ensures accurate usage tracking
+      const { error: upsertError } = await supabaseClient.rpc('increment_ai_chat_usage', {
+        p_user_id: user.id,
+        p_month: currentMonth,
+        p_minutes: minutes
+      });
 
       if (upsertError) {
-        // If upsert fails, try update
-        const { data: existing } = await supabaseClient
-          .from('ai_chat_usage')
-          .select('minutes_used, session_count')
-          .eq('user_id', user.id)
-          .eq('month', currentMonth)
-          .maybeSingle();
-
-        if (existing) {
-          const { error: updateError } = await supabaseClient
-            .from('ai_chat_usage')
-            .update({
-              minutes_used: existing.minutes_used + minutes,
-              session_count: existing.session_count + 1,
-              last_session_at: new Date().toISOString()
-            })
-            .eq('user_id', user.id)
-            .eq('month', currentMonth);
-
-          if (updateError) throw updateError;
-        } else {
-          throw upsertError;
-        }
+        console.error('Error incrementing usage:', upsertError);
+        throw upsertError;
       }
 
       return new Response(

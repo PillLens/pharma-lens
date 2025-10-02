@@ -15,8 +15,11 @@ serve(async (req) => {
   try {
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     if (!OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured in Supabase secrets');
       throw new Error('OPENAI_API_KEY is not set');
     }
+
+    console.log('Creating OpenAI Realtime session...');
 
     const { instructions, voice = "alloy" } = await req.json();
     
