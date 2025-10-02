@@ -67,11 +67,16 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   const [showPaywall, setShowPaywall] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
+  const [warningShown, setWarningShown] = useState(false);
+  const [inGracePeriod, setInGracePeriod] = useState(false);
+  const [gracePeriodSeconds, setGracePeriodSeconds] = useState(15);
   
   const chatRef = useRef<RealtimeChat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<number | null>(null);
+  const usageCheckRef = useRef<number | null>(null);
+  const gracePeriodTimerRef = useRef<number | null>(null);
 
   const { canChat, minutesUsed, minutesLimit, minutesRemaining, isUnlimited, loading: usageLoading, checkUsage, trackUsage } = useAIChatUsage();
 
@@ -186,6 +191,54 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
     setMessages(prev => [...prev, message]);
   };
 
+  // Usage monitoring effect
+  useEffect(() => {
+    if (!isConnected || isUnlimited) return;
+
+    // Check usage every 15 seconds
+    usageCheckRef.current = window.setInterval(async () => {
+      await checkUsage();
+      
+      const timeRemaining = minutesLimit - (minutesUsed + elapsedMinutes);
+      
+      // Show warning at 1 minute remaining
+      if (timeRemaining <= 1 && timeRemaining > 0 && !warningShown) {
+        setWarningShown(true);
+        toast.warning(`⚠️ Only ${Math.ceil(timeRemaining * 60)} seconds remaining!`, {
+          duration: 5000,
+        });
+        hapticService.feedback('warning');
+      }
+      
+      // Start grace period when time runs out
+      if (timeRemaining <= 0 && !inGracePeriod) {
+        setInGracePeriod(true);
+        toast.warning('Time limit reached! You have 15 seconds to finish your conversation.', {
+          duration: 5000,
+        });
+        
+        // Start grace period countdown
+        setGracePeriodSeconds(15);
+        gracePeriodTimerRef.current = window.setInterval(() => {
+          setGracePeriodSeconds(prev => {
+            if (prev <= 1) {
+              // End conversation after grace period
+              endConversation();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    }, 15000);
+
+    return () => {
+      if (usageCheckRef.current) {
+        clearInterval(usageCheckRef.current);
+      }
+    };
+  }, [isConnected, isUnlimited, minutesUsed, minutesLimit, elapsedMinutes, warningShown, inGracePeriod]);
+
   const startConversation = async () => {
     try {
       // Check usage limits first
@@ -196,6 +249,11 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
       }
 
       hapticService.buttonPress();
+      
+      // Reset warning states
+      setWarningShown(false);
+      setInGracePeriod(false);
+      setGracePeriodSeconds(15);
       
       const instructions = `You are a helpful family health assistant named Aria. You help families manage medications, coordinate care, and provide health guidance for the ${familyGroupId ? 'family group' : 'user'}.
 
@@ -233,17 +291,30 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
   const endConversation = async () => {
     hapticService.buttonPress();
     
-    // Stop timer
+    // Stop all timers
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+    if (usageCheckRef.current) {
+      clearInterval(usageCheckRef.current);
+      usageCheckRef.current = null;
+    }
+    if (gracePeriodTimerRef.current) {
+      clearInterval(gracePeriodTimerRef.current);
+      gracePeriodTimerRef.current = null;
     }
 
     // Track usage
     if (sessionStartTime && elapsedMinutes > 0) {
       const roundedMinutes = Math.ceil(elapsedMinutes);
       await trackUsage(roundedMinutes);
-      toast.success(`Session ended. ${roundedMinutes} minute${roundedMinutes > 1 ? 's' : ''} used.`);
+      
+      if (inGracePeriod) {
+        toast.info('Conversation ended due to time limit. Thank you for using PillLens!');
+      } else {
+        toast.success(`Session ended. ${roundedMinutes} minute${roundedMinutes > 1 ? 's' : ''} used.`);
+      }
     }
 
     chatRef.current?.disconnect();
@@ -253,6 +324,9 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
     setCurrentTranscript('');
     setSessionStartTime(null);
     setElapsedMinutes(0);
+    setWarningShown(false);
+    setInGracePeriod(false);
+    setGracePeriodSeconds(15);
     
     addMessage('system', 'Voice assistant disconnected');
 
@@ -337,7 +411,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
         <CardContent className="space-y-4">
           {/* Usage Display */}
           {!usageLoading && (
-            <Card className="border-primary/20">
+            <Card className={`border-primary/20 ${inGracePeriod ? 'border-red-500 animate-pulse' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -354,19 +428,36 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                     </span>
                   </div>
                   {isConnected && sessionStartTime && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {Math.floor(elapsedMinutes)}:{String(Math.floor((elapsedMinutes % 1) * 60)).padStart(2, '0')}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {Math.floor(elapsedMinutes)}:{String(Math.floor((elapsedMinutes % 1) * 60)).padStart(2, '0')}
+                      </Badge>
+                      {inGracePeriod && (
+                        <Badge variant="destructive" className="text-xs animate-pulse">
+                          Grace: {gracePeriodSeconds}s
+                        </Badge>
+                      )}
+                    </div>
                   )}
-                  {!isUnlimited && (
-                    <span className="text-xs text-muted-foreground">
+                  {!isUnlimited && !inGracePeriod && (
+                    <span className={`text-xs ${minutesRemaining <= 1 ? 'text-red-500 font-bold' : 'text-muted-foreground'}`}>
                       {Math.floor(minutesRemaining)} min remaining
                     </span>
                   )}
                 </div>
                 {!isUnlimited && (
-                  <Progress value={(minutesUsed / minutesLimit) * 100} className="h-2" />
+                  <div className="space-y-1">
+                    <Progress 
+                      value={(minutesUsed / minutesLimit) * 100} 
+                      className={`h-2 ${minutesRemaining <= 1 ? 'bg-red-100' : ''}`}
+                    />
+                    {inGracePeriod && (
+                      <p className="text-xs text-red-600 font-medium">
+                        ⚠️ Time limit reached. Conversation will end in {gracePeriodSeconds} seconds.
+                      </p>
+                    )}
+                  </div>
                 )}
               </CardContent>
             </Card>

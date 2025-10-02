@@ -187,87 +187,150 @@ export const useRealtimeChat = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioQueueRef = useRef<AudioQueue | null>(null);
 
-  const connect = useCallback(() => {
+  const connect = useCallback(async () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-    try {
-      wsRef.current = new WebSocket('wss://bquxkkaipevuakmqqilk.functions.supabase.co/functions/v1/realtime-chat');
-      
-      wsRef.current.onopen = () => {
-        console.log('Connected to realtime chat');
-        setIsConnected(true);
-        
-        // Initialize audio context
-        if (!audioContextRef.current) {
-          audioContextRef.current = new AudioContext({ sampleRate: 24000 });
-          audioQueueRef.current = new AudioQueue(audioContextRef.current);
-        }
-      };
+    const maxRetries = 3;
+    let retryCount = 0;
+    let retryDelay = 1000;
 
-      wsRef.current.onmessage = async (event) => {
+    const attemptConnection = async (): Promise<void> => {
+      return new Promise((resolve, reject) => {
         try {
-          const data = JSON.parse(event.data);
-          console.log('Received message type:', data.type);
+          wsRef.current = new WebSocket('wss://bquxkkaipevuakmqqilk.functions.supabase.co/functions/v1/realtime-chat');
+          
+          wsRef.current.onopen = () => {
+            console.log('Connected to realtime chat');
+            setIsConnected(true);
+            retryCount = 0; // Reset retry count on successful connection
+            
+            // Initialize audio context
+            if (!audioContextRef.current) {
+              audioContextRef.current = new AudioContext({ sampleRate: 24000 });
+              audioQueueRef.current = new AudioQueue(audioContextRef.current);
+            }
+            
+            resolve();
+          };
 
-          switch (data.type) {
-            case 'response.audio.delta':
-              if (audioQueueRef.current && data.delta) {
-                const binaryString = atob(data.delta);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                  bytes[i] = binaryString.charCodeAt(i);
-                }
-                await audioQueueRef.current.addToQueue(bytes);
+          wsRef.current.onmessage = async (event) => {
+            try {
+              const data = JSON.parse(event.data);
+              console.log('Received message type:', data.type);
+
+              switch (data.type) {
+                case 'response.audio.delta':
+                  if (audioQueueRef.current && data.delta) {
+                    const binaryString = atob(data.delta);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                      bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    await audioQueueRef.current.addToQueue(bytes);
+                  }
+                  break;
+
+                case 'response.audio_transcript.delta':
+                  if (data.delta) {
+                    setCurrentTranscript(prev => prev + data.delta);
+                  }
+                  break;
+
+                case 'response.audio_transcript.done':
+                  if (currentTranscript) {
+                    const newMessage: Message = {
+                      id: Date.now().toString(),
+                      type: 'assistant',
+                      content: currentTranscript,
+                      timestamp: new Date()
+                    };
+                    setMessages(prev => [...prev, newMessage]);
+                    setCurrentTranscript('');
+                  }
+                  break;
+
+                case 'response.done':
+                  console.log('Response completed');
+                  break;
+
+                case 'error':
+                  const errorCode = data.error?.code;
+                  const errorMessage = data.error?.message || 'Unknown error';
+                  
+                  console.error('WebSocket error:', data.error);
+                  
+                  // Handle specific error codes
+                  if (errorCode === 429 || errorCode === 'rate_limit_exceeded') {
+                    toast.error('Rate limit exceeded. Please wait a moment and try again.');
+                  } else if (errorCode === 503 || errorCode === 'service_unavailable') {
+                    toast.error('Service temporarily unavailable. Retrying...');
+                    // Attempt reconnection
+                    setTimeout(() => {
+                      if (retryCount < maxRetries) {
+                        retryCount++;
+                        attemptConnection().catch(console.error);
+                      }
+                    }, retryDelay);
+                  } else {
+                    toast.error('Connection error: ' + errorMessage);
+                  }
+                  break;
               }
-              break;
+            } catch (error) {
+              console.error('Error parsing message:', error);
+              toast.error('Error processing message');
+            }
+          };
 
-            case 'response.audio_transcript.delta':
-              if (data.delta) {
-                setCurrentTranscript(prev => prev + data.delta);
+          wsRef.current.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            
+            if (retryCount < maxRetries) {
+              retryCount++;
+              toast.error(`Connection error. Retrying (${retryCount}/${maxRetries})...`);
+              
+              setTimeout(() => {
+                attemptConnection().catch(reject);
+              }, retryDelay * retryCount); // Exponential backoff
+            } else {
+              setIsConnected(false);
+              toast.error('Connection failed after multiple attempts');
+              reject(error);
+            }
+          };
+
+          wsRef.current.onclose = (event) => {
+            console.log('WebSocket closed', event.code, event.reason);
+            setIsConnected(false);
+            setIsRecording(false);
+            
+            // Handle abnormal closures
+            if (event.code !== 1000 && event.code !== 1001) {
+              if (retryCount < maxRetries) {
+                retryCount++;
+                toast.error(`Connection closed unexpectedly. Retrying (${retryCount}/${maxRetries})...`);
+                
+                setTimeout(() => {
+                  attemptConnection().catch(reject);
+                }, retryDelay * retryCount);
+              } else {
+                toast.error('Connection lost. Please try reconnecting.');
+                reject(new Error('Connection closed'));
               }
-              break;
-
-            case 'response.audio_transcript.done':
-              if (currentTranscript) {
-                const newMessage: Message = {
-                  id: Date.now().toString(),
-                  type: 'assistant',
-                  content: currentTranscript,
-                  timestamp: new Date()
-                };
-                setMessages(prev => [...prev, newMessage]);
-                setCurrentTranscript('');
-              }
-              break;
-
-            case 'response.done':
-              console.log('Response completed');
-              break;
-
-            case 'error':
-              console.error('WebSocket error:', data.message);
-              toast.error('Connection error: ' + data.message);
-              break;
-          }
+            }
+          };
         } catch (error) {
-          console.error('Error parsing message:', error);
+          console.error('Error connecting to WebSocket:', error);
+          reject(error);
         }
-      };
+      });
+    };
 
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setIsConnected(false);
-        toast.error('Connection failed');
-      };
-
-      wsRef.current.onclose = () => {
-        console.log('WebSocket closed');
-        setIsConnected(false);
-        setIsRecording(false);
-      };
+    try {
+      await attemptConnection();
     } catch (error) {
-      console.error('Error connecting to WebSocket:', error);
-      toast.error('Failed to connect');
+      console.error('Failed to establish connection:', error);
+      toast.error('Failed to connect. Please try again.');
     }
   }, [currentTranscript]);
 
