@@ -14,10 +14,10 @@ import { useAIChatUsage } from '@/hooks/useAIChatUsage';
 import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import { SUPPORTED_VOICES } from '@/utils/voiceConfig';
 import {
-  Mic, MicOff, Volume2, VolumeX, Bot, User, 
+  Mic, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
-  Loader2, Speaker, HeadphonesIcon, Clock, Crown,
-  Wifi, WifiOff, Signal, Trash2, Activity
+  Loader2, HeadphonesIcon, Clock, Crown,
+  Signal, Trash2, Activity, Download, Save
 } from 'lucide-react';
 
 interface EnhancedVoiceInterfaceProps {
@@ -25,15 +25,7 @@ interface EnhancedVoiceInterfaceProps {
   onSpeakingChange?: (speaking: boolean) => void;
 }
 
-interface Message {
-  id: string;
-  type: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  isAudio?: boolean;
-}
-
-// ElevenLabs voice options
+// ElevenLabs voice options for TTS playback
 const ELEVENLABS_VOICES = [
   { id: "9BWtsMINqrJLrRacOk9x", name: "Aria", description: "Warm, conversational" },
   { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger", description: "Professional, clear" },
@@ -47,8 +39,9 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   onSpeakingChange 
 }) => {
   const { t } = useTranslation();
-  const [selectedVoice, setSelectedVoice] = useState("alloy");
-  const [useElevenLabs, setUseElevenLabs] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(() => 
+    localStorage.getItem('voice_preference') || "alloy"
+  );
   const [elevenLabsVoice, setElevenLabsVoice] = useState("9BWtsMINqrJLrRacOk9x");
   const [isMuted, setIsMuted] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -57,7 +50,6 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   const [warningShown, setWarningShown] = useState(false);
   const [inGracePeriod, setInGracePeriod] = useState(false);
   const [gracePeriodSeconds, setGracePeriodSeconds] = useState(15);
-  const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'poor'>('excellent');
   const [isSpeaking, setIsSpeaking] = useState(false);
   
   const { 
@@ -79,18 +71,20 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
 
   const { canChat, minutesUsed, minutesLimit, minutesRemaining, isUnlimited, loading: usageLoading, checkUsage, trackUsage } = useAIChatUsage();
 
+  // Auto-scroll to bottom
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, currentTranscript]);
 
+  // Notify parent of speaking state
   useEffect(() => {
     onSpeakingChange?.(isSpeaking);
   }, [isSpeaking, onSpeakingChange]);
 
+  // Detect speaking from messages
   useEffect(() => {
-    // Detect speaking from messages
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.type === 'assistant') {
       setIsSpeaking(true);
@@ -99,22 +93,14 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
     }
   }, [messages]);
 
+  // Save voice preference
+  useEffect(() => {
+    localStorage.setItem('voice_preference', selectedVoice);
+  }, [selectedVoice]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Space to toggle mic (when connected)
-      if (e.code === 'Space' && isConnected && !e.repeat) {
-        e.preventDefault();
-        if (isListening) {
-          // Stop recording functionality would go here
-          console.log('Stop recording');
-        } else {
-          // Start recording functionality would go here
-          console.log('Start recording');
-        }
-      }
-      
-      // Escape to end conversation
       if (e.code === 'Escape' && isConnected) {
         e.preventDefault();
         endConversation();
@@ -123,125 +109,17 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isConnected, isListening]);
+  }, [isConnected]);
 
-  const handleMessage = (event: any) => {
-    console.log('Received message:', event);
-    
-    switch (event.type) {
-      case 'response.audio_transcript.delta':
-        if (event.delta) {
-          setCurrentTranscript(prev => prev + event.delta);
-        }
-        break;
-        
-      case 'response.audio_transcript.done':
-        if (currentTranscript.trim()) {
-          addMessage('assistant', currentTranscript, true);
-          setCurrentTranscript('');
-        }
-        break;
-        
-      case 'response.audio.delta':
-        setIsSpeaking(true);
-        break;
-        
-      case 'response.audio.done':
-        setIsSpeaking(false);
-        break;
-        
-      case 'input_audio_buffer.speech_started':
-        setIsListening(true);
-        hapticService.feedback('light');
-        break;
-        
-      case 'input_audio_buffer.speech_stopped':
-        setIsListening(false);
-        break;
-        
-      case 'response.function_call_arguments.done':
-        handleFunctionCall(event.name, JSON.parse(event.arguments || '{}'));
-        break;
-        
-      case 'error':
-        console.error('Voice interface error:', event.error);
-        toast.error(t('toast.voice.error') + ': ' + (event.error.message || 'Unknown error'));
-        break;
-    }
-  };
-
-  const handleFunctionCall = async (functionName: string, args: any) => {
-    console.log('Function call:', functionName, args);
-    
-    switch (functionName) {
-      case 'send_family_notification':
-        if (familyGroupId) {
-          // Send notification to family members
-          await sendFamilyNotification(args.message, args.type, args.priority);
-        }
-        break;
-        
-      case 'get_medication_info':
-        // This would typically query the medication database
-        console.log('Looking up medication:', args.medication_name);
-        break;
-    }
-  };
-
-  const sendFamilyNotification = async (message: string, type: string, priority: string = 'normal') => {
-    try {
-      const { error } = await supabase
-        .from('communication_logs')
-        .insert({
-          family_group_id: familyGroupId,
-          message_content: message,
-          message_type: type,
-          sender_id: null, // AI assistant
-          is_emergency: priority === 'urgent',
-          message_data: { 
-            priority, 
-            source: 'ai_assistant',
-            timestamp: new Date().toISOString()
-          }
-        });
-
-      if (error) throw error;
-      
-      toast.success(t('toast.family.emergencyAlertSent'));
-      hapticService.feedback('success');
-    } catch (error) {
-      console.error('Error sending notification:', error);
-      toast.error('Failed to send notification');
-    }
-  };
-
-  const addMessage = (type: 'user' | 'assistant' | 'system', content: string, isAudio = false) => {
-    const message: Message = {
-      id: Date.now().toString(),
-      type,
-      content,
-      timestamp: new Date(),
-      isAudio
-    };
-    setMessages(prev => [...prev, message]);
-  };
-
-  const clearHistory = () => {
-    setMessages([]);
-    toast.success('Conversation history cleared');
-  };
-
-  // Usage monitoring effect
+  // Usage monitoring
   useEffect(() => {
     if (!isConnected || isUnlimited) return;
 
-    // Check usage every 15 seconds
     usageCheckRef.current = window.setInterval(async () => {
       await checkUsage();
       
       const timeRemaining = minutesLimit - (minutesUsed + elapsedMinutes);
       
-      // Show warning at 1 minute remaining
       if (timeRemaining <= 1 && timeRemaining > 0 && !warningShown) {
         setWarningShown(true);
         toast.warning(`⚠️ Only ${Math.ceil(timeRemaining * 60)} seconds remaining!`, {
@@ -250,19 +128,16 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
         hapticService.feedback('warning');
       }
       
-      // Start grace period when time runs out
       if (timeRemaining <= 0 && !inGracePeriod) {
         setInGracePeriod(true);
         toast.warning('Time limit reached! You have 15 seconds to finish your conversation.', {
           duration: 5000,
         });
         
-        // Start grace period countdown
         setGracePeriodSeconds(15);
         gracePeriodTimerRef.current = window.setInterval(() => {
           setGracePeriodSeconds(prev => {
             if (prev <= 1) {
-              // End conversation after grace period
               endConversation();
               return 0;
             }
@@ -273,15 +148,12 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
     }, 15000);
 
     return () => {
-      if (usageCheckRef.current) {
-        clearInterval(usageCheckRef.current);
-      }
+      if (usageCheckRef.current) clearInterval(usageCheckRef.current);
     };
   }, [isConnected, isUnlimited, minutesUsed, minutesLimit, elapsedMinutes, warningShown, inGracePeriod]);
 
   const startConversation = async () => {
     try {
-      // Check usage limits first
       if (!canChat) {
         setShowPaywall(true);
         toast.error(`You've used all ${minutesLimit} minutes this month. Upgrade to Pro for 10 AI voice minutes/month!`);
@@ -289,35 +161,17 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
       }
 
       hapticService.buttonPress();
-      
-      // Reset warning states
       setWarningShown(false);
       setInGracePeriod(false);
       setGracePeriodSeconds(15);
       
-      const instructions = `You are a helpful family health assistant named Aria. You help families manage medications, coordinate care, and provide health guidance for the ${familyGroupId ? 'family group' : 'user'}.
-
-Key responsibilities:
-- Answer questions about medications and health
-- Help set medication reminders and track adherence
-- Provide family care coordination advice  
-- Handle emergency situations with appropriate urgency
-- Give clear, actionable health guidance
-- Send notifications when requested
-
-Keep responses concise (under 3 sentences usually), warm, and supportive. Always prioritize safety and suggest consulting healthcare professionals for serious medical concerns.`;
-
-      chatRef.current = new RealtimeChat(handleMessage, setConnectionStatus);
-      await chatRef.current.init(instructions, selectedVoice);
-      setIsConnected(true);
+      await connect();
       setSessionStartTime(new Date());
       
-      // Start usage timer
       timerRef.current = window.setInterval(() => {
-        setElapsedMinutes(prev => prev + (1 / 60)); // Update every second
+        setElapsedMinutes(prev => prev + (1 / 60));
       }, 1000);
       
-      addMessage('system', 'Voice assistant connected. Start speaking!');
       toast.success(t('toast.voice.ready'));
       hapticService.feedback('success');
       
@@ -331,7 +185,6 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
   const endConversation = async () => {
     hapticService.buttonPress();
     
-    // Stop all timers
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -345,7 +198,6 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       gracePeriodTimerRef.current = null;
     }
 
-    // Track usage
     if (sessionStartTime && elapsedMinutes > 0) {
       const roundedMinutes = Math.ceil(elapsedMinutes);
       await trackUsage(roundedMinutes);
@@ -357,20 +209,13 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       }
     }
 
-    chatRef.current?.disconnect();
-    setIsConnected(false);
-    setIsSpeaking(false);
-    setIsListening(false);
-    setCurrentTranscript('');
+    disconnect();
     setSessionStartTime(null);
     setElapsedMinutes(0);
     setWarningShown(false);
     setInGracePeriod(false);
     setGracePeriodSeconds(15);
-    
-    addMessage('system', 'Voice assistant disconnected');
 
-    // Refresh usage after tracking
     await checkUsage();
   };
 
@@ -411,34 +256,69 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
     }
   };
 
-  const getConnectionStatusColor = (status: string) => {
-    switch (status) {
-      case 'connected': return 'bg-green-500';
-      case 'connecting': return 'bg-yellow-500';
-      case 'error': return 'bg-red-500';
-      default: return 'bg-gray-500';
+  // Phase 3 Feature: Export conversation
+  const exportConversation = () => {
+    const exportData = {
+      session: {
+        start: sessionStartTime,
+        duration: elapsedMinutes,
+        voice: selectedVoice
+      },
+      messages: messages.map(m => ({
+        type: m.type,
+        content: m.content,
+        timestamp: m.timestamp
+      }))
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversation-${new Date().toISOString()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Conversation exported!');
+  };
+
+  // Phase 3 Feature: Save conversation to Supabase
+  const saveConversation = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !familyGroupId) {
+        toast.error('Cannot save: no family group connected');
+        return;
+      }
+
+      const { error } = await supabase.from('communication_logs').insert({
+        family_group_id: familyGroupId,
+        sender_id: user.id,
+        message_type: 'ai_conversation' as any,
+        message_content: `AI Voice Conversation - ${messages.length} messages`,
+        is_emergency: false,
+        message_data: {
+          messages: messages.map(m => ({
+            type: m.type,
+            content: m.content,
+            timestamp: m.timestamp
+          })),
+          duration: elapsedMinutes,
+          voice: selectedVoice
+        } as any
+      } as any);
+
+      if (error) throw error;
+      toast.success('Conversation saved!');
+    } catch (error) {
+      console.error('Error saving conversation:', error);
+      toast.error('Failed to save conversation');
     }
   };
 
-  const getConnectionStatusText = (status: string) => {
-    switch (status) {
-      case 'connected': return 'Connected';
-      case 'connecting': return 'Connecting...';
-      case 'error': return 'Error';
-      default: return 'Disconnected';
-    }
-  };
-
-  const getConnectionQualityIcon = (quality: 'excellent' | 'good' | 'poor') => {
-    switch (quality) {
-      case 'excellent': return <Signal className="w-4 h-4 text-green-500" />;
-      case 'good': return <Signal className="w-4 h-4 text-yellow-500" />;
-      case 'poor': return <Signal className="w-4 h-4 text-red-500" />;
-    }
-  };
-
-  const getConnectionQualityText = (quality: 'excellent' | 'good' | 'poor') => {
-    return quality.charAt(0).toUpperCase() + quality.slice(1);
+  const getConnectionQualityIcon = (level: number) => {
+    if (level > 70) return <Signal className="w-4 h-4 text-green-500" />;
+    if (level > 40) return <Signal className="w-4 h-4 text-yellow-500" />;
+    return <Signal className="w-4 h-4 text-red-500" />;
   };
 
   return (
@@ -452,27 +332,14 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
               <span>AI Voice Assistant</span>
               <div className="flex items-center gap-2">
                 <div 
-                  className={`w-2 h-2 rounded-full ${getConnectionStatusColor(connectionStatus)}`}
+                  className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}
                   role="status"
-                  aria-label={`Connection status: ${getConnectionStatusText(connectionStatus)}`}
+                  aria-label={`Connection status: ${isConnected ? 'Connected' : 'Disconnected'}`}
                 />
                 <span className="text-sm text-muted-foreground">
-                  {getConnectionStatusText(connectionStatus)}
+                  {isConnected ? 'Connected' : 'Disconnected'}
                 </span>
               </div>
-              {isConnected && connectionQuality && (
-                <div 
-                  className="flex items-center gap-1" 
-                  title={`Connection quality: ${getConnectionQualityText(connectionQuality)}`}
-                  role="status"
-                  aria-label={`Connection quality: ${getConnectionQualityText(connectionQuality)}`}
-                >
-                  {getConnectionQualityIcon(connectionQuality)}
-                  <span className="text-xs text-muted-foreground">
-                    {getConnectionQualityText(connectionQuality)}
-                  </span>
-                </div>
-              )}
             </div>
           </CardTitle>
         </CardHeader>
@@ -509,11 +376,6 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                       )}
                     </div>
                   )}
-                  {!isUnlimited && !inGracePeriod && (
-                    <span className={`text-xs ${minutesRemaining <= 1 ? 'text-red-500 font-bold' : 'text-muted-foreground'}`}>
-                      {Math.floor(minutesRemaining)} min remaining
-                    </span>
-                  )}
                 </div>
                 {!isUnlimited && (
                   <div className="space-y-1">
@@ -535,15 +397,18 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
           {/* Voice Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">OpenAI Voice</label>
+              <label className="text-sm font-medium">Voice</label>
               <Select value={selectedVoice} onValueChange={setSelectedVoice} disabled={isConnected}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {OPENAI_VOICES.map(voice => (
+                  {SUPPORTED_VOICES.map(voice => (
                     <SelectItem key={voice.id} value={voice.id}>
-                      {voice.name}
+                      <div className="flex flex-col">
+                        <span>{voice.name}</span>
+                        <span className="text-xs text-muted-foreground">{voice.description}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -557,7 +422,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {VOICE_OPTIONS.map(voice => (
+                  {ELEVENLABS_VOICES.map(voice => (
                     <SelectItem key={voice.id} value={voice.id}>
                       <div className="flex flex-col">
                         <span>{voice.name}</span>
@@ -576,20 +441,10 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
               <Button 
                 onClick={startConversation} 
                 className="flex-1" 
-                disabled={connectionStatus === 'connecting'}
                 aria-label="Start voice chat"
               >
-                {connectionStatus === 'connecting' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
-                    Connecting...
-                  </>
-                ) : (
-                  <>
-                    <Phone className="w-4 h-4 mr-2" aria-hidden="true" />
-                    Start Voice Chat
-                  </>
-                )}
+                <Phone className="w-4 h-4 mr-2" aria-hidden="true" />
+                Start Voice Chat
               </Button>
             ) : (
               <>
@@ -617,8 +472,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
           {/* Keyboard Shortcuts Help */}
           {isConnected && (
             <div className="text-xs text-muted-foreground text-center border-t pt-2">
-              <kbd className="px-2 py-1 bg-muted rounded">Space</kbd> to toggle mic • 
-              <kbd className="px-2 py-1 bg-muted rounded ml-2">Esc</kbd> to end chat
+              <kbd className="px-2 py-1 bg-muted rounded">Esc</kbd> to end chat
             </div>
           )}
 
@@ -633,7 +487,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                   </span>
                 </div>
                 <div className="flex items-center gap-2" role="status" aria-live="polite">
-                  <Speaker className={`w-4 h-4 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} aria-hidden="true" />
+                  <Waves className={`w-4 h-4 ${isSpeaking ? 'text-blue-500' : 'text-muted-foreground'}`} aria-hidden="true" />
                   <span className={isSpeaking ? 'text-blue-600' : 'text-muted-foreground'}>
                     {isSpeaking ? 'Speaking...' : 'Silent'}
                   </span>
@@ -666,7 +520,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
       </Card>
 
       {/* Conversation History */}
-      {isConnected && (
+      {messages.length > 0 && (
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -674,7 +528,27 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                 <MessageSquare className="w-4 h-4" aria-hidden="true" />
                 Conversation
               </CardTitle>
-              {messages.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={exportConversation}
+                  aria-label="Export conversation"
+                >
+                  <Download className="w-4 h-4 mr-2" aria-hidden="true" />
+                  Export
+                </Button>
+                {familyGroupId && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={saveConversation}
+                    aria-label="Save conversation"
+                  >
+                    <Save className="w-4 h-4 mr-2" aria-hidden="true" />
+                    Save
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -684,7 +558,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                   <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
                   Clear
                 </Button>
-              )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-0">
@@ -720,12 +594,6 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
                         <span className="text-sm font-medium capitalize">
                           {message.type === 'user' ? 'You' : message.type === 'assistant' ? 'Assistant' : 'System'}
                         </span>
-                        {message.isAudio && (
-                          <Badge variant="outline" className="text-xs">
-                            <Waves className="w-3 h-3 mr-1" />
-                            Voice
-                          </Badge>
-                        )}
                         <span className="text-xs text-muted-foreground">
                           {message.timestamp.toLocaleTimeString()}
                         </span>
@@ -793,7 +661,7 @@ Keep responses concise (under 3 sentences usually), warm, and supportive. Always
               <li>• Speak naturally - the AI will respond with voice and text</li>
               <li>• Ask about medications, family health, or care coordination</li>
               <li>• Use "Play with ElevenLabs" for high-quality text-to-speech</li>
-              <li>• The AI can send notifications to family members when needed</li>
+              <li>• Export or save your conversation for future reference</li>
             </ul>
           </div>
         </CardContent>
