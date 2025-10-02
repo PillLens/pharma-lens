@@ -16,11 +16,7 @@ interface Conversation {
   created_at: string;
   message_type: string;
   message_content: string;
-  message_data: {
-    messages: any[];
-    duration: number;
-    voice: string;
-  };
+  message_data: any;
 }
 
 interface ConversationHistoryProps {
@@ -63,7 +59,7 @@ export const ConversationHistory: React.FC<ConversationHistoryProps> = ({
 
       if (error) throw error;
 
-      setConversations(data || []);
+      setConversations((data || []) as Conversation[]);
     } catch (error) {
       console.error('Error loading conversations:', error);
       toast.error('Failed to load conversation history');

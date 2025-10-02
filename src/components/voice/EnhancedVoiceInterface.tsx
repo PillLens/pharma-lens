@@ -17,8 +17,14 @@ import {
   Mic, Volume2, VolumeX, Bot, User, 
   Settings, Phone, PhoneOff, Waves, MessageSquare,
   Loader2, HeadphonesIcon, Clock, Crown,
-  Signal, Trash2, Activity, Download, Save
+  Signal, Trash2, Activity, Download, Save, FileText, 
+  BarChart3, History as HistoryIcon
 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { VoiceAnalyticsDashboard } from './VoiceAnalyticsDashboard';
+import { VoiceSettingsPanel } from './VoiceSettingsPanel';
+import { ConversationHistory } from './ConversationHistory';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EnhancedVoiceInterfaceProps {
   familyGroupId?: string;
@@ -39,6 +45,7 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
   onSpeakingChange 
 }) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [selectedVoice, setSelectedVoice] = useState(() => 
     localStorage.getItem('voice_preference') || "alloy"
   );
@@ -202,6 +209,25 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
       const roundedMinutes = Math.ceil(elapsedMinutes);
       await trackUsage(roundedMinutes);
       
+      // Track analytics for this session
+      if (user?.id) {
+        try {
+          // Note: Using any type casting until Supabase types are regenerated
+          await (supabase as any).from('voice_conversation_analytics').insert({
+            user_id: user.id,
+            session_start: sessionStartTime.toISOString(),
+            session_end: new Date().toISOString(),
+            duration_minutes: elapsedMinutes,
+            message_count: messages.length,
+            estimated_cost: elapsedMinutes * 0.06, // $0.06 per minute
+            voice_used: selectedVoice
+          });
+        } catch (analyticsError) {
+          console.error('Error tracking analytics:', analyticsError);
+          // Don't block the session end if analytics fails
+        }
+      }
+      
       if (inGracePeriod) {
         toast.info('Conversation ended due to time limit. Thank you for using PillLens!');
       } else {
@@ -256,7 +282,7 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
     }
   };
 
-  // Phase 3 Feature: Export conversation
+  // Phase 3 Feature: Export conversation (JSON + TXT)
   const exportConversation = () => {
     const exportData = {
       session: {
@@ -271,14 +297,33 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
       }))
     };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `conversation-${new Date().toISOString()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Conversation exported!');
+    // JSON export
+    const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const jsonUrl = URL.createObjectURL(jsonBlob);
+    const jsonLink = document.createElement('a');
+    jsonLink.href = jsonUrl;
+    jsonLink.download = `conversation-${new Date().toISOString()}.json`;
+    jsonLink.click();
+    URL.revokeObjectURL(jsonUrl);
+
+    // TXT export
+    const txtContent = `Conversation Export - ${new Date(sessionStartTime || new Date()).toLocaleString()}\n` +
+      `Duration: ${elapsedMinutes.toFixed(1)} minutes\n` +
+      `Voice: ${selectedVoice}\n\n` +
+      messages.map((m) => {
+        const time = new Date(m.timestamp).toLocaleTimeString();
+        return `[${time}] ${m.type === 'user' ? 'You' : 'AI'}: ${m.content}`;
+      }).join('\n\n');
+
+    const txtBlob = new Blob([txtContent], { type: 'text/plain' });
+    const txtUrl = URL.createObjectURL(txtBlob);
+    const txtLink = document.createElement('a');
+    txtLink.href = txtUrl;
+    txtLink.download = `conversation-${new Date().toISOString()}.txt`;
+    txtLink.click();
+    URL.revokeObjectURL(txtUrl);
+
+    toast.success('Conversation exported (JSON + TXT)');
   };
 
   // Phase 3 Feature: Save conversation to Supabase
@@ -319,6 +364,14 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
     if (level > 70) return <Signal className="w-4 h-4 text-green-500" />;
     if (level > 40) return <Signal className="w-4 h-4 text-yellow-500" />;
     return <Signal className="w-4 h-4 text-red-500" />;
+  };
+
+  const getUsageProgressColor = () => {
+    const percentage = (minutesUsed / minutesLimit) * 100;
+    if (percentage >= 90) return 'bg-red-500';
+    if (percentage >= 75) return 'bg-orange-500';
+    if (percentage >= 50) return 'bg-yellow-500';
+    return 'bg-green-500';
   };
 
   return (
@@ -379,10 +432,31 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
                 </div>
                 {!isUnlimited && (
                   <div className="space-y-1">
-                    <Progress 
-                      value={(minutesUsed / minutesLimit) * 100} 
-                      className={`h-2 ${minutesRemaining <= 1 ? 'bg-red-100' : ''}`}
-                    />
+                    <div className="relative">
+                      <Progress 
+                        value={(minutesUsed / minutesLimit) * 100} 
+                        className="h-2"
+                      />
+                      <div 
+                        className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getUsageProgressColor()}`}
+                        style={{ width: `${Math.min((minutesUsed / minutesLimit) * 100, 100)}%` }}
+                      />
+                    </div>
+                    {(minutesUsed / minutesLimit) >= 0.5 && (minutesUsed / minutesLimit) < 0.75 && (
+                      <p className="text-xs text-yellow-600">
+                        ⚠️ You've used 50% of your monthly minutes
+                      </p>
+                    )}
+                    {(minutesUsed / minutesLimit) >= 0.75 && (minutesUsed / minutesLimit) < 0.9 && (
+                      <p className="text-xs text-orange-600 font-medium">
+                        ⚠️ You've used 75% of your monthly minutes
+                      </p>
+                    )}
+                    {(minutesUsed / minutesLimit) >= 0.9 && !inGracePeriod && (
+                      <p className="text-xs text-red-600 font-medium">
+                        ⚠️ Critical: You've used 90% of your monthly minutes
+                      </p>
+                    )}
                     {inGracePeriod && (
                       <p className="text-xs text-red-600 font-medium">
                         ⚠️ Time limit reached. Conversation will end in {gracePeriodSeconds} seconds.
@@ -650,6 +724,46 @@ export const EnhancedVoiceInterface: React.FC<EnhancedVoiceInterfaceProps> = ({
         isOpen={showPaywall} 
         onClose={() => setShowPaywall(false)} 
       />
+
+      {/* Advanced Features Tabs */}
+      <Tabs defaultValue="history" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="history" className="flex items-center gap-2">
+            <HistoryIcon className="w-4 h-4" />
+            History
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Analytics
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="flex items-center gap-2">
+            <Settings className="w-4 h-4" />
+            Settings
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="history" className="mt-4">
+          <ConversationHistory 
+            userId={user?.id}
+            familyGroupId={familyGroupId}
+            onReplay={(conv) => {
+              toast.info('Replay feature coming soon!');
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="mt-4">
+          <VoiceAnalyticsDashboard 
+            userId={user?.id}
+            minutesUsed={minutesUsed}
+            minutesLimit={minutesLimit}
+          />
+        </TabsContent>
+
+        <TabsContent value="settings" className="mt-4">
+          <VoiceSettingsPanel userId={user?.id} />
+        </TabsContent>
+      </Tabs>
 
       {/* Usage Instructions */}
       <Card>

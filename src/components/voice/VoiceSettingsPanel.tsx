@@ -41,11 +41,12 @@ export const VoiceSettingsPanel: React.FC<VoiceSettingsPanelProps> = ({ userId }
 
       if (error) throw error;
 
-      if (data?.dashboard_preferences?.voice) {
+      const prefs = data?.dashboard_preferences as any;
+      if (prefs?.voice) {
         setSettings({
-          transcription_enabled: data.dashboard_preferences.voice.transcription_enabled ?? true,
-          auto_save_conversations: data.dashboard_preferences.voice.auto_save_conversations ?? false,
-          history_retention_days: data.dashboard_preferences.voice.history_retention_days ?? 30
+          transcription_enabled: prefs.voice.transcription_enabled ?? true,
+          auto_save_conversations: prefs.voice.auto_save_conversations ?? false,
+          history_retention_days: prefs.voice.history_retention_days ?? 30
         });
       }
     } catch (error) {
@@ -64,8 +65,9 @@ export const VoiceSettingsPanel: React.FC<VoiceSettingsPanelProps> = ({ userId }
         .eq('user_id', userId)
         .single();
 
+      const existingPrefs = (existing?.dashboard_preferences || {}) as any;
       const updatedPreferences = {
-        ...(existing?.dashboard_preferences || {}),
+        ...existingPrefs,
         voice: newSettings
       };
 

@@ -2203,6 +2203,42 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_conversation_analytics: {
+        Row: {
+          created_at: string | null
+          duration_minutes: number
+          estimated_cost: number | null
+          id: string
+          message_count: number
+          session_end: string | null
+          session_start: string
+          user_id: string
+          voice_used: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_minutes?: number
+          estimated_cost?: number | null
+          id?: string
+          message_count?: number
+          session_end?: string | null
+          session_start: string
+          user_id: string
+          voice_used?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_minutes?: number
+          estimated_cost?: number | null
+          id?: string
+          message_count?: number
+          session_end?: string | null
+          session_start?: string
+          user_id?: string
+          voice_used?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -2287,6 +2323,10 @@ export type Database = {
         Returns: {
           family_group_id: string
         }[]
+      }
+      increment_ai_chat_usage: {
+        Args: { p_minutes: number; p_month: string; p_user_id: string }
+        Returns: undefined
       }
       is_family_member: {
         Args: { group_uuid: string; user_uuid: string }
