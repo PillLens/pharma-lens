@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -7,7 +7,11 @@ import {
   Clock, 
   Calendar, 
   Save,
-  Loader2
+  Loader2,
+  Camera,
+  Upload,
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 import BottomSheet from '@/components/ui/mobile/BottomSheet';
 import { Button } from '@/components/ui/button';
@@ -31,6 +35,7 @@ interface MedicationFormSheetProps {
   medication?: UserMedication | null;
   onSave: (data: Partial<UserMedication>) => Promise<void>;
   isLoading?: boolean;
+  initialData?: Partial<MedicationFormData>;
 }
 
 const medicationSchema = z.object({
@@ -65,13 +70,17 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
   onClose,
   medication,
   onSave,
-  isLoading = false
+  isLoading = false,
+  initialData
 }) => {
   const { t } = useTranslation();
   const { addReminder } = useReminders();
   const [currentStep, setCurrentStep] = useState(0);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<MedicationFormData>({
     resolver: zodResolver(medicationSchema),
@@ -100,13 +109,31 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
         genericName: medication.generic_name || '',
         dosage: medication.dosage || '',
         frequency: medication.frequency,
-        form: 'tablet', // Default since not in interface
-        strength: '', // Default since not in interface
+        form: 'tablet',
+        strength: '',
         startDate: new Date(medication.start_date),
         endDate: medication.end_date ? new Date(medication.end_date) : undefined,
         prescriber: medication.prescriber || '',
         notes: medication.notes || '',
         status: medication.is_active ? 'active' : 'inactive'
+      });
+    } else if (initialData) {
+      // Pre-populate form with initial data (e.g., from barcode scan)
+      form.reset({
+        name: initialData.name || '',
+        genericName: initialData.genericName || '',
+        dosage: initialData.dosage || '',
+        frequency: initialData.frequency || '',
+        form: initialData.form || 'tablet',
+        strength: initialData.strength || '',
+        startDate: initialData.startDate || new Date(),
+        endDate: initialData.endDate,
+        prescriber: initialData.prescriber || '',
+        notes: initialData.notes || '',
+        status: initialData.status || 'active',
+        reminderTimes: initialData.reminderTimes || ['08:00'],
+        reminderDays: initialData.reminderDays || [1, 2, 3, 4, 5, 6, 7],
+        enableReminders: initialData.enableReminders ?? true
       });
     } else {
       form.reset({
@@ -127,7 +154,7 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
       });
     }
     setCurrentStep(0);
-  }, [medication, form, isOpen]);
+  }, [medication, initialData, form, isOpen]);
 
   const handleSave = async (data: MedicationFormData) => {
     try {
@@ -268,6 +295,67 @@ const MedicationFormSheet: React.FC<MedicationFormSheetProps> = ({
       case 1:
         return (
           <div className="space-y-6">
+            {/* Image Upload Section */}
+            <div className="space-y-2">
+              <Label>Medication Image (Optional)</Label>
+              <div className="flex flex-col gap-3">
+                {uploadedImage ? (
+                  <div className="relative w-full h-48 rounded-xl border-2 border-border overflow-hidden">
+                    <img src={uploadedImage} alt="Medication" className="w-full h-full object-cover" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => setUploadedImage(null)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 rounded-xl h-12"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingImage}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Image
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 rounded-xl h-12"
+                      disabled={isUploadingImage}
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Photo
+                    </Button>
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setIsUploadingImage(true);
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        setUploadedImage(e.target?.result as string);
+                        setIsUploadingImage(false);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="dosage">{t('medications.dosage')}</Label>
               <Input

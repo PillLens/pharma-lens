@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Pill, Activity, TrendingUp, Heart, Clock, AlertTriangle, Target, CheckCircle, Calendar, Zap, Bell, Filter, ArrowRight } from 'lucide-react';
+import { Plus, Pill, Activity, TrendingUp, Heart, Clock, AlertTriangle, Target, CheckCircle, Calendar, Zap, Bell, Filter, ArrowRight, Scan } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { toast } from 'sonner';
@@ -28,6 +28,9 @@ import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
 import { getBrowserTimezone } from '@/utils/timezoneUtils';
 import { medicationTimingService } from '@/services/medicationTimingService';
+import { MedicationSearchBar, SearchFilters } from '@/components/medications/MedicationSearchBar';
+import { DrugInteractionChecker } from '@/components/medications/DrugInteractionChecker';
+import { CameraCapture } from '@/components/CameraCapture';
 
 // Component for upcoming medication cards that uses real reminder times
 const UpcomingMedicationCard: React.FC<{
@@ -234,6 +237,10 @@ const MedicationManager: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'active' | 'due' | 'expired'>('all');
   const [refreshKey, setRefreshKey] = useState(0);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({});
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
+  const [barcodeData, setBarcodeData] = useState<any>(null);
 
   // Enhanced medication management logic - use useMemo to prevent infinite loops
   const activeMedications = useMemo(() => 
@@ -408,19 +415,64 @@ const MedicationManager: React.FC = () => {
 
   // Filter medications based on current filter
   const getFilteredMedications = () => {
+    let filtered = medications;
+
+    // Apply status filters
     switch (filter) {
       case 'active':
-        return activeMedications;
+        filtered = activeMedications;
+        break;
       case 'due':
-        return medicationsNeedingAttention; // Include both due and overdue
+        filtered = medicationsNeedingAttention;
+        break;
       case 'expired':
-        return expiredMedications;
+        filtered = expiredMedications;
+        break;
       default:
-        return medications;
+        filtered = medications;
     }
+
+    // Apply search filters
+    if (searchFilters.active) {
+      filtered = filtered.filter(m => m.is_active);
+    }
+    if (searchFilters.inactive) {
+      filtered = filtered.filter(m => !m.is_active);
+    }
+    if (searchFilters.due) {
+      filtered = filtered.filter(m => 
+        dueMedications.some(d => d.id === m.id) || 
+        overdueMedications.some(o => o.id === m.id)
+      );
+    }
+    if (searchFilters.expired) {
+      filtered = filtered.filter(m => expiredMedications.some(e => e.id === m.id));
+    }
+
+    // Apply search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(m =>
+        m.medication_name.toLowerCase().includes(query) ||
+        (m.generic_name && m.generic_name.toLowerCase().includes(query)) ||
+        (m.notes && m.notes.toLowerCase().includes(query))
+      );
+    }
+
+    return filtered;
   };
 
-  const filteredMedications = getFilteredMedications();
+  const filteredMedications = useMemo(() => getFilteredMedications(), [
+    medications,
+    filter,
+    searchFilters,
+    searchQuery,
+    activeMedications,
+    medicationsNeedingAttention,
+    expiredMedications,
+    dueMedications,
+    overdueMedications
+  ]);
 
   const handleAddMedication = async (data: Partial<UserMedication> & { _reminderSettings?: any }) => {
     setIsSubmitting(true);
@@ -609,6 +661,19 @@ const MedicationManager: React.FC = () => {
     refetch();
   };
 
+  const handleBarcodeResult = (data: any) => {
+    // Pre-populate form with barcode data
+    setBarcodeData({
+      name: data.name || data.productName || '',
+      genericName: data.genericName || '',
+      dosage: data.dosage || '',
+      frequency: 'daily',
+      notes: data.description || ''
+    });
+    setShowBarcodeScanner(false);
+    setIsAddSheetOpen(true);
+  };
+
   const handleMarkTaken = async (medicationId: string) => {
     if (!user) return;
 
@@ -740,6 +805,13 @@ const MedicationManager: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {!loading && medications.length > 0 ? (
             <div className="space-y-4">
+              {/* Search Bar */}
+              <MedicationSearchBar
+                onSearch={setSearchQuery}
+                onFilterChange={setSearchFilters}
+                placeholder="Search by name, generic name, or notes..."
+              />
+
               {/* Show explanation card for first-time users or when no reminders exist */}
               {medications.length > 0 && medications.length <= 2 && (
                 <MedicationExplanationCard onNavigateToReminders={() => navigate('/reminders')} />
@@ -958,7 +1030,10 @@ const MedicationManager: React.FC = () => {
 
               {/* Insights Tab */}
               <TabsContent value="insights" className="space-y-6">
-                {/* ... keep existing code (insights tab content) */}
+                {/* Drug Interaction Checker */}
+                <DrugInteractionChecker medications={activeMedications} />
+
+                {/* Adherence Overview */}
                 <MobileCard>
                   <MobileCardHeader>
                     <MobileCardTitle className="flex items-center gap-2">
@@ -1139,8 +1214,25 @@ const MedicationManager: React.FC = () => {
           )}
         </div>
 
-        {/* Floating Action Button */}
-        <MedicationFloatingActionButton onClick={() => setIsAddSheetOpen(true)} />
+        {/* Floating Action Button with Barcode Scanner */}
+        <MedicationFloatingActionButton
+          onAddMedication={() => {
+            setBarcodeData(null);
+            setIsAddSheetOpen(true);
+          }}
+          onScanBarcode={() => setShowBarcodeScanner(true)}
+        />
+
+        {/* Barcode Scanner Modal */}
+        {showBarcodeScanner && (
+          <div className="fixed inset-0 z-50 bg-background">
+            <CameraCapture
+              onClose={() => setShowBarcodeScanner(false)}
+              onScanResult={handleBarcodeResult}
+              language="EN"
+            />
+          </div>
+        )}
 
         {/* Bottom Sheets */}
         <MedicationFormSheet
@@ -1150,9 +1242,11 @@ const MedicationManager: React.FC = () => {
             setIsAddSheetOpen(false);
             setIsEditSheetOpen(false);
             setSelectedMedication(null);
+            setBarcodeData(null);
           }}
           onSave={handleSave}
           isLoading={isSubmitting}
+          initialData={barcodeData}
         />
 
         <MedicationDetailsSheet
