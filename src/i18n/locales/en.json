@@ -760,7 +760,8 @@
       "pause": "Pause",
       "activate": "Activate", 
       "delete": "Delete",
-      "addReminder": "Add Reminder"
+      "addReminder": "Add Reminder",
+      "markTaken": "Mark as Taken"
     },
     "details": {
       "title": "Reminder Details",
@@ -808,7 +809,16 @@
       "reminderActivated": "Reminder Activated"
     },
     "filters": {
-      "searchPlaceholder": "Search medications..."
+      "searchPlaceholder": "Search medications...",
+      "all": "All",
+      "active": "Active",
+      "paused": "Paused",
+      "today": "Today",
+      "week": "This Week",
+      "sortBy": "Sort by",
+      "time": "Time",
+      "name": "Name",
+      "status": "Status"
     }
   },
   "settings": {
