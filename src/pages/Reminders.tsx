@@ -723,7 +723,8 @@ const Reminders: React.FC = () => {
           onClose={() => setShowUpgrade(false)}
           feature="reminders_limit"
         />
-    </ProfessionalMobileLayout>
+      </ProfessionalMobileLayout>
+    </ReminderErrorBoundary>
   );
 };
 
@@ -1009,8 +1010,6 @@ const LoadingSkeleton: React.FC = () => (
       </div>
     </div>
   </div>
-</ProfessionalMobileLayout>
-</ReminderErrorBoundary>
 );
 
 export default Reminders;
