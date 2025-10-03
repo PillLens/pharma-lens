@@ -155,6 +155,24 @@
       "title": "Failed to Load Dashboard",
       "message": "We couldn't load your dashboard data. Please try again."
     },
+    "timeline": {
+      "title": "Today's Schedule",
+      "noDoses": "No doses scheduled for today",
+      "takenAt": "Taken at",
+      "markTaken": "Mark",
+      "skip": "Skip"
+    },
+    "trends": {
+      "adherence": "Adherence Trend",
+      "average": "avg. adherence",
+      "noData": "No adherence data available",
+      "adherenceRate": "Adherence Rate"
+    },
+    "stats": {
+      "byCategory": "Medications by Category",
+      "total": "total medications",
+      "noData": "No medication data available"
+    },
     "mymedicationsDescription": "View and manage your medications",
     "reminderstodayDescription": "Manage your medication reminders",
     "familygroupDescription": "Connect with family members",
