@@ -20,6 +20,8 @@ import { MobileCard, MobileCardContent, MobileCardHeader, MobileCardTitle, Mobil
 import { MobileButton } from "@/components/ui/mobile/MobileButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDashboard from "@/components/mobile/MobileDashboard";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { Footer } from "@/components/Footer";
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -80,6 +82,13 @@ const Index = () => {
     return <ScanHistory />;
   }
   const content = <div className={`${!isMobile ? 'min-h-screen bg-background' : ''}`}>
+      <SEOHead
+        title="Smart Medication Scanner & Reminder App"
+        description="Scan pill barcodes, identify medications instantly, set smart reminders, and manage family health with PillLens"
+        keywords={['pill scanner', 'medication tracker', 'drug identifier', 'medication reminder', 'health management', 'family health']}
+        canonical="https://pilllens.com/"
+      />
+
       {/* Desktop Header */}
       {!isMobile && <header className="sticky top-0 z-50 px-6 py-4 bg-background/95 backdrop-blur-md border-b border-border/50">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -94,6 +103,25 @@ const Index = () => {
               </div>
             </div>
             
+            {/* Desktop Header Actions */}
+            <div className="flex items-center gap-3">
+              <LanguageSelector />
+              {user ? (
+                <Button
+                  variant="outline"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign In
+                </Button>
+              )}
+            </div>
           </div>
         </header>}
 
@@ -411,6 +439,9 @@ const Index = () => {
           </Card>
         </section>
       </main>
+
+      {/* Footer - Desktop Only */}
+      {!isMobile && <Footer />}
 
       {/* Floating Action Button for Mobile */}
       {isMobile && <FloatingActionButton onClick={() => setShowCamera(true)} />}
