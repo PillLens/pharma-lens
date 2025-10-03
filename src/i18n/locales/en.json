@@ -227,7 +227,59 @@
     "viewAll": "View All",
     "noScans": "No recent scans",
     "noScansDescription": "Start by scanning your first medication",
-    "daysRemaining": "{{days}}d left"
+    "daysRemaining": "{{days}}d left",
+    "refill": {
+      "title": "Refill Tracker",
+      "daysRemaining": "Days Remaining",
+      "refillNeeded": "Refill Needed",
+      "refillSoon": "Refill Soon",
+      "stockOk": "Stock OK",
+      "noMedications": "No medications with refill tracking",
+      "track": "Track refills for better medication management",
+      "updateQuantity": "Update Quantity",
+      "recordRefill": "Record Refill"
+    },
+    "goals": {
+      "title": "Medication Goals",
+      "addGoal": "Add Goal",
+      "noGoals": "No active goals yet",
+      "setGoals": "Set goals to track your progress",
+      "achieved": "Achieved",
+      "recentAchievements": "Recent Achievements",
+      "adherenceRate": "Adherence Rate",
+      "streak": "Daily Streak",
+      "refillOnTime": "Timely Refills",
+      "dailyCompletion": "Daily Completion"
+    },
+    "vitalSigns": {
+      "title": "Vital Signs",
+      "record": "Record",
+      "noData": "No vital signs recorded yet",
+      "startTracking": "Start tracking your health measurements",
+      "bloodPressure": "Blood Pressure",
+      "heartRate": "Heart Rate",
+      "bloodGlucose": "Blood Glucose",
+      "weight": "Weight",
+      "temperature": "Temperature",
+      "trend": "Trend"
+    },
+    "aiInsights": {
+      "title": "AI Insights",
+      "refresh": "Refresh",
+      "noInsights": "No insights available yet",
+      "keepTracking": "Keep tracking your medications for personalized insights",
+      "generate": "Generate Insights",
+      "takeAction": "Take action",
+      "analyzing": "Analyzing your data..."
+    },
+    "healthInsights": {
+      "title": "Health Insights",
+      "weeklyAdherence": "Weekly Adherence",
+      "avgResponseTime": "Avg. Response Time",
+      "missedDoses": "Missed Doses",
+      "activeStreak": "Active Streak",
+      "performance": "Your medication management performance"
+    }
   },
   "notifications": {
     "title": "Notifications",

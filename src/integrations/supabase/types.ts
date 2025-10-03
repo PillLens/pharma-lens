@@ -47,6 +47,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_insights: {
+        Row: {
+          action_url: string | null
+          actionable: boolean | null
+          created_at: string
+          data: Json | null
+          description: string
+          dismissed_at: string | null
+          expires_at: string | null
+          id: string
+          insight_type: string
+          priority: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          actionable?: boolean | null
+          created_at?: string
+          data?: Json | null
+          description: string
+          dismissed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          insight_type: string
+          priority?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          actionable?: boolean | null
+          created_at?: string
+          data?: Json | null
+          description?: string
+          dismissed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          insight_type?: string
+          priority?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       api_rate_limits: {
         Row: {
           created_at: string
@@ -1119,6 +1164,59 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medication_goals: {
+        Row: {
+          achieved_at: string | null
+          created_at: string
+          current_value: number | null
+          end_date: string | null
+          goal_type: string
+          id: string
+          is_active: boolean | null
+          medication_id: string | null
+          start_date: string
+          target_value: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string | null
+          created_at?: string
+          current_value?: number | null
+          end_date?: string | null
+          goal_type: string
+          id?: string
+          is_active?: boolean | null
+          medication_id?: string | null
+          start_date?: string
+          target_value: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string | null
+          created_at?: string
+          current_value?: number | null
+          end_date?: string | null
+          goal_type?: string
+          id?: string
+          is_active?: boolean | null
+          medication_id?: string | null
+          start_date?: string
+          target_value?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_goals_medication_id_fkey"
+            columns: ["medication_id"]
+            isOneToOne: false
+            referencedRelation: "user_medications"
             referencedColumns: ["id"]
           },
         ]
@@ -2212,6 +2310,54 @@ export type Database = {
           notification_preferences?: Json | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      vital_signs: {
+        Row: {
+          blood_glucose: number | null
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          created_at: string
+          heart_rate: number | null
+          id: string
+          notes: string | null
+          oxygen_saturation: number | null
+          recorded_at: string
+          temperature: number | null
+          updated_at: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          blood_glucose?: number | null
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string
+          heart_rate?: number | null
+          id?: string
+          notes?: string | null
+          oxygen_saturation?: number | null
+          recorded_at?: string
+          temperature?: number | null
+          updated_at?: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          blood_glucose?: number | null
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string
+          heart_rate?: number | null
+          id?: string
+          notes?: string | null
+          oxygen_saturation?: number | null
+          recorded_at?: string
+          temperature?: number | null
+          updated_at?: string
+          user_id?: string
+          weight?: number | null
         }
         Relationships: []
       }
