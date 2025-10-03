@@ -24,6 +24,10 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/Footer";
 import { FAQSection } from "@/components/home/FAQSection";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { VideoDemoSection } from "@/components/home/VideoDemoSection";
+import { SocialProofSection } from "@/components/home/SocialProofSection";
+import { PricingPreview } from "@/components/home/PricingPreview";
+import { ComparisonTable } from "@/components/home/ComparisonTable";
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -450,6 +454,18 @@ const Index = () => {
             </div>
           </Card>
         </section>
+
+        {/* Video Demo Section - Desktop Only */}
+        {!isMobile && <VideoDemoSection />}
+
+        {/* Social Proof Section - Desktop Only */}
+        {!isMobile && <SocialProofSection />}
+
+        {/* Pricing Preview - Desktop Only */}
+        {!isMobile && <PricingPreview />}
+
+        {/* Comparison Table - Desktop Only */}
+        {!isMobile && <ComparisonTable />}
 
         {/* FAQ Section - Desktop Only */}
         {!isMobile && <FAQSection />}
