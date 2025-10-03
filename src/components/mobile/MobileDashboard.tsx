@@ -40,7 +40,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({
         <div className="flex items-center justify-between mb-1">
           <div>
             <h1 className="text-2xl font-bold text-foreground">
-              <TranslatedText translationKey="dashboard.welcome" fallback="Good morning" />
+              <TranslatedText translationKey="common.greeting" fallback="Good morning" />
             </h1>
             <p className="text-base text-muted-foreground">
               {user?.email?.split('@')[0] || 'User'}

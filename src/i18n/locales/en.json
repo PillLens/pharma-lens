@@ -44,7 +44,8 @@
     "sound": "Sound",
     "vibration": "Vibration",
     "ledLight": "LED Light",
-    "daysOfWeek": "Days of Week"
+    "daysOfWeek": "Days of Week",
+    "greeting": "Good morning"
   },
   "navigation": {
     "home": "Home",
