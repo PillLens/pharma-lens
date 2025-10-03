@@ -4,6 +4,7 @@ import { useMedicationHistory } from '@/hooks/useMedicationHistory';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
+import { useMemo, useState } from 'react';
 
 interface DashboardStats {
   medications: {
@@ -41,6 +42,7 @@ interface DashboardStats {
 export const useDashboardData = () => {
   const { user } = useAuth();
   const { medications, loading: medicationsLoading } = useMedicationHistory();
+  const [fetchError, setFetchError] = useState<Error | null>(null);
 
   const fetchDashboardData = async (): Promise<DashboardStats> => {
     if (!user || medicationsLoading) {
@@ -162,14 +164,14 @@ export const useDashboardData = () => {
     
     const adherenceRate = totalToday > 0 ? Math.round((takenToday / totalToday) * 100) : 100;
 
-    // Calculate streak from adherence log
-    const calculateStreak = async () => {
+    // Calculate streak from adherence log - memoized for performance
+    const calculateStreakFn = async () => {
       try {
         const { data: recentAdherence, error } = await supabase
           .from('medication_adherence_log')
           .select('*')
           .eq('user_id', user.id)
-          .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
+          .gte('scheduled_time', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
           .order('scheduled_time', { ascending: false });
 
         if (error) throw error;
@@ -177,7 +179,6 @@ export const useDashboardData = () => {
         let streak = 0;
         const dailyTaken = new Map();
         
-        // Group by date and check if all doses were taken each day
         recentAdherence?.forEach(log => {
           const date = new Date(log.scheduled_time).toDateString();
           if (!dailyTaken.has(date)) {
@@ -189,7 +190,6 @@ export const useDashboardData = () => {
           }
         });
 
-        // Calculate consecutive days with 100% adherence
         const sortedDates = Array.from(dailyTaken.keys()).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
         
         for (const date of sortedDates) {
@@ -208,7 +208,7 @@ export const useDashboardData = () => {
       }
     };
 
-    const streak = await calculateStreak();
+    const streak = await calculateStreakFn();
 
     // Get next reminder for today
     const now = new Date();
@@ -270,17 +270,28 @@ export const useDashboardData = () => {
 
   const { data: dashboardStats, isLoading, error, refetch } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats', user?.id, medications?.length],
-    queryFn: fetchDashboardData,
+    queryFn: async () => {
+      try {
+        setFetchError(null);
+        return await fetchDashboardData();
+      } catch (err) {
+        setFetchError(err instanceof Error ? err : new Error('Failed to fetch dashboard data'));
+        throw err;
+      }
+    },
     enabled: !!user && !medicationsLoading,
-    staleTime: 30000, // 30 seconds
-    gcTime: 300000, // 5 minutes
-    retry: 2
+    staleTime: 30000,
+    gcTime: 300000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 
-  // Handle errors manually
+  // Handle errors with toast notification
   if (error) {
     console.error('Error fetching dashboard data:', error);
-    toast.error('Failed to load dashboard data');
+    toast.error('Failed to load dashboard data', {
+      description: 'Please check your connection and try again.'
+    });
   }
 
   return {
@@ -292,6 +303,7 @@ export const useDashboardData = () => {
       family: { groups: 0, members: 0 }
     },
     loading: isLoading || medicationsLoading,
+    error: fetchError || error,
     refetch
   };
 };

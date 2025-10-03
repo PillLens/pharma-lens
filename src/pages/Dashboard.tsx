@@ -35,12 +35,14 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
+import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
+import { ErrorCard } from '@/components/dashboard/ErrorCard';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { subscription, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
-  const { dashboardStats, loading } = useDashboardData();
+  const { dashboardStats, loading, error, refetch } = useDashboardData();
   const { toast: toastHook } = useToast();
 
   // Handle checkout success/cancel
@@ -134,8 +136,8 @@ const Dashboard: React.FC = () => {
     },
     {
       icon: Users,
-      value: '0',
-      label: t('dashboard.family', 'Family Members'),
+      value: dashboardStats.family.members || 0,
+      label: t('dashboard.familyMembers', 'Family Members'),
       color: 'text-purple-500',
       bgColor: 'bg-purple-50 dark:bg-purple-950/30',
       borderColor: 'border-purple-200 dark:border-purple-800',
@@ -156,6 +158,26 @@ const Dashboard: React.FC = () => {
       onClick: () => navigate('/medications')
     },
   ];
+
+  // Show skeleton during initial load
+  if (loading && !dashboardStats) {
+    return (
+      <ProfessionalMobileLayout showHeader={false}>
+        <DashboardSkeleton />
+      </ProfessionalMobileLayout>
+    );
+  }
+
+  // Show error card if there's an error
+  if (error && !dashboardStats) {
+    return (
+      <ProfessionalMobileLayout showHeader={false}>
+        <div className="p-6">
+          <ErrorCard onRetry={refetch} />
+        </div>
+      </ProfessionalMobileLayout>
+    );
+  }
 
   return (
     <ProfessionalMobileLayout showHeader={false}>
@@ -219,13 +241,17 @@ const Dashboard: React.FC = () => {
                     {/* Health status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-success/10 rounded-full border border-success/20">
                       <Heart className="w-3 h-3 text-red-500" />
-                      <span className="text-xs font-medium text-success">Health Active</span>
+                      <span className="text-xs font-medium text-success">
+                        <TranslatedText translationKey="dashboard.healthActive" fallback="Health Active" />
+                      </span>
                     </div>
                     
                     {/* Sync status */}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-info/10 rounded-full border border-info/20">
                       <div className="w-2 h-2 rounded-full bg-info" />
-                      <span className="text-xs font-medium text-info">Sync</span>
+                      <span className="text-xs font-medium text-info">
+                        <TranslatedText translationKey="dashboard.synced" fallback="Synced" />
+                      </span>
                     </div>
                   </div>
 

@@ -148,6 +148,13 @@
     "familyMembersText": "family members",
     "setupFamilyCare": "Set up family care",
     "manageAccountPreferences": "Manage your account and preferences",
+    "lowStock": "Low Stock",
+    "dayStreak": "Day Streak",
+    "todaysDoses": "Today's Doses",
+    "error": {
+      "title": "Failed to Load Dashboard",
+      "message": "We couldn't load your dashboard data. Please try again."
+    },
     "mymedicationsDescription": "View and manage your medications",
     "reminderstodayDescription": "Manage your medication reminders",
     "familygroupDescription": "Connect with family members",
