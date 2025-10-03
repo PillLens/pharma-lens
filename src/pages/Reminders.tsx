@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Plus, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
@@ -23,16 +23,20 @@ import DeleteConfirmDialog from '@/components/reminders/DeleteConfirmDialog';
 import LastUpdatedIndicator from '@/components/reminders/LastUpdatedIndicator';
 import RemindersLoadingSkeleton from '@/components/reminders/RemindersLoadingSkeleton';
 import PullToRefreshWrapper from '@/components/mobile/PullToRefreshWrapper';
+import { ReminderErrorBoundary } from '@/components/reminders/ReminderErrorBoundary';
+import { OfflineIndicator } from '@/components/reminders/OfflineIndicator';
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useSnooze } from '@/hooks/useSnooze';
+import { useDebounce } from '@/hooks/useDebounce';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime, createScheduledTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { medicationAnalyticsService } from '@/services/medicationAnalyticsService';
 import { medicationAdherenceService } from '@/services/medicationAdherenceService';
 import { scheduledDoseService } from '@/services/scheduledDoseService';
+import { reminderOfflineQueue } from '@/services/reminderOfflineQueue';
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 
@@ -69,6 +73,9 @@ const Reminders: React.FC = () => {
     sortOrder: 'asc',
     timeRange: 'all'
   });
+  
+  // Debounce search query for better performance
+  const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
   const [realAdherenceData, setRealAdherenceData] = useState({
     adherenceRate: 0,
     streak: 0,
@@ -90,6 +97,11 @@ const Reminders: React.FC = () => {
     reminder: null
   });
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Initialize offline queue on mount
+  useEffect(() => {
+    reminderOfflineQueue.initialize();
+  }, []);
 
   // Fetch user's timezone from profile
   useEffect(() => {
@@ -439,30 +451,34 @@ const Reminders: React.FC = () => {
   }
 
   return (
-    <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
-      {/* Timezone Display */}
-      <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20 flex items-center justify-between">
-        <span>Timezone: {timezone} | Current time: {getCurrentTimeInTimezone(timezone).toLocaleTimeString()}</span>
-        {!loading && !timezoneFetching && (
-          <MarkAllTakenButton
-            pendingDoses={timelineEntries
-              .filter(e => e.status === 'current' || e.status === 'overdue')
-              .map(e => {
-                const [medicationId] = e.id.split('-');
-                return {
-                  medicationId,
-                  medicationName: e.medication,
-                  time: e.time
-                };
-              })}
-            onMarkAll={async (doses) => {
-              for (const dose of doses) {
-                await handleMarkTaken(`${dose.medicationId}-${dose.time}`);
-              }
-            }}
-          />
-        )}
-      </div>
+    <ReminderErrorBoundary>
+      <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
+        {/* Timezone & Offline Indicator Header */}
+        <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20 flex items-center justify-between">
+          <span>Timezone: {timezone} | Current time: {getCurrentTimeInTimezone(timezone).toLocaleTimeString()}</span>
+          <div className="flex items-center gap-2">
+            <OfflineIndicator />
+            {!loading && !timezoneFetching && (
+              <MarkAllTakenButton
+                pendingDoses={timelineEntries
+                  .filter(e => e.status === 'current' || e.status === 'overdue')
+                  .map(e => {
+                    const [medicationId] = e.id.split('-');
+                    return {
+                      medicationId,
+                      medicationName: e.medication,
+                      time: e.time
+                    };
+                  })}
+                onMarkAll={async (doses) => {
+                  for (const dose of doses) {
+                    await handleMarkTaken(`${dose.medicationId}-${dose.time}`);
+                  }
+                }}
+              />
+            )}
+          </div>
+        </div>
 
       {/* Main Content */}
       {loading || timezoneFetching ? (
@@ -993,6 +1009,8 @@ const LoadingSkeleton: React.FC = () => (
       </div>
     </div>
   </div>
+</ProfessionalMobileLayout>
+</ReminderErrorBoundary>
 );
 
 export default Reminders;
