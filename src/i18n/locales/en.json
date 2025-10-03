@@ -180,6 +180,35 @@
       "request": "Refill",
       "lastRefill": "Last refill:"
     },
+    "customize": {
+      "button": "Customize",
+      "title": "Customize Dashboard",
+      "description": "Show or hide dashboard cards to personalize your view",
+      "visibility": "Card Visibility",
+      "reset": "Reset"
+    },
+    "welcome": {
+      "title": "Welcome",
+      "subtitle": "Let's get started with your medication management journey",
+      "addMedication": "Add Your First Medication",
+      "takeTour": "Take a Tour",
+      "help": "Need help getting started? Check out our",
+      "helpCenter": "Help Center"
+    },
+    "emptyState": {
+      "medications": {
+        "title": "No Medications Yet",
+        "description": "Start managing your health by adding your first medication",
+        "scan": "Scan Medication",
+        "manual": "Add Manually",
+        "tip": "Tip: You can also upload a photo of your medication label for quick entry"
+      },
+      "reminders": {
+        "title": "No Reminders Set",
+        "description": "Create your first reminder to stay on track with your medications",
+        "create": "Create Reminder"
+      }
+    },
     "mymedicationsDescription": "View and manage your medications",
     "reminderstodayDescription": "Manage your medication reminders",
     "familygroupDescription": "Connect with family members",
