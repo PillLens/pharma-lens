@@ -18,6 +18,17 @@ interface AddReminderSheetProps {
     id: string;
     name: string;
   }>;
+  mode?: 'create' | 'edit';
+  initialData?: {
+    medicationId: string;
+    dosage: string;
+    frequency: string;
+    times: string[];
+    startDate: string;
+    endDate: string;
+    notes: string;
+    daysOfWeek?: number[];
+  };
 }
 
 const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
@@ -25,19 +36,38 @@ const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
   onClose,
   onSave,
   isLoading = false,
-  medications = []
+  medications = [],
+  mode = 'create',
+  initialData
 }) => {
   const { t } = useTranslation();
   
   const [formData, setFormData] = useState({
-    medicationId: '',
-    dosage: '',
-    frequency: '',
-    times: [] as string[],
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: '',
-    notes: ''
+    medicationId: initialData?.medicationId || '',
+    dosage: initialData?.dosage || '',
+    frequency: initialData?.frequency || '',
+    times: initialData?.times || [] as string[],
+    startDate: initialData?.startDate || new Date().toISOString().split('T')[0],
+    endDate: initialData?.endDate || '',
+    notes: initialData?.notes || '',
+    daysOfWeek: initialData?.daysOfWeek || [1, 2, 3, 4, 5, 6, 7]
   });
+
+  // Update form when initialData changes
+  React.useEffect(() => {
+    if (initialData && mode === 'edit') {
+      setFormData({
+        medicationId: initialData.medicationId || '',
+        dosage: initialData.dosage || '',
+        frequency: initialData.frequency || '',
+        times: initialData.times || [],
+        startDate: initialData.startDate || new Date().toISOString().split('T')[0],
+        endDate: initialData.endDate || '',
+        notes: initialData.notes || '',
+        daysOfWeek: initialData.daysOfWeek || [1, 2, 3, 4, 5, 6, 7]
+      });
+    }
+  }, [initialData, mode]);
 
   const [newTime, setNewTime] = useState('08:00');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -80,7 +110,8 @@ const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
       times: [],
       startDate: new Date().toISOString().split('T')[0],
       endDate: '',
-      notes: ''
+      notes: '',
+      daysOfWeek: [1, 2, 3, 4, 5, 6, 7]
     });
     setNewTime('08:00');
     setErrors({});
@@ -120,7 +151,7 @@ const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
         <SheetHeader className="text-left pb-6">
           <SheetTitle className="text-lg font-semibold flex items-center gap-2">
             <Plus className="w-5 h-5" />
-            {t('reminders.form.title')}
+            {mode === 'edit' ? t('reminders.form.editTitle') || 'Edit Reminder' : t('reminders.form.title')}
           </SheetTitle>
         </SheetHeader>
 
@@ -302,7 +333,7 @@ const AddReminderSheet: React.FC<AddReminderSheetProps> = ({
               {isLoading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
               ) : null}
-              {t('reminders.form.save')}
+              {mode === 'edit' ? t('reminders.form.update') || 'Update' : t('reminders.form.save')}
             </Button>
           </div>
         </div>

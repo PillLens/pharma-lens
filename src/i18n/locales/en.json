@@ -806,6 +806,9 @@
       "reminderUpdated": "Reminder updated successfully",
       "reminderPaused": "Reminder Paused",
       "reminderActivated": "Reminder Activated"
+    },
+    "filters": {
+      "searchPlaceholder": "Search medications..."
     }
   },
   "settings": {

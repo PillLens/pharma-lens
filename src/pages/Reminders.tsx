@@ -16,9 +16,12 @@ import { ReminderLimitBanner } from '@/components/reminders/ReminderLimitBanner'
 import { TrialExpirationHandler } from '@/components/reminders/TrialExpirationHandler';
 import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
+import ReminderFilters, { ReminderFilterState } from '@/components/reminders/ReminderFilters';
+import NotificationStatusIndicator from '@/components/reminders/NotificationStatusIndicator';
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { useSnooze } from '@/hooks/useSnooze';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentTimeInTimezone, parseTimeInTimezone, isDoseTime, createScheduledTime } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
@@ -43,15 +46,24 @@ const Reminders: React.FC = () => {
   } = useReminders();
   
   const { isInTrial, trialDaysRemaining, subscription } = useSubscription();
+  const { snoozeReminder, getSnoozeState, canSnooze, isSnoozing } = useSnooze();
 
   // State management
   const [selectedReminder, setSelectedReminder] = useState<ReminderWithMedication | null>(null);
   const [showAddReminder, setShowAddReminder] = useState(false);
+  const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
   const [showReminderDetails, setShowReminderDetails] = useState(false);
   const [isAddingReminder, setIsAddingReminder] = useState(false);
   const [userTimezone, setUserTimezone] = useState<string | null>(null);
   const [timezoneFetching, setTimezoneFetching] = useState(true);
   const [userMedications, setUserMedications] = useState<any[]>([]);
+  const [filters, setFilters] = useState<ReminderFilterState>({
+    searchQuery: '',
+    status: 'all',
+    sortBy: 'time',
+    sortOrder: 'asc',
+    timeRange: 'all'
+  });
   const [realAdherenceData, setRealAdherenceData] = useState({
     adherenceRate: 0,
     streak: 0,
@@ -166,7 +178,8 @@ const Reminders: React.FC = () => {
 
   const handleEditReminder = (reminder: ReminderWithMedication) => {
     setSelectedReminder(reminder);
-    setShowReminderDetails(true);
+    setEditMode('edit');
+    setShowAddReminder(true);
   };
 
   const handleReminderTap = (reminder: ReminderWithMedication) => {
@@ -277,6 +290,28 @@ const Reminders: React.FC = () => {
         description: 'Failed to mark dose as taken',
         variant: 'destructive'
       });
+    }
+  };
+
+  const handleSnooze = async (entryId: string) => {
+    try {
+      const [reminderId, reminderTime] = entryId.split('-');
+      const reminder = reminders.find(r => r.id === reminderId);
+      
+      if (!reminder) return;
+
+      if (!canSnooze(reminder.medication_id, reminderTime)) {
+        toast({
+          title: 'Cannot Snooze',
+          description: 'Maximum snooze limit reached',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      await snoozeReminder(reminder.medication_id, reminderTime, { minutes: 15, maxSnoozes: 3 });
+    } catch (error) {
+      console.error('Error snoozing reminder:', error);
     }
   };
 
@@ -415,6 +450,42 @@ const Reminders: React.FC = () => {
             />
           )}
 
+          {/* Notification Status Indicator */}
+          <div className="px-4">
+            <NotificationStatusIndicator showTestButton={true} />
+          </div>
+
+          {/* Reminder Filters */}
+          {reminders.length > 0 && (
+            <div className="px-4">
+              <ReminderFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                resultCount={reminders.filter(r => {
+                  // Apply search filter
+                  if (filters.searchQuery && !r.medication?.medication_name?.toLowerCase().includes(filters.searchQuery.toLowerCase())) {
+                    return false;
+                  }
+                  // Apply status filter
+                  if (filters.status !== 'all') {
+                    if (filters.status === 'active' && !r.is_active) return false;
+                    if (filters.status === 'paused' && r.is_active) return false;
+                  }
+                  // Apply time range filter
+                  if (filters.timeRange === 'today') {
+                    const now = getCurrentTimeInTimezone(timezone);
+                    const reminderTime = r.reminder_time;
+                    // Check if reminder is for today
+                    const today = now.getDay();
+                    const adjustedToday = today === 0 ? 7 : today;
+                    if (!r.days_of_week?.includes(adjustedToday)) return false;
+                  }
+                  return true;
+                }).length}
+              />
+            </div>
+          )}
+
           {/* Interactive Timeline */}
           {timelineEntries.length > 0 && (
             <div className="px-4">
@@ -422,12 +493,7 @@ const Reminders: React.FC = () => {
                 entries={timelineEntries}
                 userTimezone={timezone}
                 onMarkTaken={handleMarkTaken}
-                onSnooze={(entryId) => {
-                  toast({
-                    title: t('toast.reminderSnoozed'),
-                    description: t('toast.remindAgainIn15')
-                  });
-                }}
+                onSnooze={handleSnooze}
               />
             </div>
           )}
@@ -511,10 +577,25 @@ const Reminders: React.FC = () => {
       {/* Bottom Sheets */}
       <AddReminderSheet
         isOpen={showAddReminder}
-        onClose={() => setShowAddReminder(false)}
+        onClose={() => {
+          setShowAddReminder(false);
+          setEditMode('create');
+          setSelectedReminder(null);
+        }}
         onSave={handleAddReminder}
         isLoading={isAddingReminder}
         medications={userMedications}
+        mode={editMode}
+        initialData={selectedReminder && editMode === 'edit' ? {
+          medicationId: selectedReminder.medication_id,
+          dosage: selectedReminder.medication?.dosage || '',
+          frequency: selectedReminder.medication?.frequency || '',
+          times: [selectedReminder.reminder_time],
+          startDate: new Date().toISOString().split('T')[0],
+          endDate: '',
+          notes: '',
+          daysOfWeek: selectedReminder.days_of_week || [1, 2, 3, 4, 5, 6, 7]
+        } : undefined}
       />
 
       <ReminderDetailsSheet

@@ -188,38 +188,61 @@ class NativeNotificationManager {
     }
   }
 
-  private async snoozeMedication(medicationId: string, reminderTime: string): Promise<void> {
-    await medicationNotificationService.snoozeNotification(medicationId, reminderTime, 15);
-    
-    // Schedule a new local notification for 15 minutes from now
-    const snoozeTime = new Date(Date.now() + 15 * 60 * 1000);
-    
-    try {
-      // Get medication details
-      const { data: medication } = await supabase
-        .from('user_medications')
-        .select('medication_name, dosage')
-        .eq('id', medicationId)
-        .single();
+  async scheduleSnoozeNotification(
+    medicationId: string, 
+    reminderTime: string,
+    medicationName: string,
+    dosage: string,
+    snoozeMinutes: number = 15
+  ): Promise<void> {
+    if (!capacitorService.isNative()) {
+      console.log('[NATIVE-NOTIFICATIONS] Not native - skipping snooze notification');
+      return;
+    }
 
-      if (medication) {
-        await LocalNotifications.schedule({
-          notifications: [{
-            id: parseInt(`${medicationId}${Date.now()}`),
-            title: '💊 Medication Reminder (Snoozed)',
-            body: `Time to take ${medication.medication_name} (${medication.dosage})`,
-            schedule: { at: snoozeTime },
-            sound: 'default',
-            extra: {
-              medicationId,
-              reminderTime,
-              isSnoozed: true
-            }
-          }]
-        });
-      }
+    try {
+      await medicationNotificationService.snoozeNotification(medicationId, reminderTime, snoozeMinutes);
+      
+      const snoozeTime = new Date(Date.now() + snoozeMinutes * 60 * 1000);
+      
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: parseInt(`${medicationId.slice(-8)}${Date.now().toString().slice(-4)}`),
+          title: '💊 Medication Reminder (Snoozed)',
+          body: `Time to take ${medicationName}${dosage ? ` (${dosage})` : ''}`,
+          schedule: { at: snoozeTime },
+          sound: 'default',
+          extra: {
+            medicationId,
+            reminderTime,
+            isSnoozed: true
+          }
+        }]
+      });
+
+      console.log(`[NATIVE-NOTIFICATIONS] Scheduled snooze notification for ${snoozeMinutes} minutes`);
     } catch (error) {
       console.error('[NATIVE-NOTIFICATIONS] Error scheduling snooze notification:', error);
+      throw error;
+    }
+  }
+
+  private async snoozeMedication(medicationId: string, reminderTime: string): Promise<void> {
+    // Legacy method - calls new public method
+    const { data: medication } = await supabase
+      .from('user_medications')
+      .select('medication_name, dosage')
+      .eq('id', medicationId)
+      .single();
+
+    if (medication) {
+      await this.scheduleSnoozeNotification(
+        medicationId,
+        reminderTime,
+        medication.medication_name,
+        medication.dosage,
+        15
+      );
     }
   }
 
