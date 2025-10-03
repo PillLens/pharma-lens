@@ -2004,6 +2004,36 @@ export type Database = {
           },
         ]
       }
+      reminder_history: {
+        Row: {
+          action_data: Json | null
+          action_type: string
+          created_at: string
+          id: string
+          medication_id: string
+          reminder_id: string
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json | null
+          action_type: string
+          created_at?: string
+          id?: string
+          medication_id: string
+          reminder_id: string
+          user_id: string
+        }
+        Update: {
+          action_data?: Json | null
+          action_type?: string
+          created_at?: string
+          id?: string
+          medication_id?: string
+          reminder_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       security_audit_logs: {
         Row: {
           action: string
