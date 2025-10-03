@@ -622,6 +622,7 @@ const Reminders: React.FC = () => {
               />
             )}
           </div>
+          </div>
         </PullToRefreshWrapper>
       )}
 
