@@ -2128,45 +2128,57 @@ export type Database = {
       user_medications: {
         Row: {
           created_at: string
+          daily_dose_count: number | null
           dosage: string
           end_date: string | null
           frequency: string
           generic_name: string | null
           id: string
           is_active: boolean
+          last_refill_date: string | null
           medication_name: string
           notes: string | null
           prescriber: string | null
+          quantity_remaining: number | null
+          refill_reminder_date: string | null
           start_date: string
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          daily_dose_count?: number | null
           dosage: string
           end_date?: string | null
           frequency: string
           generic_name?: string | null
           id?: string
           is_active?: boolean
+          last_refill_date?: string | null
           medication_name: string
           notes?: string | null
           prescriber?: string | null
+          quantity_remaining?: number | null
+          refill_reminder_date?: string | null
           start_date: string
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          daily_dose_count?: number | null
           dosage?: string
           end_date?: string | null
           frequency?: string
           generic_name?: string | null
           id?: string
           is_active?: boolean
+          last_refill_date?: string | null
           medication_name?: string
           notes?: string | null
           prescriber?: string | null
+          quantity_remaining?: number | null
+          refill_reminder_date?: string | null
           start_date?: string
           updated_at?: string
           user_id?: string
