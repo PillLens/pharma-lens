@@ -10,6 +10,8 @@ import RecentScansCarousel from './RecentScansCarousel';
 import QuickActionCards from './QuickActionCards';
 import TodaysOverview from './TodaysOverview';
 import EnhancedFAB from './DraggableEnhancedFAB';
+import { HealthInsightsCard } from '@/components/dashboard/HealthInsightsCard';
+import { useDashboardData } from '@/hooks/useDashboardData';
 interface MobileDashboardProps {
   onScanPress: () => void;
   language: string;
@@ -23,6 +25,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({
     user
   } = useAuth();
   const [showFABMenu, setShowFABMenu] = useState(false);
+  const { dashboardStats } = useDashboardData();
   const handleEmergencyAccess = () => {
     // Quick access to critical medications
     navigate('/medications?filter=critical');
@@ -54,6 +57,16 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({
 
       {/* Quick Stats */}
       <QuickStatsCards />
+
+      {/* Health Insights */}
+      <div className="px-4 mb-6">
+        <HealthInsightsCard
+          adherenceRate={dashboardStats.adherence.rate}
+          streak={dashboardStats.adherence.streak}
+          missedToday={dashboardStats.adherence.missedToday}
+          totalToday={dashboardStats.adherence.totalToday}
+        />
+      </div>
 
       {/* Central Scan Button */}
       <div className="px-4 py-6">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Camera, Scan, Shield, Globe2, Clock, BookOpen, LogOut, History, Star, TrendingUp, Award, CheckCircle, Zap, Eye, Lock, Heart, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,11 +22,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDashboard from "@/components/mobile/MobileDashboard";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/Footer";
+import { FAQSection } from "@/components/home/FAQSection";
+import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
 const Index = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showScanResult, setShowScanResult] = useState(false);
   const [scanResultData, setScanResultData] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const {
     user,
     signOut
@@ -38,6 +41,15 @@ const Index = () => {
   const commonT = useCommonTranslations();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Check if onboarding is needed
+  useEffect(() => {
+    const onboardingCompleted = localStorage.getItem('onboarding_completed');
+    if (!onboardingCompleted && user) {
+      setShowOnboarding(true);
+    }
+  }, [user]);
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -438,6 +450,9 @@ const Index = () => {
             </div>
           </Card>
         </section>
+
+        {/* FAQ Section - Desktop Only */}
+        {!isMobile && <FAQSection />}
       </main>
 
       {/* Footer - Desktop Only */}
@@ -451,6 +466,9 @@ const Index = () => {
       setShowScanResult(false);
       setScanResultData(null);
     }} medicationData={scanResultData} />}
+
+      {/* Onboarding Flow */}
+      {showOnboarding && <OnboardingFlow onComplete={() => setShowOnboarding(false)} />}
     </div>;
   if (isMobile) {
     return <ProfessionalMobileLayout title={t('app.title', 'PillLens')} showHeader={false}>
@@ -461,6 +479,9 @@ const Index = () => {
         setShowScanResult(false);
         setScanResultData(null);
       }} medicationData={scanResultData} />}
+
+        {/* Onboarding Flow */}
+        {showOnboarding && <OnboardingFlow onComplete={() => setShowOnboarding(false)} />}
       </ProfessionalMobileLayout>;
   }
   return content;
