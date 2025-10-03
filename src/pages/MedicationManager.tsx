@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Pill, Activity, TrendingUp, Heart, Clock, AlertTriangle, Target, CheckCircle, Calendar, Zap, Bell, Filter, ArrowRight } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMedicationHistory } from '@/hooks/useMedicationHistory';
@@ -233,10 +233,18 @@ const MedicationManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'all' | 'insights'>('today');
   const [filter, setFilter] = useState<'all' | 'active' | 'due' | 'expired'>('all');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Enhanced medication management logic
-  const activeMedications = medications.filter(m => m.is_active);
-  const inactiveMedications = medications.filter(m => !m.is_active);
+  // Enhanced medication management logic - use useMemo to prevent infinite loops
+  const activeMedications = useMemo(() => 
+    medications.filter(m => m.is_active), 
+    [medications]
+  );
+  
+  const inactiveMedications = useMemo(() => 
+    medications.filter(m => !m.is_active), 
+    [medications]
+  );
   
   // Get medications using real timing service instead of legacy function
   const [dueMedications, setDueMedications] = useState<UserMedication[]>([]);
@@ -300,13 +308,19 @@ const MedicationManager: React.FC = () => {
     const interval = setInterval(updateMedicationTimings, 60000);
     return () => clearInterval(interval);
   }, [user, activeMedications, timezone]);
-  const expiredMedications = medications.filter(m => {
-    if (!m.end_date) return false;
-    return new Date(m.end_date) < new Date();
-  });
+  const expiredMedications = useMemo(() => 
+    medications.filter(m => {
+      if (!m.end_date) return false;
+      return new Date(m.end_date) < new Date();
+    }), 
+    [medications]
+  );
 
-  // All medications that need attention (due + overdue)
-  const medicationsNeedingAttention = [...dueMedications, ...overdueMedications];
+  // All medications that need attention (due + overdue) - use useMemo
+  const medicationsNeedingAttention = useMemo(() => 
+    [...dueMedications, ...overdueMedications],
+    [dueMedications, overdueMedications]
+  );
 
   // Real stats from actual adherence data
   const [realStats, setRealStats] = useState({
@@ -588,6 +602,11 @@ const MedicationManager: React.FC = () => {
     } catch (error) {
       toast.error('Failed to update medication status');
     }
+  };
+
+  const handleRetry = () => {
+    setFetchError(null);
+    refetch();
   };
 
   const handleMarkTaken = async (medicationId: string) => {
@@ -1036,6 +1055,24 @@ const MedicationManager: React.FC = () => {
             </Tabs>
             </div>
           ) : null}
+
+          {/* Error State with Retry */}
+          {fetchError && !loading && (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-destructive/10 flex items-center justify-center border border-destructive/20">
+                <AlertTriangle className="w-12 h-12 text-destructive" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2 text-foreground">Failed to Load</h3>
+              <p className="text-muted-foreground mb-6 max-w-md text-center">{fetchError}</p>
+              <MobileButton
+                onClick={handleRetry}
+                className="rounded-xl"
+                haptic
+              >
+                Try Again
+              </MobileButton>
+            </div>
+          )}
 
           {/* Loading State */}
           {loading && (

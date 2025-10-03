@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
+import type { Database } from '@/integrations/supabase/types';
+
+// Use proper Supabase types
+type MedicationRow = Database['public']['Tables']['user_medications']['Row'];
+type MedicationInsert = Database['public']['Tables']['user_medications']['Insert'];
+type MedicationUpdate = Database['public']['Tables']['user_medications']['Update'];
 
 export interface UserMedication {
   id: string;
@@ -29,12 +35,12 @@ export const useMedicationHistory = () => {
     }
 
     try {
-      // Direct table access with type assertion
       const { data, error } = await supabase
-        .from('user_medications' as any)
+        .from('user_medications')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .returns<MedicationRow[]>();
 
       if (error) {
         console.error('Error fetching medications:', error);
@@ -42,16 +48,16 @@ export const useMedicationHistory = () => {
         return;
       }
 
-      setMedications((data as any[])?.map(item => ({
+      setMedications(data?.map(item => ({
         id: item.id,
         medication_name: item.medication_name,
         generic_name: item.generic_name || '',
         dosage: item.dosage,
         frequency: item.frequency,
         start_date: item.start_date,
-        end_date: item.end_date,
-        prescriber: item.prescriber,
-        notes: item.notes,
+        end_date: item.end_date || undefined,
+        prescriber: item.prescriber || undefined,
+        notes: item.notes || undefined,
         is_active: item.is_active,
         created_at: item.created_at
       })) || []);
@@ -64,15 +70,25 @@ export const useMedicationHistory = () => {
   };
 
   const addMedication = async (medication: Omit<UserMedication, 'id' | 'created_at'>) => {
-    if (!user) return;
+    if (!user) return null;
 
     try {
+      const insertData: MedicationInsert = {
+        medication_name: medication.medication_name,
+        generic_name: medication.generic_name || null,
+        dosage: medication.dosage,
+        frequency: medication.frequency,
+        start_date: medication.start_date,
+        end_date: medication.end_date || null,
+        prescriber: medication.prescriber || null,
+        notes: medication.notes || null,
+        is_active: medication.is_active,
+        user_id: user.id
+      };
+
       const { data, error } = await supabase
-        .from('user_medications' as any)
-        .insert([{
-          ...medication,
-          user_id: user.id
-        }])
+        .from('user_medications')
+        .insert([insertData])
         .select()
         .single();
 
@@ -82,18 +98,23 @@ export const useMedicationHistory = () => {
         return null;
       }
 
+      if (!data) {
+        toast.error('Failed to add medication');
+        return null;
+      }
+
       const newMedication: UserMedication = {
-        id: (data as any).id,
-        medication_name: (data as any).medication_name,
-        generic_name: (data as any).generic_name || '',
-        dosage: (data as any).dosage,
-        frequency: (data as any).frequency,
-        start_date: (data as any).start_date,
-        end_date: (data as any).end_date,
-        prescriber: (data as any).prescriber,
-        notes: (data as any).notes,
-        is_active: (data as any).is_active,
-        created_at: (data as any).created_at
+        id: data.id,
+        medication_name: data.medication_name,
+        generic_name: data.generic_name || '',
+        dosage: data.dosage,
+        frequency: data.frequency,
+        start_date: data.start_date,
+        end_date: data.end_date || undefined,
+        prescriber: data.prescriber || undefined,
+        notes: data.notes || undefined,
+        is_active: data.is_active,
+        created_at: data.created_at
       };
 
       setMedications(prev => [newMedication, ...prev]);
@@ -107,12 +128,24 @@ export const useMedicationHistory = () => {
   };
 
   const updateMedication = async (id: string, updates: Partial<UserMedication>) => {
-    if (!user) return;
+    if (!user) return null;
 
     try {
+      const updateData: MedicationUpdate = {
+        medication_name: updates.medication_name,
+        generic_name: updates.generic_name || null,
+        dosage: updates.dosage,
+        frequency: updates.frequency,
+        start_date: updates.start_date,
+        end_date: updates.end_date || null,
+        prescriber: updates.prescriber || null,
+        notes: updates.notes || null,
+        is_active: updates.is_active
+      };
+
       const { data, error } = await supabase
-        .from('user_medications' as any)
-        .update(updates)
+        .from('user_medications')
+        .update(updateData)
         .eq('id', id)
         .eq('user_id', user.id)
         .select()
@@ -124,18 +157,23 @@ export const useMedicationHistory = () => {
         return null;
       }
 
+      if (!data) {
+        toast.error('Failed to update medication');
+        return null;
+      }
+
       const updatedMedication: UserMedication = {
-        id: (data as any).id,
-        medication_name: (data as any).medication_name,
-        generic_name: (data as any).generic_name || '',
-        dosage: (data as any).dosage,
-        frequency: (data as any).frequency,
-        start_date: (data as any).start_date,
-        end_date: (data as any).end_date,
-        prescriber: (data as any).prescriber,
-        notes: (data as any).notes,
-        is_active: (data as any).is_active,
-        created_at: (data as any).created_at
+        id: data.id,
+        medication_name: data.medication_name,
+        generic_name: data.generic_name || '',
+        dosage: data.dosage,
+        frequency: data.frequency,
+        start_date: data.start_date,
+        end_date: data.end_date || undefined,
+        prescriber: data.prescriber || undefined,
+        notes: data.notes || undefined,
+        is_active: data.is_active,
+        created_at: data.created_at
       };
 
       setMedications(prev => 
@@ -151,11 +189,11 @@ export const useMedicationHistory = () => {
   };
 
   const removeMedication = async (id: string) => {
-    if (!user) return;
+    if (!user) return false;
 
     try {
       const { error } = await supabase
-        .from('user_medications' as any)
+        .from('user_medications')
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);
