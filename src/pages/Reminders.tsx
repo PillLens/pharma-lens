@@ -18,6 +18,11 @@ import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import ReminderFilters, { ReminderFilterState } from '@/components/reminders/ReminderFilters';
 import NotificationStatusIndicator from '@/components/reminders/NotificationStatusIndicator';
+import MarkAllTakenButton from '@/components/reminders/MarkAllTakenButton';
+import DeleteConfirmDialog from '@/components/reminders/DeleteConfirmDialog';
+import LastUpdatedIndicator from '@/components/reminders/LastUpdatedIndicator';
+import RemindersLoadingSkeleton from '@/components/reminders/RemindersLoadingSkeleton';
+import PullToRefreshWrapper from '@/components/mobile/PullToRefreshWrapper';
 import { useReminders, ReminderWithMedication } from '@/hooks/useReminders';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -79,6 +84,12 @@ const Reminders: React.FC = () => {
   const [limitInfo, setLimitInfo] = useState<any>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showTrialExpiredDialog, setShowTrialExpiredDialog] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; reminder: ReminderWithMedication | null }>({
+    isOpen: false,
+    reminder: null
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch user's timezone from profile
   useEffect(() => {
@@ -169,11 +180,33 @@ const Reminders: React.FC = () => {
   };
 
   const handleDeleteReminder = async (id: string) => {
-    await deleteReminder(id);
-    toast({
-      title: t('reminders.messages.reminderDeleted'),
-      description: 'Reminder deleted successfully'
-    });
+    const reminder = reminders.find(r => r.id === id);
+    if (!reminder) return;
+    
+    setDeleteConfirm({ isOpen: true, reminder });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm.reminder) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteReminder(deleteConfirm.reminder.id);
+      toast({
+        title: t('reminders.messages.reminderDeleted'),
+        description: 'Reminder deleted successfully'
+      });
+      setDeleteConfirm({ isOpen: false, reminder: null });
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      toast({
+        title: t('common.error'),
+        description: 'Failed to delete reminder',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleEditReminder = (reminder: ReminderWithMedication) => {
@@ -408,17 +441,47 @@ const Reminders: React.FC = () => {
   return (
     <ProfessionalMobileLayout title={t('reminders.title')} showHeader={true}>
       {/* Timezone Display */}
-      <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20">
-        Timezone: {timezone} | Current time: {getCurrentTimeInTimezone(timezone).toLocaleTimeString()}
+      <div className="px-4 py-2 bg-primary/5 text-xs text-muted-foreground text-center border-b border-border/20 flex items-center justify-between">
+        <span>Timezone: {timezone} | Current time: {getCurrentTimeInTimezone(timezone).toLocaleTimeString()}</span>
+        {!loading && !timezoneFetching && (
+          <MarkAllTakenButton
+            pendingDoses={timelineEntries
+              .filter(e => e.status === 'current' || e.status === 'overdue')
+              .map(e => {
+                const [medicationId] = e.id.split('-');
+                return {
+                  medicationId,
+                  medicationName: e.medication,
+                  time: e.time
+                };
+              })}
+            onMarkAll={async (doses) => {
+              for (const dose of doses) {
+                await handleMarkTaken(`${dose.medicationId}-${dose.time}`);
+              }
+            }}
+          />
+        )}
       </div>
 
       {/* Main Content */}
       {loading || timezoneFetching ? (
-        <LoadingSkeleton />
+        <RemindersLoadingSkeleton />
       ) : (
-        <div className="space-y-6">
-          {/* Enhanced Summary Dashboard */}
-          <div className="pt-4">
+        <PullToRefreshWrapper onRefresh={async () => {
+          await Promise.all([fetchRealData(), fetchReminders()]);
+        }}>
+          <div className="space-y-6">
+            {/* Last Updated */}
+            <LastUpdatedIndicator
+              lastUpdated={lastUpdated}
+              onRefresh={async () => {
+                await Promise.all([fetchRealData(), fetchReminders()]);
+              }}
+            />
+
+            {/* Enhanced Summary Dashboard */}
+            <div className="pt-4">
           <EnhancedSummaryDashboard
             activeReminders={activeReminders}
             medicationsCovered={medicationsCovered}
@@ -559,8 +622,17 @@ const Reminders: React.FC = () => {
               />
             )}
           </div>
-        </div>
+        </PullToRefreshWrapper>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, reminder: null })}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+        itemName={deleteConfirm.reminder?.medication?.medication_name}
+      />
 
       {/* Floating Action Button */}
       <RemindersFloatingActionButton 

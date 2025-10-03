@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Edit, Trash2, MoreVertical, CheckCircle2, Circle, Bell, Pill, Calendar, Timer, Target, TrendingUp } from 'lucide-react';
+import { Clock, Edit, Trash2, MoreVertical, CheckCircle2, Circle, Bell, Pill, Calendar, Timer, Target, TrendingUp, Pause, Play } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,14 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { getCurrentTimeInTimezone } from '@/utils/timezoneUtils';
 import { useUserTimezone } from '@/hooks/useUserTimezone';
 import { calculateNextDose, formatTimeUntilNext } from '@/utils/nextDoseCalculator';
+import { useLongPress } from '@/hooks/useLongPress';
+import { hapticService } from '@/services/hapticService';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
 interface EnhancedReminderCardProps {
   reminder: {
@@ -45,6 +53,18 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
   const { timezone } = useUserTimezone();
   const [timeUntilNext, setTimeUntilNext] = useState<string>('');
   const [currentTime, setCurrentTime] = useState(() => getCurrentTimeInTimezone(timezone));
+  const [showQuickActions, setShowQuickActions] = useState(false);
+
+  // Long press handler for quick actions
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      setShowQuickActions(true);
+      hapticService.impact('medium');
+    },
+    onClick: () => onTap(),
+    delay: 500,
+    haptic: true
+  });
 
   // Update current time every minute
   useEffect(() => {
@@ -115,10 +135,12 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
   const streak = reminder.streak || 0;
 
   return (
-    <Card 
-      className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer max-w-sm mx-auto ${getCardVariant()}`}
-      onClick={onTap}
-    >
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <Card 
+          className={`rounded-3xl border-0 shadow-sm transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer max-w-sm mx-auto ${getCardVariant()}`}
+          {...longPressHandlers}
+        >
       <CardContent className="p-3">
         {/* Header with medication info */}
         <div className="flex items-start justify-between mb-5">
@@ -340,6 +362,52 @@ const EnhancedReminderCard: React.FC<EnhancedReminderCardProps> = ({
         )}
       </CardContent>
     </Card>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-56 rounded-2xl">
+        <ContextMenuItem 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            onEdit(); 
+            hapticService.buttonPress();
+          }}
+          className="cursor-pointer"
+        >
+          <Edit className="w-4 h-4 mr-3" />
+          {t('reminders.actions.edit')}
+        </ContextMenuItem>
+        <ContextMenuItem 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            onToggleStatus(); 
+            hapticService.buttonPress();
+          }}
+          className="cursor-pointer"
+        >
+          {reminder.status === 'active' ? (
+            <>
+              <Pause className="w-4 h-4 mr-3" />
+              {t('reminders.actions.pause')}
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4 mr-3" />
+              {t('reminders.actions.activate')}
+            </>
+          )}
+        </ContextMenuItem>
+        <ContextMenuItem 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            onDelete(); 
+            hapticService.impact('light');
+          }}
+          className="text-destructive focus:text-destructive cursor-pointer"
+        >
+          <Trash2 className="w-4 h-4 mr-3" />
+          {t('reminders.actions.delete')}
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 };
 
