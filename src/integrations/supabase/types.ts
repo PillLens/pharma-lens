@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_chat_usage: {
         Row: {
           created_at: string
@@ -1723,6 +1753,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          app_preferences: Json | null
           avatar_url: string | null
           bio: string | null
           city: string | null
@@ -1740,18 +1771,22 @@ export type Database = {
           location_permission_asked: boolean | null
           location_permission_granted: boolean | null
           medical_conditions: string[] | null
+          medication_preferences: Json | null
           notification_permission_asked: boolean | null
           notification_preferences: Json | null
           phone: string | null
           plan: string | null
           preferred_language: string | null
+          privacy_settings: Json | null
           stripe_customer_id: string | null
+          theme: string | null
           timezone: string | null
           trial_expires_at: string | null
           trial_started_at: string | null
           updated_at: string
         }
         Insert: {
+          app_preferences?: Json | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -1769,18 +1804,22 @@ export type Database = {
           location_permission_asked?: boolean | null
           location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
+          medication_preferences?: Json | null
           notification_permission_asked?: boolean | null
           notification_preferences?: Json | null
           phone?: string | null
           plan?: string | null
           preferred_language?: string | null
+          privacy_settings?: Json | null
           stripe_customer_id?: string | null
+          theme?: string | null
           timezone?: string | null
           trial_expires_at?: string | null
           trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
+          app_preferences?: Json | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -1798,12 +1837,15 @@ export type Database = {
           location_permission_asked?: boolean | null
           location_permission_granted?: boolean | null
           medical_conditions?: string[] | null
+          medication_preferences?: Json | null
           notification_permission_asked?: boolean | null
           notification_preferences?: Json | null
           phone?: string | null
           plan?: string | null
           preferred_language?: string | null
+          privacy_settings?: Json | null
           stripe_customer_id?: string | null
+          theme?: string | null
           timezone?: string | null
           trial_expires_at?: string | null
           trial_started_at?: string | null
@@ -2313,6 +2355,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          id: string
+          ip_address: string | null
+          last_active: string | null
+          session_token: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: string | null
+          last_active?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: string | null
+          last_active?: string | null
+          session_token?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_settings: {
         Row: {
           created_at: string
@@ -2465,6 +2540,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_old_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       find_user_by_email: {
         Args: { user_email: string }
         Returns: string
@@ -2523,6 +2602,15 @@ export type Database = {
       is_user_in_trial: {
         Args: { user_uuid: string }
         Returns: boolean
+      }
+      log_activity: {
+        Args: {
+          p_activity_data?: Json
+          p_activity_type: string
+          p_ip_address?: string
+          p_user_agent?: string
+        }
+        Returns: string
       }
     }
     Enums: {
