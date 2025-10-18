@@ -29,6 +29,10 @@
 *.woff
   Cache-Control: public, max-age=31536000, immutable
 
+# Favicon - force revalidation to prevent stale logos
+/favicon.ico
+  Cache-Control: public, max-age=0, must-revalidate
+
 # Service worker
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate

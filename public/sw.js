@@ -1,14 +1,14 @@
 // Service Worker for PillLens
 // Provides offline functionality and caching
 
-const CACHE_NAME = 'pilllens-v1.0.0';
+const CACHE_NAME = 'pilllens-v1.0.1';
 const STATIC_CACHE_URLS = [
   '/',
   '/manifest.json',
   '/assets/medical-hero.jpg'
 ];
 
-const DYNAMIC_CACHE_NAME = 'pilllens-dynamic-v1.0.0';
+const DYNAMIC_CACHE_NAME = 'pilllens-dynamic-v1.0.1';
 
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
@@ -57,6 +57,12 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
+    return;
+  }
+
+  // Always fetch favicon from network to prevent stale logos
+  if (url.pathname === '/favicon.ico') {
+    event.respondWith(fetch(request, { cache: 'reload' }));
     return;
   }
 

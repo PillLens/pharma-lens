@@ -164,7 +164,7 @@ export const EnhancedNotificationCenter: React.FC = () => {
           if (settings.push_notifications && 'Notification' in window) {
             new Notification(newNotification.title, {
               body: newNotification.message,
-              icon: '/favicon-32x32.png'
+              icon: '/pilllens-logo.png?v=2025'
             });
           }
 
