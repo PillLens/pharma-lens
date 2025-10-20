@@ -1,14 +1,14 @@
 // Service Worker for PillLens
 // Provides offline functionality and caching
 
-const CACHE_NAME = 'pilllens-v1.0.1';
+const CACHE_NAME = 'pilllens-v1.0.2';
 const STATIC_CACHE_URLS = [
   '/',
   '/manifest.json',
   '/assets/medical-hero.jpg'
 ];
 
-const DYNAMIC_CACHE_NAME = 'pilllens-dynamic-v1.0.1';
+const DYNAMIC_CACHE_NAME = 'pilllens-dynamic-v1.0.2';
 
 // Install event - cache static resources
 self.addEventListener('install', (event) => {
