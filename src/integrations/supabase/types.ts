@@ -1256,7 +1256,7 @@ export type Database = {
           accessed_at: string | null
           id: string
           interaction_id: string | null
-          ip_address: unknown | null
+          ip_address: unknown
           query_details: Json | null
           user_agent: string | null
           user_id: string | null
@@ -1265,7 +1265,7 @@ export type Database = {
           accessed_at?: string | null
           id?: string
           interaction_id?: string | null
-          ip_address?: unknown | null
+          ip_address?: unknown
           query_details?: Json | null
           user_agent?: string | null
           user_id?: string | null
@@ -1274,7 +1274,7 @@ export type Database = {
           accessed_at?: string | null
           id?: string
           interaction_id?: string | null
-          ip_address?: unknown | null
+          ip_address?: unknown
           query_details?: Json | null
           user_agent?: string | null
           user_id?: string | null
@@ -2082,7 +2082,7 @@ export type Database = {
           additional_context: Json | null
           failure_reason: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           resource_id: string | null
           resource_type: string
           sensitive_data_accessed: boolean
@@ -2097,7 +2097,7 @@ export type Database = {
           additional_context?: Json | null
           failure_reason?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type: string
           sensitive_data_accessed?: boolean
@@ -2112,7 +2112,7 @@ export type Database = {
           additional_context?: Json | null
           failure_reason?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string
           sensitive_data_accessed?: boolean
@@ -2528,26 +2528,11 @@ export type Database = {
         }
         Returns: boolean
       }
-      cleanup_expired_rate_limits: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_interaction_rate_limits: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_old_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_old_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      find_user_by_email: {
-        Args: { user_email: string }
-        Returns: string
-      }
+      cleanup_expired_rate_limits: { Args: never; Returns: undefined }
+      cleanup_interaction_rate_limits: { Args: never; Returns: undefined }
+      cleanup_old_data: { Args: never; Returns: undefined }
+      cleanup_old_sessions: { Args: never; Returns: undefined }
+      find_user_by_email: { Args: { user_email: string }; Returns: string }
       get_drug_interactions: {
         Args: { medication_a_id_param: string; medication_b_id_param: string }
         Returns: {
@@ -2581,10 +2566,7 @@ export type Database = {
           id: string
         }[]
       }
-      get_user_entitlements: {
-        Args: { user_uuid: string }
-        Returns: Json
-      }
+      get_user_entitlements: { Args: { user_uuid: string }; Returns: Json }
       get_user_family_groups: {
         Args: { user_uuid: string }
         Returns: {
@@ -2599,10 +2581,7 @@ export type Database = {
         Args: { group_uuid: string; user_uuid: string }
         Returns: boolean
       }
-      is_user_in_trial: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
+      is_user_in_trial: { Args: { user_uuid: string }; Returns: boolean }
       log_activity: {
         Args: {
           p_activity_data?: Json
