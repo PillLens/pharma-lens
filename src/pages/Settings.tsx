@@ -13,7 +13,8 @@ import {
   Settings as SettingsIcon,
   Shield as SecurityIcon,
   HelpCircle,
-  Info
+  Info,
+  FileText
 } from 'lucide-react';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -47,6 +48,7 @@ import { PaywallSheet } from '@/components/subscription/PaywallSheet';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { advancedPdfService, MedicationReportData } from '@/services/advancedPdfService';
 
 interface NotificationPreferences {
   enabled: boolean;
@@ -107,6 +109,7 @@ const Settings: React.FC = () => {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   const languages = [
     { code: 'EN', name: 'English', flag: '🇺🇸' },
@@ -292,6 +295,90 @@ const Settings: React.FC = () => {
     }
   };
 
+  // Generate health report for doctor visits
+  const handleGenerateHealthReport = async () => {
+    if (!user) return;
+    
+    setGeneratingReport(true);
+    try {
+      // Fetch user medications
+      const { data: medications, error: medsError } = await supabase
+        .from('user_medications')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+      
+      if (medsError) throw medsError;
+
+      // Fetch vital signs (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: vitalSigns, error: vitalsError } = await supabase
+        .from('vital_signs')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('recorded_at', thirtyDaysAgo.toISOString())
+        .order('recorded_at', { ascending: false });
+
+      // Fetch adherence data
+      const { data: adherenceData, error: adherenceError } = await supabase
+        .from('medication_adherence_log')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+      // Prepare report data
+      const reportData: MedicationReportData = {
+        patient: {
+          name: profileData.display_name || user.email || 'Patient',
+          email: user.email || '',
+          phone: profileData.phone || '',
+        },
+        medications: (medications || []).map((med: any) => ({
+          name: med.medication_name || med.brand_name || 'Unknown',
+          genericName: med.generic_name,
+          dosage: med.dosage || 'N/A',
+          frequency: med.frequency || 'As directed',
+          startDate: med.start_date || med.created_at?.split('T')[0] || 'N/A',
+          notes: med.notes,
+        })),
+        safetyAlerts: [],
+        interactions: [],
+        generatedDate: new Date().toISOString(),
+        generatedBy: 'PillLens Health App',
+        reportId: `RPT-${Date.now()}`,
+      };
+
+      // Generate PDF
+      const pdfBlob = await advancedPdfService.generateMedicalReport(reportData);
+      
+      // Download the PDF
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `health-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: t('settings.healthReports.reportReady', 'Report Generated'),
+        description: t('settings.healthReports.reportReadyDescription', 'Your health report has been downloaded.'),
+      });
+    } catch (error) {
+      console.error('Error generating health report:', error);
+      toast({
+        title: t('common.error'),
+        description: t('settings.healthReports.generateError', 'Failed to generate report. Please try again.'),
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
+
   // Test checkout function for debugging
   const testCheckout = async () => {
     try {
@@ -470,6 +557,23 @@ const Settings: React.FC = () => {
               subtitle={t('settings.security.twoFactorDescription')}
               rightElement={<Badge variant="outline">{t('settings.security.comingSoon')}</Badge>}
               showArrow={false}
+            />
+          </div>
+        </div>
+
+        {/* Health Reports Section */}
+        <div className="mt-6">
+          <SettingsSectionHeader title={t('settings.healthReports.title', 'Health Reports')} />
+          <div className="bg-background">
+            <SettingsRow
+              icon={<FileText className="w-5 h-5 text-primary" />}
+              title={t('settings.healthReports.generateReport', 'Generate Doctor Visit Report')}
+              subtitle={t('settings.healthReports.generateReportDescription', 'Create a comprehensive PDF report for your healthcare provider')}
+              onClick={handleGenerateHealthReport}
+              showArrow={!generatingReport}
+              rightElement={generatingReport ? (
+                <span className="text-xs text-muted-foreground">{t('common.loading', 'Loading...')}</span>
+              ) : undefined}
             />
           </div>
         </div>

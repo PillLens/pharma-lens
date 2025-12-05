@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -16,7 +16,8 @@ import {
   Crown,
   ChevronRight,
   Settings as SettingsIcon,
-  Users
+  Users,
+  ClipboardCheck
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -39,6 +40,7 @@ import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { ErrorCard } from '@/components/dashboard/ErrorCard';
 import { VitalSignsCard } from '@/components/dashboard/VitalSignsCard';
 import { MedicalDisclaimerBanner } from '@/components/MedicalDisclaimerBanner';
+import { DailyCheckupSheet } from '@/components/family/DailyCheckupSheet';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Dashboard: React.FC = () => {
   const { subscription, isInTrial, trialDaysRemaining, refreshEntitlements } = useSubscription();
   const { dashboardStats, loading, error, refetch } = useDashboardData();
   const { toast: toastHook } = useToast();
+  const [showDailyCheckup, setShowDailyCheckup] = useState(false);
 
   // Handle checkout success/cancel
   useEffect(() => {
@@ -398,6 +401,26 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Daily Wellness Checkup */}
+              <div
+                onClick={() => setShowDailyCheckup(true)}
+                className="p-4 border-b border-border/30 active:bg-muted/50 cursor-pointer transition-colors duration-150 hover:bg-muted/30 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center flex-shrink-0">
+                    <ClipboardCheck className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground mb-0.5 text-base">
+                      <TranslatedText translationKey="dashboard.dailyCheckup" fallback="Daily Wellness Checkup" />
+                    </div>
+                    <div className="text-sm text-muted-foreground leading-tight">
+                      <TranslatedText translationKey="dashboard.dailyCheckupDescription" fallback="Log your daily health & mood" />
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/60 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+                </div>
+              </div>
 
               {/* Settings Card */}
               <div
@@ -423,6 +446,12 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </PullToRefreshWrapper>
+      
+      {/* Daily Checkup Sheet */}
+      <DailyCheckupSheet 
+        isOpen={showDailyCheckup} 
+        onClose={() => setShowDailyCheckup(false)}
+      />
     </ProfessionalMobileLayout>
   );
 };
