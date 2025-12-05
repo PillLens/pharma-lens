@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { ErrorCard } from '@/components/dashboard/ErrorCard';
+import { VitalSignsCard } from '@/components/dashboard/VitalSignsCard';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -285,6 +286,11 @@ const Dashboard: React.FC = () => {
               <h2 className="text-lg font-semibold">{t('dashboard.quickOverview')}</h2>
             </div>
             <QuickStatsGrid stats={quickStats} />
+          </div>
+
+          {/* Vital Signs Card */}
+          <div className="px-6 mb-8">
+            <VitalSignsCard />
           </div>
 
           {/* Today's Focus Card */}
