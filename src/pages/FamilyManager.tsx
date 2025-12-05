@@ -15,6 +15,7 @@ const FamilyGroupDetails = lazy(() => import('@/components/family/FamilyGroupDet
 import GroupSettingsSheet from '@/components/family/GroupSettingsSheet';
 import InviteMemberSheet from '@/components/family/InviteMemberSheet';
 import CreateGroupSheet from '@/components/family/CreateGroupSheet';
+import { DailyCheckupSheet } from '@/components/family/DailyCheckupSheet';
 import FamilyFloatingActionButton from '@/components/family/FamilyFloatingActionButton';
 import ProfessionalMobileLayout from '@/components/mobile/ProfessionalMobileLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,6 +49,7 @@ const FamilyManager: React.FC = () => {
   const [editingGroup, setEditingGroup] = useState<FamilyGroup | null>(null);
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [showDailyCheckup, setShowDailyCheckup] = useState(false);
 
   // Load family data
   const loadFamilyData = async () => {
@@ -279,6 +281,10 @@ const FamilyManager: React.FC = () => {
 
   // Enhanced handlers for new features
   const handleQuickAction = (action: string) => {
+    if (action === 'checkup') {
+      setShowDailyCheckup(true);
+      return;
+    }
     toast({ 
       title: t('toast.quickAction'),
       description: t('toast.featureComingSoon', { action }) 
@@ -576,6 +582,12 @@ const FamilyManager: React.FC = () => {
           onDeleteGroup={handleDeleteGroupFromSettings}
         />
       )}
+
+      <DailyCheckupSheet
+        isOpen={showDailyCheckup}
+        onClose={() => setShowDailyCheckup(false)}
+        familyGroups={familyGroups}
+      />
     </ProfessionalMobileLayout>
   );
 };

@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Activity, Plus, Heart, Droplet, TrendingUp } from 'lucide-react';
 import { useVitalSigns } from '@/hooks/useVitalSigns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format } from 'date-fns';
+import { VitalSignsFormSheet } from './VitalSignsFormSheet';
 
 export function VitalSignsCard() {
-  const { vitalSigns, loading } = useVitalSigns(7);
+  const { vitalSigns, loading, refetch } = useVitalSigns(7);
+  const [showForm, setShowForm] = useState(false);
 
   const bloodPressureData = vitalSigns
     .filter(vs => vs.blood_pressure_systolic && vs.blood_pressure_diastolic)
@@ -27,7 +30,7 @@ export function VitalSignsCard() {
             <Activity className="h-5 w-5 text-primary" />
             <CardTitle>Vital Signs</CardTitle>
           </div>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Record
           </Button>
@@ -133,6 +136,12 @@ export function VitalSignsCard() {
           </div>
         )}
       </CardContent>
+
+      <VitalSignsFormSheet 
+        isOpen={showForm} 
+        onClose={() => setShowForm(false)} 
+        onSuccess={refetch}
+      />
     </Card>
   );
 }
