@@ -1448,5 +1448,48 @@
       "updated": "Updated successfully",
       "created": "Created successfully"
     }
+  },
+  "disclaimer": {
+    "medical": {
+      "title": "Medical Information Disclaimer",
+      "message": "This app does not provide medical diagnosis and is not a substitute for professional medical advice. Always consult your healthcare provider before making any decisions about your medications."
+    },
+    "scanResult": "Information is for reference only. This app does not provide medical diagnosis. Consult your healthcare provider for medical advice."
+  },
+  "legal": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "viewFullPolicy": "View Full Privacy Policy",
+    "privacy": {
+      "lastUpdated": "Last updated: December 5, 2024",
+      "medicalDisclaimer": {
+        "title": "Medical Disclaimer",
+        "content": "PillLens is a medication management tool and does NOT provide medical diagnosis or replace professional medical advice. Always consult your healthcare provider for medical decisions."
+      },
+      "section1": {
+        "title": "Information We Collect",
+        "content": "We collect account information, medication data, health metrics (vital signs, checkups), scan history, and usage data to provide medication management services."
+      },
+      "section2": {
+        "title": "How We Use Information",
+        "content": "Your data is used for medication identification, reminders, safety alerts, adherence tracking, and family coordination. We do NOT sell your health data."
+      },
+      "section3": {
+        "title": "Data Security",
+        "content": "All data is encrypted in transit and at rest. We use industry-standard security measures including TLS 1.3 and AES-256 encryption."
+      },
+      "section4": {
+        "title": "Data Retention",
+        "content": "Data is retained while your account is active. Upon deletion request, all personal data is permanently removed within 30 days."
+      },
+      "section5": {
+        "title": "Your Rights",
+        "content": "You can access, correct, export, or delete your data at any time through the app settings."
+      },
+      "section6": {
+        "title": "Children's Privacy",
+        "content": "Users must be 13+ to create an account. Children under 18 should use the app under parental supervision."
+      }
+    }
   }
 }
