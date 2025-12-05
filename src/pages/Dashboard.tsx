@@ -38,6 +38,7 @@ import { QuickStatsGrid } from '@/components/ui/QuickStatsGrid';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { ErrorCard } from '@/components/dashboard/ErrorCard';
 import { VitalSignsCard } from '@/components/dashboard/VitalSignsCard';
+import { MedicalDisclaimerBanner } from '@/components/MedicalDisclaimerBanner';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -270,6 +271,11 @@ const Dashboard: React.FC = () => {
                 <div className="mt-6 h-px bg-border" />
               </div>
             </div>
+          </div>
+
+          {/* Medical Disclaimer Banner */}
+          <div className="px-6 mt-4">
+            <MedicalDisclaimerBanner />
           </div>
 
           {/* Trial Banner */}

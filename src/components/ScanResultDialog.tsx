@@ -410,6 +410,13 @@ export const ScanResultDialog = ({ open, onClose, medicationData }: ScanResultDi
             <p className="text-sm text-muted-foreground">{medicationData.storage_instructions}</p>
           </Card>
         )}
+
+        {/* Medical Disclaimer */}
+        <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
+          <p className="text-xs text-muted-foreground text-center leading-relaxed">
+            {t('disclaimer.scanResult', 'Information is for reference only. This app does not provide medical diagnosis. Consult your healthcare provider for medical advice.')}
+          </p>
+        </div>
       </div>
     </div>
   );
