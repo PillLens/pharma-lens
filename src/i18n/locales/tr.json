@@ -701,6 +701,109 @@
     "unsupportedFormat": "Desteklenmeyen format",
     "processingFailed": "İşleme başarısız",
     "extractionFailed": "Bilgi çıkarma başarısız"
+  },
+  "disclaimer": {
+    "medical": {
+      "title": "Tıbbi Bilgi Uyarısı",
+      "message": "Bu uygulama tıbbi teşhis sağlamaz ve profesyonel tıbbi tavsiyenin yerini almaz. İlaçlarınızla ilgili herhangi bir karar vermeden önce daima sağlık uzmanınıza danışın."
+    },
+    "scanResult": "Bilgiler yalnızca referans içindir. Bu uygulama tıbbi teşhis sağlamaz. Tıbbi tavsiye için sağlık uzmanınıza danışın."
+  },
+  "legal": {
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsOfService": "Hizmet Şartları",
+    "viewFullPolicy": "Tam Gizlilik Politikasını Görüntüle",
+    "privacy": {
+      "lastUpdated": "Son güncelleme: 5 Aralık 2024",
+      "medicalDisclaimer": {
+        "title": "Tıbbi Sorumluluk Reddi",
+        "content": "PillLens bir ilaç yönetim aracıdır ve tıbbi teşhis SAĞLAMAZ veya profesyonel tıbbi tavsiyenin yerini ALMAZ. Tıbbi kararlar için daima sağlık uzmanınıza danışın."
+      },
+      "section1": {
+        "title": "Topladığımız Bilgiler",
+        "content": "İlaç yönetimi hizmetleri sağlamak için hesap bilgileri, ilaç verileri, sağlık ölçümleri (yaşamsal belirtiler, kontroller), tarama geçmişi ve kullanım verileri topluyoruz."
+      },
+      "section2": {
+        "title": "Bilgileri Nasıl Kullanıyoruz",
+        "content": "Verileriniz ilaç tanımlama, hatırlatıcılar, güvenlik uyarıları, uyum takibi ve aile koordinasyonu için kullanılır. Sağlık verilerinizi SATMIYORUZ."
+      },
+      "section3": {
+        "title": "Veri Güvenliği",
+        "content": "Tüm veriler aktarımda ve depolamada şifrelenir. TLS 1.3 ve AES-256 şifreleme dahil olmak üzere endüstri standardı güvenlik önlemleri kullanıyoruz."
+      },
+      "section4": {
+        "title": "Veri Saklama",
+        "content": "Hesabınız aktif olduğu sürece veriler saklanır. Silme talebi üzerine tüm kişisel veriler 30 gün içinde kalıcı olarak kaldırılır."
+      },
+      "section5": {
+        "title": "Haklarınız",
+        "content": "Uygulama ayarları üzerinden verilerinize istediğiniz zaman erişebilir, düzeltebilir, dışa aktarabilir veya silebilirsiniz."
+      },
+      "section6": {
+        "title": "Çocukların Gizliliği",
+        "content": "Hesap oluşturmak için kullanıcıların 13 yaş ve üzeri olması gerekir. 18 yaşın altındaki çocuklar uygulamayı ebeveyn gözetiminde kullanmalıdır."
+      }
+    }
+  },
+  "policy": {
+    "privacy": {
+      "title": "Gizlilik Politikası",
+      "section1": {
+        "title": "1. Topladığımız Bilgiler",
+        "content": "İlaç yönetimi hizmetlerimizi sağlamak için şunları topluyoruz: hesap bilgileri (e-posta, ad), ilaç verileri, taranan etiket görüntüleri, kullanım verileri."
+      },
+      "section2": {
+        "title": "2. Veri Kullanımı",
+        "content": "Verileriniz yalnızca ilaç tanımlama, hatırlatıcı oluşturma, tarama geçmişi saklama ve hizmet kalitesini iyileştirmek için kullanılır."
+      },
+      "section3": {
+        "title": "3. Veri Güvenliği",
+        "content": "Verilerinizi korumak için endüstri standardı şifreleme ve güvenlik önlemleri uyguluyoruz. Cihazınız ve sunucularımız arasındaki tüm iletişim TLS ile şifrelenir."
+      },
+      "section4": {
+        "title": "4. Tıbbi Uyumluluk",
+        "content": "PillLens sağlık gizliliği standartlarını takip eder ve HIPAA uyumluluk ilkeleri göz önünde bulundurularak tasarlanmıştır."
+      },
+      "section5": {
+        "title": "5. Haklarınız",
+        "content": "Kişisel bilgilerinize istediğiniz zaman erişme, güncelleme veya silme hakkına sahipsiniz. Ayarlar sayfası üzerinden tüm verilerinizi dışa aktarabilir veya hesabınızı kalıcı olarak silebilirsiniz."
+      },
+      "section6": {
+        "title": "6. Bize Ulaşın",
+        "content": "Bu Gizlilik Politikası veya verilerinizin işlenmesiyle ilgili sorularınız varsa bizimle iletişime geçin: privacy@pilllens.com."
+      },
+      "lastUpdated": "Son güncelleme: Aralık 2024. Bu gizlilik politikası zaman zaman güncellenebilir."
+    },
+    "terms": {
+      "section1": {
+        "title": "1. Şartların Kabulü",
+        "content": "PillLens'i kullanarak bu Hizmet Şartlarını kabul ediyorsunuz. Bu şartları kabul etmiyorsanız, lütfen uygulamamızı kullanmayın."
+      },
+      "section2": {
+        "title": "2. Tıbbi Sorumluluk Reddi",
+        "content": "PillLens bir ilaç bilgisi ve hatırlatıcı aracıdır. Profesyonel tıbbi tavsiye, teşhis veya tedavinin yerini almaz. Tıbbi durumlarınız ve tedavileriniz hakkında her zaman nitelikli sağlık profesyonellerine danışın."
+      },
+      "section3": {
+        "title": "3. Bilgi Doğruluğu",
+        "content": "Resmi kaynaklardan çıkarılan doğru ilaç bilgileri sağlamaya çalışsak da, tüm bilgilerin eksiksizliğini veya doğruluğunu garanti edemeyiz."
+      },
+      "section4": {
+        "title": "4. Kullanıcı Sorumlulukları",
+        "content": "Hesabınızın gizliliğini korumak, doğru bilgi sağlamak ve hizmeti yürürlükteki yasalara uygun şekilde kullanmak sizin sorumluluğunuzdadır."
+      },
+      "section5": {
+        "title": "5. Sorumluluk Sınırlaması",
+        "content": "PillLens ve geliştiricileri, uygulamanın kullanımından veya sağlanan bilgilere dayanılmasından kaynaklanan doğrudan, dolaylı, arızi veya sonuç olarak ortaya çıkan zararlardan sorumlu tutulamaz."
+      },
+      "section6": {
+        "title": "6. Hizmet Kullanılabilirliği",
+        "content": "Hizmet kullanılabilirliğini sürdürmeye çalışıyoruz ancak kesintisiz erişimi garanti etmiyoruz. Uygun bildirimle hizmetleri değiştirme veya durdurma hakkını saklı tutuyoruz."
+      },
+      "section7": {
+        "title": "7. Fesih",
+        "content": "Her iki taraf da hizmet sözleşmesini istediği zaman feshedebilir. Fesih üzerine hizmeti kullanma hakkınız derhal sona erer."
+      },
+      "lastUpdated": "Son güncelleme: Aralık 2024. Bu şartlar zaman zaman güncellenebilir."
+    }
   }
-}
 }

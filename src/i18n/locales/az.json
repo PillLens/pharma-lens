@@ -773,5 +773,109 @@
   "permissions": {
     "viewMedications": "Dərmanları Gör",
     "editMedications": "Dərmanları Redaktə Et"
+  },
+  "disclaimer": {
+    "medical": {
+      "title": "Tibbi Məlumat Açıqlaması",
+      "message": "Bu tətbiq tibbi diaqnoz vermir və peşəkar tibbi məsləhəti əvəz etmir. Dərmanlarınızla bağlı hər hansı qərar vermədən əvvəl həmişə həkiminizlə məsləhətləşin."
+    },
+    "scanResult": "Məlumat yalnız istinad üçündür. Bu tətbiq tibbi diaqnoz vermir. Tibbi məsləhət üçün həkiminizlə məsləhətləşin."
+  },
+  "legal": {
+    "privacyPolicy": "Məxfilik Siyasəti",
+    "termsOfService": "Xidmət Şərtləri",
+    "viewFullPolicy": "Tam Məxfilik Siyasətinə Baxın",
+    "privacy": {
+      "lastUpdated": "Son yenilənmə: 5 Dekabr 2024",
+      "medicalDisclaimer": {
+        "title": "Tibbi Açıqlama",
+        "content": "PillLens dərman idarəetmə alətidir və tibbi diaqnoz vermir və ya peşəkar tibbi məsləhəti əvəz etmir. Tibbi qərarlar üçün həmişə həkiminizlə məsləhətləşin."
+      },
+      "section1": {
+        "title": "Topladığımız Məlumatlar",
+        "content": "Dərman idarəetmə xidmətləri təmin etmək üçün hesab məlumatları, dərman məlumatları, sağlamlıq göstəriciləri (həyati əlamətlər, müayinələr), skan tarixçəsi və istifadə məlumatları toplayırıq."
+      },
+      "section2": {
+        "title": "Məlumatdan Necə İstifadə Edirik",
+        "content": "Məlumatlarınız dərman identifikasiyası, xatırlatmalar, təhlükəsizlik xəbərdarlıqları, riayət izləməsi və ailə koordinasiyası üçün istifadə olunur. Sağlamlıq məlumatlarınızı SATMIRLIQ."
+      },
+      "section3": {
+        "title": "Məlumat Təhlükəsizliyi",
+        "content": "Bütün məlumatlar ötürülmə zamanı və saxlama zamanı şifrələnir. TLS 1.3 və AES-256 şifrələmə daxil olmaqla sənaye standartlarına uyğun təhlükəsizlik tədbirləri tətbiq edirik."
+      },
+      "section4": {
+        "title": "Məlumat Saxlama",
+        "content": "Hesabınız aktiv olduqda məlumatlar saxlanılır. Silmə tələbi zamanı bütün şəxsi məlumatlar 30 gün ərzində həmişəlik silinir."
+      },
+      "section5": {
+        "title": "Hüquqlarınız",
+        "content": "Tətbiq parametrləri vasitəsilə istənilən vaxt məlumatlarınıza daxil ola, düzəldə, ixrac edə və ya silə bilərsiniz."
+      },
+      "section6": {
+        "title": "Uşaqların Məxfiliyi",
+        "content": "Hesab yaratmaq üçün istifadəçilər 13 yaşından yuxarı olmalıdır. 18 yaşından kiçik uşaqlar tətbiqi valideyn nəzarəti altında istifadə etməlidirlər."
+      }
+    }
+  },
+  "policy": {
+    "privacy": {
+      "title": "Məxfilik Siyasəti",
+      "section1": {
+        "title": "1. Topladığımız Məlumatlar",
+        "content": "Dərman idarəetmə xidmətlərimizi təmin etmək üçün aşağıdakı məlumatları toplayırıq: hesab məlumatları (e-poçt, ad), dərman məlumatları, skan edilmiş etiket görüntüləri, istifadə məlumatları."
+      },
+      "section2": {
+        "title": "2. Məlumatın İstifadəsi",
+        "content": "Məlumatlarınız yalnız dərman aşkarlanması, xatırlatmaların yaradılması, skan tarixçəsinin saxlanması və xidmət keyfiyyətinin yaxşılaşdırılması üçün istifadə olunur."
+      },
+      "section3": {
+        "title": "3. Məlumat Təhlükəsizliyi",
+        "content": "Məlumatlarınızı qorumaq üçün sənaye standartları olan şifrələmə və təhlükəsizlik tədbirləri tətbiq edirik. Cihazınız və serverlərimiz arasında bütün əlaqə TLS ilə şifrələnir."
+      },
+      "section4": {
+        "title": "4. Tibbi Uyğunluq",
+        "content": "PillLens səhiyyə məxfiliyi standartlarına əməl edir və HIPAA uyğunluğu prinsipləri nəzərə alınmaqla hazırlanmışdır."
+      },
+      "section5": {
+        "title": "5. Hüquqlarınız",
+        "content": "İstədiyiniz zaman şəxsi məlumatlarınıza daxil ola, yeniləyə və ya silə bilərsiniz. Parametrlər səhifəsi vasitəsilə bütün məlumatlarınızı ixrac edə və ya hesabınızı həmişəlik silə bilərsiniz."
+      },
+      "section6": {
+        "title": "6. Bizimlə Əlaqə",
+        "content": "Bu Məxfilik Siyasəti və ya məlumatlarınızın idarə edilməsi ilə bağlı hər hansı sualınız varsa, bizimlə əlaqə saxlayın: privacy@pilllens.com."
+      },
+      "lastUpdated": "Son yenilənmə: Dekabr 2024. Bu məxfilik siyasəti vaxtaşırı yenilənə bilər."
+    },
+    "terms": {
+      "section1": {
+        "title": "1. Şərtlərin Qəbulu",
+        "content": "PillLens-i istifadə etməklə siz bu Xidmət Şərtlərini qəbul edirsiniz. Bu şərtlərlə razı deyilsinizsə, lütfən tətbiqimizi istifadə etməyin."
+      },
+      "section2": {
+        "title": "2. Tibbi Açıqlama",
+        "content": "PillLens dərman məlumatı və xatırlatma alətidir. Bu, peşəkar tibbi məsləhət, diaqnoz və ya müalicəni əvəz etmir. Tibbi vəziyyətləriniz və müalicələriniz barədə həmişə ixtisaslı səhiyyə mütəxəssisləri ilə məsləhətləşin."
+      },
+      "section3": {
+        "title": "3. Məlumatın Dəqiqliyi",
+        "content": "Rəsmi mənbələrdən çıxarılan dəqiq dərman məlumatları təqdim etməyə çalışsaq da, bütün məlumatların tamlığına və ya dəqiqliyinə zəmanət verə bilmərik."
+      },
+      "section4": {
+        "title": "4. İstifadəçi Məsuliyyətləri",
+        "content": "Hesabınızın məxfiliyini qorumaq, dəqiq məlumat vermək və xidmətdən qanunlara uyğun istifadə etmək sizin məsuliyyətinizdədir."
+      },
+      "section5": {
+        "title": "5. Məsuliyyətin Məhdudlaşdırılması",
+        "content": "PillLens və onun tərtibatçıları tətbiqdən istifadə və ya verilən məlumatlara əsaslanma nəticəsində yaranan birbaşa, dolayı, təsadüfi və ya nəticə zərərlərinə görə məsuliyyət daşımır."
+      },
+      "section6": {
+        "title": "6. Xidmətin Mövcudluğu",
+        "content": "Xidmət mövcudluğunu saxlamağa çalışırıq, lakin fasiləsiz girişə zəmanət vermirik. Müvafiq bildirişlə xidmətləri dəyişdirmək və ya dayandırmaq hüququmuzu saxlayırıq."
+      },
+      "section7": {
+        "title": "7. Xitam",
+        "content": "Hər iki tərəf istənilən vaxt xidmət müqaviləsinə xitam verə bilər. Xitamdan sonra xidmətdən istifadə hüququnuz dərhal dayandırılacaq."
+      },
+      "lastUpdated": "Son yenilənmə: Dekabr 2024. Bu şərtlər vaxtaşırı yenilənə bilər."
+    }
   }
 }
