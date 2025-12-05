@@ -143,12 +143,7 @@ const Dashboard: React.FC = () => {
       color: 'text-purple-500',
       bgColor: 'bg-purple-50 dark:bg-purple-950/30',
       borderColor: 'border-purple-200 dark:border-purple-800',
-      onClick: () => {
-        toast.info('🚧 Coming Soon!', {
-          description: 'Family management features are being developed.',
-          duration: 3000,
-        });
-      }
+      onClick: () => navigate('/family')
     },
     {
       icon: TrendingUp,

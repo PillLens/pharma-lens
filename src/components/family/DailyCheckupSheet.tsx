@@ -60,24 +60,36 @@ export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
   }, [isOpen, user]);
 
   const checkTodaysCheckup = async () => {
+    if (!user) return;
+    
     try {
       const today = new Date().toISOString().split('T')[0];
-      const storageKey = `daily_checkup_${user?.id}_${today}`;
-      const savedCheckup = localStorage.getItem(storageKey);
+      
+      // Check database first
+      const { data: existingCheckup, error } = await supabase
+        .from('daily_health_checkups')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('checkup_date', today)
+        .maybeSingle();
 
-      if (savedCheckup) {
-        const checkup = JSON.parse(savedCheckup);
+      if (error) {
+        console.error('Error fetching checkup from database:', error);
+        return;
+      }
+
+      if (existingCheckup) {
         setHasCompletedToday(true);
         setCheckupData({
-          mood: checkup.mood_score,
-          energy: checkup.energy_level,
-          pain: checkup.pain_level,
-          sleep: checkup.sleep_quality,
-          appetite: checkup.appetite_level,
-          stress: checkup.stress_level,
-          symptoms: checkup.symptoms || '',
-          notes: checkup.notes || '',
-          medications_taken: checkup.medications_taken
+          mood: existingCheckup.mood_score,
+          energy: existingCheckup.energy_level,
+          pain: existingCheckup.pain_level,
+          sleep: existingCheckup.sleep_quality,
+          appetite: existingCheckup.appetite_level,
+          stress: existingCheckup.stress_level,
+          symptoms: existingCheckup.symptoms || '',
+          notes: existingCheckup.notes || '',
+          medications_taken: existingCheckup.medications_taken
         });
       } else {
         setHasCompletedToday(false);
@@ -94,6 +106,11 @@ export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
     try {
       const today = new Date().toISOString().split('T')[0];
       
+      const overallWellnessScore = Math.round(
+        (checkupData.mood + checkupData.energy + (10 - checkupData.pain) + 
+         checkupData.sleep + checkupData.appetite + (10 - checkupData.stress)) / 6
+      );
+
       const checkupRecord = {
         user_id: user.id,
         checkup_date: today,
@@ -103,19 +120,23 @@ export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
         sleep_quality: checkupData.sleep,
         appetite_level: checkupData.appetite,
         stress_level: checkupData.stress,
-        symptoms: checkupData.symptoms,
-        notes: checkupData.notes,
+        symptoms: checkupData.symptoms || null,
+        notes: checkupData.notes || null,
         medications_taken: checkupData.medications_taken,
-        overall_wellness_score: Math.round(
-          (checkupData.mood + checkupData.energy + (10 - checkupData.pain) + 
-           checkupData.sleep + checkupData.appetite + (10 - checkupData.stress)) / 6
-        ),
-        created_at: new Date().toISOString()
+        overall_wellness_score: overallWellnessScore
       };
 
-      // Save to localStorage temporarily
-      const storageKey = `daily_checkup_${user.id}_${today}`;
-      localStorage.setItem(storageKey, JSON.stringify(checkupRecord));
+      // Save to database - upsert to handle both insert and update
+      const { error: dbError } = await supabase
+        .from('daily_health_checkups')
+        .upsert(checkupRecord, {
+          onConflict: 'user_id,checkup_date'
+        });
+
+      if (dbError) {
+        console.error('Database error saving checkup:', dbError);
+        throw new Error('Failed to save checkup to database');
+      }
       
       toast({
         title: hasCompletedToday ? 'Daily Checkup Updated' : 'Daily Checkup Completed',

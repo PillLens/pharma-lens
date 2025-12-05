@@ -173,16 +173,16 @@ const Index = () => {
               {/* Stats Row */}
               <div className="grid grid-cols-3 gap-6 py-8 border-t border-b border-border/50">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">99.2%</div>
-                  <div className="text-sm text-muted-foreground font-medium">Accuracy Rate</div>
+                  <div className="text-3xl font-bold text-primary">AI</div>
+                  <div className="text-sm text-muted-foreground font-medium">Powered Analysis</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">50K+</div>
-                  <div className="text-sm text-muted-foreground font-medium">Medications Scanned</div>
+                  <div className="text-3xl font-bold text-primary">4+</div>
+                  <div className="text-sm text-muted-foreground font-medium">Languages Supported</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">15K+</div>
-                  <div className="text-sm text-muted-foreground font-medium">Active Users</div>
+                  <div className="text-3xl font-bold text-primary">24/7</div>
+                  <div className="text-sm text-muted-foreground font-medium">Available Anytime</div>
                 </div>
               </div>
 
@@ -203,15 +203,15 @@ const Index = () => {
               <div className="flex items-center gap-6 pt-4">
                 <div className="flex items-center gap-2">
                   <Lock className="w-4 h-4 text-success" />
-                  <span className="text-sm text-muted-foreground">HIPAA Compliant</span>
+                  <span className="text-sm text-muted-foreground">Privacy Protected</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-success" />
-                  <span className="text-sm text-muted-foreground">FDA Approved Data</span>
+                  <span className="text-sm text-muted-foreground">Secure Data</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-success" />
-                  <span className="text-sm text-muted-foreground">Medical Grade</span>
+                  <span className="text-sm text-muted-foreground">AI Powered</span>
                 </div>
               </div>
             </div>
@@ -235,7 +235,7 @@ const Index = () => {
                 
                 <div className="absolute bottom-4 left-4 px-4 py-2 bg-success text-success-foreground text-sm font-semibold rounded-lg shadow-lg flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
-                  99.2% Accurate
+                  Safe & Reliable
                 </div>
               </div>
             </div>
