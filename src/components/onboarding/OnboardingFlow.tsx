@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Camera, Bell, Users, Shield, CheckCircle, ArrowRight, X } from 'lucide-react';
+import { Camera, Bell, Users, Shield, CheckCircle, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface OnboardingFlowProps {
@@ -69,19 +69,9 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
-        <div className="relative">
-          {/* Close button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0"
-            onClick={handleSkip}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-
+        <div>
           {/* Progress */}
-          <div className="mb-8 mt-4">
+          <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-muted-foreground">
                 Step {currentStep + 1} of {onboardingSteps.length}
