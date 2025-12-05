@@ -15,7 +15,7 @@ import { useAuth } from '@/hooks/useAuth';
 interface DailyCheckupSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  familyGroups: FamilyGroup[];
+  familyGroups?: FamilyGroup[];
   selectedMember?: string;
 }
 
@@ -34,7 +34,7 @@ interface DailyCheckupData {
 export const DailyCheckupSheet: React.FC<DailyCheckupSheetProps> = ({
   isOpen,
   onClose,
-  familyGroups,
+  familyGroups = [],
   selectedMember
 }) => {
   const { user } = useAuth();
